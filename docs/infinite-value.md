@@ -26,13 +26,45 @@ The `InfVal` structure handles any value and supports arithmetic operations, ser
 
 ## Requirements
 
-- Unity 2020.3.48 or later
+- Unity 6.0 or later
 
 ## Get It
 
 <a href="https://assetstore.unity.com/packages/tools/integration/infinite-value-bigdecimal-194963" class="asset-store-btn">View on Unity Asset Store ($29.99)</a>
 
 ## Patch Notes
+
+**v2.0** (June 1, 2026)
+
+New Features:
+- **Formatter system**: format and parse behavior is now driven by `IInfValFormatter` implementations, wrapped in a `FormatterAsset` (`ScriptableObject`). Assign a `FormatterAsset` to `Configuration` or `InfValInputField` in the Inspector. Create one via `Assets > Create > Infinite Value > Formatter`. Four built-in formatters are provided:
+  - `ManualFormatter`: fully explicit; configure unit list, separators, exponent marker, digit count, and display flags.
+  - `ScientificFormatter`: always formats as scientific notation (e.g. `1.23e+6`); configurable decimal separator, exponent marker, digit count, and trailing zeros.
+  - `AlphabeticFormatter`: idle-game style with letter suffixes (`1.23a`, `4.56b`, ..., `1.00aa`); configurable alphabet, separators, digit count, and trailing zeros.
+  - `CultureFormatter`: derives separators from a `Culture`; uses native East Asian units (`万/億...`, `만/억...`, `万/亿...`) with 4-digit stepping for `ja-*`, `ko-*`, and `zh-*` locales, and Western units (`k/M/G...`) for all others.
+- `IInfValFormatter`: implement this interface to create a fully custom formatter. Requires `Format(in InfVal)`, `TryParse(string, out InfVal)`, and `IsValidPartialInput(string)`.
+- `InfValFormatHelper`: static utility class for use when implementing `IInfValFormatter`. Provides `Format`, `TryParse`, `Parse`, `IsValidPartialInput`, `GetDecimalSeparator`, `GetGroupSeparator`, `AreUnitsValid`, and `defaultExponentMarkers`.
+- `InfValInputField.activeFormatter`: read-only property returning the component's assigned formatter, falling back to `Configuration.defaultFormatter`.
+
+Breaking Changes:
+- **Formatter system replaces format settings**: all per-formatter options previously scattered across `Configuration` and `InfValInputField` have been removed. Assign a `FormatterAsset` to the `Default Formatter` field on `Configuration`, or to the `Formatter` field on `InfValInputField`. Fields removed:
+  - `Configuration`: `maxDisplayedDigits`, `unitsList`, `displayOptions`, and all decimal/separator/exponent/culture format settings.
+  - `InfValInputField`: `useCustomUnits`, `unitsList`, `useCustomCulture`, `culture`, `useCustomMaxDisplayedDigits`, `maxDisplayedDigits`, `useCustomDisplayOptions`, `displayOptions`.
+- **`InfVal.ToString` overloads removed**: `ToString(int, string[], DisplayOption, ...)` and all related overloads are gone. Use `ToString(IInfValFormatter)` or the no-arg `ToString()` which uses `Configuration.defaultFormatter`.
+- **Parse API simplified**: `Parse`, `TryParse` overloads taking `string[]` or `IFormatProvider` are gone. `ParseOrDefault` is fully removed.
+- **`DisplayOption` enum removed**.
+- **Integer constructors**: when no `precision` argument is provided, the resulting `InfVal` now has its precision set to the maximum digit count of the source type (e.g. 10 for `int`) instead of the actual digit count of the value. Pass an explicit `precision` to restore the old behavior.
+- **`MathInfVal.Approximately`**: parameter renamed from `precision` to `significantDigits`. Only affects code using named arguments.
+- **`Configuration` asset moved**: from `<Infinite Value package folder>/Resources/Configuration.asset` to `Assets/Resources/Infinite Value Configuration.asset`. Re-apply your settings to the new asset, which is created automatically on the first domain reload after upgrading.
+- **`operator ++` and `operator --` removed**: use `value + 1` / `value - 1` instead.
+
+Bug Fixes:
+- Comparison operators (`<`, `>`, `<=`, `>=`) and `CompareTo` now correctly order negative values of different magnitudes (e.g. `-10 < -1` previously returned `false`).
+- `MathInfVal.MaxExponent`, `MinExponent`, `MaxPrecision`, and `MinPrecision` (`params` overloads): the accumulation loop read back `.exponent`/`.precision` of `InfVal` representations of the loop indices instead of the original integers, producing incorrect results.
+- `MathInfVal.Approximately`: did not account for the magnitude of the values; values with identical significant digits but different exponents (e.g. `1.23e5` vs. `1.23e6`) were incorrectly considered approximately equal.
+- `MathInfVal.RandomRange`: now throws `ArgumentException` if `min > max` (previously silently swapped them); calling this repeatedly in the same frame no longer returns the same value every time.
+- `MathInfVal.Repeat` and `PingPong`: now throw `ArgumentException` if `length` is zero (previously threw `DivideByZeroException`).
+- `InterpolateInfVal.InverseLinear`: now throws `ArgumentException` if `min == max` (previously returned `NaN` or infinity).
 
 **v1.2.1** (September 12, 2023)
 - Fixed the Pow method, which could provide wrong results in some cases
