@@ -30,6 +30,15 @@ Arithmetic and comparison operations in generic C# classes. Works with any value
 
 <a href="https://assetstore.unity.com/packages/tools/utilities/generic-arithmetic-c-template-extension-265011" class="asset-store-btn" target="_blank">View on Unity Asset Store (Free)</a>
 
+## Patch Notes
+
+**v1.1.0** (January 2, 2024)
+- Added Try versions of all methods in Calculate and Evaluate
+- Added a new overload to `Computable<T>.From` that takes a T as a parameter (same behaviour as the constructor)
+- Small improvements to the documentation
+
+**v1.0.0** - Initial release
+
 ---
 
 *Questions or issues? Contact us at [justetools@gmail.com](mailto:justetools@gmail.com)*

@@ -2,9 +2,9 @@
 layout: home
 ---
 
-<p class="site-tagline">Creating awesome tools for awesome games.</p>
-
 <img src="/assets/images/home.jpg" alt="Juste Tools" class="home-image">
+
+<p class="site-tagline">Creating awesome tools for awesome games.</p>
 
 <div class="package-grid">
 
