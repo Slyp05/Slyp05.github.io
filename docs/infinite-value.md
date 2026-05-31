@@ -6,31 +6,38 @@ permalink: /infinite-value/
 
 <img src="/assets/images/infinite-value.png" alt="Infinite Value" class="package-image">
 
-`InfVal` is an arbitrary-precision number type for Unity. It stores any integer or decimal value and behaves like a primitive: full arithmetic, comparison, and bitwise operators, implicit casts from all numeric types, and direct inspector support. Designed for real-time use and fully serializable. Perfect for incremental games, RPGs, or any system where standard numeric types overflow or lose precision.
+`InfVal` is an arbitrary-precision number type for Unity.  
+It stores any integer or decimal value and behaves like a primitive: full arithmetic, comparison, and bitwise operators, implicit casts from all numeric types, and direct inspector support.  
+Designed for real-time use and fully serializable.  
+Perfect for incremental games, RPGs, or any system where standard numeric types overflow or lose precision.
 
 ## Features
 
 - **Arbitrary precision**: integer or decimal with any digit count; values up to ~±10^4,294,967,295 with precision down to 10^−2,147,483,648
-- **Primitive-like API**: arithmetic (`+`, `-`, `*`, `/`, `%`), bitwise, and comparison operators; implicit casts from all numeric primitives; pass by `in` keyword to avoid copies
+- **Primitive-like API**: arithmetic (`+`, `-`, `*`, `/`, `%`), bitwise, and comparison operators; implicit casts from all numeric primitives
 - **Formatter system**: 4 built-in formatters (Manual, Scientific, Alphabetic, Culture-aware with native East Asian units) and a custom formatter interface; assign formatters project-wide or per component
 - **Inspector drawer**: edit values directly, access raw digits and exponent, call transform methods with one click, and view all read-only properties, all sections configurable
 - **Input field component**: `InfValInputField` turns any `InputField` or `TMP_InputField` into an `InfVal` field with validation modes, sign constraints, and per-component formatter override
 - **Math & interpolation**: 30+ methods in `MathInfVal` (Abs, Pow, Sqrt, Log, Clamp, RandomRange, ...) and 10+ interpolation modes in `InterpolateInfVal` including ease in/out and angle variants
 - **Performant**: explicit precision control, `in`-parameter passing, and `ToString()` caching keep real-time use efficient
-- **Full sources**: all scripts included with comments and summaries; ships with bulk randomized tests and a complete NUnit test suite
+- **Full sources**: all scripts included with comments and summaries
+
+## Content
+
+- **Infinite value type**: the `InfVal` struct separated in multiple files
+- **Formatter system**: `IInfValFormatter`, `FormatterAsset`, 4 built-in formatters
+- **Support classes**: `MathInfVal`, `InterpolateInfVal`, `InfValInputField` UI component
+- **Tests**: NUnit test suite and custom randomized bulk tests
+- **Demo**: a complete clicker-game demo with a save system, a scriptable-object database, and reusable UI scripts
+
+## Requirements
+
+- Unity 6.0 or later
 
 ## Documentation
 
 <a href="/infinite-value/documentation/" class="asset-store-btn">Documentation</a>
 <a href="/infinite-value/public-api/" class="asset-store-btn">Public API</a>
-
-## Content
-
-The `InfVal` struct, the full formatter system (`IInfValFormatter`, `FormatterAsset`, 4 built-in formatters), `MathInfVal`, `InterpolateInfVal`, the `InfValInputField` UI component, and a complete clicker-game demo with a save system, a scriptable-object database, and reusable UI scripts.
-
-## Requirements
-
-- Unity 6.0 or later
 
 ## Get It
 
