@@ -35,7 +35,6 @@ header_pages:
   - infinite-value.md
   - auto-singleton.md
   - generic-arithmetic.md
-  - about.markdown
 
 # Exclude from processing.
 # The following items will not be processed, by default.

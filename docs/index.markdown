@@ -4,7 +4,7 @@ layout: home
 
 <img src="/assets/images/home.jpg" alt="Juste Tools" class="home-image">
 
-<p class="site-tagline">Creating awesome tools for awesome games.</p>
+## Assets
 
 <div class="package-grid">
 
@@ -30,3 +30,7 @@ layout: home
   </div>
 
 </div>
+
+## Contact
+
+Questions or issues? Reach me at [justetools@gmail.com](mailto:justetools@gmail.com)
