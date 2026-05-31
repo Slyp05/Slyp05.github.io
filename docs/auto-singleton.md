@@ -23,7 +23,7 @@ Works with both `MonoBehaviour` and `ScriptableObject`.
 
 ## Documentation
 
-<a href="/auto-singleton/documentation/" class="asset-store-btn" target="_blank">Documentation</a>
+<a href="/auto-singleton/documentation/" class="asset-store-btn">Documentation</a>
 
 ## Requirements
 
@@ -31,7 +31,7 @@ Works with both `MonoBehaviour` and `ScriptableObject`.
 
 ## Get It
 
-<a href="https://assetstore.unity.com/packages/tools/utilities/auto-singleton-264895" class="asset-store-btn" target="_blank">View on Unity Asset Store (Free)</a>
+<a href="https://assetstore.unity.com/packages/tools/utilities/auto-singleton-264895" class="asset-store-btn">View on Unity Asset Store (Free)</a>
 
 ## Patch Notes
 

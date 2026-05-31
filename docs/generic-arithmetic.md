@@ -20,7 +20,7 @@ Arithmetic and comparison operations in generic C# classes. Works with any value
 
 ## Documentation
 
-<a href="/generic-arithmetic/documentation/" class="asset-store-btn" target="_blank">Documentation</a>
+<a href="/generic-arithmetic/documentation/" class="asset-store-btn">Documentation</a>
 
 ## Requirements
 
@@ -28,7 +28,7 @@ Arithmetic and comparison operations in generic C# classes. Works with any value
 
 ## Get It
 
-<a href="https://assetstore.unity.com/packages/tools/utilities/generic-arithmetic-c-template-extension-265011" class="asset-store-btn" target="_blank">View on Unity Asset Store (Free)</a>
+<a href="https://assetstore.unity.com/packages/tools/utilities/generic-arithmetic-c-template-extension-265011" class="asset-store-btn">View on Unity Asset Store (Free)</a>
 
 ## Patch Notes
 
