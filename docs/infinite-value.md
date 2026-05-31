@@ -30,7 +30,7 @@ The `InfVal` structure handles any value and supports arithmetic operations, ser
 
 ## Get It
 
-<a href="https://assetstore.unity.com/packages/tools/integration/infinite-value-bigdecimal-194963" class="asset-store-btn">View on Unity Asset Store (€27.59)</a>
+<a href="https://assetstore.unity.com/packages/tools/integration/infinite-value-bigdecimal-194963" class="asset-store-btn">View on Unity Asset Store ($29.99)</a>
 
 ## Patch Notes
 

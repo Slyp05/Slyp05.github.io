@@ -10,7 +10,7 @@ layout: home
 
   <div class="package-card">
     <h2><a href="/infinite-value/">Infinite Value</a></h2>
-    <span class="badge badge-paid">€27.59</span>
+    <span class="badge badge-paid">$29.99</span>
     <p>Numbers of any size and precision in Unity. Behaves like a primitive type, works in real-time, and is fully configurable. Perfect for incremental games, RPGs, and monetary systems.</p>
     <a href="/infinite-value/" class="card-link">Learn more →</a>
   </div>
