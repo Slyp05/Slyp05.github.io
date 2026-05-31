@@ -18,7 +18,8 @@ A complete solution for working with numbers of any size and precision in Unity.
 
 ## Documentation
 
-<a href="/assets/docs/infinite-value.pdf" class="asset-store-btn">Documentation</a>
+<a href="/infinite-value/documentation/" class="asset-store-btn">Documentation</a>
+<a href="/infinite-value/public-api/" class="asset-store-btn">Public API</a>
 
 ## Content
 
@@ -31,6 +32,7 @@ The `InfVal` structure handles any value and supports arithmetic operations, ser
 ## Get It
 
 <a href="https://assetstore.unity.com/packages/tools/integration/infinite-value-bigdecimal-194963" class="asset-store-btn">View on Unity Asset Store ($29.99)</a>
+<a href="https://justetools.itch.io/infinite-value" class="asset-store-btn">Play Demo</a>
 
 ## Patch Notes
 
@@ -106,7 +108,3 @@ This update makes the InfVal structure conserve precision instead of exponent, w
 - Updated the demo, unit tests window, documentation and API to reflect these changes
 
 **v1.0.0** - Initial release
-
----
-
-*Questions or issues? Contact us at [justetools@gmail.com](mailto:justetools@gmail.com)*

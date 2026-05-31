@@ -44,7 +44,3 @@ Works with both `MonoBehaviour` and `ScriptableObject`.
 - Demo and documentation modified to reflect those changes
 
 **v1.0.0** - Initial release
-
----
-
-*Questions or issues? Contact us at [justetools@gmail.com](mailto:justetools@gmail.com)*

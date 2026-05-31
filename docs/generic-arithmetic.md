@@ -38,7 +38,3 @@ Arithmetic and comparison operations in generic C# classes. Works with any value
 - Small improvements to the documentation
 
 **v1.0.0** - Initial release
-
----
-
-*Questions or issues? Contact us at [justetools@gmail.com](mailto:justetools@gmail.com)*
