@@ -3,6 +3,20 @@
 
 @import "minima";
 
+.home-image {
+  display: block;
+  width: 300px;
+  max-width: 100%;
+  margin: 1.5rem auto;
+}
+
+.package-image {
+  display: block;
+  width: 780px;
+  max-width: 100%;
+  margin: 0 auto 2rem;
+}
+
 .site-tagline {
   font-size: 1.1em;
   color: #666;
@@ -11,14 +25,12 @@
 
 .package-grid {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 1.5rem;
   margin: 1.5rem 0;
 }
 
 .package-card {
-  flex: 1;
-  min-width: 220px;
   border: 1px solid #e8e8e8;
   border-radius: 6px;
   padding: 1.5rem;
@@ -69,19 +81,26 @@
   font-size: 0.9em;
 }
 
+.doc-embed {
+  width: 100%;
+  height: 80vh;
+  border: none;
+  margin-top: 1rem;
+}
+
 .asset-store-btn {
   display: inline-block;
   margin-top: 0.5rem;
   padding: 0.6rem 1.2rem;
   background: #222;
-  color: #fff;
+  color: #93c5fd !important;
   border-radius: 4px;
   text-decoration: none;
   font-size: 0.95em;
 
   &:hover {
     background: #444;
-    color: #fff;
+    color: #bfdbfe !important;
     text-decoration: none;
   }
 }

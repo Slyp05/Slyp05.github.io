@@ -4,6 +4,8 @@ title: Auto Singleton
 permalink: /auto-singleton/
 ---
 
+<img src="/assets/images/auto-singleton.jpg" alt="Auto Singleton" class="package-image">
+
 The simplest singleton tool on the Asset Store. Add the `[Singleton]` attribute to any class and the asset handles everything: automatic asset generation, cleanup, and polymorphic access at runtime.
 
 Works with both `MonoBehaviour` and `ScriptableObject`.
@@ -18,6 +20,10 @@ Works with both `MonoBehaviour` and `ScriptableObject`.
 - **No reload on play mode**: works seamlessly without domain reload
 - **Inspector integration**: view all singletons in a list and enable/disable them with a single click
 - **Inheritable or not**: choose per attribute whether it applies to subclasses
+
+## Documentation
+
+<a href="/auto-singleton/documentation/" class="asset-store-btn" target="_blank">Documentation</a>
 
 ## Requirements
 

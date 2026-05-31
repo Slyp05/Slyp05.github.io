@@ -4,6 +4,8 @@ title: Infinite Value
 permalink: /infinite-value/
 ---
 
+<img src="/assets/images/infinite-value.png" alt="Infinite Value" class="package-image">
+
 A complete solution for working with numbers of any size and precision in Unity. Perfect for incremental games, RPGs, or any mathematical or monetary application where standard numeric types fall short.
 
 ## Features
@@ -13,6 +15,10 @@ A complete solution for working with numbers of any size and precision in Unity.
 - **Performant**: designed for real-time use, with specific optimizations for gigantic numbers
 - **Configurable**: a configuration file lets you control how values are displayed and customize the inspector drawer
 - **Full sources**: all scripts are included with comments and summaries
+
+## Documentation
+
+<a href="/infinite-value/documentation/" class="asset-store-btn" target="_blank">Documentation</a>
 
 ## Content
 

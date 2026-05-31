@@ -4,6 +4,8 @@ title: Generic Arithmetic
 permalink: /generic-arithmetic/
 ---
 
+<img src="/assets/images/generic-arithmetic.jpg" alt="Generic Arithmetic" class="package-image">
+
 Arithmetic and comparison operations in generic C# classes. Works with any value type (system primitives, Unity primitives, custom classes or structs, and nullables) with no additional setup required.
 
 ## Features
@@ -15,6 +17,10 @@ Arithmetic and comparison operations in generic C# classes. Works with any value
 - **No setup**: drop in and use immediately
 - **Full sources**: 50+ scripts included
 - **Unit test window**: included to verify correctness
+
+## Documentation
+
+<a href="/generic-arithmetic/documentation/" class="asset-store-btn" target="_blank">Documentation</a>
 
 ## Requirements
 
