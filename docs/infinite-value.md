@@ -6,15 +6,18 @@ permalink: /infinite-value/
 
 <img src="/assets/images/infinite-value.png" alt="Infinite Value" class="package-image">
 
-A complete solution for working with numbers of any size and precision in Unity. Perfect for incremental games, RPGs, or any mathematical or monetary application where standard numeric types fall short.
+`InfVal` is an arbitrary-precision number type for Unity. It stores any integer or decimal value and behaves like a primitive: full arithmetic, comparison, and bitwise operators, implicit casts from all numeric types, and direct inspector support. Designed for real-time use and fully serializable. Perfect for incremental games, RPGs, or any system where standard numeric types overflow or lose precision.
 
 ## Features
 
-- **Complete**: define integer or decimal numbers as large or as small as you want, with the sharpest precision
-- **Easy to use**: behaves like any other primitive type (`int`, `float`, etc.) and converts to/from them naturally
-- **Performant**: designed for real-time use, with specific optimizations for gigantic numbers
-- **Configurable**: a configuration file lets you control how values are displayed and customize the inspector drawer
-- **Full sources**: all scripts are included with comments and summaries
+- **Arbitrary precision**: integer or decimal with any digit count; values up to ~±10^4,294,967,295 with precision down to 10^−2,147,483,648
+- **Primitive-like API**: arithmetic (`+`, `-`, `*`, `/`, `%`), bitwise, and comparison operators; implicit casts from all numeric primitives; pass by `in` keyword to avoid copies
+- **Formatter system**: 4 built-in formatters (Manual, Scientific, Alphabetic, Culture-aware with native East Asian units) and a custom formatter interface; assign formatters project-wide or per component
+- **Inspector drawer**: edit values directly, access raw digits and exponent, call transform methods with one click, and view all read-only properties, all sections configurable
+- **Input field component**: `InfValInputField` turns any `InputField` or `TMP_InputField` into an `InfVal` field with validation modes, sign constraints, and per-component formatter override
+- **Math & interpolation**: 30+ methods in `MathInfVal` (Abs, Pow, Sqrt, Log, Clamp, RandomRange, ...) and 10+ interpolation modes in `InterpolateInfVal` including ease in/out and angle variants
+- **Performant**: explicit precision control, `in`-parameter passing, and `ToString()` caching keep real-time use efficient
+- **Full sources**: all scripts included with comments and summaries; ships with bulk randomized tests and a complete NUnit test suite
 
 ## Documentation
 
@@ -23,7 +26,7 @@ A complete solution for working with numbers of any size and precision in Unity.
 
 ## Content
 
-The `InfVal` structure handles any value and supports arithmetic operations, serialization, parsing, and more. A complete demo is also included as a starting point for a clicker game.
+The `InfVal` struct, the full formatter system (`IInfValFormatter`, `FormatterAsset`, 4 built-in formatters), `MathInfVal`, `InterpolateInfVal`, the `InfValInputField` UI component, and a complete clicker-game demo with a save system, a scriptable-object database, and reusable UI scripts.
 
 ## Requirements
 
