@@ -18,7 +18,7 @@ A complete solution for working with numbers of any size and precision in Unity.
 
 ## Documentation
 
-<a href="/infinite-value/documentation/" class="asset-store-btn">Documentation</a>
+<a href="/assets/docs/infinite-value.pdf" class="asset-store-btn">Documentation</a>
 
 ## Content
 
