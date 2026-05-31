@@ -1,0 +1,87 @@
+---
+---
+
+@import "minima";
+
+.site-tagline {
+  font-size: 1.1em;
+  color: #666;
+  margin-bottom: 2rem;
+}
+
+.package-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin: 1.5rem 0;
+}
+
+.package-card {
+  flex: 1;
+  min-width: 220px;
+  border: 1px solid #e8e8e8;
+  border-radius: 6px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+
+  h2 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    font-size: 1.3em;
+
+    a {
+      color: inherit;
+      text-decoration: none;
+      &:hover { text-decoration: underline; }
+    }
+  }
+
+  p {
+    flex: 1;
+    color: #444;
+    font-size: 0.95em;
+  }
+}
+
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 0.78em;
+  font-weight: bold;
+  margin-bottom: 0.75rem;
+}
+
+.badge-paid {
+  background: #eef4ff;
+  color: #1a56db;
+}
+
+.badge-free {
+  background: #edfaf1;
+  color: #057a55;
+}
+
+.card-link {
+  margin-top: 0.75rem;
+  font-weight: bold;
+  font-size: 0.9em;
+}
+
+.asset-store-btn {
+  display: inline-block;
+  margin-top: 0.5rem;
+  padding: 0.6rem 1.2rem;
+  background: #222;
+  color: #fff;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 0.95em;
+
+  &:hover {
+    background: #444;
+    color: #fff;
+    text-decoration: none;
+  }
+}
