@@ -18,13 +18,13 @@ Arithmetic and comparison operations in generic C# classes. Works with any value
 - **Full sources**: 50+ scripts included
 - **Unit test window**: included to verify correctness
 
-## Documentation
-
-<a href="/assets/docs/generic-arithmetic.pdf" class="asset-store-btn">Documentation</a>
-
 ## Requirements
 
 - Unity 2021.3.31 or later
+
+## Documentation
+
+<a href="/assets/docs/generic-arithmetic.pdf" class="asset-store-btn">Documentation</a>
 
 ## Get It
 

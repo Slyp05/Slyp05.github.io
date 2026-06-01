@@ -21,13 +21,13 @@ Works with both `MonoBehaviour` and `ScriptableObject`.
 - **Inspector integration**: view all singletons in a list and enable/disable them with a single click
 - **Inheritable or not**: choose per attribute whether it applies to subclasses
 
-## Documentation
-
-<a href="/assets/docs/auto-singleton.pdf" class="asset-store-btn">Documentation</a>
-
 ## Requirements
 
 - Unity 2021.3.31 or later
+
+## Documentation
+
+<a href="/assets/docs/auto-singleton.pdf" class="asset-store-btn">Documentation</a>
 
 ## Get It
 
