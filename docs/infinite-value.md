@@ -46,7 +46,7 @@ Perfect for incremental games, RPGs, or any system where standard numeric types 
 
 ## Patch Notes
 
-**v2.0** (June 1, 2026)
+**v2.0.0** (June 1, 2026)
 
 New Features:
 - **Formatter system**: format and parse behavior is now driven by `IInfValFormatter` implementations, wrapped in a `FormatterAsset` (`ScriptableObject`). Assign a `FormatterAsset` to `Configuration` or `InfValInputField` in the Inspector. Create one via `Assets > Create > Infinite Value > Formatter`. Four built-in formatters are provided:
@@ -82,7 +82,7 @@ Bug Fixes:
 - Fixed the Pow method, which could provide wrong results in some cases
 - Greatly improved the precision of Pow and NthRoot methods when used with a negative second parameter
 
-**v1.2** (June 15, 2023)
+**v1.2.0** (June 15, 2023)
 
 Potentially breaking changes:
 - Addition of assembly assets (runtime and editor)
@@ -105,7 +105,7 @@ Minor:
 Other:
 - Updated documentation and API to reflect the aforementioned changes
 
-**v1.1** (May 26, 2021)
+**v1.1.0** (May 26, 2021)
 
 This update makes the InfVal structure conserve precision instead of exponent, which is similar to what primitive value types do and simpler to use in most cases. Old usage can still be done using the ToExponent method. It makes the easiest way to use the structure also the most optimized way, allowing you to work with gigantic numbers.
 
