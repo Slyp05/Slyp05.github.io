@@ -54,9 +54,9 @@ New Features:
   - `ScientificFormatter`: always formats as scientific notation (e.g. `1.23e+6`); configurable decimal separator, exponent marker, digit count, and trailing zeros.
   - `AlphabeticFormatter`: idle-game style with letter suffixes (`1.23a`, `4.56b`, ..., `1.00aa`); configurable alphabet, separators, digit count, and trailing zeros.
   - `CultureFormatter`: derives separators from a `Culture`; uses native East Asian units (`万/億...`, `만/억...`, `万/亿...`) with 4-digit stepping for `ja-*`, `ko-*`, and `zh-*` locales, and Western units (`k/M/G...`) for all others.
-- `IInfValFormatter`: implement this interface to create a fully custom formatter. Requires `Format(in InfVal)`, `TryParse(string, out InfVal)`, and `IsValidPartialInput(string)`.
-- `InfValFormatHelper`: static utility class for use when implementing `IInfValFormatter`. Provides `Format`, `TryParse`, `Parse`, `IsValidPartialInput`, `GetDecimalSeparator`, `GetGroupSeparator`, `AreUnitsValid`, and `defaultExponentMarkers`.
-- `InfValInputField.activeFormatter`: read-only property returning the component's assigned formatter, falling back to `Configuration.defaultFormatter`.
+- **`IInfValFormatter`**: implement this interface to create a fully custom formatter. Requires `Format(in InfVal)`, `TryParse(string, out InfVal)`, and `IsValidPartialInput(string)`.
+- **`InfValFormatHelper`**: static utility class for use when implementing `IInfValFormatter`. Provides `Format`, `TryParse`, `Parse`, `IsValidPartialInput`, `GetDecimalSeparator`, `GetGroupSeparator`, `AreUnitsValid`, and `defaultExponentMarkers`.
+- **`InfValInputField.activeFormatter`**: read-only property returning the component's assigned formatter, falling back to `Configuration.defaultFormatter`.
 
 Breaking Changes:
 - **Formatter system replaces format settings**: all per-formatter options previously scattered across `Configuration` and `InfValInputField` have been removed. Assign a `FormatterAsset` to the `Default Formatter` field on `Configuration`, or to the `Formatter` field on `InfValInputField`. Fields removed:
