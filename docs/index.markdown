@@ -27,8 +27,8 @@ layout: home
     <img src="/assets/images/GA.png" alt="Generic Arithmetic icon" class="package-card-icon">
     <div class="package-card-content">
       <h2><a href="/generic-arithmetic/">Generic Arithmetic</a></h2>
-      <span class="badge badge-free">Free</span>
-      <p>Arithmetic and comparison operations in generic C# classes. Works with any value type, uses optimized compiled delegates, and requires no setup.</p>
+      <span class="badge badge-paid">$4.99</span>
+      <p>Arithmetic and comparison operations in generic C# classes. Works with any value type, no setup required; supports source generation for AOT-safe custom types.</p>
       <a href="/generic-arithmetic/" class="card-link">Learn more →</a>
     </div>
   </div>
