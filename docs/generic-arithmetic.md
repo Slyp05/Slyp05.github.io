@@ -24,7 +24,8 @@ Arithmetic and comparison operations in generic C# classes. Works with any value
 
 ## Documentation
 
-<a href="/assets/docs/generic-arithmetic.pdf" class="asset-store-btn">Documentation</a>
+<a href="/generic-arithmetic/documentation/" class="asset-store-btn">Documentation</a>
+<a href="/generic-arithmetic/public-api/" class="asset-store-btn">Public API</a>
 
 ## Get It
 

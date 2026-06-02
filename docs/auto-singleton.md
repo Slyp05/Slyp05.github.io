@@ -27,7 +27,8 @@ Works with both `MonoBehaviour` and `ScriptableObject`.
 
 ## Documentation
 
-<a href="/assets/docs/auto-singleton.pdf" class="asset-store-btn">Documentation</a>
+<a href="/auto-singleton/documentation/" class="asset-store-btn">Documentation</a>
+<a href="/auto-singleton/public-api/" class="asset-store-btn">Public API</a>
 
 ## Get It
 

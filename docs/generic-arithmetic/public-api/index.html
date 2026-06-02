@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Generic Arithmetic — Public API</title>
+  <link rel="stylesheet" href="/assets/css/doc-styles.css" />
+</head>
+<body>
+<div id="layout">
+
+  <!-- ─── Sidebar ─── -->
+  <nav>
+    <div class="nav-title">Generic Arithmetic</div>
+    <a href="/generic-arithmetic/">Product Page</a>
+    <a href="/generic-arithmetic/documentation/">Documentation</a>
+    <span class="nav-current">Public API</span>
+    <hr class="nav-sep" />
+    <a href="#CalculateTResult"><span class="badge badge-static">static</span>Calculate&lt;TResult&gt;</a>
+    <a href="#CalculateTry" class="indent">. Try</a>
+    <a href="#Evaluate"><span class="badge badge-static">static</span>Evaluate</a>
+    <a href="#EvaluateTry" class="indent">. Try</a>
+    <a href="#ComputableT"><span class="badge badge-struct">struct</span>Computable&lt;T&gt;</a>
+    <a href="#BinaryCalculator"><span class="badge badge-class">abstract</span>BinaryCalculator&lt;...&gt;</a>
+    <a href="#UnaryCalculator"><span class="badge badge-class">abstract</span>UnaryCalculator&lt;...&gt;</a>
+    <a href="#BinaryEvaluator"><span class="badge badge-class">abstract</span>BinaryEvaluator&lt;...&gt;</a>
+    <a href="#UnaryEvaluator"><span class="badge badge-class">abstract</span>UnaryEvaluator&lt;...&gt;</a>
+    <a href="#GenerateComputatorsAttribute"><span class="badge badge-class">attr</span>GenerateComputatorsAttribute</a>
+  </nav>
+
+  <!-- ─── Main ─── -->
+  <main>
+    <div class="page-header">
+      <h1>Public API</h1>
+      <div class="sub">Generic Arithmetic v2.0.0 &nbsp;&middot;&nbsp; namespace <code>GenericArithmetic</code></div>
+    </div>
+
+
+    <!-- ═══════════════════════════════════ Calculate<TResult> ═══ -->
+    <div class="type-section" id="CalculateTResult">
+      <div class="type-header">
+        <h2>Calculate&lt;TResult&gt;</h2>
+        <span class="badge badge-static">static class</span>
+      </div>
+      <p class="type-desc">
+        Perform binary and unary arithmetic operations on generic values. <code>TResult</code>
+        specifies what the operation produces. The correct computator is resolved automatically
+        for each type combination.
+      </p>
+
+      <div class="member-group">
+        <div class="member-group-title">Binary Operations</div>
+        <table class="mt">
+          <tr>
+            <td><span class="t">TResult</span> <span class="mn">Add</span>&lt;<span class="t">TParamA</span>, <span class="t">TParamB</span>&gt;(<span class="t">TParamA</span> a, <span class="t">TParamB</span> b)</td>
+            <td>a + b</td>
+          </tr>
+          <tr>
+            <td><span class="t">TResult</span> <span class="mn">Subtract</span>&lt;<span class="t">TParamA</span>, <span class="t">TParamB</span>&gt;(<span class="t">TParamA</span> a, <span class="t">TParamB</span> b)</td>
+            <td>a - b</td>
+          </tr>
+          <tr>
+            <td><span class="t">TResult</span> <span class="mn">Multiply</span>&lt;<span class="t">TParamA</span>, <span class="t">TParamB</span>&gt;(<span class="t">TParamA</span> a, <span class="t">TParamB</span> b)</td>
+            <td>a * b</td>
+          </tr>
+          <tr>
+            <td><span class="t">TResult</span> <span class="mn">Divide</span>&lt;<span class="t">TParamA</span>, <span class="t">TParamB</span>&gt;(<span class="t">TParamA</span> a, <span class="t">TParamB</span> b)</td>
+            <td>a / b</td>
+          </tr>
+          <tr>
+            <td><span class="t">TResult</span> <span class="mn">Modulo</span>&lt;<span class="t">TParamA</span>, <span class="t">TParamB</span>&gt;(<span class="t">TParamA</span> a, <span class="t">TParamB</span> b)</td>
+            <td>a % b</td>
+          </tr>
+          <tr>
+            <td><span class="t">TResult</span> <span class="mn">And</span>&lt;<span class="t">TParamA</span>, <span class="t">TParamB</span>&gt;(<span class="t">TParamA</span> a, <span class="t">TParamB</span> b)</td>
+            <td>a &amp; b</td>
+          </tr>
+          <tr>
+            <td><span class="t">TResult</span> <span class="mn">Or</span>&lt;<span class="t">TParamA</span>, <span class="t">TParamB</span>&gt;(<span class="t">TParamA</span> a, <span class="t">TParamB</span> b)</td>
+            <td>a | b</td>
+          </tr>
+          <tr>
+            <td><span class="t">TResult</span> <span class="mn">Xor</span>&lt;<span class="t">TParamA</span>, <span class="t">TParamB</span>&gt;(<span class="t">TParamA</span> a, <span class="t">TParamB</span> b)</td>
+            <td>a ^ b</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="member-group">
+        <div class="member-group-title">Unary Operations</div>
+        <table class="mt">
+          <tr>
+            <td><span class="t">TResult</span> <span class="mn">Plus</span>&lt;<span class="t">TParam</span>&gt;(<span class="t">TParam</span> param)</td>
+            <td>+param</td>
+          </tr>
+          <tr>
+            <td><span class="t">TResult</span> <span class="mn">Negate</span>&lt;<span class="t">TParam</span>&gt;(<span class="t">TParam</span> param)</td>
+            <td>-param</td>
+          </tr>
+          <tr>
+            <td><span class="t">TResult</span> <span class="mn">Invert</span>&lt;<span class="t">TParam</span>&gt;(<span class="t">TParam</span> param)</td>
+            <td>!param</td>
+          </tr>
+          <tr>
+            <td><span class="t">TResult</span> <span class="mn">Complement</span>&lt;<span class="t">TParam</span>&gt;(<span class="t">TParam</span> param)</td>
+            <td>~param</td>
+          </tr>
+          <tr>
+            <td><span class="t">TResult</span> <span class="mn">Increment</span>&lt;<span class="t">TParam</span>&gt;(<span class="t">TParam</span> param)</td>
+            <td>++param</td>
+          </tr>
+          <tr>
+            <td><span class="t">TResult</span> <span class="mn">Decrement</span>&lt;<span class="t">TParam</span>&gt;(<span class="t">TParam</span> param)</td>
+            <td>--param</td>
+          </tr>
+          <tr>
+            <td><span class="t">TResult</span> <span class="mn">Cast</span>&lt;<span class="t">TParam</span>&gt;(<span class="t">TParam</span> param)</td>
+            <td>(<span class="t">TResult</span>)param</td>
+          </tr>
+          <tr>
+            <td><span class="t">TResult</span> <span class="mn">LeftShift</span>&lt;<span class="t">TParam</span>&gt;(<span class="t">TParam</span> param, <span class="t">int</span> shift)</td>
+            <td>param &lt;&lt; shift</td>
+          </tr>
+          <tr>
+            <td><span class="t">TResult</span> <span class="mn">RightShift</span>&lt;<span class="t">TParam</span>&gt;(<span class="t">TParam</span> param, <span class="t">int</span> shift)</td>
+            <td>param &gt;&gt; shift</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+
+    <!-- ═══════════════════════════ Calculate<TResult>.Try ═══ -->
+    <div class="type-section" id="CalculateTry">
+      <div class="type-header">
+        <h2>Calculate&lt;TResult&gt;.Try</h2>
+        <span class="badge badge-static">nested static class</span>
+      </div>
+      <p class="type-desc">
+        Non-throwing versions of all <a href="#CalculateTResult">Calculate&lt;TResult&gt;</a>
+        methods. Returns <code>true</code> and sets <code>result</code> on success; returns
+        <code>false</code> and sets <code>result</code> to <code>default</code> when the operation
+        is not supported for the given types.
+      </p>
+
+      <div class="member-group">
+        <div class="member-group-title">Binary Operations</div>
+        <table class="mt">
+          <tr>
+            <td><span class="t">bool</span> <span class="mn">Add</span>&lt;<span class="t">TParamA</span>, <span class="t">TParamB</span>&gt;(<span class="t">TParamA</span> a, <span class="t">TParamB</span> b, <span class="kw">out</span> <span class="t">TResult</span> result)</td>
+            <td>a + b</td>
+          </tr>
+          <tr>
+            <td><span class="t">bool</span> <span class="mn">Subtract</span>&lt;<span class="t">TParamA</span>, <span class="t">TParamB</span>&gt;(<span class="t">TParamA</span> a, <span class="t">TParamB</span> b, <span class="kw">out</span> <span class="t">TResult</span> result)</td>
+            <td>a - b</td>
+          </tr>
+          <tr>
+            <td><span class="t">bool</span> <span class="mn">Multiply</span>&lt;<span class="t">TParamA</span>, <span class="t">TParamB</span>&gt;(<span class="t">TParamA</span> a, <span class="t">TParamB</span> b, <span class="kw">out</span> <span class="t">TResult</span> result)</td>
+            <td>a * b</td>
+          </tr>
+          <tr>
+            <td><span class="t">bool</span> <span class="mn">Divide</span>&lt;<span class="t">TParamA</span>, <span class="t">TParamB</span>&gt;(<span class="t">TParamA</span> a, <span class="t">TParamB</span> b, <span class="kw">out</span> <span class="t">TResult</span> result)</td>
+            <td>a / b</td>
+          </tr>
+          <tr>
+            <td><span class="t">bool</span> <span class="mn">Modulo</span>&lt;<span class="t">TParamA</span>, <span class="t">TParamB</span>&gt;(<span class="t">TParamA</span> a, <span class="t">TParamB</span> b, <span class="kw">out</span> <span class="t">TResult</span> result)</td>
+            <td>a % b</td>
+          </tr>
+          <tr>
+            <td><span class="t">bool</span> <span class="mn">And</span>&lt;<span class="t">TParamA</span>, <span class="t">TParamB</span>&gt;(<span class="t">TParamA</span> a, <span class="t">TParamB</span> b, <span class="kw">out</span> <span class="t">TResult</span> result)</td>
+            <td>a &amp; b</td>
+          </tr>
+          <tr>
+            <td><span class="t">bool</span> <span class="mn">Or</span>&lt;<span class="t">TParamA</span>, <span class="t">TParamB</span>&gt;(<span class="t">TParamA</span> a, <span class="t">TParamB</span> b, <span class="kw">out</span> <span class="t">TResult</span> result)</td>
+            <td>a | b</td>
+          </tr>
+          <tr>
+            <td><span class="t">bool</span> <span class="mn">Xor</span>&lt;<span class="t">TParamA</span>, <span class="t">TParamB</span>&gt;(<span class="t">TParamA</span> a, <span class="t">TParamB</span> b, <span class="kw">out</span> <span class="t">TResult</span> result)</td>
+            <td>a ^ b</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="member-group">
+        <div class="member-group-title">Unary Operations</div>
+        <table class="mt">
+          <tr>
+            <td><span class="t">bool</span> <span class="mn">Plus</span>&lt;<span class="t">TParam</span>&gt;(<span class="t">TParam</span> param, <span class="kw">out</span> <span class="t">TResult</span> result)</td>
+            <td>+param</td>
+          </tr>
+          <tr>
+            <td><span class="t">bool</span> <span class="mn">Negate</span>&lt;<span class="t">TParam</span>&gt;(<span class="t">TParam</span> param, <span class="kw">out</span> <span class="t">TResult</span> result)</td>
+            <td>-param</td>
+          </tr>
+          <tr>
+            <td><span class="t">bool</span> <span class="mn">Invert</span>&lt;<span class="t">TParam</span>&gt;(<span class="t">TParam</span> param, <span class="kw">out</span> <span class="t">TResult</span> result)</td>
+            <td>!param</td>
+          </tr>
+          <tr>
+            <td><span class="t">bool</span> <span class="mn">Complement</span>&lt;<span class="t">TParam</span>&gt;(<span class="t">TParam</span> param, <span class="kw">out</span> <span class="t">TResult</span> result)</td>
+            <td>~param</td>
+          </tr>
+          <tr>
+            <td><span class="t">bool</span> <span class="mn">Increment</span>&lt;<span class="t">TParam</span>&gt;(<span class="t">TParam</span> param, <span class="kw">out</span> <span class="t">TResult</span> result)</td>
+            <td>++param</td>
+          </tr>
+          <tr>
+            <td><span class="t">bool</span> <span class="mn">Decrement</span>&lt;<span class="t">TParam</span>&gt;(<span class="t">TParam</span> param, <span class="kw">out</span> <span class="t">TResult</span> result)</td>
+            <td>--param</td>
+          </tr>
+          <tr>
+            <td><span class="t">bool</span> <span class="mn">Cast</span>&lt;<span class="t">TParam</span>&gt;(<span class="t">TParam</span> param, <span class="kw">out</span> <span class="t">TResult</span> result)</td>
+            <td>(<span class="t">TResult</span>)param</td>
+          </tr>
+          <tr>
+            <td><span class="t">bool</span> <span class="mn">LeftShift</span>&lt;<span class="t">TParam</span>&gt;(<span class="t">TParam</span> param, <span class="t">int</span> shift, <span class="kw">out</span> <span class="t">TResult</span> result)</td>
+            <td>param &lt;&lt; shift</td>
+          </tr>
+          <tr>
+            <td><span class="t">bool</span> <span class="mn">RightShift</span>&lt;<span class="t">TParam</span>&gt;(<span class="t">TParam</span> param, <span class="t">int</span> shift, <span class="kw">out</span> <span class="t">TResult</span> result)</td>
+            <td>param &gt;&gt; shift</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+
+    <!-- ═══════════════════════════════════════ Evaluate ═══ -->
+    <div class="type-section" id="Evaluate">
+      <div class="type-header">
+        <h2>Evaluate</h2>
+        <span class="badge badge-static">static class</span>
+      </div>
+      <p class="type-desc">
+        Perform comparisons and boolean evaluations on generic values. The correct computator is
+        resolved automatically for each type combination.
+      </p>
+
+      <div class="member-group">
+        <div class="member-group-title">Binary Comparisons</div>
+        <table class="mt">
+          <tr>
+            <td><span class="t">bool</span> <span class="mn">Equal</span>&lt;<span class="t">TParamA</span>, <span class="t">TParamB</span>&gt;(<span class="t">TParamA</span> a, <span class="t">TParamB</span> b)</td>
+            <td>a == b</td>
+          </tr>
+          <tr>
+            <td><span class="t">bool</span> <span class="mn">NotEqual</span>&lt;<span class="t">TParamA</span>, <span class="t">TParamB</span>&gt;(<span class="t">TParamA</span> a, <span class="t">TParamB</span> b)</td>
+            <td>a != b</td>
+          </tr>
+          <tr>
+            <td><span class="t">bool</span> <span class="mn">GreaterThan</span>&lt;<span class="t">TParamA</span>, <span class="t">TParamB</span>&gt;(<span class="t">TParamA</span> a, <span class="t">TParamB</span> b)</td>
+            <td>a &gt; b</td>
+          </tr>
+          <tr>
+            <td><span class="t">bool</span> <span class="mn">LessThan</span>&lt;<span class="t">TParamA</span>, <span class="t">TParamB</span>&gt;(<span class="t">TParamA</span> a, <span class="t">TParamB</span> b)</td>
+            <td>a &lt; b</td>
+          </tr>
+          <tr>
+            <td><span class="t">bool</span> <span class="mn">GreaterThanOrEqual</span>&lt;<span class="t">TParamA</span>, <span class="t">TParamB</span>&gt;(<span class="t">TParamA</span> a, <span class="t">TParamB</span> b)</td>
+            <td>a &gt;= b</td>
+          </tr>
+          <tr>
+            <td><span class="t">bool</span> <span class="mn">LessThanOrEqual</span>&lt;<span class="t">TParamA</span>, <span class="t">TParamB</span>&gt;(<span class="t">TParamA</span> a, <span class="t">TParamB</span> b)</td>
+            <td>a &lt;= b</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="member-group">
+        <div class="member-group-title">Unary Evaluations</div>
+        <table class="mt">
+          <tr>
+            <td><span class="t">bool</span> <span class="mn">True</span>&lt;<span class="t">TParam</span>&gt;(<span class="t">TParam</span> param)</td>
+            <td>param is true (<code>operator true</code>)</td>
+          </tr>
+          <tr>
+            <td><span class="t">bool</span> <span class="mn">False</span>&lt;<span class="t">TParam</span>&gt;(<span class="t">TParam</span> param)</td>
+            <td>param is false (<code>operator false</code>)</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+
+    <!-- ═════════════════════════════════ Evaluate.Try ═══ -->
+    <div class="type-section" id="EvaluateTry">
+      <div class="type-header">
+        <h2>Evaluate.Try</h2>
+        <span class="badge badge-static">nested static class</span>
+      </div>
+      <p class="type-desc">
+        Non-throwing versions of all <a href="#Evaluate">Evaluate</a> methods.
+        Returns <code>true</code> and sets <code>result</code> on success; returns
+        <code>false</code> and sets <code>result</code> to <code>default</code> when the operation
+        is not supported for the given types.
+      </p>
+
+      <div class="member-group">
+        <div class="member-group-title">Binary Comparisons</div>
+        <table class="mt">
+          <tr>
+            <td><span class="t">bool</span> <span class="mn">Equal</span>&lt;<span class="t">TParamA</span>, <span class="t">TParamB</span>&gt;(<span class="t">TParamA</span> a, <span class="t">TParamB</span> b, <span class="kw">out</span> <span class="t">bool</span> result)</td>
+            <td>a == b</td>
+          </tr>
+          <tr>
+            <td><span class="t">bool</span> <span class="mn">NotEqual</span>&lt;<span class="t">TParamA</span>, <span class="t">TParamB</span>&gt;(<span class="t">TParamA</span> a, <span class="t">TParamB</span> b, <span class="kw">out</span> <span class="t">bool</span> result)</td>
+            <td>a != b</td>
+          </tr>
+          <tr>
+            <td><span class="t">bool</span> <span class="mn">GreaterThan</span>&lt;<span class="t">TParamA</span>, <span class="t">TParamB</span>&gt;(<span class="t">TParamA</span> a, <span class="t">TParamB</span> b, <span class="kw">out</span> <span class="t">bool</span> result)</td>
+            <td>a &gt; b</td>
+          </tr>
+          <tr>
+            <td><span class="t">bool</span> <span class="mn">LessThan</span>&lt;<span class="t">TParamA</span>, <span class="t">TParamB</span>&gt;(<span class="t">TParamA</span> a, <span class="t">TParamB</span> b, <span class="kw">out</span> <span class="t">bool</span> result)</td>
+            <td>a &lt; b</td>
+          </tr>
+          <tr>
+            <td><span class="t">bool</span> <span class="mn">GreaterThanOrEqual</span>&lt;<span class="t">TParamA</span>, <span class="t">TParamB</span>&gt;(<span class="t">TParamA</span> a, <span class="t">TParamB</span> b, <span class="kw">out</span> <span class="t">bool</span> result)</td>
+            <td>a &gt;= b</td>
+          </tr>
+          <tr>
+            <td><span class="t">bool</span> <span class="mn">LessThanOrEqual</span>&lt;<span class="t">TParamA</span>, <span class="t">TParamB</span>&gt;(<span class="t">TParamA</span> a, <span class="t">TParamB</span> b, <span class="kw">out</span> <span class="t">bool</span> result)</td>
+            <td>a &lt;= b</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="member-group">
+        <div class="member-group-title">Unary Evaluations</div>
+        <table class="mt">
+          <tr>
+            <td><span class="t">bool</span> <span class="mn">True</span>&lt;<span class="t">TParam</span>&gt;(<span class="t">TParam</span> param, <span class="kw">out</span> <span class="t">bool</span> result)</td>
+            <td>param is true (<code>operator true</code>)</td>
+          </tr>
+          <tr>
+            <td><span class="t">bool</span> <span class="mn">False</span>&lt;<span class="t">TParam</span>&gt;(<span class="t">TParam</span> param, <span class="kw">out</span> <span class="t">bool</span> result)</td>
+            <td>param is false (<code>operator false</code>)</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+
+    <!-- ══════════════════════════════════ Computable<T> ═══ -->
+    <div class="type-section" id="ComputableT">
+      <div class="type-header">
+        <h2>Computable&lt;T&gt;</h2>
+        <span class="badge badge-struct">readonly struct</span>
+      </div>
+      <p class="type-desc">
+        A generic value wrapper that exposes arithmetic operators directly on the value.
+        Operator overloads work between two <code>Computable&lt;T&gt;</code> of the same
+        <code>T</code> only; for cross-type operations (e.g. <code>int + float</code>), use
+        <a href="#CalculateTResult">Calculate&lt;TResult&gt;</a> directly.
+      </p>
+
+      <div class="member-group">
+        <div class="member-group-title">Public Fields</div>
+        <table class="mt">
+          <tr>
+            <td><span class="t">T</span> <span class="mn">value</span></td>
+            <td>The underlying value this instance holds.</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="member-group">
+        <div class="member-group-title">Constructors &amp; Factory Methods</div>
+        <table class="mt">
+          <tr>
+            <td><span class="mn">Computable</span>(<span class="t">T</span> value)</td>
+            <td>Wrap <code>value</code> in a <code>Computable&lt;T&gt;</code>.</td>
+          </tr>
+          <tr>
+            <td><span class="kw">static</span> <span class="t">Computable&lt;T&gt;</span> <span class="mn">From</span>(<span class="t">T</span> value)</td>
+            <td>Factory equivalent of the constructor.</td>
+          </tr>
+          <tr>
+            <td><span class="kw">static</span> <span class="t">Computable&lt;T&gt;</span> <span class="mn">From</span>&lt;<span class="t">TOther</span>&gt;(<span class="t">TOther</span> value)</td>
+            <td>Cast <code>value</code> to <code>T</code> first, then wrap it.</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="member-group">
+        <div class="member-group-title">Instance Methods</div>
+        <table class="mt">
+          <tr>
+            <td><span class="t">TOther</span> <span class="mn">To</span>&lt;<span class="t">TOther</span>&gt;()</td>
+            <td>Cast the underlying value to <code>TOther</code>.</td>
+          </tr>
+          <tr>
+            <td><span class="t">bool</span> <span class="mn">Equals</span>(<span class="t">object</span> other)</td>
+            <td>True if <code>other</code> is an equal <code>Computable&lt;T&gt;</code> or a bare <code>T</code> value.</td>
+          </tr>
+          <tr>
+            <td><span class="t">int</span> <span class="mn">GetHashCode</span>()</td>
+            <td>Hash code of the underlying value.</td>
+          </tr>
+          <tr>
+            <td><span class="t">string</span> <span class="mn">ToString</span>()</td>
+            <td>String representation of the underlying value.</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="member-group">
+        <div class="member-group-title">Implicit Conversions</div>
+        <table class="mt">
+          <tr>
+            <td><span class="kw">implicit operator</span> <span class="t">T</span>(<span class="t">Computable&lt;T&gt;</span> computable)</td>
+            <td>Extracts the underlying value.</td>
+          </tr>
+          <tr>
+            <td><span class="kw">implicit operator</span> <span class="t">Computable&lt;T&gt;</span>(<span class="t">T</span> value)</td>
+            <td>Wraps a value in a <code>Computable&lt;T&gt;</code>.</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="member-group">
+        <div class="member-group-title">Arithmetic &amp; Bitwise Operators</div>
+        <div class="note">Both operands are <code>Computable&lt;T&gt;</code>; result is <code>Computable&lt;T&gt;</code>.</div>
+        <table class="mt">
+          <tr><td><span class="kw">operator</span> +</td><td>a + b</td></tr>
+          <tr><td><span class="kw">operator</span> -</td><td>a - b</td></tr>
+          <tr><td><span class="kw">operator</span> *</td><td>a * b</td></tr>
+          <tr><td><span class="kw">operator</span> /</td><td>a / b</td></tr>
+          <tr><td><span class="kw">operator</span> %</td><td>a % b</td></tr>
+          <tr><td><span class="kw">operator</span> &amp;</td><td>a &amp; b</td></tr>
+          <tr><td><span class="kw">operator</span> |</td><td>a | b</td></tr>
+          <tr><td><span class="kw">operator</span> ^</td><td>a ^ b</td></tr>
+        </table>
+      </div>
+
+      <div class="member-group">
+        <div class="member-group-title">Unary &amp; Shift Operators</div>
+        <div class="note">Operand and result are <code>Computable&lt;T&gt;</code>; shift operators also take an <code>int</code> amount.</div>
+        <table class="mt">
+          <tr><td><span class="kw">operator</span> + <span class="rt">(unary)</span></td><td>+a</td></tr>
+          <tr><td><span class="kw">operator</span> - <span class="rt">(unary)</span></td><td>-a</td></tr>
+          <tr><td><span class="kw">operator</span> !</td><td>!a</td></tr>
+          <tr><td><span class="kw">operator</span> ~</td><td>~a</td></tr>
+          <tr><td><span class="kw">operator</span> ++</td><td>++a</td></tr>
+          <tr><td><span class="kw">operator</span> --</td><td>--a</td></tr>
+          <tr><td><span class="kw">operator</span> &lt;&lt;</td><td>a &lt;&lt; n</td></tr>
+          <tr><td><span class="kw">operator</span> &gt;&gt;</td><td>a &gt;&gt; n</td></tr>
+        </table>
+      </div>
+
+      <div class="member-group">
+        <div class="member-group-title">Comparison &amp; Boolean Operators</div>
+        <div class="note">Both operands are <code>Computable&lt;T&gt;</code>; result is <code>bool</code>.</div>
+        <table class="mt">
+          <tr><td><span class="kw">operator</span> ==</td><td>a == b</td></tr>
+          <tr><td><span class="kw">operator</span> !=</td><td>a != b</td></tr>
+          <tr><td><span class="kw">operator</span> &gt;</td><td>a &gt; b</td></tr>
+          <tr><td><span class="kw">operator</span> &lt;</td><td>a &lt; b</td></tr>
+          <tr><td><span class="kw">operator</span> &gt;=</td><td>a &gt;= b</td></tr>
+          <tr><td><span class="kw">operator</span> &lt;=</td><td>a &lt;= b</td></tr>
+          <tr><td><span class="kw">operator true</span></td><td>a is true (<code>operator true</code>)</td></tr>
+          <tr><td><span class="kw">operator false</span></td><td>a is false (<code>operator false</code>)</td></tr>
+        </table>
+      </div>
+    </div>
+
+
+    <!-- ══════════════════════ BinaryCalculator<...> ═══ -->
+    <div class="type-section" id="BinaryCalculator">
+      <div class="type-header">
+        <h2>BinaryCalculator&lt;TResult, TParamA, TParamB&gt;</h2>
+        <span class="badge badge-class">abstract class</span>
+      </div>
+      <p class="type-desc">
+        Base class for defining a manual binary (two-operand) computator. Derive from this class
+        anywhere in your Assets folder; the package discovers and registers it automatically at
+        startup. Manual computators take priority over source-generated and default computators.
+      </p>
+
+      <div class="member-group">
+        <div class="member-group-title">Abstract Methods</div>
+        <table class="mt">
+          <tr>
+            <td><span class="t">TResult</span> <span class="mn">Add</span>(<span class="t">TParamA</span> a, <span class="t">TParamB</span> b)</td>
+            <td>a + b</td>
+          </tr>
+          <tr>
+            <td><span class="t">TResult</span> <span class="mn">Subtract</span>(<span class="t">TParamA</span> a, <span class="t">TParamB</span> b)</td>
+            <td>a - b</td>
+          </tr>
+          <tr>
+            <td><span class="t">TResult</span> <span class="mn">Multiply</span>(<span class="t">TParamA</span> a, <span class="t">TParamB</span> b)</td>
+            <td>a * b</td>
+          </tr>
+          <tr>
+            <td><span class="t">TResult</span> <span class="mn">Divide</span>(<span class="t">TParamA</span> a, <span class="t">TParamB</span> b)</td>
+            <td>a / b</td>
+          </tr>
+          <tr>
+            <td><span class="t">TResult</span> <span class="mn">Modulo</span>(<span class="t">TParamA</span> a, <span class="t">TParamB</span> b)</td>
+            <td>a % b</td>
+          </tr>
+          <tr>
+            <td><span class="t">TResult</span> <span class="mn">And</span>(<span class="t">TParamA</span> a, <span class="t">TParamB</span> b)</td>
+            <td>a &amp; b</td>
+          </tr>
+          <tr>
+            <td><span class="t">TResult</span> <span class="mn">Or</span>(<span class="t">TParamA</span> a, <span class="t">TParamB</span> b)</td>
+            <td>a | b</td>
+          </tr>
+          <tr>
+            <td><span class="t">TResult</span> <span class="mn">Xor</span>(<span class="t">TParamA</span> a, <span class="t">TParamB</span> b)</td>
+            <td>a ^ b</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+
+    <!-- ═══════════════════════ UnaryCalculator<...> ═══ -->
+    <div class="type-section" id="UnaryCalculator">
+      <div class="type-header">
+        <h2>UnaryCalculator&lt;TResult, TParam&gt;</h2>
+        <span class="badge badge-class">abstract class</span>
+      </div>
+      <p class="type-desc">
+        Base class for defining a manual unary (one-operand) computator. Derive from this class
+        anywhere in your Assets folder; the package discovers and registers it automatically at
+        startup. Manual computators take priority over source-generated and default computators.
+      </p>
+
+      <div class="member-group">
+        <div class="member-group-title">Abstract Methods</div>
+        <table class="mt">
+          <tr>
+            <td><span class="t">TResult</span> <span class="mn">Plus</span>(<span class="t">TParam</span> param)</td>
+            <td>+param</td>
+          </tr>
+          <tr>
+            <td><span class="t">TResult</span> <span class="mn">Negate</span>(<span class="t">TParam</span> param)</td>
+            <td>-param</td>
+          </tr>
+          <tr>
+            <td><span class="t">TResult</span> <span class="mn">Invert</span>(<span class="t">TParam</span> param)</td>
+            <td>!param</td>
+          </tr>
+          <tr>
+            <td><span class="t">TResult</span> <span class="mn">Complement</span>(<span class="t">TParam</span> param)</td>
+            <td>~param</td>
+          </tr>
+          <tr>
+            <td><span class="t">TResult</span> <span class="mn">Increment</span>(<span class="t">TParam</span> param)</td>
+            <td>++param</td>
+          </tr>
+          <tr>
+            <td><span class="t">TResult</span> <span class="mn">Decrement</span>(<span class="t">TParam</span> param)</td>
+            <td>--param</td>
+          </tr>
+          <tr>
+            <td><span class="t">TResult</span> <span class="mn">Cast</span>(<span class="t">TParam</span> param)</td>
+            <td>(<span class="t">TResult</span>)param</td>
+          </tr>
+          <tr>
+            <td><span class="t">TResult</span> <span class="mn">LeftShift</span>(<span class="t">TParam</span> param, <span class="t">int</span> shift)</td>
+            <td>param &lt;&lt; shift</td>
+          </tr>
+          <tr>
+            <td><span class="t">TResult</span> <span class="mn">RightShift</span>(<span class="t">TParam</span> param, <span class="t">int</span> shift)</td>
+            <td>param &gt;&gt; shift</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+
+    <!-- ═══════════════════════ BinaryEvaluator<...> ═══ -->
+    <div class="type-section" id="BinaryEvaluator">
+      <div class="type-header">
+        <h2>BinaryEvaluator&lt;TParamA, TParamB&gt;</h2>
+        <span class="badge badge-class">abstract class</span>
+      </div>
+      <p class="type-desc">
+        Base class for defining a manual binary comparison computator. Derive from this class
+        anywhere in your Assets folder; the package discovers and registers it automatically at
+        startup. Manual computators take priority over source-generated and default computators.
+      </p>
+
+      <div class="member-group">
+        <div class="member-group-title">Abstract Methods</div>
+        <table class="mt">
+          <tr>
+            <td><span class="t">bool</span> <span class="mn">Equal</span>(<span class="t">TParamA</span> a, <span class="t">TParamB</span> b)</td>
+            <td>a == b</td>
+          </tr>
+          <tr>
+            <td><span class="t">bool</span> <span class="mn">NotEqual</span>(<span class="t">TParamA</span> a, <span class="t">TParamB</span> b)</td>
+            <td>a != b</td>
+          </tr>
+          <tr>
+            <td><span class="t">bool</span> <span class="mn">GreaterThan</span>(<span class="t">TParamA</span> a, <span class="t">TParamB</span> b)</td>
+            <td>a &gt; b</td>
+          </tr>
+          <tr>
+            <td><span class="t">bool</span> <span class="mn">LessThan</span>(<span class="t">TParamA</span> a, <span class="t">TParamB</span> b)</td>
+            <td>a &lt; b</td>
+          </tr>
+          <tr>
+            <td><span class="t">bool</span> <span class="mn">GreaterThanOrEqual</span>(<span class="t">TParamA</span> a, <span class="t">TParamB</span> b)</td>
+            <td>a &gt;= b</td>
+          </tr>
+          <tr>
+            <td><span class="t">bool</span> <span class="mn">LessThanOrEqual</span>(<span class="t">TParamA</span> a, <span class="t">TParamB</span> b)</td>
+            <td>a &lt;= b</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+
+    <!-- ════════════════════════ UnaryEvaluator<...> ═══ -->
+    <div class="type-section" id="UnaryEvaluator">
+      <div class="type-header">
+        <h2>UnaryEvaluator&lt;TParam&gt;</h2>
+        <span class="badge badge-class">abstract class</span>
+      </div>
+      <p class="type-desc">
+        Base class for defining a manual boolean computator for a single type. Handles
+        <code>operator true</code> and <code>operator false</code>, which control truthiness in
+        boolean contexts (e.g. <code>if (myValue)</code> or <code>myValue &amp;&amp; other</code>).
+        Derive from this class anywhere in your Assets folder; the package discovers and registers
+        it automatically at startup.
+      </p>
+
+      <div class="member-group">
+        <div class="member-group-title">Abstract Methods</div>
+        <table class="mt">
+          <tr>
+            <td><span class="t">bool</span> <span class="mn">True</span>(<span class="t">TParam</span> param)</td>
+            <td>param is true (<code>operator true</code>)</td>
+          </tr>
+          <tr>
+            <td><span class="t">bool</span> <span class="mn">False</span>(<span class="t">TParam</span> param)</td>
+            <td>param is false (<code>operator false</code>)</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+
+    <!-- ══════════════════ GenerateComputatorsAttribute ═══ -->
+    <div class="type-section" id="GenerateComputatorsAttribute">
+      <div class="type-header">
+        <h2>GenerateComputatorsAttribute</h2>
+        <span class="badge badge-class">Attribute</span>
+      </div>
+      <p class="type-desc">
+        Assembly-level attribute that instructs the Generic Arithmetic source generator to produce
+        computator classes at compile time. Apply with
+        <code>[assembly: GenerateComputators(...)]</code>. Generated computators are AOT-safe and
+        take priority over the default computator, but are overridden by manual computators.
+      </p>
+      <div class="note">
+        Requires the Generic Arithmetic source generator DLL to be present in your project.
+      </div>
+
+      <div class="member-group">
+        <div class="member-group-title">Constructors</div>
+        <table class="mt">
+          <tr>
+            <td><span class="mn">GenerateComputatorsAttribute</span>(<span class="t">Type</span> type)</td>
+            <td>Generates all four computators (<code>BinaryCalculator</code>, <code>BinaryEvaluator</code>, <code>UnaryCalculator</code>, <code>UnaryEvaluator</code>) using <code>type</code> as result, left operand, and right operand.</td>
+          </tr>
+          <tr>
+            <td><span class="mn">GenerateComputatorsAttribute</span>(<span class="t">Type</span> result, <span class="t">Type</span> paramA, <span class="t">Type</span> paramB)</td>
+            <td>Generates <code>BinaryCalculator&lt;TResult,TParamA,TParamB&gt;</code> and <code>BinaryEvaluator&lt;TParamA,TParamB&gt;</code> for cross-type operations.</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="member-group">
+        <div class="member-group-title">Properties</div>
+        <table class="mt">
+          <tr>
+            <td><span class="t">Type</span> <span class="mn">Result</span></td>
+            <td>The result type for the generated computators.</td>
+          </tr>
+          <tr>
+            <td><span class="t">Type</span> <span class="mn">ParamA</span></td>
+            <td>The left operand type for the generated computators.</td>
+          </tr>
+          <tr>
+            <td><span class="t">Type</span> <span class="mn">ParamB</span></td>
+            <td>The right operand type for the generated computators.</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+  </main>
+</div>
+</body>
+</html>
