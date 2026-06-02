@@ -1,4 +1,4 @@
----
+﻿---
 layout: page
 title: Auto Singleton
 permalink: /auto-singleton/
@@ -12,10 +12,10 @@ Works with both `MonoBehaviour` and `ScriptableObject`.
 
 ## Features
 
-- **Attribute-based setup**: decorate any `MonoBehaviour` or `ScriptableObject` with `[Singleton]` — no base classes, no boilerplate; optional `inherited`, `displayName`, and `folderPath` arguments for fine-grained control
+- **Attribute-based setup**: decorate any `MonoBehaviour` or `ScriptableObject` with `[Singleton]`: no base classes, no boilerplate; optional `inherited`, `displayName`, and `folderPath` arguments for fine-grained control
 - **Automatic asset management**: the editor creates and maintains prefabs (MonoBehaviour) or ScriptableObject assets after each compilation; deleting a singleton class also deletes its asset
 - **Polymorphic access**: retrieve all singletons assignable to a type via `Singleton<T>.Instances`; `T` can be a base class or an interface
-- **Instance selection**: designate which instance `Singleton<T>.Instance` returns using `SelectInstance` — by predicate, priority function, runtime type, direct reference, or no-arg when only one is registered
+- **Instance selection**: designate which instance `Singleton<T>.Instance` returns using `SelectInstance`: by predicate, priority function, runtime type, direct reference, or no-arg when only one is registered
 - **Safe access helpers**: `HasInstance` and `TryGetInstance` let you check availability without catching exceptions; `Find` returns all instances matching a predicate
 - **Manual registration**: use `Singleton.Add` and `Singleton.Remove` at runtime to manage singletons of any reference type, not just Unity objects
 - **No reload on play mode**: works seamlessly with Unity's no-domain-reload setting

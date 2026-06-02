@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -230,7 +230,7 @@
           </tr>
           <tr>
             <td><span class="t">string</span> <span class="mn">ToDebugString</span>()</td>
-            <td>Returns <code>"(digits, exponent)"</code> — a raw representation useful for debugging.</td>
+            <td>Returns <code>"(digits, exponent)"</code>: a raw representation useful for debugging.</td>
           </tr>
           <tr>
             <td><span class="t">bool</span> <span class="mn">Equals</span>(<span class="t">InfVal</span> other)</td>
@@ -257,7 +257,7 @@
 
       <!-- Operators -->
       <div class="member-group">
-        <div class="member-group-title">Operators — Arithmetic</div>
+        <div class="member-group-title">Operators: Arithmetic</div>
         <table class="mt">
           <tr><td>+<span class="mn">a</span></td><td>Identity.</td></tr>
           <tr><td>-<span class="mn">a</span></td><td>Negation.</td></tr>
@@ -269,7 +269,7 @@
         </table>
       </div>
       <div class="member-group">
-        <div class="member-group-title">Operators — Bitwise</div>
+        <div class="member-group-title">Operators: Bitwise</div>
         <div class="note">Bitwise operators require exponent == 0. Throws <code>InvalidOperationException</code> otherwise.</div>
         <table class="mt">
           <tr><td>~<span class="mn">a</span></td><td>Bitwise NOT.</td></tr>
@@ -281,7 +281,7 @@
         </table>
       </div>
       <div class="member-group">
-        <div class="member-group-title">Operators — Comparison</div>
+        <div class="member-group-title">Operators: Comparison</div>
         <table class="mt">
           <tr><td><span class="mn">a</span> == <span class="mn">b</span></td><td>Value equality.</td></tr>
           <tr><td><span class="mn">a</span> != <span class="mn">b</span></td><td>Value inequality.</td></tr>
@@ -294,7 +294,7 @@
 
       <!-- Casts -->
       <div class="member-group">
-        <div class="member-group-title">Implicit Casts — to InfVal</div>
+        <div class="member-group-title">Implicit Casts: to InfVal</div>
         <div class="note">All numeric primitives, BigInteger, and InfVal itself convert implicitly. A <code>(value, precision)</code> tuple overload exists for every type below.</div>
         <table class="mt">
           <tr><td><span class="t">sbyte</span>, <span class="t">byte</span>, <span class="t">short</span>, <span class="t">ushort</span></td><td>Small integer types.</td></tr>
@@ -306,14 +306,14 @@
         </table>
       </div>
       <div class="member-group">
-        <div class="member-group-title">Explicit Casts — to InfVal</div>
+        <div class="member-group-title">Explicit Casts: to InfVal</div>
         <table class="mt">
           <tr><td>(<span class="t">InfVal</span>)<span class="t">string</span></td><td>Parse using the default formatter.</td></tr>
           <tr><td>(<span class="t">InfVal</span>)(<span class="t">string</span>, <span class="t">int</span>)</td><td>Parse and set precision.</td></tr>
         </table>
       </div>
       <div class="member-group">
-        <div class="member-group-title">Explicit Casts — from InfVal</div>
+        <div class="member-group-title">Explicit Casts: from InfVal</div>
         <table class="mt">
           <tr><td>(<span class="t">BigInteger</span>)<span class="mn">iv</span></td><td>Truncates to integer part (ToExponent(0).digits).</td></tr>
           <tr><td>(<span class="t">sbyte</span>) (<span class="t">byte</span>) (<span class="t">short</span>) (<span class="t">ushort</span>)<br/>(<span class="t">int</span>) (<span class="t">uint</span>) (<span class="t">long</span>) (<span class="t">ulong</span>)</td><td>Cast through BigInteger; may overflow.</td></tr>
@@ -500,7 +500,7 @@
         </table>
       </div>
       <div class="member-group">
-        <div class="member-group-title">Static Methods — Formatting</div>
+        <div class="member-group-title">Static Methods: Formatting</div>
         <table class="mt">
           <tr>
             <td><span class="t">string</span> <span class="mn">Format</span>(<span class="kw">in</span> <span class="t">InfVal</span> value, <span class="t">int</span> maxDisplayedDigits, <span class="t">string[]</span> unitsList, <span class="t">string</span> decimalPoint, <span class="t">string</span> groupSeparator, <span class="t">string</span> exponentMarker, <span class="t">bool</span> addGroupSepBefore, <span class="t">bool</span> addGroupSepAfter, <span class="t">bool</span> forceAbbreviation, <span class="t">bool</span> keepTrailingZeros, <span class="t">int</span> unitStep = 3)</td>
@@ -509,7 +509,7 @@
         </table>
       </div>
       <div class="member-group">
-        <div class="member-group-title">Static Methods — Parsing</div>
+        <div class="member-group-title">Static Methods: Parsing</div>
         <table class="mt">
           <tr>
             <td><span class="t">bool</span> <span class="mn">TryParse</span>(<span class="t">string</span> text, <span class="t">string[]</span> unitsList, <span class="t">string</span> decimalPoint, <span class="t">string</span> groupSeparator, <span class="t">string[]</span> exponentMarkers, <span class="kw">out</span> <span class="t">InfVal</span> result, <span class="t">int</span> unitStep = 3)</td>
@@ -526,7 +526,7 @@
         </table>
       </div>
       <div class="member-group">
-        <div class="member-group-title">Static Methods — Culture &amp; Validation</div>
+        <div class="member-group-title">Static Methods: Culture &amp; Validation</div>
         <table class="mt">
           <tr>
             <td><span class="t">string</span> <span class="mn">GetDecimalSeparator</span>(<span class="t">CultureInfo</span> culture)</td>
@@ -733,7 +733,7 @@
           <tr><td><span class="t">InfVal</span> <span class="mn">EaseIn</span>(<span class="kw">in</span> <span class="t">InfVal</span> min, <span class="kw">in</span> <span class="t">InfVal</span> max, <span class="t">float</span> t, <span class="t">float</span> easePower, <span class="t">bool</span> clamped = true)</td><td>Ease-in interpolation. <code>easePower</code> controls the curve strength.</td></tr>
           <tr><td><span class="t">InfVal</span> <span class="mn">EaseOut</span>(<span class="kw">in</span> <span class="t">InfVal</span> min, <span class="kw">in</span> <span class="t">InfVal</span> max, <span class="t">float</span> t, <span class="t">float</span> easePower, <span class="t">bool</span> clamped = true)</td><td>Ease-out interpolation.</td></tr>
           <tr><td><span class="t">InfVal</span> <span class="mn">EaseInAndOut</span>(<span class="kw">in</span> <span class="t">InfVal</span> min, <span class="kw">in</span> <span class="t">InfVal</span> max, <span class="t">float</span> t, <span class="t">float</span> easePower, <span class="t">bool</span> clamped = true)</td><td>Ease-in-and-out interpolation.</td></tr>
-          <tr><td><span class="t">float</span> <span class="mn">InverseLinear</span>(<span class="kw">in</span> <span class="t">InfVal</span> min, <span class="kw">in</span> <span class="t">InfVal</span> max, <span class="kw">in</span> <span class="t">InfVal</span> value)</td><td>Inverse linear — returns the t that would produce <code>value</code>. <span class="ex">Throws ArgumentException if min == max.</span></td></tr>
+          <tr><td><span class="t">float</span> <span class="mn">InverseLinear</span>(<span class="kw">in</span> <span class="t">InfVal</span> min, <span class="kw">in</span> <span class="t">InfVal</span> max, <span class="kw">in</span> <span class="t">InfVal</span> value)</td><td>Inverse linear: returns the t that would produce <code>value</code>. <span class="ex">Throws ArgumentException if min == max.</span></td></tr>
           <tr><td><span class="t">InfVal</span> <span class="mn">LinearAngle</span>(<span class="kw">in</span> <span class="t">InfVal</span> minAngle, <span class="kw">in</span> <span class="t">InfVal</span> maxAngle, <span class="t">float</span> t, <span class="t">bool</span> clamped = true)</td><td>Linear interpolation that wraps around 360 degrees.</td></tr>
           <tr><td><span class="t">InfVal</span> <span class="mn">SmoothStepAngle</span>(<span class="kw">in</span> <span class="t">InfVal</span> minAngle, <span class="kw">in</span> <span class="t">InfVal</span> maxAngle, <span class="t">float</span> t, <span class="t">bool</span> clamped = true)</td><td>SmoothStep that wraps around 360 degrees.</td></tr>
           <tr><td><span class="t">InfVal</span> <span class="mn">EaseInAngle</span>(<span class="kw">in</span> <span class="t">InfVal</span> minAngle, <span class="kw">in</span> <span class="t">InfVal</span> maxAngle, <span class="t">float</span> t, <span class="t">float</span> easePower, <span class="t">bool</span> clamped = true)</td><td>EaseIn that wraps around 360 degrees.</td></tr>

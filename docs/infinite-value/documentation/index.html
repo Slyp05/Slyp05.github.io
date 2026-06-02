@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -113,10 +113,10 @@ b = b + b;  <span class="cm">// a is unchanged, b is now 84</span></code></pre>
       </div>
 
       <ul>
-        <li><strong>Value field</strong> — Shows the formatted value. Edit it and press Enter to set a new value; the text is parsed using the default formatter.</li>
-        <li><strong>Raw Edit</strong> — Edit the <code>digits</code> and <code>exponent</code> directly.</li>
-        <li><strong>Edit Methods</strong> — Call <code>RemoveTrailingZeros</code>, <code>MovePointLeft</code>, or <code>MovePointRight</code> with one click.</li>
-        <li><strong>Properties</strong> — Read-only display of all public properties. "Undefined" means the property threw an exception (e.g. <code>isEven</code> on a floating-point value).</li>
+        <li><strong>Value field</strong>: Shows the formatted value. Edit it and press Enter to set a new value; the text is parsed using the default formatter.</li>
+        <li><strong>Raw Edit</strong>: Edit the <code>digits</code> and <code>exponent</code> directly.</li>
+        <li><strong>Edit Methods</strong>: Call <code>RemoveTrailingZeros</code>, <code>MovePointLeft</code>, or <code>MovePointRight</code> with one click.</li>
+        <li><strong>Properties</strong>: Read-only display of all public properties. "Undefined" means the property threw an exception (e.g. <code>isEven</code> on a floating-point value).</li>
       </ul>
       <p>Which sections appear and whether they show titles is configurable in the <strong>Configuration</strong> asset (see <a href="#configuration">Configuration</a>).</p>
 
@@ -145,8 +145,8 @@ Debug.Log(iv.ToDebugString());
         <strong>Configuration</strong> default.
       </p>
       <ul>
-        <li><code>InfVal.Parse(string)</code> — Returns the parsed value; throws a <code>FormatException</code> if the string is invalid.</li>
-        <li><code>InfVal.TryParse(string, out InfVal)</code> — Returns <code>true</code> on success, <code>false</code> on failure; never throws.</li>
+        <li><code>InfVal.Parse(string)</code>: Returns the parsed value; throws a <code>FormatException</code> if the string is invalid.</li>
+        <li><code>InfVal.TryParse(string, out InfVal)</code>: Returns <code>true</code> on success, <code>false</code> on failure; never throws.</li>
       </ul>
       <pre><code><span class="ty">InfVal</span> a = <span class="ty">InfVal</span>.Parse(<span class="st">"1.5k"</span>, myFormatter.formatter);
 
@@ -168,10 +168,10 @@ Debug.Log(iv.ToDebugString());
         issue typically appears when constructing from a <code>BigInteger</code> without
         specifying precision, since the precision then equals the digit count of the value.
       </p>
-      <pre><code><span class="cm">// BigInteger.One has 1 digit — no room for the decimal result</span>
+      <pre><code><span class="cm">// BigInteger.One has 1 digit: no room for the decimal result</span>
 Debug.Log(<span class="kw">new</span> <span class="ty">InfVal</span>(BigInteger.One) / <span class="kw">new</span> <span class="ty">InfVal</span>(3));  <span class="cm">// 0</span>
 
-<span class="cm">// int defaults to precision 10 — result fits</span>
+<span class="cm">// int defaults to precision 10: result fits</span>
 Debug.Log(<span class="kw">new</span> <span class="ty">InfVal</span>(1) / <span class="kw">new</span> <span class="ty">InfVal</span>(3));               <span class="cm">// 0.333333333</span>
 
 <span class="cm">// Explicit precision gives exact control</span>
@@ -239,7 +239,7 @@ iv = <span class="kw">new</span> <span class="ty">InfVal</span>(0).ToPrecision(2
           <span class="icon">🖼</span>
           <span><strong>img/formatter_asset.png</strong><br/>FormatterAsset inspector with type dropdown</span>
         </div>
-        <div class="img-caption">FormatterAsset — type dropdown and fields</div>
+        <div class="img-caption">FormatterAsset: type dropdown and fields</div>
       </div>
 
       <p>
@@ -253,14 +253,14 @@ iv = <span class="kw">new</span> <span class="ty">InfVal</span>(0).ToPrecision(2
       <h4>ManualFormatter</h4>
       <p>Fully explicit. Configure every detail of how the value is displayed.</p>
       <ul>
-        <li><code>groupSize</code> — Digits per unit level and group separator step. Default: 3 (k/M/G style). Use 4 for East Asian style (万/億/兆).</li>
-        <li><code>unitsList</code> — Suffix list applied at each power step (default: k, M, G, T, P, E, Z, Y).</li>
-        <li><code>maxDisplayedDigits</code> — Maximum digits in the output (0 means unlimited).</li>
-        <li><code>decimalSeparator</code> / <code>groupSeparator</code> — Decimal point and thousands separator characters.</li>
-        <li><code>exponentMarker</code> — Marker for scientific notation (e.g. <code>"e"</code>).</li>
-        <li><code>addGroupSeparatorsBeforeDecimalPoint</code> / <code>addGroupSeparatorsAfterDecimalPoint</code> — Toggle thousands separators on each side of the decimal point.</li>
-        <li><code>forceAbbreviation</code> — Always use a unit suffix or scientific notation, even for small values.</li>
-        <li><code>keepTrailingZeros</code> — Pad decimals with zeros up to <code>maxDisplayedDigits</code>.</li>
+        <li><code>groupSize</code>: Digits per unit level and group separator step. Default: 3 (k/M/G style). Use 4 for East Asian style (万/億/兆).</li>
+        <li><code>unitsList</code>: Suffix list applied at each power step (default: k, M, G, T, P, E, Z, Y).</li>
+        <li><code>maxDisplayedDigits</code>: Maximum digits in the output (0 means unlimited).</li>
+        <li><code>decimalSeparator</code> / <code>groupSeparator</code>: Decimal point and thousands separator characters.</li>
+        <li><code>exponentMarker</code>: Marker for scientific notation (e.g. <code>"e"</code>).</li>
+        <li><code>addGroupSeparatorsBeforeDecimalPoint</code> / <code>addGroupSeparatorsAfterDecimalPoint</code>: Toggle thousands separators on each side of the decimal point.</li>
+        <li><code>forceAbbreviation</code>: Always use a unit suffix or scientific notation, even for small values.</li>
+        <li><code>keepTrailingZeros</code>: Pad decimals with zeros up to <code>maxDisplayedDigits</code>.</li>
       </ul>
 
       <h4>ScientificFormatter</h4>
@@ -276,7 +276,7 @@ iv = <span class="kw">new</span> <span class="ty">InfVal</span>(0).ToPrecision(2
         configurable alphabet and cached automatically.
       </p>
       <ul>
-        <li><code>alphabet</code> — Source string for generating suffixes (default: a–z).</li>
+        <li><code>alphabet</code>: Source string for generating suffixes (default: a–z).</li>
         <li><code>maxDisplayedDigits</code>, <code>decimalSeparator</code>, <code>groupSeparator</code>, <code>keepTrailingZeros</code></li>
       </ul>
 
@@ -288,7 +288,7 @@ iv = <span class="kw">new</span> <span class="ty">InfVal</span>(0).ToPrecision(2
         Western units (k/M/G/...) with 3-digit stepping.
       </p>
       <ul>
-        <li><code>culture</code> — The culture to use (serializable via the <code>Culture</code> class).</li>
+        <li><code>culture</code>: The culture to use (serializable via the <code>Culture</code> class).</li>
         <li><code>maxDisplayedDigits</code>, <code>addGroupSeparatorsBeforeDecimalPoint</code>, <code>addGroupSeparatorsAfterDecimalPoint</code>, <code>keepTrailingZeros</code></li>
       </ul>
 
@@ -351,11 +351,11 @@ iv = <span class="kw">new</span> <span class="ty">InfVal</span>(0).ToPrecision(2
 
       <h3>Inspector Settings</h3>
       <ul>
-        <li><strong>Double Click Delay</strong> — Maximum time in seconds between two clicks to count as a double-click (used to fold/unfold the drawer).</li>
-        <li><strong>Draw Raw Edit</strong> — Show the Digits and Exponent edit fields.</li>
-        <li><strong>Draw Methods</strong> — Show the Edit Methods section.</li>
-        <li><strong>Draw Read-Only Properties</strong> — Show the Properties section.</li>
-        <li><strong>Draw Titles</strong> — Add a title above each section in the drawer.</li>
+        <li><strong>Double Click Delay</strong>: Maximum time in seconds between two clicks to count as a double-click (used to fold/unfold the drawer).</li>
+        <li><strong>Draw Raw Edit</strong>: Show the Digits and Exponent edit fields.</li>
+        <li><strong>Draw Methods</strong>: Show the Edit Methods section.</li>
+        <li><strong>Draw Read-Only Properties</strong>: Show the Properties section.</li>
+        <li><strong>Draw Titles</strong>: Add a title above each section in the drawer.</li>
       </ul>
     </section>
 
@@ -385,22 +385,22 @@ iv = <span class="kw">new</span> <span class="ty">InfVal</span>(0).ToPrecision(2
       </div>
 
       <ul>
-        <li><strong>Formatter</strong> — Optional override. If empty, the Configuration default is used.</li>
-        <li><strong>Validate Type</strong> — How invalid input is handled: <code>None</code>, <code>ChangeColor</code>, or <code>DisallowInvalid</code> (blocks characters that would make the input invalid).</li>
-        <li><strong>Valid / Invalid Color</strong> — Colors applied to the text when Validate Type is ChangeColor.</li>
-        <li><strong>Integer Only</strong> — Treat non-integer values as invalid.</li>
-        <li><strong>Force Sign</strong> — Restrict to positive or negative values only.</li>
-        <li><strong>Non Zero</strong> — Treat zero as invalid.</li>
-        <li><strong>Interactables If Valid</strong> — UI Selectables that are only enabled while the input is valid.</li>
-        <li><strong>Redraw On End Edit</strong> — Replace the typed text with a clean formatted representation when the user finishes typing.</li>
+        <li><strong>Formatter</strong>: Optional override. If empty, the Configuration default is used.</li>
+        <li><strong>Validate Type</strong>: How invalid input is handled: <code>None</code>, <code>ChangeColor</code>, or <code>DisallowInvalid</code> (blocks characters that would make the input invalid).</li>
+        <li><strong>Valid / Invalid Color</strong>: Colors applied to the text when Validate Type is ChangeColor.</li>
+        <li><strong>Integer Only</strong>: Treat non-integer values as invalid.</li>
+        <li><strong>Force Sign</strong>: Restrict to positive or negative values only.</li>
+        <li><strong>Non Zero</strong>: Treat zero as invalid.</li>
+        <li><strong>Interactables If Valid</strong>: UI Selectables that are only enabled while the input is valid.</li>
+        <li><strong>Redraw On End Edit</strong>: Replace the typed text with a clean formatted representation when the user finishes typing.</li>
       </ul>
 
       <p>Scripting members:</p>
       <ul>
-        <li><code>value</code> — Get or set the current <strong>InfVal</strong>.</li>
-        <li><code>isValid</code> — Whether the current value passes all validation constraints.</li>
-        <li><code>activeFormatter</code> — The formatter in use (assigned or Configuration default).</li>
-        <li><code>target</code> — The underlying <code>InputField</code> or <code>TMP_InputField</code>.</li>
+        <li><code>value</code>: Get or set the current <strong>InfVal</strong>.</li>
+        <li><code>isValid</code>: Whether the current value passes all validation constraints.</li>
+        <li><code>activeFormatter</code>: The formatter in use (assigned or Configuration default).</li>
+        <li><code>target</code>: The underlying <code>InputField</code> or <code>TMP_InputField</code>.</li>
       </ul>
     </section>
 
@@ -466,14 +466,14 @@ iv = <span class="kw">new</span> <span class="ty">InfVal</span>(0).ToPrecision(2
         Edit Mode tab). The suite covers:
       </p>
       <ul>
-        <li><strong>InfValPropertiesTests</strong> &mdash; <code>precision</code>, <code>isZero</code>, <code>isOne</code>, <code>isInteger</code>, <code>isEven</code>, <code>isPowerOfTwo</code>, <code>sign</code>, <code>digits</code>, <code>exponent</code>.</li>
-        <li><strong>InfValComparisonTests</strong> &mdash; All six comparison operators and <code>CompareTo</code>.</li>
-        <li><strong>InfValArithmeticTests</strong> &mdash; Every arithmetic, bitwise, and shift operator.</li>
-        <li><strong>InfValMethodsTests</strong> &mdash; <code>ToPrecision</code>, <code>ToExponent</code>, <code>RemoveTrailingZeros</code>, <code>MovePointLeft/Right</code>, <code>Deconstruct</code>.</li>
-        <li><strong>InfValCastTests</strong> &mdash; Round-trip casts for all integer types, <code>BigInteger</code>, <code>float</code>, and <code>double</code>.</li>
-        <li><strong>InfValParseTests</strong> &mdash; <code>InfValFormatHelper.TryParse</code> with known strings.</li>
-        <li><strong>FormatterTests</strong> &mdash; Formatting output for all built-in formatters.</li>
-        <li><strong>MathInfValTests</strong> &mdash; Every <code>MathInfVal</code> method.</li>
+        <li><strong>InfValPropertiesTests</strong>: <code>precision</code>, <code>isZero</code>, <code>isOne</code>, <code>isInteger</code>, <code>isEven</code>, <code>isPowerOfTwo</code>, <code>sign</code>, <code>digits</code>, <code>exponent</code>.</li>
+        <li><strong>InfValComparisonTests</strong>: All six comparison operators and <code>CompareTo</code>.</li>
+        <li><strong>InfValArithmeticTests</strong>: Every arithmetic, bitwise, and shift operator.</li>
+        <li><strong>InfValMethodsTests</strong>: <code>ToPrecision</code>, <code>ToExponent</code>, <code>RemoveTrailingZeros</code>, <code>MovePointLeft/Right</code>, <code>Deconstruct</code>.</li>
+        <li><strong>InfValCastTests</strong>: Round-trip casts for all integer types, <code>BigInteger</code>, <code>float</code>, and <code>double</code>.</li>
+        <li><strong>InfValParseTests</strong>: <code>InfValFormatHelper.TryParse</code> with known strings.</li>
+        <li><strong>FormatterTests</strong>: Formatting output for all built-in formatters.</li>
+        <li><strong>MathInfValTests</strong>: Every <code>MathInfVal</code> method.</li>
       </ul>
       <p>Run both tools after modifying any scripts to catch regressions.</p>
     </section>
@@ -495,7 +495,7 @@ iv = <span class="kw">new</span> <span class="ty">InfVal</span>(0).ToPrecision(2
           <span class="icon">🖼</span>
           <span><strong>img/demo.png</strong><br/>Running demo game</span>
         </div>
-        <div class="img-caption">Infinite Value demo — clicker game</div>
+        <div class="img-caption">Infinite Value demo: clicker game</div>
       </div>
 
       <p>
