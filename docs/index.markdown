@@ -24,22 +24,22 @@ layout: home
   </div>
 
   <div class="package-card">
-    <img src="/assets/images/AS.png" alt="Auto Singleton icon" class="package-card-icon">
-    <div class="package-card-content">
-      <h2><a href="/auto-singleton/">Auto Singleton</a></h2>
-      <span class="badge badge-free">Free</span>
-      <p>Add <code>[Singleton]</code> to any class and the asset handles everything: asset generation, cleanup, polymorphic access, and inspector integration.</p>
-      <a href="/auto-singleton/" class="card-link">Learn more →</a>
-    </div>
-  </div>
-
-  <div class="package-card">
     <img src="/assets/images/GA.png" alt="Generic Arithmetic icon" class="package-card-icon">
     <div class="package-card-content">
       <h2><a href="/generic-arithmetic/">Generic Arithmetic</a></h2>
       <span class="badge badge-free">Free</span>
       <p>Arithmetic and comparison operations in generic C# classes. Works with any value type, uses optimized compiled delegates, and requires no setup.</p>
       <a href="/generic-arithmetic/" class="card-link">Learn more →</a>
+    </div>
+  </div>
+
+  <div class="package-card">
+    <img src="/assets/images/AS.png" alt="Auto Singleton icon" class="package-card-icon">
+    <div class="package-card-content">
+      <h2><a href="/auto-singleton/">Auto Singleton</a></h2>
+      <span class="badge badge-free">Free</span>
+      <p>Add <code>[Singleton]</code> to any class and the asset handles everything: asset generation, cleanup, polymorphic access, and inspector integration.</p>
+      <a href="/auto-singleton/" class="card-link">Learn more →</a>
     </div>
   </div>
 

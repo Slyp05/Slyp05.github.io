@@ -33,8 +33,8 @@ plugins:
 
 header_pages:
   - infinite-value.md
-  - auto-singleton.md
   - generic-arithmetic.md
+  - auto-singleton.md
 
 # Exclude from processing.
 # The following items will not be processed, by default.
