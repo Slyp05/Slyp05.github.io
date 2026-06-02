@@ -8,8 +8,6 @@ permalink: /auto-singleton/
 
 The simplest singleton tool on the Asset Store. Add the `[Singleton]` attribute to any class and the asset handles everything: automatic asset generation, cleanup, and polymorphic access at runtime.
 
-Works with both `MonoBehaviour` and `ScriptableObject`.
-
 ## Features
 
 - **Attribute-based setup**: decorate any `MonoBehaviour` or `ScriptableObject` with `[Singleton]`: no base classes, no boilerplate; optional `inherited`, `displayName`, and `folderPath` arguments for fine-grained control
