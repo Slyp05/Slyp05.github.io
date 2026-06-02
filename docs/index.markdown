@@ -56,6 +56,14 @@ layout: home
   <img src="/assets/images/about-me.jpg" alt="Lucas Sarkadi" class="about-photo">
 </div>
 
+## AI Usage
+
+<div class="about-text">
+  <p>I use <a href="https://claude.ai/code">Claude Code</a> as an AI assistant throughout development. All code and documentation is either written by me and reviewed by Claude, or drafted by Claude and reviewed and validated by me before it ships.</p>
+  <p>The public APIs are human-made: designing a clean, intentional API requires judgment that AI isn't quite there for yet. Everything else, from implementation details to documentation phrasing, is a collaborative back-and-forth where I stay in the loop at every step.</p>
+  <p>I believe in being transparent about this. AI doesn't replace the craft; it helps move faster without cutting corners.</p>
+</div>
+
 ## Contact
 
 Questions or issues? Reach me at [justetools@gmail.com](mailto:justetools@gmail.com)
