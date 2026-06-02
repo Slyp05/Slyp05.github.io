@@ -43,6 +43,31 @@ Unity 6.0 or later
 
 ## Patch Notes
 
+**v1.2.0** (June 1, 2026)
+
+Breaking Changes:
+- The singleton list asset has been renamed to `Auto Singleton List` and moved from `Assets/Auto Singleton/Resources/` to `Assets/Resources/`. Existing projects must move it manually, or delete it and let it be recreated on the next refresh.
+- `Singleton<T>.HasInstance` now throws outside of play mode, consistent with `Instance`. Previously it silently returned `false`.
+- `Singleton<T>.SelectInstance(Predicate<T>)` now correctly returns `false` when no instance matches the predicate, instead of returning `true` and silently clearing the selected instance.
+
+New:
+- Added `Singleton<T>.TryGetInstance(out T instance)`: a non-throwing alternative to `Instance` that returns `false` when no instance is available, safe in both editor and builds.
+- `SelectInstance` overloads now log a warning in the editor when returning `false`, making misconfigured or missing setup easier to spot.
+- The `Instance` error message when no instance was selected now includes the count of available instances and a hint to call `SelectInstance()`.
+- Newly created singleton assets are pinged in the Project window after a refresh.
+- The `Auto Singleton List` asset is automatically recreated if accidentally deleted.
+- The `Auto Singleton` root GameObject is now created lazily on the first MonoBehaviour singleton instantiation.
+- The singleton list ordering is now deterministic, preventing spurious VCS diffs on the `Auto Singleton List` asset.
+
+Bug Fixes:
+- MonoBehaviour singleton components were not being saved to their prefab file correctly; they now are.
+- Open generic MonoBehaviour subclasses (e.g. `class Foo<T> : MonoBehaviour`) are no longer mistakenly treated as instantiable.
+- Singletons registered via `Singleton.Add` no longer appear as stale entries in the inspector after re-entering play mode.
+- `SelectInstance` with a numeric priority no longer incorrectly reports a tie when a singleton's priority value equals `int.MinValue` or `float.MinValue`.
+- Singleton assets are now deleted through Unity's asset pipeline, preventing stale references.
+- The singleton icon now scales correctly with the Project window's zoom level.
+- Fixed path issues on Windows that could cause asset operations and the Documentation menu item to fail.
+
 **v1.1.0** (January 23, 2026)
 - The tool now fully works with no reload on play mode enabled
 - Can now add and remove singletons at runtime using new methods, Add and Remove, in the Singleton class

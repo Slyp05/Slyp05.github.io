@@ -44,6 +44,28 @@ Unity 6.0 or later
 
 ## Patch Notes
 
+**v2.0.0** (June 2, 2026)
+
+New Features:
+- **Source generator**: add `[assembly: GenerateComputators(typeof(T))]` to any script to generate all four computator classes at compile time, with no runtime reflection or expression compilation. AOT/IL2CPP-safe. A three-type form is also available for cross-type operations.
+- **Create Manual Computator Script**: new editor window under `Tools > Generic Arithmetic > Create Manual Computator Script`. Enter a type name, pick an output folder, and click Create; the file opens automatically.
+- Added unit tests covering `Computable<T>`, `Calculate<T>.Try`, and `Evaluate.Try`.
+
+Breaking Changes:
+- The four computator base classes have been renamed for consistency: `DuoCalculator` → `UnaryCalculator`, `TrioCalculator` → `BinaryCalculator`, `DuoEvaluator` → `BinaryEvaluator`, `SoloEvaluator` → `UnaryEvaluator`.
+- `BinaryCalculator.Addition` and `Calculate<TResult>.Addition` renamed to `Add`.
+- `Calculate<TResult>.Try` and `Evaluate.Try` changed from nested structs to nested static classes (call syntax is unchanged).
+
+Changes:
+- Error messages when a computator is missing now include the exact base class to derive from.
+- The "Unit Tests" window has been renamed to "Bulk Tests" and expanded with more values per type and a filter dropdown.
+- `Computable<T>.ToString()` now forwards to the underlying value.
+
+Bug Fixes:
+- `Computable<T>.GetHashCode()` no longer throws when `T` is a reference type and the value is `null`.
+- `operator true` / `operator false` now produce correct results with the Dynamic computator for types that define those operators without an implicit cast to `bool`.
+- Unary `+` and `-` operator lookup was using wrong reflection names, causing expression fallback to fail for custom types.
+
 **v1.1.0** (January 2, 2024)
 - Added Try versions of all methods in Calculate and Evaluate
 - Added a new overload to `Computable<T>.From` that takes a T as a parameter (same behaviour as the constructor)
