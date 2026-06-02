@@ -32,7 +32,7 @@ Perfect for incremental games, RPGs, or any system where standard numeric types 
 
 ## Requirements
 
-- Unity 6.0 or later
+Unity 6.0 or later
 
 ## Documentation
 

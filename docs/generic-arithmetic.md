@@ -6,21 +6,32 @@ permalink: /generic-arithmetic/
 
 <img src="/assets/images/generic-arithmetic.jpg" alt="Generic Arithmetic" class="package-image">
 
-Arithmetic and comparison operations in generic C# classes. Works with any value type (system primitives, Unity primitives, custom classes or structs, and nullables) with no additional setup required.
+Arithmetic and comparison operations in generic C# classes. Works with any numeric or operator-enabled type, with no additional setup required.  
+Built-in computators cover all Unity numeric and vector types; a Roslyn source generator adds AOT-safe support for custom types.
 
 ## Features
 
-- **All operators**: handles all C# arithmetic operators and functions, in the editor and at runtime
-- **Any value type**: system primitives, Unity primitives, custom classes, structs, and nullables
-- **Two usage styles**: instantiate a `Computable` or use static classes directly
-- **Optimized**: uses reflection and `Linq.Expressions` to compile optimized delegates at runtime; more efficient than raw DLR
-- **No setup**: drop in and use immediately
-- **Full sources**: 50+ scripts included
-- **Unit test window**: included to verify correctness
+- **Full operator coverage**: all C# arithmetic (`+`, `-`, `*`, `/`, `%`), bitwise (`&`, `|`, `^`), unary, shift, and comparison operators, plus boolean evaluation (`operator true` / `operator false`)
+- **Any numeric or operator-enabled type**: built-in computators cover `int`, `float`, `double`, `long`, `Vector2`, `Vector3`, and all other Unity numeric and vector types; custom types are supported via source generator or manual computators
+- **Two usage styles**: wrap values in `Computable<T>` to use standard C# operator syntax inline, or call `Calculate<TResult>` and `Evaluate` static methods directly for explicit result-type control and cross-type operations
+- **Source generator**: the `[GenerateComputators]` assembly-level attribute generates AOT-safe computators at compile time; the recommended approach for IL2CPP builds
+- **Manual computators**: extend `BinaryCalculator`, `UnaryCalculator`, `BinaryEvaluator`, or `UnaryEvaluator` for full control over how each operation is implemented; discovered automatically at startup, no registration required
+- **Try methods**: non-throwing variants of every `Calculate<T>` and `Evaluate` method return `false` instead of throwing when an operation is not supported for the given types
+- **Configurable fallback**: choose `Throw`, `Dynamic`, or `Expression` behavior for types without a registered computator, set per-project in the Configuration inspector
+- **Editor tooling**: bulk tests window to run all registered computators against a predefined value set and review color-coded results; creator tool to generate manual computator scripts from a window
+
+## Content
+
+- **`Computable<T>` struct**: lightweight value wrapper exposing all operators directly; implicit conversions to/from `T` and cross-type `From` / `To` casting
+- **`Calculate<TResult>` and `Evaluate` static classes**: method-call API for binary and unary operations with explicit result types; each has a nested `Try` class for non-throwing access
+- **Computator system**: built-in computators for all Unity numeric and vector types; `[GenerateComputators]` Roslyn source generator; four abstract base classes (`BinaryCalculator`, `UnaryCalculator`, `BinaryEvaluator`, `UnaryEvaluator`) for manual implementation
+- **Configuration inspector**: per-project fallback strategy and view of all registered built-in and user computators
+- **Tests**: NUnit test suite and a bulk tests window covering all computator type combinations
+- **Demo**: a benchmark scene comparing non-generic, naive generic, `Computable<T>`, and `Calculate<T>` approaches
 
 ## Requirements
 
-- Unity 2021.3.31 or later
+Unity 6.0 or later
 
 ## Documentation
 
