@@ -11,12 +11,14 @@
 
   <!-- Sidebar -->
   <nav>
-    <div class="nav-title">Public API</div>
+    <div class="nav-title">Generic Arithmetic</div>
     <a href="#CalculateTResult"><span class="badge badge-static">static</span>Calculate&lt;TResult&gt;</a>
     <a href="#CalculateTry" class="indent">. Try</a>
     <a href="#Evaluate"><span class="badge badge-static">static</span>Evaluate</a>
     <a href="#EvaluateTry" class="indent">. Try</a>
     <a href="#ComputableT"><span class="badge badge-struct">struct</span>Computable&lt;T&gt;</a>
+    <a href="#MathT"><span class="badge badge-static">static</span>Math&lt;T&gt;</a>
+    <a href="#MathTry" class="indent">. Try</a>
     <a href="#BinaryCalculator"><span class="badge badge-class">abstract</span>BinaryCalculator&lt;...&gt;</a>
     <a href="#UnaryCalculator"><span class="badge badge-class">abstract</span>UnaryCalculator&lt;...&gt;</a>
     <a href="#BinaryEvaluator"><span class="badge badge-class">abstract</span>BinaryEvaluator&lt;...&gt;</a>
@@ -456,6 +458,380 @@
           <tr><td><span class="kw">operator</span> &lt;=</td><td>a &lt;= b</td></tr>
           <tr><td><span class="kw">operator true</span></td><td>a is true (<code>operator true</code>)</td></tr>
           <tr><td><span class="kw">operator false</span></td><td>a is false (<code>operator false</code>)</td></tr>
+        </table>
+      </div>
+    </div>
+
+
+    <!-- ================================================================== Math<T> === -->
+    <div class="type-section" id="MathT">
+      <div class="type-header">
+        <h2>Math&lt;T&gt;</h2>
+        <span class="badge badge-static">static class</span>
+      </div>
+      <p class="type-desc">
+        Generic equivalent of <code>UnityEngine.Mathf</code> and <code>System.Math</code>, built on
+        <a href="#CalculateTResult">Calculate&lt;T&gt;</a> and <a href="#Evaluate">Evaluate</a>.
+        Static readonly constants are computed once per closed type (e.g. <code>Math&lt;float&gt;</code>)
+        and cached. Methods that require transcendental math (rounding, trig, powers, logarithms)
+        cast through <code>double</code> via <code>Calculate&lt;double&gt;</code>; all other methods
+        operate purely through generic arithmetic.
+      </p>
+
+      <div class="member-group">
+        <div class="member-group-title">Constants</div>
+        <table class="mt">
+          <tr>
+            <td><span class="kw">static readonly</span> <span class="t">T</span> <span class="mn">Zero</span></td>
+            <td><code>default(T)</code> — zero for numeric types.</td>
+          </tr>
+          <tr>
+            <td><span class="kw">static readonly</span> <span class="t">T</span> <span class="mn">One</span></td>
+            <td><code>(T)1</code></td>
+          </tr>
+          <tr>
+            <td><span class="kw">static readonly</span> <span class="t">T</span> <span class="mn">PI</span></td>
+            <td>&#960; (3.14159...)</td>
+          </tr>
+          <tr>
+            <td><span class="kw">static readonly</span> <span class="t">T</span> <span class="mn">E</span></td>
+            <td>Euler's number (2.71828...)</td>
+          </tr>
+          <tr>
+            <td><span class="kw">static readonly</span> <span class="t">T</span> <span class="mn">Deg2Rad</span></td>
+            <td>&#960; / 180</td>
+          </tr>
+          <tr>
+            <td><span class="kw">static readonly</span> <span class="t">T</span> <span class="mn">Rad2Deg</span></td>
+            <td>180 / &#960;</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="member-group">
+        <div class="member-group-title">Basic</div>
+        <table class="mt">
+          <tr>
+            <td><span class="t">T</span> <span class="mn">Abs</span>(<span class="t">T</span> value)</td>
+            <td>Absolute value.</td>
+          </tr>
+          <tr>
+            <td><span class="t">T</span> <span class="mn">Sign</span>(<span class="t">T</span> value)</td>
+            <td>Returns <code>One</code>, <code>-One</code>, or <code>Zero</code>.</td>
+          </tr>
+          <tr>
+            <td><span class="t">T</span> <span class="mn">Min</span>(<span class="t">T</span> a, <span class="t">T</span> b)</td>
+            <td>Smaller of two values.</td>
+          </tr>
+          <tr>
+            <td><span class="t">T</span> <span class="mn">Max</span>(<span class="t">T</span> a, <span class="t">T</span> b)</td>
+            <td>Larger of two values.</td>
+          </tr>
+          <tr>
+            <td><span class="t">T</span> <span class="mn">Clamp</span>(<span class="t">T</span> value, <span class="t">T</span> min, <span class="t">T</span> max)</td>
+            <td>Clamps <code>value</code> to [min, max].</td>
+          </tr>
+          <tr>
+            <td><span class="t">T</span> <span class="mn">Clamp01</span>(<span class="t">T</span> value)</td>
+            <td>Clamps <code>value</code> to [0, 1].</td>
+          </tr>
+          <tr>
+            <td><span class="t">bool</span> <span class="mn">Approximately</span>(<span class="t">T</span> a, <span class="t">T</span> b)</td>
+            <td>True if <code>|b - a|</code> is within a relative epsilon of <code>1e-6</code>.</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="member-group">
+        <div class="member-group-title">Interpolation</div>
+        <table class="mt">
+          <tr>
+            <td><span class="t">T</span> <span class="mn">Lerp</span>(<span class="t">T</span> a, <span class="t">T</span> b, <span class="t">T</span> t)</td>
+            <td>Linear interpolation, <code>t</code> clamped to [0, 1].</td>
+          </tr>
+          <tr>
+            <td><span class="t">T</span> <span class="mn">LerpUnclamped</span>(<span class="t">T</span> a, <span class="t">T</span> b, <span class="t">T</span> t)</td>
+            <td>Linear interpolation without clamping <code>t</code>.</td>
+          </tr>
+          <tr>
+            <td><span class="t">T</span> <span class="mn">InverseLerp</span>(<span class="t">T</span> a, <span class="t">T</span> b, <span class="t">T</span> value)</td>
+            <td><code>(value - a) / (b - a)</code></td>
+          </tr>
+          <tr>
+            <td><span class="t">T</span> <span class="mn">LerpAngle</span>(<span class="t">T</span> a, <span class="t">T</span> b, <span class="t">T</span> t)</td>
+            <td>Lerp between two angles (degrees) via the shortest arc.</td>
+          </tr>
+          <tr>
+            <td><span class="t">T</span> <span class="mn">MoveTowards</span>(<span class="t">T</span> current, <span class="t">T</span> target, <span class="t">T</span> maxDelta)</td>
+            <td>Steps <code>current</code> toward <code>target</code> by at most <code>maxDelta</code>.</td>
+          </tr>
+          <tr>
+            <td><span class="t">T</span> <span class="mn">MoveTowardsAngle</span>(<span class="t">T</span> current, <span class="t">T</span> target, <span class="t">T</span> maxDelta)</td>
+            <td>Like <code>MoveTowards</code> but for angles (degrees), taking the shortest arc.</td>
+          </tr>
+          <tr>
+            <td><span class="t">T</span> <span class="mn">SmoothStep</span>(<span class="t">T</span> from, <span class="t">T</span> to, <span class="t">T</span> t)</td>
+            <td>Hermite smooth-step interpolation: <code>-2t&#179; + 3t&#178;</code> blend.</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="member-group">
+        <div class="member-group-title">Periodic</div>
+        <table class="mt">
+          <tr>
+            <td><span class="t">T</span> <span class="mn">Repeat</span>(<span class="t">T</span> t, <span class="t">T</span> length)</td>
+            <td>Wraps <code>t</code> into [0, length) using modulo with sign correction.</td>
+          </tr>
+          <tr>
+            <td><span class="t">T</span> <span class="mn">PingPong</span>(<span class="t">T</span> t, <span class="t">T</span> length)</td>
+            <td>Oscillates <code>t</code> back and forth between 0 and <code>length</code>.</td>
+          </tr>
+          <tr>
+            <td><span class="t">T</span> <span class="mn">DeltaAngle</span>(<span class="t">T</span> current, <span class="t">T</span> target)</td>
+            <td>Shortest signed difference between two angles (degrees), in (-180, 180].</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="member-group">
+        <div class="member-group-title">Rounding</div>
+        <table class="mt">
+          <tr>
+            <td><span class="t">T</span> <span class="mn">Floor</span>(<span class="t">T</span> value)</td>
+            <td>Largest integer less than or equal to <code>value</code>.</td>
+          </tr>
+          <tr>
+            <td><span class="t">T</span> <span class="mn">Ceiling</span>(<span class="t">T</span> value)</td>
+            <td>Smallest integer greater than or equal to <code>value</code>.</td>
+          </tr>
+          <tr>
+            <td><span class="t">T</span> <span class="mn">Ceil</span>(<span class="t">T</span> value)</td>
+            <td>Alias for <code>Ceiling</code>.</td>
+          </tr>
+          <tr>
+            <td><span class="t">T</span> <span class="mn">Round</span>(<span class="t">T</span> value)</td>
+            <td>Rounds to the nearest integer (midpoint rounds to even).</td>
+          </tr>
+          <tr>
+            <td><span class="t">T</span> <span class="mn">Truncate</span>(<span class="t">T</span> value)</td>
+            <td>Integer part, truncating toward zero.</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="member-group">
+        <div class="member-group-title">Powers &amp; Roots</div>
+        <table class="mt">
+          <tr>
+            <td><span class="t">T</span> <span class="mn">Sqrt</span>(<span class="t">T</span> value)</td>
+            <td>Square root.</td>
+          </tr>
+          <tr>
+            <td><span class="t">T</span> <span class="mn">Cbrt</span>(<span class="t">T</span> value)</td>
+            <td>Cube root (sign-preserving for negative values).</td>
+          </tr>
+          <tr>
+            <td><span class="t">T</span> <span class="mn">Pow</span>(<span class="t">T</span> value, <span class="t">T</span> power)</td>
+            <td><code>value</code> raised to <code>power</code>.</td>
+          </tr>
+          <tr>
+            <td><span class="t">T</span> <span class="mn">Exp</span>(<span class="t">T</span> value)</td>
+            <td>e raised to <code>value</code>.</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="member-group">
+        <div class="member-group-title">Logarithms</div>
+        <table class="mt">
+          <tr>
+            <td><span class="t">T</span> <span class="mn">Log</span>(<span class="t">T</span> value)</td>
+            <td>Natural logarithm.</td>
+          </tr>
+          <tr>
+            <td><span class="t">T</span> <span class="mn">Log</span>(<span class="t">T</span> value, <span class="t">T</span> newBase)</td>
+            <td>Logarithm with a specified base.</td>
+          </tr>
+          <tr>
+            <td><span class="t">T</span> <span class="mn">Log2</span>(<span class="t">T</span> value)</td>
+            <td>Base-2 logarithm.</td>
+          </tr>
+          <tr>
+            <td><span class="t">T</span> <span class="mn">Log10</span>(<span class="t">T</span> value)</td>
+            <td>Base-10 logarithm.</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="member-group">
+        <div class="member-group-title">Trigonometry</div>
+        <table class="mt">
+          <tr>
+            <td><span class="t">T</span> <span class="mn">Sin</span>(<span class="t">T</span> value)</td>
+            <td>Sine (radians).</td>
+          </tr>
+          <tr>
+            <td><span class="t">T</span> <span class="mn">Cos</span>(<span class="t">T</span> value)</td>
+            <td>Cosine (radians).</td>
+          </tr>
+          <tr>
+            <td><span class="t">T</span> <span class="mn">Tan</span>(<span class="t">T</span> value)</td>
+            <td>Tangent (radians).</td>
+          </tr>
+          <tr>
+            <td><span class="t">T</span> <span class="mn">Asin</span>(<span class="t">T</span> value)</td>
+            <td>Arc sine, result in [-&#960;/2, &#960;/2].</td>
+          </tr>
+          <tr>
+            <td><span class="t">T</span> <span class="mn">Acos</span>(<span class="t">T</span> value)</td>
+            <td>Arc cosine, result in [0, &#960;].</td>
+          </tr>
+          <tr>
+            <td><span class="t">T</span> <span class="mn">Atan</span>(<span class="t">T</span> value)</td>
+            <td>Arc tangent, result in (-&#960;/2, &#960;/2).</td>
+          </tr>
+          <tr>
+            <td><span class="t">T</span> <span class="mn">Atan2</span>(<span class="t">T</span> y, <span class="t">T</span> x)</td>
+            <td>Two-argument arc tangent of y/x, result in (-&#960;, &#960;].</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="member-group">
+        <div class="member-group-title">Hyperbolic</div>
+        <table class="mt">
+          <tr>
+            <td><span class="t">T</span> <span class="mn">Sinh</span>(<span class="t">T</span> value)</td>
+            <td>Hyperbolic sine.</td>
+          </tr>
+          <tr>
+            <td><span class="t">T</span> <span class="mn">Cosh</span>(<span class="t">T</span> value)</td>
+            <td>Hyperbolic cosine.</td>
+          </tr>
+          <tr>
+            <td><span class="t">T</span> <span class="mn">Tanh</span>(<span class="t">T</span> value)</td>
+            <td>Hyperbolic tangent.</td>
+          </tr>
+          <tr>
+            <td><span class="t">T</span> <span class="mn">Asinh</span>(<span class="t">T</span> value)</td>
+            <td>Inverse hyperbolic sine.</td>
+          </tr>
+          <tr>
+            <td><span class="t">T</span> <span class="mn">Acosh</span>(<span class="t">T</span> value)</td>
+            <td>Inverse hyperbolic cosine.</td>
+          </tr>
+          <tr>
+            <td><span class="t">T</span> <span class="mn">Atanh</span>(<span class="t">T</span> value)</td>
+            <td>Inverse hyperbolic tangent.</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+
+    <!-- ============================================================== Math<T>.Try === -->
+    <div class="type-section" id="MathTry">
+      <div class="type-header">
+        <h2>Math&lt;T&gt;.Try</h2>
+        <span class="badge badge-static">nested static class</span>
+      </div>
+      <p class="type-desc">
+        Non-throwing versions of all <a href="#MathT">Math&lt;T&gt;</a> methods. Returns
+        <code>true</code> and sets <code>result</code> on success; returns <code>false</code> and
+        sets <code>result</code> to <code>default</code> when the operation is not supported for
+        the given type. <code>Approximately</code> uses <code>out bool result</code> since the
+        underlying method already returns <code>bool</code>.
+      </p>
+
+      <div class="member-group">
+        <div class="member-group-title">Basic</div>
+        <table class="mt">
+          <tr><td><span class="t">bool</span> <span class="mn">Abs</span>(<span class="t">T</span> value, <span class="kw">out</span> <span class="t">T</span> result)</td><td></td></tr>
+          <tr><td><span class="t">bool</span> <span class="mn">Sign</span>(<span class="t">T</span> value, <span class="kw">out</span> <span class="t">T</span> result)</td><td></td></tr>
+          <tr><td><span class="t">bool</span> <span class="mn">Min</span>(<span class="t">T</span> a, <span class="t">T</span> b, <span class="kw">out</span> <span class="t">T</span> result)</td><td></td></tr>
+          <tr><td><span class="t">bool</span> <span class="mn">Max</span>(<span class="t">T</span> a, <span class="t">T</span> b, <span class="kw">out</span> <span class="t">T</span> result)</td><td></td></tr>
+          <tr><td><span class="t">bool</span> <span class="mn">Clamp</span>(<span class="t">T</span> value, <span class="t">T</span> min, <span class="t">T</span> max, <span class="kw">out</span> <span class="t">T</span> result)</td><td></td></tr>
+          <tr><td><span class="t">bool</span> <span class="mn">Clamp01</span>(<span class="t">T</span> value, <span class="kw">out</span> <span class="t">T</span> result)</td><td></td></tr>
+          <tr><td><span class="t">bool</span> <span class="mn">Approximately</span>(<span class="t">T</span> a, <span class="t">T</span> b, <span class="kw">out</span> <span class="t">bool</span> result)</td><td></td></tr>
+        </table>
+      </div>
+
+      <div class="member-group">
+        <div class="member-group-title">Interpolation</div>
+        <table class="mt">
+          <tr><td><span class="t">bool</span> <span class="mn">Lerp</span>(<span class="t">T</span> a, <span class="t">T</span> b, <span class="t">T</span> t, <span class="kw">out</span> <span class="t">T</span> result)</td><td></td></tr>
+          <tr><td><span class="t">bool</span> <span class="mn">LerpUnclamped</span>(<span class="t">T</span> a, <span class="t">T</span> b, <span class="t">T</span> t, <span class="kw">out</span> <span class="t">T</span> result)</td><td></td></tr>
+          <tr><td><span class="t">bool</span> <span class="mn">InverseLerp</span>(<span class="t">T</span> a, <span class="t">T</span> b, <span class="t">T</span> value, <span class="kw">out</span> <span class="t">T</span> result)</td><td></td></tr>
+          <tr><td><span class="t">bool</span> <span class="mn">LerpAngle</span>(<span class="t">T</span> a, <span class="t">T</span> b, <span class="t">T</span> t, <span class="kw">out</span> <span class="t">T</span> result)</td><td></td></tr>
+          <tr><td><span class="t">bool</span> <span class="mn">MoveTowards</span>(<span class="t">T</span> current, <span class="t">T</span> target, <span class="t">T</span> maxDelta, <span class="kw">out</span> <span class="t">T</span> result)</td><td></td></tr>
+          <tr><td><span class="t">bool</span> <span class="mn">MoveTowardsAngle</span>(<span class="t">T</span> current, <span class="t">T</span> target, <span class="t">T</span> maxDelta, <span class="kw">out</span> <span class="t">T</span> result)</td><td></td></tr>
+          <tr><td><span class="t">bool</span> <span class="mn">SmoothStep</span>(<span class="t">T</span> from, <span class="t">T</span> to, <span class="t">T</span> t, <span class="kw">out</span> <span class="t">T</span> result)</td><td></td></tr>
+        </table>
+      </div>
+
+      <div class="member-group">
+        <div class="member-group-title">Periodic</div>
+        <table class="mt">
+          <tr><td><span class="t">bool</span> <span class="mn">Repeat</span>(<span class="t">T</span> t, <span class="t">T</span> length, <span class="kw">out</span> <span class="t">T</span> result)</td><td></td></tr>
+          <tr><td><span class="t">bool</span> <span class="mn">PingPong</span>(<span class="t">T</span> t, <span class="t">T</span> length, <span class="kw">out</span> <span class="t">T</span> result)</td><td></td></tr>
+          <tr><td><span class="t">bool</span> <span class="mn">DeltaAngle</span>(<span class="t">T</span> current, <span class="t">T</span> target, <span class="kw">out</span> <span class="t">T</span> result)</td><td></td></tr>
+        </table>
+      </div>
+
+      <div class="member-group">
+        <div class="member-group-title">Rounding</div>
+        <table class="mt">
+          <tr><td><span class="t">bool</span> <span class="mn">Floor</span>(<span class="t">T</span> value, <span class="kw">out</span> <span class="t">T</span> result)</td><td></td></tr>
+          <tr><td><span class="t">bool</span> <span class="mn">Ceiling</span>(<span class="t">T</span> value, <span class="kw">out</span> <span class="t">T</span> result)</td><td></td></tr>
+          <tr><td><span class="t">bool</span> <span class="mn">Ceil</span>(<span class="t">T</span> value, <span class="kw">out</span> <span class="t">T</span> result)</td><td></td></tr>
+          <tr><td><span class="t">bool</span> <span class="mn">Round</span>(<span class="t">T</span> value, <span class="kw">out</span> <span class="t">T</span> result)</td><td></td></tr>
+          <tr><td><span class="t">bool</span> <span class="mn">Truncate</span>(<span class="t">T</span> value, <span class="kw">out</span> <span class="t">T</span> result)</td><td></td></tr>
+        </table>
+      </div>
+
+      <div class="member-group">
+        <div class="member-group-title">Powers &amp; Roots</div>
+        <table class="mt">
+          <tr><td><span class="t">bool</span> <span class="mn">Sqrt</span>(<span class="t">T</span> value, <span class="kw">out</span> <span class="t">T</span> result)</td><td></td></tr>
+          <tr><td><span class="t">bool</span> <span class="mn">Cbrt</span>(<span class="t">T</span> value, <span class="kw">out</span> <span class="t">T</span> result)</td><td></td></tr>
+          <tr><td><span class="t">bool</span> <span class="mn">Pow</span>(<span class="t">T</span> value, <span class="t">T</span> power, <span class="kw">out</span> <span class="t">T</span> result)</td><td></td></tr>
+          <tr><td><span class="t">bool</span> <span class="mn">Exp</span>(<span class="t">T</span> value, <span class="kw">out</span> <span class="t">T</span> result)</td><td></td></tr>
+        </table>
+      </div>
+
+      <div class="member-group">
+        <div class="member-group-title">Logarithms</div>
+        <table class="mt">
+          <tr><td><span class="t">bool</span> <span class="mn">Log</span>(<span class="t">T</span> value, <span class="kw">out</span> <span class="t">T</span> result)</td><td></td></tr>
+          <tr><td><span class="t">bool</span> <span class="mn">Log</span>(<span class="t">T</span> value, <span class="t">T</span> newBase, <span class="kw">out</span> <span class="t">T</span> result)</td><td></td></tr>
+          <tr><td><span class="t">bool</span> <span class="mn">Log2</span>(<span class="t">T</span> value, <span class="kw">out</span> <span class="t">T</span> result)</td><td></td></tr>
+          <tr><td><span class="t">bool</span> <span class="mn">Log10</span>(<span class="t">T</span> value, <span class="kw">out</span> <span class="t">T</span> result)</td><td></td></tr>
+        </table>
+      </div>
+
+      <div class="member-group">
+        <div class="member-group-title">Trigonometry</div>
+        <table class="mt">
+          <tr><td><span class="t">bool</span> <span class="mn">Sin</span>(<span class="t">T</span> value, <span class="kw">out</span> <span class="t">T</span> result)</td><td></td></tr>
+          <tr><td><span class="t">bool</span> <span class="mn">Cos</span>(<span class="t">T</span> value, <span class="kw">out</span> <span class="t">T</span> result)</td><td></td></tr>
+          <tr><td><span class="t">bool</span> <span class="mn">Tan</span>(<span class="t">T</span> value, <span class="kw">out</span> <span class="t">T</span> result)</td><td></td></tr>
+          <tr><td><span class="t">bool</span> <span class="mn">Asin</span>(<span class="t">T</span> value, <span class="kw">out</span> <span class="t">T</span> result)</td><td></td></tr>
+          <tr><td><span class="t">bool</span> <span class="mn">Acos</span>(<span class="t">T</span> value, <span class="kw">out</span> <span class="t">T</span> result)</td><td></td></tr>
+          <tr><td><span class="t">bool</span> <span class="mn">Atan</span>(<span class="t">T</span> value, <span class="kw">out</span> <span class="t">T</span> result)</td><td></td></tr>
+          <tr><td><span class="t">bool</span> <span class="mn">Atan2</span>(<span class="t">T</span> y, <span class="t">T</span> x, <span class="kw">out</span> <span class="t">T</span> result)</td><td></td></tr>
+        </table>
+      </div>
+
+      <div class="member-group">
+        <div class="member-group-title">Hyperbolic</div>
+        <table class="mt">
+          <tr><td><span class="t">bool</span> <span class="mn">Sinh</span>(<span class="t">T</span> value, <span class="kw">out</span> <span class="t">T</span> result)</td><td></td></tr>
+          <tr><td><span class="t">bool</span> <span class="mn">Cosh</span>(<span class="t">T</span> value, <span class="kw">out</span> <span class="t">T</span> result)</td><td></td></tr>
+          <tr><td><span class="t">bool</span> <span class="mn">Tanh</span>(<span class="t">T</span> value, <span class="kw">out</span> <span class="t">T</span> result)</td><td></td></tr>
+          <tr><td><span class="t">bool</span> <span class="mn">Asinh</span>(<span class="t">T</span> value, <span class="kw">out</span> <span class="t">T</span> result)</td><td></td></tr>
+          <tr><td><span class="t">bool</span> <span class="mn">Acosh</span>(<span class="t">T</span> value, <span class="kw">out</span> <span class="t">T</span> result)</td><td></td></tr>
+          <tr><td><span class="t">bool</span> <span class="mn">Atanh</span>(<span class="t">T</span> value, <span class="kw">out</span> <span class="t">T</span> result)</td><td></td></tr>
         </table>
       </div>
     </div>
