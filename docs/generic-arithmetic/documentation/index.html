@@ -26,6 +26,7 @@
     <a href="#calc-unary"        class="indent">Unary Operations</a>
     <a href="#calc-comparisons"  class="indent">Comparisons</a>
     <a href="#calc-try"          class="indent">Try Methods</a>
+    <a href="#math">Math&lt;T&gt;</a>
     <a href="#source-gen">Source Generator</a>
     <a href="#manual">Manual Computators</a>
     <a href="#manual-tool"       class="indent">Using the Creator Tool</a>
@@ -194,6 +195,41 @@
 
 <span class="kw">if</span> (<span class="ty">Evaluate</span>.Try.GreaterThan&lt;<span class="ty">MyType</span>, <span class="ty">MyType</span>&gt;(x, y, <span class="kw">out</span> <span class="kw">bool</span> gt))
     Debug.Log(gt);</code></pre>
+    </section>
+
+
+    <!-- ══════════════════════════════════════ Math<T> ════ -->
+    <section id="math">
+      <h2>Math&lt;T&gt;</h2>
+      <p>
+        <code>Math&lt;T&gt;</code> is a static utility class that provides generic equivalents of
+        <code>UnityEngine.Mathf</code> and <code>System.Math</code>, built entirely on
+        <code>Calculate&lt;T&gt;</code> and <code>Evaluate</code>. It works with any numeric
+        type <code>T</code> that supports the necessary operators.
+      </p>
+      <p>
+        Typed constants are exposed as <code>static readonly</code> fields, computed once per
+        closed type (e.g. <code>Math&lt;float&gt;</code>) and cached:
+        <code>Zero</code>, <code>One</code>, <code>PI</code>, <code>E</code>,
+        <code>Deg2Rad</code>, <code>Rad2Deg</code>.
+      </p>
+      <pre><code><span class="kw">float</span> clamped = <span class="ty">Math</span>&lt;<span class="kw">float</span>&gt;.Clamp(value, <span class="nu">0f</span>, <span class="nu">1f</span>);
+<span class="kw">float</span> angle   = <span class="ty">Math</span>&lt;<span class="kw">float</span>&gt;.DeltaAngle(current, target);
+<span class="kw">float</span> s       = <span class="ty">Math</span>&lt;<span class="kw">float</span>&gt;.Sin(<span class="ty">Math</span>&lt;<span class="kw">float</span>&gt;.PI / <span class="nu">6f</span>);</code></pre>
+      <p>
+        A nested <code>Math&lt;T&gt;.Try</code> class mirrors every method with a non-throwing
+        version, following the same pattern as <code>Calculate&lt;T&gt;.Try</code>:
+      </p>
+      <pre><code><span class="kw">if</span> (<span class="ty">Math</span>&lt;<span class="kw">float</span>&gt;.Try.Sqrt(value, <span class="kw">out float</span> root))
+    Debug.Log(root);</code></pre>
+      <div class="note">
+        Methods that require transcendental math (rounding, trig, powers, logarithms) cast
+        through <code>double</code> internally. All other methods
+        (<code>Abs</code>, <code>Sign</code>, <code>Min</code>, <code>Max</code>,
+        <code>Clamp</code>, <code>Lerp</code>, <code>Repeat</code>, etc.) stay entirely
+        within generic arithmetic. See the <a href="/generic-arithmetic/public-api/">Public API</a> for
+        the full method list.
+      </div>
     </section>
 
 
@@ -385,6 +421,8 @@
         <li><strong>Computable&lt;T&gt;</strong> - implicit conversions, <code>From</code>/<code>To</code> casting, <code>Equals</code> override (against another <code>Computable&lt;T&gt;</code>, a bare <code>T</code>, <code>null</code>, and an unrelated type), <code>ToString</code>/<code>GetHashCode</code> delegation, and operator wiring.</li>
         <li><strong>Calculate&lt;T&gt;.Try</strong> - returns <code>true</code> with the correct result for valid operations, returns <code>false</code> without throwing for invalid ones, and correctly returns <code>true</code> with <code>PositiveInfinity</code> for float division by zero.</li>
         <li><strong>Evaluate.Try</strong> - same contract as above for comparison operations.</li>
+        <li><strong>Math&lt;T&gt;</strong> - constants, basic operations (Abs, Sign, Min, Max, Clamp, Approximately), interpolation (Lerp, MoveTowards, SmoothStep, etc.), periodic (Repeat, PingPong, DeltaAngle), rounding, powers, logarithms, and trigonometry including hyperbolic functions. Each method is tested against known float values.</li>
+        <li><strong>Math&lt;T&gt;.Try</strong> - returns <code>true</code> and the correct result for valid operations, returns <code>false</code> without throwing for unsupported types, and correctly uses <code>out bool result</code> for <code>Approximately</code>.</li>
       </ul>
 
       <h3>Bulk Tests</h3>
