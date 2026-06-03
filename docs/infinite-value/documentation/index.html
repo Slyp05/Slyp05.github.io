@@ -163,24 +163,18 @@ Debug.Log(iv.ToDebugString());
       <h4>Division looks like zero</h4>
       <p>
         <strong>InfVal</strong> precision determines how many decimal places a division
-        result can hold. Integer types now default to their type's maximum digit count
-        (e.g. 10 for <code>int</code>), so most divisions work as expected. The zero-result
-        issue typically appears when constructing from a <code>BigInteger</code> without
-        specifying precision, since the precision then equals the digit count of the value.
+        result can hold. If the precision is too low, the result rounds to zero.
       </p>
-      <pre><code><span class="cm">// BigInteger.One has 1 digit: no room for the decimal result</span>
-Debug.Log(<span class="kw">new</span> <span class="ty">InfVal</span>(BigInteger.One) / <span class="kw">new</span> <span class="ty">InfVal</span>(3));  <span class="cm">// 0</span>
+      <pre><code><span class="cm">// "1" has 1 digit of precision: no room for the decimal result</span>
+Debug.Log(<span class="kw">new</span> <span class="ty">InfVal</span>(<span class="st">"1"</span>) / <span class="kw">new</span> <span class="ty">InfVal</span>(3));        <span class="cm">// 0</span>
 
-<span class="cm">// int defaults to precision 10: result fits</span>
-Debug.Log(<span class="kw">new</span> <span class="ty">InfVal</span>(1) / <span class="kw">new</span> <span class="ty">InfVal</span>(3));               <span class="cm">// 0.333333333</span>
-
-<span class="cm">// Explicit precision gives exact control</span>
-Debug.Log(<span class="kw">new</span> <span class="ty">InfVal</span>(1, 3) / <span class="kw">new</span> <span class="ty">InfVal</span>(3));            <span class="cm">// 0.33</span></code></pre>
+<span class="cm">// Specify precision explicitly to get the expected result</span>
+Debug.Log(<span class="kw">new</span> <span class="ty">InfVal</span>(<span class="st">"1"</span>, 9) / <span class="kw">new</span> <span class="ty">InfVal</span>(3));     <span class="cm">// 0.333333333</span></code></pre>
       <p>
         Arithmetic returns an <strong>InfVal</strong> with the precision of the
-        higher-precision operand. Floats default to 9 significant digits, doubles to 17,
-        decimals to 29. Integer types default to the maximum digit count for the type
-        (e.g. 10 for <code>int</code>, 19 for <code>long</code>).
+        higher-precision operand. All types default to their maximum digit count
+        (e.g. 9 for <code>float</code>, 17 for <code>double</code>, 29 for <code>decimal</code>,
+        10 for <code>int</code>, 19 for <code>long</code>, etc.).
       </p>
 
       <h4>Methods seem to have no effect</h4>
