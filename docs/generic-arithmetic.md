@@ -49,8 +49,8 @@ Unity 6.0 or later
 New Features:
 - **Source generator**: add `[assembly: GenerateComputators(typeof(T))]` to any script to generate all four computator classes at compile time, with no runtime reflection or expression compilation. AOT/IL2CPP-safe. A three-type form is also available for cross-type operations.
 - **Create Manual Computator Script**: new editor window under `Tools > Generic Arithmetic > Create Manual Computator Script`. Enter a type name, pick an output folder, and click Create; the file opens automatically.
-- Added unit tests covering `Computable<T>`, `Calculate<T>.Try`, and `Evaluate.Try`.
 - **`Math<T>` utility class**: generic equivalents of `Mathf` and `System.Math`, built on `Calculate<T>` and `Evaluate`. Includes typed constants (`Zero`, `One`, `PI`, `E`, `Deg2Rad`, `Rad2Deg`) and methods spanning basic math (`Abs`, `Sign`, `Min`, `Max`, `Clamp`, `Approximately`), interpolation (`Lerp`, `LerpUnclamped`, `InverseLerp`, `LerpAngle`, `MoveTowards`, `MoveTowardsAngle`, `SmoothStep`), periodic utilities (`Repeat`, `PingPong`, `DeltaAngle`), rounding (`Floor`, `Ceiling`, `Round`, `Truncate`), powers and roots (`Sqrt`, `Cbrt`, `Pow`, `Exp`), logarithms (`Log`, `Log2`, `Log10`), and trigonometry including hyperbolic functions. A nested `Math<T>.Try` class provides non-throwing versions of every method.
+- Added unit tests covering `Computable<T>`, `Calculate<T>.Try`, `Evaluate.Try`, `Math<T>`, and `Math<T>.Try`.
 
 Breaking Changes:
 - The four computator base classes have been renamed for consistency: `DuoCalculator` → `UnaryCalculator`, `TrioCalculator` → `BinaryCalculator`, `DuoEvaluator` → `BinaryEvaluator`, `SoloEvaluator` → `UnaryEvaluator`.
