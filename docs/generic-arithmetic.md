@@ -40,7 +40,7 @@ Unity 6.0 or later
 
 ## Get It
 
-<a href="https://assetstore.unity.com/packages/tools/utilities/generic-arithmetic-c-template-extension-265011" class="asset-store-btn">View on Unity Asset Store ($4.99)</a>
+<a href="https://assetstore.unity.com/packages/tools/utilities/generic-arithmetic-c-template-extension-265011" class="asset-store-btn">View on Unity Asset Store ($15.99)</a>
 
 ## Patch Notes
 
