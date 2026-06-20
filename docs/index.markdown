@@ -59,9 +59,10 @@ layout: home
 ## AI Usage
 
 <div class="about-text">
-  <p>I use <a href="https://claude.ai/code">Claude Code</a> as an AI assistant throughout development. All code and documentation is either written by me and reviewed by Claude, or drafted by Claude and reviewed and validated by me before it ships.</p>
-  <p>The public APIs are human-made: designing a clean, intentional API requires judgment that AI isn't quite there for yet. Everything else, from implementation details to documentation phrasing, is a collaborative back-and-forth where I stay in the loop at every step.</p>
-  <p>I believe in being transparent about this. AI doesn't replace the craft; it helps move faster without cutting corners.</p>
+  <p>I use <a href="https://claude.ai/code">Claude Code</a> as an AI assistant throughout development, but I have a deliberate stance on how. Three principles guide it:</p>
+  <p><strong>Against alienation.</strong> I'm wary of the current trend of using AI in a way that alienates programmers from their craft. Making tools is the opposite move: a way to stay close to the work, to keep solving real problems and building real things rather than outsourcing the thinking. AI here is in service of making stuff, not a substitute for it.</p>
+  <p><strong>Ethical by design.</strong> I see tool building as a way to make AI use more responsible. The effort is spent once, carefully and under human supervision, so that everyone who uses the tool afterwards leans on AI less themselves. One reviewed, intentional solution does the work that would otherwise take countless scattered prompts.</p>
+  <p><strong>Human-facing, human-made.</strong> The public APIs, the intended workflows, the documentation phrasing: these carry the judgment and care that decide how it actually feels to use a tool, and that responsibility stays with me. AI helps me move faster on the inside; the surface you touch is mine.</p>
 </div>
 
 ## Contact
