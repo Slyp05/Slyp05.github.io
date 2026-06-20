@@ -71,6 +71,14 @@ layout: home
   The public APIs, the intended workflows, the documentation phrasing: these carry the judgment and care that decide how it actually feels to use a tool, and that responsibility stays with me. AI helps me move faster on the inside; the surface you touch is mine.</p>
 </div>
 
+## Support
+
+<div class="about-text">
+  <p>If one of my tools helped you out, a coffee is a kind way to say thanks. No pressure at all, but it really means a lot. 🙂</p>
+</div>
+
+<a href="https://ko-fi.com/justetools" class="asset-store-btn" target="_blank" rel="noopener">Support me on Ko-fi ☕</a>
+
 ## Contact
 
 Questions or issues? Reach me at [justetools@gmail.com](mailto:justetools@gmail.com), or follow my work on the [Unity Asset Store](https://assetstore.unity.com/publishers/52427).
