@@ -2,6 +2,7 @@
 layout: page
 title: Infinite Value
 permalink: /infinite-value/
+image: /assets/images/infinite-value.png
 ---
 
 <img src="/assets/images/infinite-value.png" alt="Infinite Value" class="package-image">

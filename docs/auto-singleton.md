@@ -2,6 +2,7 @@
 layout: page
 title: Auto Singleton
 permalink: /auto-singleton/
+image: /assets/images/auto-singleton.jpg
 ---
 
 <img src="/assets/images/auto-singleton.jpg" alt="Auto Singleton" class="package-image">

@@ -2,6 +2,7 @@
 layout: page
 title: Generic Arithmetic
 permalink: /generic-arithmetic/
+image: /assets/images/generic-arithmetic.jpg
 ---
 
 <img src="/assets/images/generic-arithmetic.jpg" alt="Generic Arithmetic" class="package-image">
