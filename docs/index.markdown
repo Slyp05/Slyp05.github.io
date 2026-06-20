@@ -2,7 +2,7 @@
 layout: home
 ---
 
-<img src="/assets/images/home.jpg" alt="Juste Tools" class="home-image">
+<img src="/assets/images/home.jpg" alt="Juste Tools" class="home-image" width="1200" height="800" decoding="async">
 
 <div class="home-intro">
   <p>Juste Tools is where I make the Unity tools I always wished existed: clean APIs, solid architecture, and docs that actually help.</p>
@@ -14,7 +14,7 @@ layout: home
 <div class="package-grid">
 
   <div class="package-card">
-    <img src="/assets/images/AS.png" alt="Auto Singleton icon" class="package-card-icon">
+    <img src="/assets/images/AS.png" alt="Auto Singleton icon" class="package-card-icon" width="160" height="160" loading="lazy" decoding="async">
     <div class="package-card-content">
       <h2><a href="/auto-singleton/">Auto Singleton</a></h2>
       <div class="card-meta">
@@ -27,7 +27,7 @@ layout: home
   </div>
 
   <div class="package-card">
-    <img src="/assets/images/GA.png" alt="Generic Arithmetic icon" class="package-card-icon">
+    <img src="/assets/images/GA.png" alt="Generic Arithmetic icon" class="package-card-icon" width="160" height="160" loading="lazy" decoding="async">
     <div class="package-card-content">
       <h2><a href="/generic-arithmetic/">Generic Arithmetic</a></h2>
       <div class="card-meta">
@@ -40,7 +40,7 @@ layout: home
   </div>
 
   <div class="package-card">
-    <img src="/assets/images/IV.png" alt="Infinite Value icon" class="package-card-icon">
+    <img src="/assets/images/IV.png" alt="Infinite Value icon" class="package-card-icon" width="160" height="160" loading="lazy" decoding="async">
     <div class="package-card-content">
       <h2><a href="/infinite-value/">Infinite Value</a></h2>
       <div class="card-meta">
@@ -65,7 +65,7 @@ layout: home
     <p>Outside of work you'll usually find me at a <strong>game jam</strong>, behind a <strong>drum kit</strong>, or lost in a good <strong>sci-fi or horror story</strong>.<br>
     I believe good tools, like good games, come from people who genuinely care, and I try to bring that care to everything I publish here.</p>
   </div>
-  <img src="/assets/images/about-me.jpg" alt="Lucas Sarkadi" class="about-photo">
+  <img src="/assets/images/about-me.jpg" alt="Lucas Sarkadi" class="about-photo" width="3100" height="2878" loading="lazy" decoding="async">
 </div>
 
 ## My Stance on AI

@@ -5,6 +5,33 @@
 <link rel="apple-touch-icon" sizes="180x180" href="{{ '/assets/images/apple-touch-icon.png' | relative_url }}">
 <link rel="manifest" href="{{ '/assets/images/site.webmanifest' | relative_url }}">
 
+<!-- Structured data: SoftwareApplication (product rich results), driven by `software:` front matter -->
+{%- if page.software -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": {{ page.title | jsonify }},
+  "description": {{ page.software.description | jsonify }},
+  "applicationCategory": "DeveloperApplication",
+  "operatingSystem": "Unity 6.0 or later",
+  "image": {{ page.image | absolute_url | jsonify }},
+  "url": {{ page.url | absolute_url | jsonify }},
+  "author": {
+    "@type": "Person",
+    "name": "Lucas Sarkadi"
+  },
+  "offers": {
+    "@type": "Offer",
+    "price": {{ page.software.price | jsonify }},
+    "priceCurrency": "USD",
+    "availability": "https://schema.org/InStock",
+    "url": {{ page.software.store_url | jsonify }}
+  }
+}
+</script>
+{%- endif -%}
+
 <!-- Analytics: GoatCounter (no cookies, ignores localhost automatically) -->
 <script data-goatcounter="https://justetools.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>

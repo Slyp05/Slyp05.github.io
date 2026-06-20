@@ -3,9 +3,13 @@ layout: page
 title: Infinite Value
 permalink: /infinite-value/
 image: /assets/images/infinite-value.png
+software:
+  description: "Arbitrary-precision number type for Unity that behaves like a primitive, works in real-time, and is fully configurable. Perfect for incremental games, RPGs, and monetary systems."
+  price: "29.99"
+  store_url: https://assetstore.unity.com/packages/tools/integration/infinite-value-bigdecimal-194963
 ---
 
-<img src="/assets/images/infinite-value.png" alt="Infinite Value" class="package-image">
+<img src="/assets/images/infinite-value.png" alt="Infinite Value" class="package-image" width="1950" height="1300" decoding="async">
 
 `InfVal` is an arbitrary-precision number type for Unity.  
 It stores any integer or decimal value and behaves like a primitive: full arithmetic, comparison, and bitwise operators, implicit casts from all numeric types, and direct inspector support.  

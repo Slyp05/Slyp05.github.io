@@ -3,9 +3,13 @@ layout: page
 title: Generic Arithmetic
 permalink: /generic-arithmetic/
 image: /assets/images/generic-arithmetic.jpg
+software:
+  description: "Arithmetic and comparison operations in generic C# classes for Unity. Works with any value type, with a Roslyn source generator for AOT-safe custom types."
+  price: "0"
+  store_url: https://assetstore.unity.com/packages/tools/utilities/generic-arithmetic-c-template-extension-265011
 ---
 
-<img src="/assets/images/generic-arithmetic.jpg" alt="Generic Arithmetic" class="package-image">
+<img src="/assets/images/generic-arithmetic.jpg" alt="Generic Arithmetic" class="package-image" width="1950" height="1300" decoding="async">
 
 Arithmetic and comparison operations in generic C# classes. Works with any numeric or operator-enabled type, with no additional setup required.  
 Built-in computators cover all Unity numeric and vector types; a Roslyn source generator adds AOT-safe support for custom types.
