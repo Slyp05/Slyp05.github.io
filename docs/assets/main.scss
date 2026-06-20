@@ -73,6 +73,12 @@
   flex-direction: row;
   gap: 1.2rem;
   align-items: center;
+
+  @media (max-width: 480px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
 }
 
 .package-card-icon {
@@ -123,6 +129,20 @@
 .badge-free {
   background: #edfaf1;
   color: #057a55;
+}
+
+.card-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.75rem;
+
+  .badge { margin-bottom: 0; }
+}
+
+.card-updated {
+  color: #888;
+  font-size: 0.78em;
 }
 
 .card-link {
@@ -179,6 +199,7 @@
     flex-direction: column;
     align-items: center;
 
+    .about-photo { order: -1; }
     .about-text { text-align: center; }
   }
 }
@@ -213,4 +234,28 @@
   font-size: 0.9em;
 
   a { font-weight: 600; }
+}
+
+.notfound {
+  text-align: center;
+  padding: 3rem 1rem 4rem;
+
+  .notfound-code {
+    font-size: 6rem;
+    font-weight: 800;
+    line-height: 1;
+    color: #1e1e2e;
+    letter-spacing: -2px;
+  }
+
+  .notfound-title {
+    font-size: 1.6em;
+    margin: 0.5rem 0 0.75rem;
+    color: #1e1e2e;
+  }
+
+  .notfound-text {
+    color: #666;
+    margin-bottom: 1.5rem;
+  }
 }

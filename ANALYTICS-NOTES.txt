@@ -1,0 +1,22 @@
+GoatCounter analytics
+=====================
+
+Set up: June 2026
+
+Dashboard: https://justetools.goatcounter.com
+(log in there to see visitor stats)
+
+Tracking snippet lives in:
+  - docs/_includes/custom-head.html      (covers all Jekyll pages)
+  - docs/*/documentation/index.html      (3 standalone doc pages)
+  - docs/*/public-api/index.html         (3 standalone API pages)
+If you add new standalone HTML pages, paste the snippet into their <head> too.
+
+Good to know:
+  - No cookies, no consent banner needed (EU/France friendly).
+  - localhost is ignored automatically, so local testing won't pollute stats.
+
+TODO / reminder:
+  - GoatCounter is free for personal use but asks COMMERCIAL sites to pay
+    (pay-what-you-want, ~5-15 EUR/mo, honor system). Since the site sells an
+    asset, consider donating: https://www.goatcounter.com/contribute

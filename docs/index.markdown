@@ -17,7 +17,10 @@ layout: home
     <img src="/assets/images/AS.png" alt="Auto Singleton icon" class="package-card-icon">
     <div class="package-card-content">
       <h2><a href="/auto-singleton/">Auto Singleton</a></h2>
-      <span class="badge badge-free">Free</span>
+      <div class="card-meta">
+        <span class="badge badge-free">Free</span>
+        <span class="card-updated">Updated June 2026</span>
+      </div>
       <p>Add <code>[Singleton]</code> to any class and the asset handles everything: asset generation, cleanup, polymorphic access, and inspector integration.</p>
       <a href="/auto-singleton/" class="card-link">Learn more →</a>
     </div>
@@ -27,7 +30,10 @@ layout: home
     <img src="/assets/images/GA.png" alt="Generic Arithmetic icon" class="package-card-icon">
     <div class="package-card-content">
       <h2><a href="/generic-arithmetic/">Generic Arithmetic</a></h2>
-      <span class="badge badge-free">Free</span>
+      <div class="card-meta">
+        <span class="badge badge-free">Free</span>
+        <span class="card-updated">Updated June 2026</span>
+      </div>
       <p>Arithmetic and comparison operations in generic C# classes. Works with any value type, no setup required; supports source generation for AOT-safe custom types.</p>
       <a href="/generic-arithmetic/" class="card-link">Learn more →</a>
     </div>
@@ -37,7 +43,10 @@ layout: home
     <img src="/assets/images/IV.png" alt="Infinite Value icon" class="package-card-icon">
     <div class="package-card-content">
       <h2><a href="/infinite-value/">Infinite Value</a></h2>
-      <span class="badge badge-paid">$29.99</span>
+      <div class="card-meta">
+        <span class="badge badge-paid">$29.99</span>
+        <span class="card-updated">Updated June 2026</span>
+      </div>
       <p>Numbers of any size and precision in Unity. Behaves like a primitive type, works in real-time, and is fully configurable. Perfect for incremental games, RPGs, and monetary systems.</p>
       <a href="/infinite-value/" class="card-link">Learn more →</a>
     </div>
