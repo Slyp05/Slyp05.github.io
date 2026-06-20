@@ -14,12 +14,12 @@ layout: home
 <div class="package-grid">
 
   <div class="package-card">
-    <img src="/assets/images/IV.png" alt="Infinite Value icon" class="package-card-icon">
+    <img src="/assets/images/AS.png" alt="Auto Singleton icon" class="package-card-icon">
     <div class="package-card-content">
-      <h2><a href="/infinite-value/">Infinite Value</a></h2>
-      <span class="badge badge-paid">$29.99</span>
-      <p>Numbers of any size and precision in Unity. Behaves like a primitive type, works in real-time, and is fully configurable. Perfect for incremental games, RPGs, and monetary systems.</p>
-      <a href="/infinite-value/" class="card-link">Learn more →</a>
+      <h2><a href="/auto-singleton/">Auto Singleton</a></h2>
+      <span class="badge badge-free">Free</span>
+      <p>Add <code>[Singleton]</code> to any class and the asset handles everything: asset generation, cleanup, polymorphic access, and inspector integration.</p>
+      <a href="/auto-singleton/" class="card-link">Learn more →</a>
     </div>
   </div>
 
@@ -34,12 +34,12 @@ layout: home
   </div>
 
   <div class="package-card">
-    <img src="/assets/images/AS.png" alt="Auto Singleton icon" class="package-card-icon">
+    <img src="/assets/images/IV.png" alt="Infinite Value icon" class="package-card-icon">
     <div class="package-card-content">
-      <h2><a href="/auto-singleton/">Auto Singleton</a></h2>
-      <span class="badge badge-free">Free</span>
-      <p>Add <code>[Singleton]</code> to any class and the asset handles everything: asset generation, cleanup, polymorphic access, and inspector integration.</p>
-      <a href="/auto-singleton/" class="card-link">Learn more →</a>
+      <h2><a href="/infinite-value/">Infinite Value</a></h2>
+      <span class="badge badge-paid">$29.99</span>
+      <p>Numbers of any size and precision in Unity. Behaves like a primitive type, works in real-time, and is fully configurable. Perfect for incremental games, RPGs, and monetary systems.</p>
+      <a href="/infinite-value/" class="card-link">Learn more →</a>
     </div>
   </div>
 
@@ -59,7 +59,7 @@ layout: home
   <img src="/assets/images/about-me.jpg" alt="Lucas Sarkadi" class="about-photo">
 </div>
 
-## AI Usage
+## My Stance on AI
 
 <div class="about-text">
   <p>I use <a href="https://claude.ai/code">Claude Code</a> as an AI assistant throughout development, but I have a deliberate stance on how. Three principles guide it:</p>
@@ -73,4 +73,4 @@ layout: home
 
 ## Contact
 
-Questions or issues? Reach me at [justetools@gmail.com](mailto:justetools@gmail.com)
+Questions or issues? Reach me at [justetools@gmail.com](mailto:justetools@gmail.com), or follow my work on the [Unity Asset Store](https://assetstore.unity.com/publishers/52427).

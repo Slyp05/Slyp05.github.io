@@ -32,9 +32,9 @@ plugins:
   - jekyll-feed
 
 header_pages:
-  - infinite-value.md
-  - generic-arithmetic.md
   - auto-singleton.md
+  - generic-arithmetic.md
+  - infinite-value.md
 
 # Exclude from processing.
 # The following items will not be processed, by default.
