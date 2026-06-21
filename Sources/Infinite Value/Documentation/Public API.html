@@ -124,11 +124,11 @@
           </tr>
           <tr>
             <td><span class="t">InfVal</span> <span class="mn">Parse</span>(<span class="t">string</span> str)</td>
-            <td>Parse using the default formatter. Throws <code>FormatException</code> if invalid.</td>
+            <td>Parse using the default formatter. <span class="ex">Throws FormatException if invalid, or InvalidOperationException if no default formatter is configured.</span></td>
           </tr>
           <tr>
             <td><span class="t">InfVal</span> <span class="mn">Parse</span>(<span class="t">string</span> str, <span class="t">IInfValFormatter</span> formatter)</td>
-            <td>Parse using a specific formatter (null falls back to the Configuration default). Throws <code>FormatException</code> if invalid.</td>
+            <td>Parse using a specific formatter (null falls back to the Configuration default). <span class="ex">Throws FormatException if invalid, or InvalidOperationException if formatter is null and no default is configured.</span></td>
           </tr>
           <tr>
             <td><span class="t">bool</span> <span class="mn">TryParse</span>(<span class="t">string</span> str, <span class="kw">out</span> <span class="t">InfVal</span> result)</td>
@@ -198,7 +198,7 @@
           </tr>
           <tr>
             <td><span class="t">InfVal</span> <span class="mn">ToPrecision</span>(<span class="t">int</span> precision)</td>
-            <td>Return with a different precision by adjusting the exponent. Throws <code>ArgumentException</code> if precision &le; 0.</td>
+            <td>Return with a different precision by adjusting the exponent. <span class="ex">Throws ArgumentException if precision &le; 0.</span></td>
           </tr>
           <tr>
             <td><span class="t">InfVal</span> <span class="mn">RemoveTrailingZeros</span>()</td>
@@ -246,7 +246,7 @@
           </tr>
           <tr>
             <td><span class="t">int</span> <span class="mn">CompareTo</span>(<span class="t">object</span> obj)</td>
-            <td>Compares with any type castable to InfVal. Throws <code>ArgumentException</code> for incompatible types.</td>
+            <td>Compares with any type castable to InfVal. <span class="ex">Throws ArgumentException for incompatible types.</span></td>
           </tr>
         </table>
       </div>
@@ -260,13 +260,13 @@
           <tr><td><span class="mn">a</span> + <span class="mn">b</span></td><td>Addition. Result precision = max(a.precision, b.precision).</td></tr>
           <tr><td><span class="mn">a</span> - <span class="mn">b</span></td><td>Subtraction. Result precision = max(a.precision, b.precision).</td></tr>
           <tr><td><span class="mn">a</span> * <span class="mn">b</span></td><td>Multiplication. Result precision = max(a.precision, b.precision).</td></tr>
-          <tr><td><span class="mn">a</span> / <span class="mn">b</span></td><td>Division. Throws <code>DivideByZeroException</code> if b is zero.</td></tr>
-          <tr><td><span class="mn">a</span> % <span class="mn">b</span></td><td>Modulo. Throws <code>DivideByZeroException</code> if b is zero.</td></tr>
+          <tr><td><span class="mn">a</span> / <span class="mn">b</span></td><td>Division. <span class="ex">Throws DivideByZeroException if b is zero.</span></td></tr>
+          <tr><td><span class="mn">a</span> % <span class="mn">b</span></td><td>Modulo. <span class="ex">Throws DivideByZeroException if b is zero.</span></td></tr>
         </table>
       </div>
       <div class="member-group">
         <div class="member-group-title">Operators — Bitwise</div>
-        <div class="note">Bitwise operators require exponent == 0. Throws <code>InvalidOperationException</code> otherwise.</div>
+        <div class="note">Bitwise operators require exponent == 0. <span class="ex">Throws InvalidOperationException otherwise.</span></div>
         <table class="mt">
           <tr><td>~<span class="mn">a</span></td><td>Bitwise NOT.</td></tr>
           <tr><td><span class="mn">a</span> &amp; <span class="mn">b</span></td><td>Bitwise AND.</td></tr>
@@ -312,8 +312,8 @@
         <div class="member-group-title">Explicit Casts — from InfVal</div>
         <table class="mt">
           <tr><td>(<span class="t">BigInteger</span>)<span class="mn">iv</span></td><td>Truncates to integer part (ToExponent(0).digits).</td></tr>
-          <tr><td>(<span class="t">sbyte</span>) (<span class="t">byte</span>) (<span class="t">short</span>) (<span class="t">ushort</span>)<br/>(<span class="t">int</span>) (<span class="t">uint</span>) (<span class="t">long</span>) (<span class="t">ulong</span>)</td><td>Cast through BigInteger; may overflow.</td></tr>
-          <tr><td>(<span class="t">float</span>) (<span class="t">double</span>) (<span class="t">decimal</span>)</td><td>Convert via string representation; throws OverflowException on overflow.</td></tr>
+          <tr><td>(<span class="t">sbyte</span>) (<span class="t">byte</span>) (<span class="t">short</span>) (<span class="t">ushort</span>)<br/>(<span class="t">int</span>) (<span class="t">uint</span>) (<span class="t">long</span>) (<span class="t">ulong</span>)</td><td>Cast through BigInteger. <span class="ex">Throws OverflowException on overflow.</span></td></tr>
+          <tr><td>(<span class="t">float</span>) (<span class="t">double</span>) (<span class="t">decimal</span>)</td><td>Convert via string representation. <span class="ex">Throws OverflowException on overflow.</span></td></tr>
         </table>
       </div>
     </div>
@@ -513,7 +513,7 @@
           </tr>
           <tr>
             <td><span class="t">InfVal</span> <span class="mn">Parse</span>(<span class="t">string</span> text, <span class="t">string[]</span> unitsList, <span class="t">string</span> decimalPoint, <span class="t">string</span> groupSeparator, <span class="t">string[]</span> exponentMarkers, <span class="t">int</span> unitStep = 3)</td>
-            <td>Parse a string. Throws <code>FormatException</code> on failure.</td>
+            <td>Parse a string. <span class="ex">Throws FormatException on failure.</span></td>
           </tr>
           <tr>
             <td><span class="t">bool</span> <span class="mn">IsValidPartialInput</span>(<span class="t">string</span> text, <span class="t">string[]</span> unitsList, <span class="t">string</span> decimalPoint, <span class="t">string</span> groupSeparator, <span class="t">string[]</span> exponentMarkers, <span class="t">int</span> unitStep = 3)</td>
