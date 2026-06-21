@@ -51,6 +51,20 @@ Unity 6.0 or later
 
 ## Patch Notes
 
+**v2.1.0** (June 21, 2026)
+
+Breaking Changes:
+- Casting an `InfVal` to `float`, `double`, or `decimal` now throws when the value is too big to fit, instead of silently returning 0. Values that fit are unaffected.
+
+Bug Fixes:
+- Fixed `Sqrt` returning wrong results for some values.
+- Improved `NthRoot`: more accurate, much faster, and now handles roots of negative numbers correctly.
+- Equal values (like `5` and `5.0`) now work reliably as `Dictionary` and `HashSet` keys.
+- `ToString`, `Parse`, and `TryParse` no longer fail when given no formatter; they now use the one set in `Configuration`.
+- Saved values are no longer affected by the computer's language settings, preventing corruption when sharing a project.
+- Fixed `InfValInputField` registering its callbacks multiple times and not cleaning them up.
+- An invalid or unavailable `Culture` no longer causes an error; it falls back to a default.
+
 **v2.0.0** (June 1, 2026)
 
 New Features:
