@@ -88,6 +88,10 @@ layout: home
 
 <a href="https://ko-fi.com/justetools" class="asset-store-btn" target="_blank" rel="noopener">Support me on Ko-fi ☕</a>
 
+<div class="about-text">
+  <p><br>Leaving a review on the Asset Store helps too, even a critical one: it tells me what to improve and helps others find the tools. 🙂</p>
+</div>
+
 ## Contact
 
 Questions or issues? Reach me at [justetools@gmail.com](mailto:justetools@gmail.com), or follow my work on the [Unity Asset Store](https://assetstore.unity.com/publishers/52427).
