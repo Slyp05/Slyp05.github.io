@@ -44,8 +44,6 @@ Unity 6.0 or later
 
 <a href="https://assetstore.unity.com/packages/tools/utilities/auto-singleton-264895" class="asset-store-btn">View on Unity Asset Store (Free)</a>
 
-<p class="support-note">This one's on me. If it made your life a little easier, you're always welcome to <a href="https://ko-fi.com/justetools" target="_blank" rel="noopener">buy me a coffee</a> ☕</p>
-
 ## Patch Notes
 
 **v1.2.0** (June 1, 2026)
