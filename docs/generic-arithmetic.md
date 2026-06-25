@@ -36,7 +36,7 @@ Built-in computators cover all Unity numeric and vector types; a Roslyn source g
 
 ## Requirements
 
-Unity 6.0 or later
+Unity 6.0 or later (tested up to 6.5)
 
 ## Documentation
 

@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Persistent Asset - Core Concepts</title>
+  <link rel="stylesheet" href="/assets/css/doc-styles.css" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<div id="layout">
+
+  <nav>
+    <div class="nav-title">Persistent Asset</div>
+    <a href="../index.html">Home</a>
+    <a href="What%20is%20a%20ScriptableObject.html">What is a ScriptableObject?</a>
+    <a href="Getting%20Started.html">Getting Started</a>
+    <a href="Installation.html">Installation &amp; Demo</a>
+    <a href="Core%20Concepts.html" class="active">Core Concepts</a>
+    <a href="#parts"      class="indent">The parts</a>
+    <a href="#object"     class="indent">Persistent object</a>
+    <a href="#manager"    class="indent">Persistence manager</a>
+    <a href="#serializer" class="indent">Serializer</a>
+    <a href="#operations" class="indent">Operations</a>
+    <a href="#results"    class="indent">Results</a>
+    <a href="#ready"      class="indent">When the data is ready</a>
+    <a href="#editor"     class="indent">Editor vs play mode</a>
+    <a href="#global"     class="indent">Acting on everything</a>
+    <a href="Local%20Saving.html">Local Saving</a>
+    <a href="Cloud%20and%20Remote.html">Cloud &amp; Remote</a>
+    <a href="Guides.html">Guides</a>
+    <a href="No-Code.html">No-Code</a>
+    <a href="Settings.html">Settings</a>
+    <a href="Extending.html">Extending</a>
+    <a href="Technical%20QA.html">Technical Q&amp;A</a>
+    <a href="Roadmap.html">Roadmap</a>
+  </nav>
+
+  <main>
+    <div class="page-header">
+      <h1>Core Concepts <span class="tag tag-mustread">Must read</span></h1>
+      <div class="sub">The parts the system is made of, and how data flows through them.</div>
+    </div>
+
+    <p class="lead">
+      The model behind what you already did: the parts data flows through, and when to reach for
+      more than the simple path.
+    </p>
+
+
+    <!-- ══════════════════════════════════════ parts ════ -->
+    <section id="parts">
+      <h2>The parts</h2>
+      <p>Three pieces do the work:</p>
+      <ul>
+        <li><strong>The persistent object</strong>: your data, a <code>PersistentScriptableObject</code>.</li>
+        <li><strong>The persistence manager</strong>: where and how that data is stored (the inspector dropdown).</li>
+        <li><strong>The serializer</strong>: how the data is turned into text to store, and back.</li>
+      </ul>
+      <p>
+        Around those, three <strong>operations</strong> (load, save and clear) move data between the
+        object and its storage, mostly on their own.
+      </p>
+
+      <div class="img-block">
+        <svg class="diagram" viewBox="0 0 720 272" role="img"
+             aria-label="A pipeline of four boxes: the persistent object, the serializer, the persistence manager and storage, linked by two-way connectors. Save writes data out to storage, load reads it back, and clear empties storage.">
+          <defs>
+            <marker id="co-arr" markerWidth="9" markerHeight="9" refX="7.5" refY="4.5" orient="auto">
+              <path d="M0,0 L9,4.5 L0,9 Z" fill="#5a8dee"/>
+            </marker>
+            <marker id="co-arr-r" markerWidth="9" markerHeight="9" refX="7.5" refY="4.5" orient="auto">
+              <path d="M0,0 L9,4.5 L0,9 Z" fill="#dc2626"/>
+            </marker>
+            <marker id="co-bi" markerWidth="8" markerHeight="8" refX="6.5" refY="4" orient="auto-start-reverse">
+              <path d="M0,0 L8,4 L0,8 Z" fill="#9aa0b5"/>
+            </marker>
+          </defs>
+
+          <!-- four boxes -->
+          <g>
+            <rect x="15"  y="110" width="150" height="64" rx="9" fill="#fff" stroke="#d7d7e2"/>
+            <text x="90"  y="138" text-anchor="middle" font-size="13" font-weight="600" fill="#15803d">Persistent Object</text>
+            <text x="90"  y="157" text-anchor="middle" font-size="11" fill="#888">your data</text>
+
+            <rect x="195" y="110" width="150" height="64" rx="9" fill="#fff" stroke="#d7d7e2"/>
+            <text x="270" y="138" text-anchor="middle" font-size="13" font-weight="600" fill="#6d28d9">Serializer</text>
+            <text x="270" y="157" text-anchor="middle" font-size="11" fill="#888">data to text</text>
+
+            <rect x="375" y="110" width="150" height="64" rx="9" fill="#fff" stroke="#d7d7e2"/>
+            <text x="450" y="138" text-anchor="middle" font-size="13" font-weight="600" fill="#4338ca">Persistence Manager</text>
+            <text x="450" y="157" text-anchor="middle" font-size="11" fill="#888">where &amp; how</text>
+
+            <rect x="555" y="110" width="150" height="64" rx="9" fill="#1e1e2e" stroke="#1e1e2e"/>
+            <text x="630" y="138" text-anchor="middle" font-size="13" font-weight="600" fill="#fbbf77">Storage</text>
+            <text x="630" y="157" text-anchor="middle" font-size="11" fill="#b9b9c8">disk / cloud</text>
+          </g>
+
+          <!-- two-way connectors between boxes -->
+          <g stroke="#9aa0b5" stroke-width="1.6">
+            <line x1="169" y1="142" x2="191" y2="142" marker-start="url(#co-bi)" marker-end="url(#co-bi)"/>
+            <line x1="349" y1="142" x2="371" y2="142" marker-start="url(#co-bi)" marker-end="url(#co-bi)"/>
+            <line x1="529" y1="142" x2="551" y2="142" marker-start="url(#co-bi)" marker-end="url(#co-bi)"/>
+          </g>
+
+          <!-- save: object -> storage (top arc) -->
+          <path d="M90,110 C90,44 630,44 630,110" fill="none" stroke="#5a8dee" stroke-width="2" marker-end="url(#co-arr)"/>
+          <rect x="334" y="46" width="52" height="22" rx="11" fill="#fff" stroke="#5a8dee"/>
+          <text x="360" y="61" text-anchor="middle" font-size="12.5" font-weight="700" fill="#3457b8">save &#9654;</text>
+
+          <!-- load: storage -> object (bottom arc) -->
+          <path d="M630,174 C630,238 90,238 90,174" fill="none" stroke="#5a8dee" stroke-width="2" marker-end="url(#co-arr)"/>
+          <rect x="334" y="216" width="52" height="22" rx="11" fill="#fff" stroke="#5a8dee"/>
+          <text x="360" y="231" text-anchor="middle" font-size="12.5" font-weight="700" fill="#3457b8">&#9664; load</text>
+
+          <!-- clear: empties storage -->
+          <line x1="630" y1="240" x2="630" y2="178" stroke="#dc2626" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#co-arr-r)"/>
+          <rect x="588" y="240" width="84" height="22" rx="11" fill="#fff" stroke="#dc2626"/>
+          <text x="630" y="255" text-anchor="middle" font-size="12.5" font-weight="700" fill="#b91c1c">clear &#10005;</text>
+        </svg>
+        <div class="img-caption">The object, the serializer and the manager, connected by operations</div>
+      </div>
+    </section>
+
+
+    <!-- ══════════════════════════════════════ object ════ -->
+    <section id="object">
+      <h2>The persistent object</h2>
+      <p>
+        Your data is a class inheriting <code>PersistentScriptableObject</code>, and its serialized
+        fields are your data. You read and write them through the object at runtime, exactly like a
+        normal ScriptableObject; those same fields are what gets saved and loaded.
+      </p>
+      <pre><code>[CreateAssetMenu(menuName = <span class="st">"Player Data"</span>)]
+<span class="kw">public class</span> <span class="ty">PlayerData</span> : <span class="ty">PersistentScriptableObject</span>
+{
+    <span class="kw">public int</span> gold;
+    <span class="kw">public int</span> level = <span class="nu">1</span>;
+}</code></pre>
+      <p>
+        Whatever the fields hold <strong>outside play mode</strong> is the object's <strong>default
+        values</strong>: the state a brand-new player starts with, and what the data falls back to
+        when there is no save.
+      </p>
+      <p>
+        A persistent object is a single shared asset, so everything that references it reads and
+        writes the same live data. When you want more (multiple save slots, save versioning,
+        reacting to load and save) you opt in through one of the small
+        <a href="Guides.html">optional interfaces</a>.
+      </p>
+      <div class="note">
+        A persistent object follows Unity's normal ScriptableObject lifetime: Unity loads and unloads
+        it based on what references it, just like any other asset. Persistent Asset does not keep it
+        alive or change that flow; it simply hooks into those load and unload moments to restore and
+        save the data.
+      </div>
+    </section>
+
+
+    <!-- ══════════════════════════════════════ manager ════ -->
+    <section id="manager">
+      <h2>The persistence manager</h2>
+      <p>
+        At the top of every persistent object's inspector is a <strong>Persistence Manager</strong>
+        dropdown. The manager decides <em>where</em> and <em>how</em> the data is stored: a local file,
+        Player Prefs, memory, a server. Pick one, or pick <strong>None</strong> to opt the object out
+        of persistence entirely. The manager you pick is created automatically as a sub-asset of the
+        persistent object, you never make or wire it yourself.
+      </p>
+
+      <div class="img-block">
+        <img src="../img/manager_dropdown.png" alt="Persistence Manager dropdown"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">&#128247;</span>
+          <span><strong>img/manager_dropdown.png</strong><br/>The manager dropdown with the built-in managers listed</span>
+        </div>
+        <div class="img-caption">One object, one manager, swappable without touching code</div>
+      </div>
+
+      <p>
+        Because the manager is data on the asset and not in your scripts, you can switch managers at
+        any time without changing a line of code. Its inspector has three sections:
+      </p>
+      <ul>
+        <li><strong>Parameters</strong>: the manager's settings, the serializer, whether it loads and saves automatically, how often, timeouts, and manager-specific options.</li>
+        <li><strong>Actions</strong>: the current slot, and buttons to Load, Save or Clear by hand while you play.</li>
+        <li><strong>Status</strong>: the object's live state (ready or not, the last operation's result), and a running log of every load, save and clear as it happens.</li>
+      </ul>
+      <p>See <a href="Local%20Saving.html">Local Saving</a> for the managers you can choose.</p>
+
+      <div class="img-block">
+        <img src="../img/manager_logs.png" alt="Manager logs in the inspector"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">&#128247;</span>
+          <span><strong>img/manager_logs.png</strong><br/>The per-manager log panel during play</span>
+        </div>
+        <div class="img-caption">Each manager logs its own activity during play</div>
+      </div>
+    </section>
+
+
+    <!-- ══════════════════════════════════════ serializer ════ -->
+    <section id="serializer">
+      <h2>The serializer</h2>
+      <p>
+        Storage works in text, so the manager runs the object through a <strong>serializer</strong>
+        to turn it into a string on save, and back into the object on load. The serializer is a field
+        on the manager, so you choose it in the same inspector.
+      </p>
+      <p>
+        By default that is Unity JSON, which serializes your fields exactly the way Unity already
+        does (the same rules as the inspector and prefabs), so it just works for typical data with no
+        setup. The save it produces is plain, readable JSON when no compression or encryption is
+        applied.
+      </p>
+      <p>
+        You rarely need to think about it, but it is a real extension point: swap in your own format
+        by writing a <code>Serializer</code> (see <a href="Extending.html#serializer">Extending</a>).
+      </p>
+    </section>
+
+
+    <!-- ══════════════════════════════════════ operations ════ -->
+    <section id="operations">
+      <h2>Operations: load, save, clear</h2>
+      <p>
+        Three operations move data between the object and its storage. Most of the time you call none
+        of them. A manager is <strong>in scope</strong> while its object is loaded and active in the
+        running game, and leaves scope when the object is unloaded; by default it loads when it enters
+        scope (whenever Unity loads its object, which may be at launch or much later), retrying
+        automatically if that load fails (<code>AutoLoadRetryDelay</code>),
+        and saves at safe points (when the object is unloaded, when the
+        application loses focus or is paused, and on a regular timer).
+        This automatic behavior is what lets a basic setup need no save code, and you can tune or
+        disable it per manager (<code>AutoLoad</code>, <code>AutoSave</code>, <code>AutoLoadRetryDelay</code>, <code>RegularSaveDelay</code>).
+      </p>
+      <h3>Load</h3>
+      <p>
+        Reads the stored data back into the object. It happens automatically when the object enters
+        scope; call it yourself for a "load game" or "continue" flow. Not every manager can load synchronously: a
+        server manager has no synchronous load, so <code>LoadSync()</code> on it reports it could not
+        run rather than blocking. The manager's <code>ReadExecutionMode</code> declares what it
+        supports.
+      </p>
+
+      <h3>Save</h3>
+      <p>
+        Writes the object's current data to storage. It happens automatically at the safe points
+        above; call it yourself at your own checkpoints.
+      </p>
+      <div class="note">
+        A manager will not save until it has first loaded, or confirmed there is nothing to load.
+        This is what stops a freshly launched game from overwriting an existing save with default
+        values before it has read that save. Until the first load settles, both automatic and manual
+        saves are held; if a load fails (the storage was temporarily unavailable), saving stays held
+        so a retry can still recover the real data.
+      </div>
+
+      <h3>Clear</h3>
+      <p>
+        The destructive one: it deletes the saved data, resets the object to its defaults, and pauses
+        saving until the next load, so the just-cleared state is never written back. To reset the
+        object in memory without deleting the save, use <code>ResetToDefaults()</code> instead; to
+        capture and restore an in-memory checkpoint, use <code>Snapshot()</code> /
+        <code>Restore()</code> (see <a href="Guides.html#reset">Resetting &amp; checkpoints</a>).
+      </p>
+      <h3>Driving it yourself</h3>
+      <p>
+        Most projects never need this, the automatic behavior above is enough. When you do call an
+        operation yourself, each of Load, Save and Clear comes in five shapes so it fits any calling
+        style (shown here with Save):
+      </p>
+      <ul>
+        <li><strong>Fire and forget</strong>: <code>Save()</code>. The default "don't think about it" call, kick it off and move on. It also drops straight onto a UI event, with no wrapper script.</li>
+        <li><strong>Callback</strong>: <code>Save(result =&gt; ...)</code>. Runs your callback once the operation finishes, handing it the result.</li>
+        <li><strong>Synchronous</strong>: <code>SaveSync()</code>. Forces the operation to run inline and returns its final result, when the manager supports synchronous work.</li>
+        <li><strong>Async</strong>: <code>await SaveAsync()</code>. Await the result inside an <code>async</code> method.</li>
+        <li><strong>Coroutine</strong>: <code>yield return SaveRoutine()</code>. Yield it in a coroutine, then read its <code>Result</code>.</li>
+      </ul>
+      <pre><code><span class="ty">PersistenceManager</span> pm = playerData.PersistenceManager;
+
+pm.Save();                                  <span class="cm">// fire and forget</span>
+pm.Save(result =&gt; ShowSavedTick());         <span class="cm">// callback when done</span>
+<span class="ty">SaveResult</span> sync = pm.SaveSync();            <span class="cm">// forced synchronous, result inline</span>
+<span class="ty">SaveResult</span> res  = <span class="kw">await</span> pm.SaveAsync();     <span class="cm">// async</span>
+<span class="ty">PersistenceOperation</span>&lt;<span class="ty">SaveResult</span>&gt; op = pm.SaveRoutine();   <span class="cm">// coroutine: create the handle,</span>
+<span class="kw">yield return</span> op;                          <span class="cm">//   yield return it,</span>
+<span class="ty">SaveResult</span> routine = op.Result;            <span class="cm">//   then read its Result</span></code></pre>
+    </section>
+
+
+    <!-- ══════════════════════════════════════ results ════ -->
+    <section id="results">
+      <h2>Results</h2>
+      <p>
+        Every operation reports back a <code>Result</code> (<code>LoadResult</code>,
+        <code>SaveResult</code> or <code>ClearResult</code>). It carries a <code>Type</code>, and the
+        simplest way to read it is the intent-named flags:
+      </p>
+      <ul>
+        <li><code>IsSuccess</code>: it worked.</li>
+        <li><code>IsFailure</code>: something genuinely went wrong (the storage was temporarily unavailable, or code threw). A retry might help.</li>
+        <li><code>IsInvalid</code> (load only): the storage held nothing usable, missing or corrupt. This is the normal first run, not an error: the object keeps its current values (its authored defaults on a fresh launch, or whatever the game set in the meantime) and saving is allowed.</li>
+        <li><code>IsIgnored</code>: the operation never ran and changed nothing (not dirty, blocked, no slot selected, not loaded yet, shutting down, superseded, among others). <code>Message</code> says why.</li>
+        <li><code>IsCancelled</code>: it started but was abandoned (timed out, superseded, or the manager left scope).</li>
+        <li><code>IsBusy</code>: a special <code>IsIgnored</code> case, a synchronous call declined because async work (or a pending recovery) was already in flight. Retry once idle, or use the async path.</li>
+      </ul>
+      <p>
+        A result tells you how that one <em>operation</em> ended. To know whether the object is
+        currently holding its real data, read <code>IsReady</code>, covered next.
+      </p>
+    </section>
+
+
+    <!-- ══════════════════════════════════════ ready ════ -->
+    <section id="ready">
+      <h2>When the data is ready</h2>
+      <p>
+        Once a manager has loaded, its object holds real data and is safe to read and modify. You can
+        check that moment with <code>IsReady</code>, but how much you actually need it depends on your
+        persistence manager.
+      </p>
+      <ul>
+        <li>
+          With a <strong>synchronous manager that always succeeds instantly</strong> (Player Prefs,
+          Prototype on a normal device), the automatic load finishes before your game code runs, so
+          the data is effectively always ready. You rarely check.
+        </li>
+        <li>
+          It earns its keep when a load can genuinely <strong>fail or take time</strong>: an
+          asynchronous manager (a server, Cloud Save), or any case where you must be certain the real
+          save loaded and cannot simply proceed on default values.
+        </li>
+      </ul>
+      <p>
+        <code>IsReady</code> is <code>true</code> once the object holds its data and is safe to read
+        and save. It is <code>false</code> before the first load completes, during a slot change,
+        after a clear until the next load, and after a load that <em>failed</em> (so a save never
+        overwrites data a retry might still recover). Changing the active slot is itself a scope exit
+        and re-entry, so it triggers a fresh load and <code>IsReady</code> stays false until that load
+        lands.
+      </p>
+      <pre><code><span class="kw">if</span> (playerData.PersistenceManager.IsReady)
+    playerData.gold += <span class="nu">100</span>;</code></pre>
+      <p>
+        To wait for readiness rather than poll, await <code>WhenReady</code> (it works with both
+        <code>await</code> and <code>yield return</code>). It completes once the current readiness flow
+        has settled, then you read <code>IsReady</code> for the outcome:
+      </p>
+      <pre><code><span class="kw">await</span> playerData.PersistenceManager.WhenReady;
+<span class="kw">if</span> (playerData.PersistenceManager.IsReady)
+    StartGame(playerData);</code></pre>
+
+      <div class="img-block">
+        <svg class="diagram" viewBox="0 0 720 210" role="img"
+             aria-label="A timeline of IsReady across a session: false from scope-in until the first load lands, then true, dropping back to false during a slot change until the new load lands, then true again.">
+          <defs>
+            <marker id="ir-arr" markerWidth="8" markerHeight="8" refX="6.5" refY="4" orient="auto">
+              <path d="M0,0 L8,4 L0,8 Z" fill="#9aa0b5"/>
+            </marker>
+          </defs>
+
+          <!-- legend -->
+          <circle cx="486" cy="22" r="5" fill="#15803d"/>
+          <text x="496" y="26" font-size="12" fill="#555">ready (true)</text>
+          <circle cx="588" cy="22" r="5" fill="#dc2626"/>
+          <text x="598" y="26" font-size="12" fill="#555">not ready (false)</text>
+
+          <!-- level guides -->
+          <line x1="92" y1="66"  x2="694" y2="66"  stroke="#e3e3ec" stroke-width="1" stroke-dasharray="3 4"/>
+          <line x1="92" y1="150" x2="694" y2="150" stroke="#e3e3ec" stroke-width="1" stroke-dasharray="3 4"/>
+          <text x="84" y="70"  text-anchor="end" font-size="11" font-weight="600" fill="#15803d">true</text>
+          <text x="84" y="154" text-anchor="end" font-size="11" font-weight="600" fill="#dc2626">false</text>
+
+          <!-- timeline axis -->
+          <line x1="92" y1="170" x2="700" y2="170" stroke="#9aa0b5" stroke-width="1.4" marker-end="url(#ir-arr)"/>
+
+          <!-- event ticks -->
+          <g stroke="#c7c7d4" stroke-width="1" stroke-dasharray="3 3">
+            <line x1="120" y1="58"  x2="120" y2="170"/>
+            <line x1="250" y1="58"  x2="250" y2="170"/>
+            <line x1="470" y1="58"  x2="470" y2="170"/>
+            <line x1="545" y1="58"  x2="545" y2="170"/>
+          </g>
+
+          <!-- state line: false -> true -> false -> true -->
+          <path d="M120,150 L250,150" fill="none" stroke="#dc2626" stroke-width="3"/>
+          <path d="M250,150 L250,66 L470,66" fill="none" stroke="#15803d" stroke-width="3"/>
+          <path d="M470,66 L470,150 L545,150" fill="none" stroke="#dc2626" stroke-width="3"/>
+          <path d="M545,150 L545,66 L688,66" fill="none" stroke="#15803d" stroke-width="3"/>
+
+          <!-- transition dots -->
+          <circle cx="250" cy="150" r="4" fill="#15803d"/>
+          <circle cx="470" cy="66"  r="4" fill="#dc2626"/>
+          <circle cx="545" cy="150" r="4" fill="#15803d"/>
+
+          <!-- event labels -->
+          <text x="120" y="190" text-anchor="middle" font-size="11.5" fill="#555">scope in</text>
+          <text x="250" y="190" text-anchor="middle" font-size="11.5" fill="#555">first load lands</text>
+          <text x="470" y="190" text-anchor="middle" font-size="11.5" fill="#555">slot change</text>
+          <text x="545" y="206" text-anchor="middle" font-size="11.5" fill="#555">load lands</text>
+        </svg>
+        <div class="img-caption">When IsReady is true and false across a session</div>
+      </div>
+    </section>
+
+
+    <!-- ══════════════════════════════════════ editor ════ -->
+    <section id="editor">
+      <h2>Editor vs play mode</h2>
+      <p>
+        In the editor, when you stop playing, your persistent objects are restored to the
+        <strong>default values</strong> you authored on the asset, not the runtime values from the
+        play session.
+      </p>
+      <p>
+        This is deliberate. A ScriptableObject normally keeps runtime edits written into the asset in
+        the editor (a well-known Unity quirk that does not happen in a build). Persistent Asset undoes
+        that for you, so the defaults you set on the asset stay exactly as authored and version
+        control does not fill with play-session noise. The save itself still exists on disk and still
+        loads on the next launch, in the editor and in a build alike.
+      </p>
+      <div class="note">
+        So in the editor: press Play, change values, stop, and the <em>asset</em> shows your authored
+        defaults again, while the <em>save</em> persists. Press Play again and the save loads back.
+        That is the system working as intended, not a lost save.
+      </div>
+    </section>
+
+
+    <!-- ══════════════════════════════════════ global ════ -->
+    <section id="global">
+      <h2>Acting on everything at once</h2>
+      <p>
+        Most code talks to one object's manager through
+        <code>yourObject.PersistenceManager</code>. When you want to act on every active manager
+        together (a global save on quit, a "new game" wipe), the static <code>Persistence</code> class
+        mirrors the same operations across all of them:
+      </p>
+      <pre><code><span class="cm">// Save every active manager at once</span>
+Persistence.SaveAll();
+
+<span class="cm">// Wait for every manager's load to settle</span>
+<span class="kw">await</span> Persistence.WhenAllReady;</code></pre>
+      <p>
+        <code>Persistence</code> also exposes global events (such as <code>OnAfterAnySave</code> and
+        <code>ManagerAdded</code>) for cross-cutting concerns like a "saving..." indicator.
+      </p>
+      <p>
+        And for the objects you marked <a href="Guides.html#globals">always-global</a> (a settings
+        singleton, a slot registry), the static <code>GlobalPersistedData</code> class reaches them
+        from anywhere by type, with no serialized reference, through
+        <code>GlobalPersistedData.Find&lt;GameSettings&gt;()</code>.
+      </p>
+    </section>
+
+
+    <div class="pager">
+      <a class="prev" href="Installation.html">
+        <div class="dir">Back</div>
+        <div class="pg-title">Installation &amp; Demo</div>
+      </a>
+      <a class="next" href="Local%20Saving.html">
+        <div class="dir">Next</div>
+        <div class="pg-title">Local Saving</div>
+      </a>
+    </div>
+
+  </main>
+</div>
+</body>
+</html>

@@ -33,7 +33,7 @@ The simplest singleton tool on the Asset Store. Add the `[Singleton]` attribute 
 
 ## Requirements
 
-Unity 6.0 or later
+Unity 6.0 or later (tested up to 6.5)
 
 ## Documentation
 

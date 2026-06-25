@@ -33,6 +33,12 @@ defaults:
       path: ""
     values:
       image: /assets/images/home.jpg
+  # Persistent Asset is unreleased: keep its whole doc tree out of the sitemap.
+  # Remove this entry (and `sitemap: false` in persistent-asset.md) on release.
+  - scope:
+      path: "persistent-asset"
+    values:
+      sitemap: false
 
 # Build settings
 theme: minima

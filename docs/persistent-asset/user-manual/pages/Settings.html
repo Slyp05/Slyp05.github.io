@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Persistent Asset - Settings</title>
+  <link rel="stylesheet" href="/assets/css/doc-styles.css" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<div id="layout">
+
+  <nav>
+    <div class="nav-title">Persistent Asset</div>
+    <a href="../index.html">Home</a>
+    <a href="What%20is%20a%20ScriptableObject.html">What is a ScriptableObject?</a>
+    <a href="Getting%20Started.html">Getting Started</a>
+    <a href="Installation.html">Installation &amp; Demo</a>
+    <a href="Core%20Concepts.html">Core Concepts</a>
+    <a href="Local%20Saving.html">Local Saving</a>
+    <a href="Cloud%20and%20Remote.html">Cloud &amp; Remote</a>
+    <a href="Guides.html">Guides</a>
+    <a href="No-Code.html">No-Code</a>
+    <a href="Settings.html" class="active">Settings</a>
+    <a href="#general"   class="indent">General</a>
+    <a href="#singleton" class="indent">Singleton</a>
+    <a href="#security"  class="indent">Security</a>
+    <a href="#remote"    class="indent">Remote</a>
+    <a href="#variables" class="indent">Variables Binding</a>
+    <a href="Extending.html">Extending</a>
+    <a href="Technical%20QA.html">Technical Q&amp;A</a>
+    <a href="Roadmap.html">Roadmap</a>
+  </nav>
+
+  <main>
+    <div class="page-header">
+      <h1>Settings</h1>
+      <div class="sub">Everything under Project Settings &gt; Persistent Asset.</div>
+    </div>
+
+    <p class="lead">
+      Project-wide settings live in <strong>Edit &gt; Project Settings &gt; Persistent Asset</strong>
+      (or <strong>Tools &gt; Persistent Asset &gt; Settings</strong>), split into the sections below.
+      You should commit the settings file to your VCS.
+    </p>
+
+    <div class="img-block">
+      <img src="../img/settings_overview.png" alt="The Persistent Asset settings page"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+      <div class="img-placeholder" style="display:none">
+        <span class="icon">&#128247;</span>
+        <span><strong>img/settings_overview.png</strong><br/>Project Settings &gt; Persistent Asset, every section</span>
+      </div>
+      <div class="img-caption">Edit &gt; Project Settings &gt; Persistent Asset, all sections in one place</div>
+    </div>
+
+
+    <!-- ══════════════════════════════════════ general ════ -->
+    <section id="general">
+      <h2>General</h2>
+      <div class="member-group">
+        <table class="mt">
+          <tr><td><strong>Default Persistence Manager</strong></td><td>The manager assigned to a newly created persistent object (default: Prototype). Set it to None to create them with no manager.</td></tr>
+          <tr><td><strong>Default Serializer</strong></td><td>The serializer a new (or reset) manager starts with (default: Unity JSON).</td></tr>
+          <tr><td><strong>Max Drain Time In Editor</strong><br/><strong>Max Drain Time In Build</strong></td><td>Hard ceiling, in seconds, on the <a href="Guides.html#drain">shutdown drain</a> when leaving play mode and when quitting a build (5 each by default; 0 means no ceiling).</td></tr>
+          <tr><td><strong>Auto Lock On Build</strong></td><td>When a build automatically <a href="Guides.html#migration">locks</a> every manager's breaking fields: <code>Any Build</code>, <code>Release Build</code> (default), or <code>None</code>.</td></tr>
+          <tr><td><strong>Prompt Before Auto Lock</strong></td><td>Whether the automatic lock asks for confirmation first (off by default; a command-line build never prompts).</td></tr>
+          <tr><td><strong>Editor Default Slot</strong><br/><strong>Slot Name</strong></td><td>Editor convenience: the toggle seeds a starting <a href="Guides.html#slots">slot</a> (named in <strong>Slot Name</strong>) so a multi-slot object works when you press Play straight into a gameplay scene. Off by default, ignored in a build.</td></tr>
+        </table>
+      </div>
+    </section>
+
+
+    <!-- ══════════════════════════════════════ singleton ════ -->
+    <section id="singleton">
+      <h2>Singleton</h2>
+      <div class="member-group">
+        <table class="mt">
+          <tr><td><strong>Generation Folder</strong></td><td>Editor only: the folder where a <a href="Guides.html#globals">PersistentSingleton</a> asset is auto-created for each of its subclasses (default <code>Assets/Persistent Singletons</code>).</td></tr>
+        </table>
+      </div>
+    </section>
+
+
+    <!-- ══════════════════════════════════════ security ════ -->
+    <section id="security">
+      <h2>Security</h2>
+      <div class="member-group">
+        <table class="mt">
+          <tr><td><strong>Cheat Protection Secret</strong></td><td>The secret the encryption and integrity key is derived from (see <a href="Guides.html#security">Securing saves</a>). Generated automatically, unique to your project; changing it makes every existing protected save unreadable, so commit it and keep it identical across builds.</td></tr>
+          <tr><td><strong>Ignore Runtime Secret In Editor</strong></td><td>Editor only: lets a manager whose Lock Save To includes <code>RuntimeSecret</code> be played in the editor without the runtime secret your code provides. Builds always honor the lock.</td></tr>
+        </table>
+      </div>
+    </section>
+
+
+    <!-- ══════════════════════════════════════ remote ════ -->
+    <section id="remote">
+      <h2>Remote</h2>
+      <div class="member-group">
+        <table class="mt">
+          <tr><td><strong>Push Retry Delay</strong></td><td>Seconds between attempts to push pending <a href="Cloud%20and%20Remote.html#cache">offline-cache</a> data to the server (default 30, clamped to at least 5).</td></tr>
+          <tr><td><strong>Request Timeout</strong></td><td>A hard ceiling, in seconds, on a single remote request, a safety net against a server that accepts a connection but never answers (default 120; 0 disables it). Normal operation is governed by each manager's own Load / Save / Clear Timeout, which usually ends a request first.</td></tr>
+        </table>
+      </div>
+    </section>
+
+
+    <!-- ══════════════════════════════════════ variables ════ -->
+    <section id="variables">
+      <h2>Variables Binding</h2>
+      <div class="member-group">
+        <table class="mt">
+          <tr><td><strong>Binder Poll Delay</strong></td><td>Seconds between a <a href="No-Code.html#components">Variable Binder</a> re-reading its bound components for changes (0 means every frame).</td></tr>
+        </table>
+      </div>
+    </section>
+
+
+    <div class="pager">
+      <a class="prev" href="No-Code.html">
+        <div class="dir">Back</div>
+        <div class="pg-title">No-Code</div>
+      </a>
+      <a class="next" href="Extending.html">
+        <div class="dir">Next</div>
+        <div class="pg-title">Extending</div>
+      </a>
+    </div>
+
+  </main>
+</div>
+</body>
+</html>

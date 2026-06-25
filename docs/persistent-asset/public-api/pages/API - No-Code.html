@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Persistent Asset - Public API - No-Code</title>
+  <link rel="stylesheet" href="/assets/css/doc-styles.css" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<div id="layout">
+
+  <nav>
+    <div class="nav-title">Public API</div>
+    <a href="../index.html">Overview</a>
+    <a class="nav-band" href="API%20-%20Core.html">Core</a>
+    <a class="nav-band" href="API%20-%20Built-Ins.html">Built-Ins</a>
+    <div class="nav-band active">No-Code</div>
+    <div class="nav-group">Variables &amp; Components</div>
+    <a href="#PersistentVariables"><span class="badge badge-so">SO</span>PersistentVariables</a>
+    <a href="#VariableRefs"><span class="badge badge-struct">struct</span>Variable refs</a>
+    <a href="#VariableComponents"><span class="badge badge-mb">MB</span>Variable components</a>
+    <a href="#Observables"><span class="badge badge-class">class</span>Observables</a>
+    <a href="#NoCodeExtending"><span class="badge badge-class">class</span>Codecs &amp; converters</a>
+    <a href="#NoCodeStatics"><span class="badge badge-static">static</span>Input &amp; Localization</a>
+
+    <div class="nav-group">Attributes</div>
+    <a href="#NoCodeAttributes"><span class="badge badge-class">attr</span>VariableType</a>
+
+    <a class="nav-band" href="API%20-%20Editor%20Extension.html">Editor Extension</a>
+  </nav>
+
+  <main>
+    <div class="page-header">
+      <h1>Public API</h1>
+      <div class="sub">Persistent Asset v1.0.0 &nbsp;&middot;&nbsp; namespaces <code>PersistentAsset(.BuiltIns/.NoCode)</code> and the editor mirrors <code>PersistentAsset.Editor(.BuiltIns/.NoCode)</code></div>
+    </div>
+
+    <p class="lead">Reference for every public type and member in the No-Code area. <span class="ex">Red text</span> flags the exceptions a member can throw. See the <a href="../index.html">API overview</a> for the other areas.</p>
+
+    <div class="module-band band-first"><span class="band-name">No-Code</span><span class="band-desc">Persist data straight from the inspector, no scripting.</span></div>
+
+
+    <!-- ═══════════════════════════════════════ No-Code ═══ -->
+    <div class="type-section" id="PersistentVariables">
+      <div class="type-header"><h2>PersistentVariables</h2><span class="badge badge-so">SO</span></div>
+      <p class="type-desc">A persistent object holding a named, typed set of variables authored in the inspector. It derives from <code>PersistentScriptableObject</code>, so the full load / save / slot API is available on the asset. See No-Code.</p>
+      <div class="member-group">
+        <div class="member-group-title">Read &amp; write values</div>
+        <table class="mt">
+          <tr><td><span class="t">T</span> <span class="mn">Get&lt;T&gt;</span>(<span class="t">string</span> name, <span class="t">T</span> fallback = default)</td><td>Read a variable, or the fallback when missing or an incompatible type.</td></tr>
+          <tr><td><span class="t">bool</span> <span class="mn">TryGet&lt;T&gt;</span>(<span class="t">string</span> name, out <span class="t">T</span> value)</td><td>Read, returning false when missing or incompatible.</td></tr>
+          <tr><td><span class="kw">void</span> <span class="mn">Set&lt;T&gt;</span>(<span class="t">string</span> name, <span class="t">T</span> value)</td><td>Write, creating it when absent. Writing an equal value-type/string is a no-op that does not re-raise <code>Changed</code>. <span class="ex">Throws ArgumentException (null/empty name, or null untyped value), NotSupportedException (no registered variable type for T), InvalidOperationException (exists with an incompatible type/shape).</span></td></tr>
+          <tr><td><span class="t">bool</span> <span class="mn">TrySet&lt;T&gt;</span>(<span class="t">string</span> name, <span class="t">T</span> value)</td><td>Write, returning false instead of throwing.</td></tr>
+          <tr><td><span class="kw">void</span> <span class="mn">NotifyChanged</span>(<span class="t">string</span> name)</td><td>Flag a reference-type value changed after mutating it in place.</td></tr>
+        </table>
+      </div>
+      <div class="member-group">
+        <div class="member-group-title">Lists</div>
+        <table class="mt">
+          <tr><td><span class="t">ObservableList&lt;T&gt;</span> <span class="mn">GetList&lt;T&gt;</span>(<span class="t">string</span> name)</td><td>The live list behind a list variable (created empty when absent). <span class="ex">Throws ArgumentException (null/empty name), NotSupportedException (no registered type), InvalidOperationException (name exists with a different shape/type).</span></td></tr>
+          <tr><td><span class="t">bool</span> <span class="mn">TryGetList&lt;T&gt;</span>(<span class="t">string</span> name, out <span class="t">ObservableList&lt;T&gt;</span> list)</td><td>The list, returning false instead of throwing.</td></tr>
+        </table>
+      </div>
+      <div class="member-group">
+        <div class="member-group-title">Maps</div>
+        <table class="mt">
+          <tr><td><span class="t">ObservableDictionary&lt;TKey, TValue&gt;</span> <span class="mn">GetMap&lt;TKey, TValue&gt;</span>(<span class="t">string</span> name)</td><td>The live map behind a map variable (created empty when absent). <span class="ex">Throws ArgumentException (null/empty name), NotSupportedException (no registered type), InvalidOperationException (name exists with a different shape/type).</span></td></tr>
+          <tr><td><span class="t">bool</span> <span class="mn">TryGetMap&lt;TKey, TValue&gt;</span>(<span class="t">string</span> name, out <span class="t">ObservableDictionary&lt;TKey, TValue&gt;</span> map)</td><td>The map, returning false instead of throwing.</td></tr>
+        </table>
+      </div>
+      <div class="member-group">
+        <div class="member-group-title">Schema &amp; identity</div>
+        <table class="mt">
+          <tr><td><span class="t">int</span> <span class="mn">Count</span> { get; } / <span class="t">IReadOnlyList&lt;string&gt;</span> <span class="mn">Keys</span> { get; } / <span class="t">string</span> <span class="mn">GlobalIdentifier</span> { get; }</td><td>How many variables; every variable name; the asset's stable global id.</td></tr>
+          <tr><td><span class="t">bool</span> <span class="mn">Has</span>(<span class="t">string</span> name) / <span class="t">Type</span> <span class="mn">TypeOf</span>(<span class="t">string</span> name) / <span class="t">bool</span> <span class="mn">IsList</span>(<span class="t">string</span>) / <span class="mn">IsMap</span>(<span class="t">string</span>)</td><td>Presence, value type, and shape of a variable.</td></tr>
+          <tr><td><span class="t">bool</span> <span class="mn">MapTypesOf</span>(<span class="t">string</span> name, out <span class="t">Type</span> keyType, out <span class="t">Type</span> valueType)</td><td>Key/value types of a map variable.</td></tr>
+          <tr><td><span class="t">string</span> <span class="mn">NameOf</span>(<span class="t">string</span> id) / <span class="mn">IdOf</span>(<span class="t">string</span> name)</td><td>Map between a variable's display name and its stable id (<code>IdOf</code> returns <code>null</code> for a variable created at runtime through <code>Set</code>, which has no stable id).</td></tr>
+          <tr><td><span class="t">bool</span> <span class="mn">Remove</span>(<span class="t">string</span> name) / <span class="kw">void</span> <span class="mn">Clear</span>()</td><td>Remove one variable, or all of them.</td></tr>
+          <tr><td><span class="t">bool</span> <span class="mn">ResetVariable</span>(<span class="t">string</span> name) / <span class="kw">void</span> <span class="mn">ResetVariable</span>(params <span class="t">string[]</span> names)</td><td>Reset variable(s) to their authored default.</td></tr>
+        </table>
+      </div>
+      <div class="member-group">
+        <div class="member-group-title">Events</div>
+        <table class="mt">
+          <tr><td><span class="t">event Action&lt;string&gt;</span> <span class="mn">Changed</span></td><td>A variable changed (its name is passed).</td></tr>
+          <tr><td><span class="t">event Action</span> <span class="mn">Reloaded</span></td><td>The backing store was rebuilt (after a load/reset): re-fetch any cached list or map.</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="type-section" id="VariableRefs">
+      <div class="type-header"><h2>Variable references</h2><span class="badge badge-struct">struct</span></div>
+      <p class="type-desc">Serializable fields that point at one variable inside a <code>PersistentVariables</code> asset, filled by dragging a variable from its inspector (or picking it from a dropdown). Each stores the asset plus the variable's <strong>stable id</strong>, so renaming the variable never breaks the link. Choose the one matching how strict the field should be:</p>
+      <ul>
+        <li><code>VariableRef</code>: untyped, any shape; you pass the type at each call (<code>Get&lt;T&gt;</code> / <code>GetList&lt;T&gt;</code> / <code>GetMap&lt;TKey,TValue&gt;</code>).</li>
+        <li><code>VariableValueRef&lt;T&gt;</code>: one value of <code>T</code>; <code>Get</code>/<code>Set</code> need no type argument and the inspector only offers matching variables.</li>
+        <li><code>VariableListRef&lt;T&gt;</code>: a list of <code>T</code>, read and edited live through <code>List</code>.</li>
+        <li><code>VariableMapRef&lt;TKey, TValue&gt;</code>: a map, read and edited live through <code>Map</code>.</li>
+      </ul>
+      <div class="member-group">
+        <div class="member-group-title">Common to all four</div>
+        <table class="mt">
+          <tr><td><span class="t">PersistentVariables</span> <span class="mn">Variables</span> { get; }</td><td>The asset this points into.</td></tr>
+          <tr><td><span class="t">string</span> <span class="mn">Id</span> { get; } / <span class="t">string</span> <span class="mn">Name</span> { get; }</td><td>The variable's stable id, and its current display name (resolved from the id, falling back to the last known name).</td></tr>
+          <tr><td><span class="t">bool</span> <span class="mn">IsSet</span> { get; } / <span class="t">bool</span> <span class="mn">Exists</span> { get; }</td><td>Whether an asset + variable are assigned; whether that variable currently exists (the typed refs also require the matching type / shape).</td></tr>
+          <tr><td><span class="t">bool</span> <span class="mn">Reset</span>()</td><td>Reset the variable to its authored default; false when no asset is assigned.</td></tr>
+        </table>
+      </div>
+      <div class="member-group">
+        <div class="member-group-title">VariableRef: untyped</div>
+        <table class="mt">
+          <tr><td><span class="t">Type</span> <span class="mn">Type</span> { get; }</td><td>The variable's stored type, or null when missing or unsupported.</td></tr>
+          <tr><td><span class="t">T</span> <span class="mn">Get&lt;T&gt;</span>(<span class="t">T</span> fallback = default) / <span class="t">bool</span> <span class="mn">TryGet&lt;T&gt;</span>(out <span class="t">T</span>)</td><td>Read as <code>T</code> (fallback / false when missing or a different type).</td></tr>
+          <tr><td><span class="kw">void</span> <span class="mn">Set&lt;T&gt;</span>(<span class="t">T</span>) / <span class="t">bool</span> <span class="mn">TrySet&lt;T&gt;</span>(<span class="t">T</span>)</td><td>Write, creating it when absent (<code>TrySet</code> returns false instead of throwing). A silent no-op when no asset is assigned; otherwise <span class="ex">Set throws like <code>PersistentVariables.Set</code>.</span></td></tr>
+          <tr><td><span class="t">ObservableList&lt;T&gt;</span> <span class="mn">GetList&lt;T&gt;</span>()</td><td>The live list (created empty when absent), or null when the variable is not a list of <code>T</code>.</td></tr>
+          <tr><td><span class="t">ObservableDictionary&lt;TKey, TValue&gt;</span> <span class="mn">GetMap&lt;TKey, TValue&gt;</span>()</td><td>The live map (created empty when absent), or null when the variable is not a map of those types.</td></tr>
+        </table>
+      </div>
+      <div class="member-group">
+        <div class="member-group-title">VariableValueRef&lt;T&gt;: single value</div>
+        <table class="mt">
+          <tr><td><span class="t">T</span> <span class="mn">Value</span> { get; set; }</td><td>Shorthand for <code>Get()</code> / <code>Set(value)</code> with the default fallback.</td></tr>
+          <tr><td><span class="t">T</span> <span class="mn">Get</span>(<span class="t">T</span> fallback = default) / <span class="t">bool</span> <span class="mn">TryGet</span>(out <span class="t">T</span>)</td><td>Read (fallback / false when missing or stored as a different type).</td></tr>
+          <tr><td><span class="kw">void</span> <span class="mn">Set</span>(<span class="t">T</span>) / <span class="t">bool</span> <span class="mn">TrySet</span>(<span class="t">T</span>)</td><td>Write, creating it when absent (<code>TrySet</code> returns false instead of throwing). A silent no-op when no asset is assigned; otherwise <span class="ex">Set throws like <code>PersistentVariables.Set</code>.</span></td></tr>
+          <tr><td><span class="t">Type</span> <span class="mn">Type</span> { get; }</td><td>The variable's actual stored type (may differ from <code>T</code> if the asset was edited since), or null when missing / unsupported.</td></tr>
+        </table>
+      </div>
+      <div class="member-group">
+        <div class="member-group-title">VariableListRef&lt;T&gt;: list</div>
+        <table class="mt">
+          <tr><td><span class="t">ObservableList&lt;T&gt;</span> <span class="mn">List</span> { get; } / <span class="t">bool</span> <span class="mn">TryGetList</span>(out <span class="t">ObservableList&lt;T&gt;</span>)</td><td>The live list, created empty when absent, or null / false when not a list of <code>T</code>.</td></tr>
+        </table>
+      </div>
+      <div class="member-group">
+        <div class="member-group-title">VariableMapRef&lt;TKey, TValue&gt;: map</div>
+        <table class="mt">
+          <tr><td><span class="t">ObservableDictionary&lt;TKey, TValue&gt;</span> <span class="mn">Map</span> { get; } / <span class="t">bool</span> <span class="mn">TryGetMap</span>(out <span class="t">ObservableDictionary&lt;TKey, TValue&gt;</span>)</td><td>The live dictionary, created empty when absent, or null / false when not a map of those types.</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="type-section" id="VariableComponents">
+      <div class="type-header"><h2>Variable components</h2><span class="badge badge-mb">MB</span></div>
+      <p class="type-desc">MonoBehaviours wiring variables to a scene, no code. Each exposes <code>VariableRef Variable { get; }</code> (from the abstract <code>VariableComponent</code> base).</p>
+      <div class="member-group"><table class="mt">
+        <tr><td><span class="mn">VariableComponent</span> (abstract) &middot; <span class="t">VariableRef</span> <span class="mn">Variable</span> { get; } &middot; <span class="kw">protected virtual void</span> <span class="mn">OnEnable</span>() / <span class="mn">OnDisable</span>()</td><td>Base for the components below. When overriding <code>OnEnable</code> / <code>OnDisable</code>, call <code>base</code> so the component stays registered.</td></tr>
+        <tr><td><span class="mn">VariableBinder</span></td><td>Two-way bind a variable to a target member (with an optional value converter); a <code>BindingDirection</code> picks the flow.</td></tr>
+        <tr><td><span class="mn">VariableListener</span></td><td>Raise a typed UnityEvent on change (nested <code>StringEvent</code> / <code>FloatEvent</code> / <code>IntEvent</code> / <code>BoolEvent</code>).</td></tr>
+        <tr><td><span class="mn">VariableSetter</span> &middot; <span class="kw">void</span> <span class="mn">Apply</span>() / <span class="mn">SetBool</span>/<span class="mn">SetInt</span>/<span class="mn">SetFloat</span>/<span class="mn">SetString</span>(value) / <span class="mn">Toggle</span>() / <span class="mn">Increment</span>()</td><td>Change a variable from a UnityEvent. <code>Operation</code>: Set, Toggle, Increment, Add, Reset.</td></tr>
+      </table></div>
+      <div class="member-group">
+        <div class="member-group-title">Enums</div>
+        <table class="mt">
+          <tr><td><span class="mn">VariableSetter.Operation</span></td><td><code>Set</code>, <code>Toggle</code>, <code>Increment</code>, <code>Add</code>, <code>Reset</code>.</td></tr>
+          <tr><td><span class="mn">BindingDirection</span></td><td><code>Auto</code>, <code>TwoWay</code>, <code>VariableToTarget</code>, <code>TargetToVariable</code>.</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="type-section" id="Observables">
+      <div class="type-header"><h2>Observables</h2><span class="badge badge-class">class</span></div>
+      <p class="type-desc">The live collection backings behind list and map variables. Editing one notifies its owning <code>PersistentVariables</code> (raising <code>Changed</code>) and marks the asset dirty, so the change persists. Do not cache an instance across a load or reset: a reload rebuilds the backing store, so a kept reference goes stale and stops persisting, re-fetch it (e.g. on <code>Reloaded</code>).</p>
+      <div class="member-group">
+        <div class="member-group-title">ObservableList&lt;T&gt;</div>
+        <table class="mt">
+          <tr><td>Standard <code>IList&lt;T&gt;</code> members</td><td>Indexer, <code>Add</code>, <code>Insert</code>, <code>Remove</code>, <code>RemoveAt</code>, <code>Clear</code>, <code>Count</code>, <code>IndexOf</code>, <code>Contains</code>, enumeration, etc.</td></tr>
+        </table>
+      </div>
+      <div class="member-group">
+        <div class="member-group-title">ObservableDictionary&lt;TKey, TValue&gt;</div>
+        <table class="mt">
+          <tr><td>Standard <code>IDictionary&lt;TKey, TValue&gt;</code> members</td><td>Indexer, <code>Keys</code>, <code>Values</code>, <code>Remove</code>, <code>Clear</code>, <code>Count</code>, <code>ContainsKey</code>, <code>TryGetValue</code>, enumeration, etc.</td></tr>
+          <tr><td><span class="kw">void</span> <span class="mn">Add</span>(<span class="t">TKey</span> key, <span class="t">TValue</span> value)</td><td>Add a pair. <span class="ex">Throws ArgumentException when the key is already present.</span></td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="type-section" id="NoCodeExtending">
+      <div class="type-header"><h2>Codecs &amp; converters</h2><span class="badge badge-class">class</span><span class="warn">extending</span></div>
+      <p class="type-desc">Add a persistable No-Code type with a codec; bridge differing types in a binder with converters. See Extending.</p>
+      <div class="member-group">
+        <div class="member-group-title">Codecs</div>
+        <table class="mt">
+          <tr><td><span class="mn">VariableTypeCodec</span> (abstract) &middot; <span class="kw">abstract string</span> <span class="mn">Format</span>(<span class="t">object</span>) / <span class="kw">abstract object</span> <span class="mn">Parse</span>(<span class="t">string</span>)</td><td>String round trip for a type.</td></tr>
+          <tr><td><span class="mn">VariableTypeCodec&lt;T&gt;</span> (abstract) &middot; <span class="kw">protected abstract string</span> <span class="mn">Write</span>(<span class="t">T</span>) / <span class="kw">protected abstract T</span> <span class="mn">Read</span>(<span class="t">string</span>)</td><td>The typed codec to implement (an empty string passed to <code>Read</code> means the default); pair with <code>[VariableType(type, id)]</code>.</td></tr>
+        </table>
+      </div>
+      <div class="member-group">
+        <div class="member-group-title">Converters</div>
+        <table class="mt">
+          <tr><td><span class="mn">ValueConverter</span> (abstract) &middot; <span class="t">Type</span> <span class="mn">From</span> / <span class="mn">To</span> { get; }, <span class="t">object</span> <span class="mn">Convert</span>(<span class="t">object</span>) &middot; <span class="mn">ValueConverter&lt;TFrom, TTo&gt;</span> (abstract) &middot; <span class="kw">protected abstract</span> <span class="t">TTo</span> <span class="mn">Convert</span>(<span class="t">TFrom</span> value)</td><td>Turn one type into another for a binder (prefer <code>ValueConverter&lt;TFrom, TTo&gt;</code>; register two, one each way, for a two-way binding).</td></tr>
+          <tr><td><span class="mn">ValueConverters</span> (static) &middot; <span class="kw">void</span> <span class="mn">Register</span>(<span class="t">ValueConverter</span>) / <span class="t">bool</span> <span class="mn">CanConvert</span>(<span class="t">Type</span>, <span class="t">Type</span>) / <span class="mn">TryConvert</span>(<span class="t">object</span>, <span class="t">Type</span>, out <span class="t">object</span>) / <span class="mn">TryConvert</span>(<span class="t">object</span>, <span class="t">Type</span>, <span class="t">CultureInfo</span>, out <span class="t">object</span>)</td><td>The converter registry plus built-in number/enum/to-string rules. <span class="ex">Register throws ArgumentNullException on a null converter.</span></td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="type-section" id="NoCodeStatics">
+      <div class="type-header"><h2>Input &amp; Localization</h2><span class="badge badge-static">static</span></div>
+      <p class="type-desc">Extension-method helpers that make <code>InputBinding</code> and a locale persistable through a <code>PersistentVariables</code> variable. (The codecs and widgets they rely on register themselves; only these statics are public.)</p>
+      <div class="member-group">
+        <div class="member-group-title">InputBindingPersistence</div>
+        <table class="mt">
+          <tr><td><span class="t">bool</span> <span class="mn">ApplyTo</span>(this <span class="t">InputBinding</span> stored, <span class="t">InputAction</span> action, <span class="t">int</span> bindingIndex = 0)</td><td>Apply a stored binding override onto an action.</td></tr>
+          <tr><td><span class="t">bool</span> <span class="mn">ApplyBinding</span>(this <span class="t">PersistentVariables</span>, <span class="t">string</span> name, <span class="t">InputAction</span>, <span class="t">int</span> = 0) / <span class="mn">CaptureBinding</span>(this <span class="t">PersistentVariables</span>, <span class="t">string</span>, <span class="t">InputAction</span>, <span class="t">int</span> = 0)</td><td>Apply / capture an action's binding to a variable.</td></tr>
+          <tr><td><span class="t">InputActionRebindingExtensions.RebindingOperation</span> <span class="mn">RebindAndStore</span>(this <span class="t">PersistentVariables</span>, <span class="t">string</span> name, <span class="t">InputAction</span>, <span class="t">int</span> bindingIndex = 0, <span class="t">Action</span> onComplete = null, <span class="t">Action</span> onCancel = null)</td><td>Start an interactive rebind, then capture the new binding into the variable when it completes. The caller owns the returned operation's lifetime: keep it and call its <code>Cancel</code> in <code>OnDisable</code> / <code>OnDestroy</code>, or the completion callback can run after the object is gone.</td></tr>
+        </table>
+      </div>
+      <div class="member-group">
+        <div class="member-group-title">LocalePersistence</div>
+        <table class="mt">
+          <tr><td><span class="t">bool</span> <span class="mn">ApplyLocale</span>(this <span class="t">PersistentVariables</span>, <span class="t">string</span> name) / <span class="mn">CaptureLocale</span>(this <span class="t">PersistentVariables</span>, <span class="t">string</span> name)</td><td>Apply the stored locale as the active one / capture the active locale into a variable. Call the <code>LocalePersistence</code> helpers once localization is initialized (e.g. after awaiting <code>LocalizationSettings.InitializationOperation</code>), else they return false.</td></tr>
+          <tr><td><span class="t">bool</span> <span class="mn">SelectLocale</span>(this <span class="t">PersistentVariables</span>, <span class="t">string</span> name, <span class="t">LocaleIdentifier</span> locale)</td><td>Set and store a chosen locale (same initialization requirement as above, else returns false).</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════ Attributes ═══ -->
+    <div class="type-section" id="NoCodeAttributes">
+      <div class="type-header"><h2>Attributes</h2><span class="badge badge-class">attr</span></div>
+      <div class="member-group"><table class="mt">
+        <tr><td><span class="mn">[VariableType(<span class="t">Type</span> type, <span class="t">string</span> id)]</span><br/><span class="t">Type</span> <span class="mn">Type</span> { get; }, <span class="t">string</span> <span class="mn">Id</span> { get; }</td><td>Register a No-Code variable codec for a type, saved under a stable id (see <a href="#NoCodeExtending">Codecs &amp; converters</a>).</td></tr>
+      </table></div>
+    </div>
+
+    <div class="doc-footer">Persistent Asset v1.0.0 &nbsp;&middot;&nbsp; For full signatures and remarks, see the XML doc comments in the source.</div>
+
+  </main>
+</div>
+</body>
+</html>
