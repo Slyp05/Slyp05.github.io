@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Persistent Asset - Public API</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div id="layout">
+
+  <!-- ─── Sidebar: the API overview lists its four areas; each opens its own reference page ─── -->
+  <nav>
+    <div class="nav-title">Persistent Asset</div>
+    <a href="Public%20API.html" class="active">Overview</a>
+    <a class="nav-band" href="pages/API%20-%20Core.html">Core</a>
+    <a class="nav-band" href="pages/API%20-%20Built-Ins.html">Built-Ins</a>
+    <a class="nav-band" href="pages/API%20-%20No-Code.html">No-Code</a>
+    <a class="nav-band" href="pages/API%20-%20Editor%20Extension.html">Editor Extension</a>
+  </nav>
+
+  <main>
+    <div class="page-header">
+      <h1>Public API</h1>
+      <div class="sub">Persistent Asset v1.0.0 &nbsp;&middot;&nbsp; namespaces <code>PersistentAsset(.BuiltIns/.NoCode)</code> and the editor mirrors <code>PersistentAsset.Editor(.BuiltIns/.NoCode)</code></div>
+    </div>
+
+    <p class="lead">Reference for every public type and member, split into four areas. Open an area for its full reference, where <span class="ex">red text</span> flags the exceptions a member can throw.</p>
+
+    <div class="module-band band-first"><span class="band-name">Core</span><span class="band-desc">The foundation: persistent objects, managers and the save API.</span></div>
+    <p class="api-open"><a class="nav-ext" href="pages/API%20-%20Core.html">Open the Core reference &rarr;</a></p>
+    <div class="summary-index">
+    <div class="summary-group">Core Types</div>
+    <a href="pages/API%20-%20Core.html#PersistentScriptableObject"><span class="badge badge-so">SO</span>PersistentScriptableObject</a>
+    <a href="pages/API%20-%20Core.html#PersistenceManager"><span class="badge badge-pm">PM</span>PersistenceManager</a>
+    <a href="pages/API%20-%20Core.html#Persistence"><span class="badge badge-static">static</span>Persistence</a>
+    <a href="pages/API%20-%20Core.html#Slots"><span class="badge badge-static">static</span>Slots</a>
+    <a href="pages/API%20-%20Core.html#GlobalPersistedData"><span class="badge badge-static">static</span>GlobalPersistedData</a>
+    <a href="pages/API%20-%20Core.html#Settings"><span class="badge badge-static">static</span>Settings</a>
+    <a href="pages/API%20-%20Core.html#SettingsEntry"><span class="badge badge-class">class</span>SettingsEntry</a>
+
+    <div class="summary-group">Operations &amp; Results</div>
+    <a href="pages/API%20-%20Core.html#Result"><span class="badge badge-class">class</span>Result</a>
+    <a href="pages/API%20-%20Core.html#LoadResult"><span class="badge badge-class">sealed</span>LoadResult</a>
+    <a href="pages/API%20-%20Core.html#SaveResult"><span class="badge badge-class">sealed</span>SaveResult</a>
+    <a href="pages/API%20-%20Core.html#ClearResult"><span class="badge badge-class">sealed</span>ClearResult</a>
+    <a href="pages/API%20-%20Core.html#ResultType"><span class="badge badge-enum">enum</span>ResultType</a>
+    <a href="pages/API%20-%20Core.html#ExecutionMode"><span class="badge badge-enum">enum</span>ExecutionMode</a>
+    <a href="pages/API%20-%20Core.html#PersistenceSource"><span class="badge badge-enum">enum</span>PersistenceSource</a>
+    <a href="pages/API%20-%20Core.html#PersistenceOperation"><span class="badge badge-class">sealed</span>PersistenceOperation&lt;T&gt;</a>
+
+    <div class="summary-group">Optional Interfaces</div>
+    <a href="pages/API%20-%20Core.html#IMultiSlot"><span class="badge badge-interface">iface</span>IMultiSlot</a>
+    <a href="pages/API%20-%20Core.html#IUpgradable"><span class="badge badge-interface">iface</span>IUpgradable</a>
+    <a href="pages/API%20-%20Core.html#IFieldResettable"><span class="badge badge-interface">iface</span>IFieldResettable</a>
+    <a href="pages/API%20-%20Core.html#IScopeCallbacks"><span class="badge badge-interface">iface</span>IScopeCallbacks</a>
+    <a href="pages/API%20-%20Core.html#ISerializationCallbacks"><span class="badge badge-interface">iface</span>ISerializationCallbacks</a>
+    <a href="pages/API%20-%20Core.html#IDirtyTracked"><span class="badge badge-interface">iface</span>IDirtyTracked</a>
+    <a href="pages/API%20-%20Core.html#IDynamicInitialize"><span class="badge badge-interface">iface</span>IDynamicInitialize</a>
+    <a href="pages/API%20-%20Core.html#IPersistencePolicy"><span class="badge badge-interface">iface</span>IPersistencePolicy</a>
+    <a href="pages/API%20-%20Core.html#PersistencePolicy"><span class="badge badge-struct">struct</span>PersistencePolicy</a>
+    <a href="pages/API%20-%20Core.html#IAlwaysGlobal"><span class="badge badge-interface">iface</span>IAlwaysGlobal</a>
+
+    <div class="summary-group">Serialization</div>
+    <a href="pages/API%20-%20Core.html#Serializer"><span class="badge badge-class">class</span>Serializer</a>
+    <a href="pages/API%20-%20Core.html#SaveNode"><span class="badge badge-class">class</span>SaveNode</a>
+
+    <div class="summary-group">Attributes</div>
+    <a href="pages/API%20-%20Core.html#Attributes"><span class="badge badge-class">attr</span>Attributes</a>
+
+    <div class="summary-group">Debugging</div>
+    <a href="pages/API%20-%20Core.html#LogLevel"><span class="badge badge-enum">enum</span>LogLevel</a>
+    <a href="pages/API%20-%20Core.html#InGameLogsViewer"><span class="badge badge-mb">MB</span>InGameLogsViewer</a>
+    <a href="pages/API%20-%20Core.html#PersistentAssetConsole"><span class="badge badge-static">static</span>PersistentAssetConsole</a>
+    </div>
+
+    <div class="module-band"><span class="band-name">Built-Ins</span><span class="band-desc">Ready-made managers, storage backends, security and helpers.</span></div>
+    <p class="api-open"><a class="nav-ext" href="pages/API%20-%20Built-Ins.html">Open the Built-Ins reference &rarr;</a></p>
+    <div class="summary-index">
+    <div class="summary-group">Serializer</div>
+    <a href="pages/API%20-%20Built-Ins.html#UnityJsonSerializer"><span class="badge badge-class">class</span>UnityJsonSerializer</a>
+    <div class="summary-group">Built-In Managers</div>
+    <a href="pages/API%20-%20Built-Ins.html#PrototypePersistenceManager"><span class="badge badge-pm">PM</span>Prototype</a>
+    <a href="pages/API%20-%20Built-Ins.html#FilePersistenceManager"><span class="badge badge-pm">PM</span>Local File</a>
+    <a href="pages/API%20-%20Built-Ins.html#PlayerPrefsPersistenceManager"><span class="badge badge-pm">PM</span>Player Prefs</a>
+    <a href="pages/API%20-%20Built-Ins.html#SessionPersistenceManager"><span class="badge badge-pm">PM</span>Session</a>
+    <div class="summary-group">Persistent Objects</div>
+    <a href="pages/API%20-%20Built-Ins.html#PersistentSlotRegistry"><span class="badge badge-so">SO</span>PersistentSlotRegistry</a>
+    <a href="pages/API%20-%20Built-Ins.html#SlotEntry"><span class="badge badge-struct">struct</span>SlotEntry&lt;T&gt;</a>
+    <a href="pages/API%20-%20Built-Ins.html#SaveScreenshot"><span class="badge badge-struct">struct</span>SaveScreenshot</a>
+    <a href="pages/API%20-%20Built-Ins.html#ScreenshotFormat"><span class="badge badge-enum">enum</span>ScreenshotFormat</a>
+    <a href="pages/API%20-%20Built-Ins.html#PersistentSingleton"><span class="badge badge-so">SO</span>PersistentSingleton</a>
+
+    <div class="summary-group">Security</div>
+    <a href="pages/API%20-%20Built-Ins.html#Encryption"><span class="badge badge-enum">enum</span>Encryption</a>
+    <a href="pages/API%20-%20Built-Ins.html#Compression"><span class="badge badge-enum">enum</span>Compression</a>
+    <a href="pages/API%20-%20Built-Ins.html#SaveLock"><span class="badge badge-enum">enum</span>SaveLock</a>
+
+    <div class="summary-group">Remote</div>
+    <a href="pages/API%20-%20Built-Ins.html#RemotePersistenceManager"><span class="badge badge-pm">PM</span>RemotePersistenceManager</a>
+    <a href="pages/API%20-%20Built-Ins.html#HttpPersistenceManager"><span class="badge badge-pm">PM</span>Server (HTTP)</a>
+    <a href="pages/API%20-%20Built-Ins.html#CloudSavePersistenceManager"><span class="badge badge-pm">PM</span>Cloud Save (UGS)</a>
+    <a href="pages/API%20-%20Built-Ins.html#RemoteEnums"><span class="badge badge-enum">enum</span>Remote enums</a>
+    <a href="pages/API%20-%20Built-Ins.html#RemoteManagerSettings"><span class="badge badge-class">class</span>RemoteManagerSettings</a>
+
+    <div class="summary-group">Utilities</div>
+    <a href="pages/API%20-%20Built-Ins.html#SaveFileUtility"><span class="badge badge-static">static</span>SaveFileUtility</a>
+    <a href="pages/API%20-%20Built-Ins.html#CheatProtectionUtility"><span class="badge badge-static">static</span>CheatProtectionUtility</a>
+    <a href="pages/API%20-%20Built-Ins.html#GzipUtility"><span class="badge badge-static">static</span>GzipUtility</a>
+    <a href="pages/API%20-%20Built-Ins.html#TaskUtility"><span class="badge badge-static">static</span>TaskUtility</a>
+    <a href="pages/API%20-%20Built-Ins.html#SlotFormatUtility"><span class="badge badge-static">static</span>SlotFormatUtility</a>
+    <a href="pages/API%20-%20Built-Ins.html#WebGLFileSync"><span class="badge badge-static">static</span>WebGLFileSync</a>
+    <a href="pages/API%20-%20Built-Ins.html#UtilityEnums"><span class="badge badge-enum">enum</span>ThreadType / SaveLocation</a>
+
+    <div class="summary-group">Integration Testing</div>
+    <a href="pages/API%20-%20Built-Ins.html#TestPersistenceManager"><span class="badge badge-pm">PM</span>TestPersistenceManager</a>
+    <a href="pages/API%20-%20Built-Ins.html#TestPersistentScriptableObject"><span class="badge badge-so">SO</span>TestPersistentScriptableObject</a>
+    </div>
+
+    <div class="module-band"><span class="band-name">No-Code</span><span class="band-desc">Persist data straight from the inspector, no scripting.</span></div>
+    <p class="api-open"><a class="nav-ext" href="pages/API%20-%20No-Code.html">Open the No-Code reference &rarr;</a></p>
+    <div class="summary-index">
+    <div class="summary-group">Variables &amp; Components</div>
+    <a href="pages/API%20-%20No-Code.html#PersistentVariables"><span class="badge badge-so">SO</span>PersistentVariables</a>
+    <a href="pages/API%20-%20No-Code.html#VariableRefs"><span class="badge badge-struct">struct</span>Variable refs</a>
+    <a href="pages/API%20-%20No-Code.html#VariableComponents"><span class="badge badge-mb">MB</span>Variable components</a>
+    <a href="pages/API%20-%20No-Code.html#Observables"><span class="badge badge-class">class</span>Observables</a>
+    <a href="pages/API%20-%20No-Code.html#NoCodeExtending"><span class="badge badge-class">class</span>Codecs &amp; converters</a>
+    <a href="pages/API%20-%20No-Code.html#NoCodeStatics"><span class="badge badge-static">static</span>Input &amp; Localization</a>
+
+    <div class="summary-group">Attributes</div>
+    <a href="pages/API%20-%20No-Code.html#NoCodeAttributes"><span class="badge badge-class">attr</span>VariableType</a>
+
+    </div>
+
+    <div class="module-band"><span class="band-name">Editor Extension</span><span class="band-desc">Customize the package's inspectors, drawers and tooling.</span></div>
+    <p class="api-open"><a class="nav-ext" href="pages/API%20-%20Editor%20Extension.html">Open the Editor Extension reference &rarr;</a></p>
+    <div class="summary-index">
+    <div class="summary-group">Editors, Drawers &amp; GUI</div>
+    <a href="pages/API%20-%20Editor%20Extension.html#PersistenceManagerEditor"><span class="badge badge-editor">Editor</span>PersistenceManagerEditor</a>
+    <a href="pages/API%20-%20Editor%20Extension.html#RemotePersistenceManagerEditor"><span class="badge badge-editor">Editor</span>RemotePersistenceManagerEditor</a>
+    <a href="pages/API%20-%20Editor%20Extension.html#SlotRegistryEditor"><span class="badge badge-editor">Editor</span>SlotRegistryEditor</a>
+    <a href="pages/API%20-%20Editor%20Extension.html#PersistentVariablesEditor"><span class="badge badge-editor">Editor</span>PersistentVariablesEditor</a>
+    <a href="pages/API%20-%20Editor%20Extension.html#SerializerDrawer"><span class="badge badge-editor">drawer</span>SerializerDrawer</a>
+    <a href="pages/API%20-%20Editor%20Extension.html#SettingsEntryDrawer"><span class="badge badge-editor">drawer</span>SettingsEntryDrawer</a>
+    <a href="pages/API%20-%20Editor%20Extension.html#PersistenceManagerEditorGUI"><span class="badge badge-static">static</span>PersistenceManagerEditorGUI</a>
+    <a href="pages/API%20-%20Editor%20Extension.html#PersistentAssetEditorGUI"><span class="badge badge-static">static</span>PersistentAssetEditorGUI</a>
+    <a href="pages/API%20-%20Editor%20Extension.html#SecurityGUI"><span class="badge badge-static">static</span>SecurityGUI</a>
+    <a href="pages/API%20-%20Editor%20Extension.html#SlotFormatGUI"><span class="badge badge-static">static</span>SlotFormatGUI</a>
+    <a href="pages/API%20-%20Editor%20Extension.html#SerializedObjectExtensions"><span class="badge badge-static">static</span>SerializedObjectExtensions</a>
+    <a href="pages/API%20-%20Editor%20Extension.html#VariableWidget"><span class="badge badge-class">class</span>VariableWidget&lt;T&gt;</a>
+    <a href="pages/API%20-%20Editor%20Extension.html#TypeDisplay"><span class="badge badge-struct">struct</span>TypeDisplay</a>
+
+    <div class="summary-group">Attributes</div>
+    <a href="pages/API%20-%20Editor%20Extension.html#EditorAttributes"><span class="badge badge-class">attr</span>ClearLocalData</a>
+    </div>
+
+    <div class="doc-footer">Persistent Asset v1.0.0 &nbsp;&middot;&nbsp; For full signatures and remarks, see the XML doc comments in the source.</div>
+
+  </main>
+</div>
+</body>
+</html>

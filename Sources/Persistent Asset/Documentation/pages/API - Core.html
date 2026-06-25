@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Persistent Asset - Public API - Core</title>
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+<div id="layout">
+
+  <nav>
+    <div class="nav-title">Public API</div>
+    <a href="../Public%20API.html">Overview</a>
+    <div class="nav-band active">Core</div>
+    <div class="nav-group">Core Types</div>
+    <a href="#PersistentScriptableObject"><span class="badge badge-so">SO</span>PersistentScriptableObject</a>
+    <a href="#PersistenceManager"><span class="badge badge-pm">PM</span>PersistenceManager</a>
+    <a href="#Persistence"><span class="badge badge-static">static</span>Persistence</a>
+    <a href="#Slots"><span class="badge badge-static">static</span>Slots</a>
+    <a href="#GlobalPersistedData"><span class="badge badge-static">static</span>GlobalPersistedData</a>
+    <a href="#Settings"><span class="badge badge-static">static</span>Settings</a>
+    <a href="#SettingsEntry"><span class="badge badge-class">class</span>SettingsEntry</a>
+
+    <div class="nav-group">Operations &amp; Results</div>
+    <a href="#Result"><span class="badge badge-class">class</span>Result</a>
+    <a href="#LoadResult"><span class="badge badge-class">sealed</span>LoadResult</a>
+    <a href="#SaveResult"><span class="badge badge-class">sealed</span>SaveResult</a>
+    <a href="#ClearResult"><span class="badge badge-class">sealed</span>ClearResult</a>
+    <a href="#ResultType"><span class="badge badge-enum">enum</span>ResultType</a>
+    <a href="#ExecutionMode"><span class="badge badge-enum">enum</span>ExecutionMode</a>
+    <a href="#PersistenceSource"><span class="badge badge-enum">enum</span>PersistenceSource</a>
+    <a href="#PersistenceOperation"><span class="badge badge-class">sealed</span>PersistenceOperation&lt;T&gt;</a>
+
+    <div class="nav-group">Optional Interfaces</div>
+    <a href="#IMultiSlot"><span class="badge badge-interface">iface</span>IMultiSlot</a>
+    <a href="#IUpgradable"><span class="badge badge-interface">iface</span>IUpgradable</a>
+    <a href="#IFieldResettable"><span class="badge badge-interface">iface</span>IFieldResettable</a>
+    <a href="#IScopeCallbacks"><span class="badge badge-interface">iface</span>IScopeCallbacks</a>
+    <a href="#ISerializationCallbacks"><span class="badge badge-interface">iface</span>ISerializationCallbacks</a>
+    <a href="#IDirtyTracked"><span class="badge badge-interface">iface</span>IDirtyTracked</a>
+    <a href="#IDynamicInitialize"><span class="badge badge-interface">iface</span>IDynamicInitialize</a>
+    <a href="#IPersistencePolicy"><span class="badge badge-interface">iface</span>IPersistencePolicy</a>
+    <a href="#PersistencePolicy"><span class="badge badge-struct">struct</span>PersistencePolicy</a>
+    <a href="#IAlwaysGlobal"><span class="badge badge-interface">iface</span>IAlwaysGlobal</a>
+
+    <div class="nav-group">Serialization</div>
+    <a href="#Serializer"><span class="badge badge-class">class</span>Serializer</a>
+    <a href="#SaveNode"><span class="badge badge-class">class</span>SaveNode</a>
+
+    <div class="nav-group">Attributes</div>
+    <a href="#Attributes"><span class="badge badge-class">attr</span>Attributes</a>
+
+    <div class="nav-group">Debugging</div>
+    <a href="#LogLevel"><span class="badge badge-enum">enum</span>LogLevel</a>
+    <a href="#InGameLogsViewer"><span class="badge badge-mb">MB</span>InGameLogsViewer</a>
+    <a href="#PersistentAssetConsole"><span class="badge badge-static">static</span>PersistentAssetConsole</a>
+    <a class="nav-band" href="API%20-%20Built-Ins.html">Built-Ins</a>
+    <a class="nav-band" href="API%20-%20No-Code.html">No-Code</a>
+    <a class="nav-band" href="API%20-%20Editor%20Extension.html">Editor Extension</a>
+  </nav>
+
+  <main>
+    <div class="page-header">
+      <h1>Public API</h1>
+      <div class="sub">Persistent Asset v1.0.0 &nbsp;&middot;&nbsp; namespaces <code>PersistentAsset(.BuiltIns/.NoCode)</code> and the editor mirrors <code>PersistentAsset.Editor(.BuiltIns/.NoCode)</code></div>
+    </div>
+
+    <p class="lead">Reference for every public type and member in the Core area. <span class="ex">Red text</span> flags the exceptions a member can throw. See the <a href="../Public%20API.html">API overview</a> for the other areas.</p>
+
+    <div class="module-band band-first"><span class="band-name">Core</span><span class="band-desc">The foundation: persistent objects, managers and the save API.</span></div>
+
+
+    <!-- ═══════════════════════════════════════ PersistentScriptableObject ═══ -->
+    <div class="type-section" id="PersistentScriptableObject">
+      <div class="type-header"><h2>PersistentScriptableObject</h2><span class="badge badge-so">SO</span><span class="badge badge-class">abstract</span></div>
+      <p class="type-desc">Base class for your data. Inherit it and its serialized fields persist between sessions.</p>
+      <div class="member-group">
+        <div class="member-group-title">Properties</div>
+        <table class="mt">
+          <tr><td><span class="t">PersistenceManager</span> <span class="mn">PersistenceManager</span> { get; }</td><td>The manager in charge of this object's persistent data.</td></tr>
+        </table>
+      </div>
+    </div>
+
+
+    <!-- ═══════════════════════════════════════ PersistenceManager ═══ -->
+    <div class="type-section" id="PersistenceManager">
+      <div class="type-header"><h2>PersistenceManager</h2><span class="badge badge-pm">PM</span><span class="badge badge-class">abstract</span><span class="warn">extending</span></div>
+      <p class="type-desc">Saves and loads a persistent object. The built-in managers derive from it; so does any custom one (see Extending).</p>
+
+      <div class="member-group">
+        <div class="member-group-title">State &amp; identity</div>
+        <table class="mt">
+          <tr><td><span class="t">bool</span> <span class="mn">IsReady</span> { get; }</td><td>Whether the target holds its data and is safe to read and save. The one rule.</td></tr>
+          <tr><td><span class="t">Awaitable</span> <span class="mn">WhenReady</span> { get; }</td><td>Await (or yield) until the automatic load has settled, then read <code>IsReady</code>.</td></tr>
+          <tr><td><span class="t">Object</span> <span class="mn">Target</span> { get; }</td><td>The persistent object this manager saves and loads.</td></tr>
+          <tr><td><span class="t">string</span> <span class="mn">UniqueID</span> { get; }</td><td>Identifier unique to this manager.</td></tr>
+          <tr><td><span class="t">Serializer</span> <span class="mn">Serializer</span> { get; protected set; }</td><td>The serialization system in use.</td></tr>
+          <tr><td><span class="t">string</span> <span class="mn">Slot</span> { get; set; }</td><td>Current slot (multi-slot targets). Setting it switches slot as a scope transition. <span class="ex">The setter throws InvalidOperationException in the editor only when set outside play mode.</span></td></tr>
+          <tr><td><span class="t">bool</span> <span class="mn">UseSlot</span> { get; }</td><td>Whether the target is <code>IMultiSlot</code>.</td></tr>
+          <tr><td><span class="t">string</span> <span class="mn">GetStorageLocation</span>() / <span class="mn">GetStorageLocation</span>(<span class="t">string</span> slot)</td><td>Where this manager stores its data (the current slot, or a given one), or null (a normal answer for remote managers).</td></tr>
+        </table>
+      </div>
+
+      <div class="member-group">
+        <div class="member-group-title">Load / Save / Clear operations</div>
+        <div class="note"><span class="ex">Every method below throws InvalidOperationException in the editor only when called outside play mode (never at runtime).</span></div>
+        <table class="mt">
+          <tr><td><span class="t">LoadResult</span> <span class="mn">LoadSync</span>()</td><td>Force synchronous; the result is final on return.</td></tr>
+          <tr><td><span class="kw">void</span> <span class="mn">Load</span>()</td><td>Fire and forget; wireable to a UnityEvent.</td></tr>
+          <tr><td><span class="kw">void</span> <span class="mn">Load</span>(<span class="t">Action</span>&lt;<span class="t">LoadResult</span>&gt; onComplete)</td><td>Default; sync when it can, else async, then callback.</td></tr>
+          <tr><td><span class="t">Task</span>&lt;<span class="t">LoadResult</span>&gt; <span class="mn">LoadAsync</span>(<span class="t">ExecutionMode</span>? executionModeOverride = null)</td><td>Async; await the result.</td></tr>
+          <tr><td><span class="t">PersistenceOperation</span>&lt;<span class="t">LoadResult</span>&gt; <span class="mn">LoadRoutine</span>()</td><td>Coroutine; yield return it, then read <code>Result</code>.</td></tr>
+          <tr><td><span class="t">SaveResult</span> <span class="mn">SaveSync</span>()</td><td>Force synchronous save.</td></tr>
+          <tr><td><span class="kw">void</span> <span class="mn">Save</span>()</td><td>Fire and forget save (wireable to a UnityEvent).</td></tr>
+          <tr><td><span class="kw">void</span> <span class="mn">Save</span>(<span class="t">Action</span>&lt;<span class="t">SaveResult</span>&gt; onComplete)</td><td>Default save, then callback.</td></tr>
+          <tr><td><span class="t">Task</span>&lt;<span class="t">SaveResult</span>&gt; <span class="mn">SaveAsync</span>(<span class="t">ExecutionMode</span>? executionModeOverride = null)</td><td>Async save; await the result.</td></tr>
+          <tr><td><span class="t">PersistenceOperation</span>&lt;<span class="t">SaveResult</span>&gt; <span class="mn">SaveRoutine</span>()</td><td>Coroutine save.</td></tr>
+          <tr><td><span class="t">ClearResult</span> <span class="mn">ClearSync</span>()</td><td>Force synchronous clear: deletes the slot's save, resets the target to defaults, pauses saving until the next load.</td></tr>
+          <tr><td><span class="kw">void</span> <span class="mn">Clear</span>()</td><td>Fire and forget clear (wireable to a UnityEvent).</td></tr>
+          <tr><td><span class="kw">void</span> <span class="mn">Clear</span>(<span class="t">Action</span>&lt;<span class="t">ClearResult</span>&gt; onComplete)</td><td>Default clear, then callback.</td></tr>
+          <tr><td><span class="t">Task</span>&lt;<span class="t">ClearResult</span>&gt; <span class="mn">ClearAsync</span>(<span class="t">ExecutionMode</span>? executionModeOverride = null)</td><td>Async clear; await the result.</td></tr>
+          <tr><td><span class="t">PersistenceOperation</span>&lt;<span class="t">ClearResult</span>&gt; <span class="mn">ClearRoutine</span>()</td><td>Coroutine clear.</td></tr>
+        </table>
+      </div>
+
+      <div class="member-group">
+        <div class="member-group-title">Other operations</div>
+        <div class="note"><span class="ex">All three throw InvalidOperationException in the editor only when called outside play mode (never at runtime).</span></div>
+        <table class="mt">
+          <tr><td><span class="kw">void</span> <span class="mn">ResetToDefaults</span>()</td><td>Reset the target's fields to pre-play values, in memory only (the save is untouched).</td></tr>
+          <tr><td><span class="t">string</span> <span class="mn">Snapshot</span>()</td><td>Capture the target's current values into a string for a checkpoint. Returns <code>null</code> when there is no serializer or the encode fails.</td></tr>
+          <tr><td><span class="t">bool</span> <span class="mn">Restore</span>(<span class="t">string</span> snapshot)</td><td>Restore from a <code>Snapshot</code> string, in memory only. Returns <code>false</code> when the string is <code>null</code>, could not be decoded, or persistence is disabled.</td></tr>
+        </table>
+      </div>
+
+      <div class="member-group">
+        <div class="member-group-title">Events</div>
+        <table class="mt">
+          <tr><td><span class="mn">OnBeforeLoad</span> / <span class="mn">OnAfterLoad</span></td><td>Around each load that runs (with source, and result on After).</td></tr>
+          <tr><td><span class="mn">OnBeforeSave</span> / <span class="mn">OnAfterSave</span></td><td>Around each save that runs.</td></tr>
+          <tr><td><span class="mn">OnBeforeClear</span> / <span class="mn">OnAfterClear</span></td><td>Around each clear that runs.</td></tr>
+          <tr><td><span class="mn">BlockLoad</span> / <span class="mn">BlockSave</span> / <span class="mn">BlockClear</span></td><td>Return true from a subscriber to veto the operation.</td></tr>
+        </table>
+      </div>
+
+      <div class="member-group">
+        <div class="member-group-title">Settings (configurable in the inspector / overridable in a subclass)</div>
+        <table class="mt">
+          <tr><td><span class="t">bool</span> <span class="mn">AutoLoad</span> / <span class="mn">AutoSave</span></td><td>Whether to load on launch and save at safe points automatically.</td></tr>
+          <tr><td><span class="t">float</span> <span class="mn">RegularSaveDelay</span> / <span class="mn">AutoLoadRetryDelay</span></td><td>Timer cadences (use <code>NoRegularSave</code> / <code>NoAutoLoadRetry</code> to disable).</td></tr>
+          <tr><td><span class="t">const float</span> <span class="mn">MinimumRegularSaveDelay</span> / <span class="mn">MinimumAutoLoadRetryDelay</span> = 5 &middot; <span class="mn">NoRegularSave</span> / <span class="mn">NoAutoLoadRetry</span> = 0</td><td>A positive delay is clamped up to the minimum; the <code>No*</code> value (or lower) disables the timer.</td></tr>
+          <tr><td><span class="t">ExecutionMode</span> <span class="mn">ReadExecutionMode</span> / <span class="mn">WriteExecutionMode</span></td><td>Which sync/async paths the manager supports, and the default.</td></tr>
+          <tr><td><span class="t">float</span> <span class="mn">LoadTimeout</span> / <span class="mn">SaveTimeout</span> / <span class="mn">ClearTimeout</span></td><td>Seconds an async operation may run before cancellation.</td></tr>
+          <tr><td><span class="t">bool</span> <span class="mn">HasDurableStorage</span> { get; }</td><td>Whether the storage outlives the session (false for an in-memory manager).</td></tr>
+        </table>
+      </div>
+
+      <div class="member-group">
+        <div class="member-group-title">For implementers (protected)</div>
+        <table class="mt">
+          <tr><td><span class="t">LoadResult</span> <span class="mn">ReadPayloadSync</span>(<span class="t">PersistenceSource</span> source, <span class="t">string</span> slot)</td><td>Read and return the stored payload (or Invalid / Failure).</td></tr>
+          <tr><td><span class="t">SaveResult</span> <span class="mn">WritePayloadSync</span>(<span class="t">PersistenceSource</span> source, <span class="t">string</span> slot, <span class="t">string</span> payload)</td><td>Persist the payload.</td></tr>
+          <tr><td><span class="t">ClearResult</span> <span class="mn">ClearPayloadSync</span>(<span class="t">string</span> slot)</td><td>Delete the stored data.</td></tr>
+          <tr><td><span class="mn">ReadPayloadAsync</span> / <span class="mn">WritePayloadAsync</span> / <span class="mn">ClearPayloadAsync</span></td><td>Async equivalents (with a <code>CancellationToken</code>).</td></tr>
+          <tr><td><span class="t">string</span> <span class="mn">StorageLocation</span>(<span class="t">string</span> slot)</td><td>Report a stable storage path or key.</td></tr>
+          <tr><td><span class="kw">void</span> <span class="mn">OnEnteringScope</span>() / <span class="mn">OnLeavingScope</span>()</td><td>Per-session setup and teardown.</td></tr>
+          <tr><td><span class="t">PersistencePolicy</span> <span class="mn">Constraint</span> / <span class="t">bool</span> <span class="mn">SelfBoundsAsyncOperations</span></td><td>Fix auto-load/save the manager cannot work without; declare it bounds its own async timeouts.</td></tr>
+          <tr><td><span class="kw">void</span> <span class="mn">Log</span>(<span class="t">string</span> text, <span class="t">LogLevel</span> level = None)</td><td>Write to the manager's inspector log (development only).</td></tr>
+        </table>
+      </div>
+    </div>
+
+
+    <!-- ═══════════════════════════════════════ Persistence ═══ -->
+    <div class="type-section" id="Persistence">
+      <div class="type-header"><h2>Persistence</h2><span class="badge badge-static">static</span></div>
+      <p class="type-desc">Global entry point for state and operations shared across every manager.</p>
+      <div class="member-group">
+        <div class="member-group-title">State &amp; events</div>
+        <table class="mt">
+          <tr><td><span class="t">Awaitable</span> <span class="mn">WhenAllReady</span> { get; }</td><td>Await (or yield) until every active manager's load has settled.</td></tr>
+          <tr><td><span class="t">IReadOnlyList</span>&lt;<span class="t">PersistenceManager</span>&gt; <span class="mn">ActiveManagers</span> { get; }</td><td>Live view of every active manager.</td></tr>
+          <tr><td><span class="t">int</span> <span class="mn">ManagerCount</span> { get; }</td><td>Count of currently active managers.</td></tr>
+          <tr><td><span class="t">bool</span> <span class="mn">IsDraining</span> { get; }</td><td>Whether a shutdown save drain is running.</td></tr>
+          <tr><td><span class="kw">void</span> <span class="mn">ForceQuitDrain</span>()</td><td>Cut a running shutdown drain short (unsaved data may be lost).</td></tr>
+          <tr><td><span class="t">event Action</span>&lt;<span class="t">PersistenceManager</span>&gt; <span class="mn">ManagerAdded</span> / <span class="mn">ManagerRemoved</span></td><td>A manager went in or out of scope.</td></tr>
+          <tr><td><span class="t">event Action</span> <span class="mn">OnShutdownDrainStarted</span> / <span class="mn">OnShutdownDrainCompleted</span></td><td>Around the shutdown save drain (play-mode exit or app quit).</td></tr>
+          <tr><td><span class="mn">OnBeforeAnyLoad</span> / <span class="mn">OnAfterAnyLoad</span></td><td>Around any manager's load: <code>(manager, source)</code>, and <code>(manager, source, LoadResult)</code> on after.</td></tr>
+          <tr><td><span class="mn">OnBeforeAnySave</span> / <span class="mn">OnAfterAnySave</span></td><td>Around any manager's save (with <code>SaveResult</code> on after).</td></tr>
+          <tr><td><span class="mn">OnBeforeAnyClear</span> / <span class="mn">OnAfterAnyClear</span></td><td>Around any manager's clear (with <code>ClearResult</code> on after).</td></tr>
+        </table>
+      </div>
+
+      <div class="member-group">
+        <div class="member-group-title">Operations on every active manager</div>
+        <div class="note"><span class="ex">Every method below throws InvalidOperationException in the editor only when called outside play mode. ClearAll* permanently deletes player data.</span></div>
+        <table class="mt">
+          <tr><td><span class="t">LoadResult[]</span> <span class="mn">LoadAllSync</span>()</td><td>Force synchronous; every result is final on return.</td></tr>
+          <tr><td><span class="kw">void</span> <span class="mn">LoadAll</span>()</td><td>Fire and forget (wireable to a UnityEvent).</td></tr>
+          <tr><td><span class="kw">void</span> <span class="mn">LoadAll</span>(<span class="t">Action</span>&lt;<span class="t">LoadResult[]</span>&gt; onComplete)</td><td>Default; callback with every result.</td></tr>
+          <tr><td><span class="t">Task</span>&lt;<span class="t">LoadResult[]</span>&gt; <span class="mn">LoadAllAsync</span>(<span class="t">ExecutionMode</span>? executionModeOverride = null)</td><td>Async; await every result.</td></tr>
+          <tr><td><span class="t">PersistenceOperation</span>&lt;<span class="t">LoadResult[]</span>&gt; <span class="mn">LoadAllRoutine</span>()</td><td>Coroutine; yield then read <code>Result</code>.</td></tr>
+          <tr><td><span class="t">SaveResult[]</span> <span class="mn">SaveAllSync</span>() / <span class="kw">void</span> <span class="mn">SaveAll</span>() / <span class="mn">SaveAll</span>(<span class="t">Action</span>&lt;<span class="t">SaveResult[]</span>&gt;)</td><td>Save every manager: sync, fire-and-forget, callback.</td></tr>
+          <tr><td><span class="t">Task</span>&lt;<span class="t">SaveResult[]</span>&gt; <span class="mn">SaveAllAsync</span>(<span class="t">ExecutionMode</span>? = null) / <span class="t">PersistenceOperation</span>&lt;<span class="t">SaveResult[]</span>&gt; <span class="mn">SaveAllRoutine</span>()</td><td>Save every manager: async, coroutine.</td></tr>
+          <tr><td><span class="t">ClearResult[]</span> <span class="mn">ClearAllSync</span>() / <span class="kw">void</span> <span class="mn">ClearAll</span>() / <span class="mn">ClearAll</span>(<span class="t">Action</span>&lt;<span class="t">ClearResult[]</span>&gt;)</td><td>Clear every manager: sync, fire-and-forget, callback.</td></tr>
+          <tr><td><span class="t">Task</span>&lt;<span class="t">ClearResult[]</span>&gt; <span class="mn">ClearAllAsync</span>(<span class="t">ExecutionMode</span>? = null) / <span class="t">PersistenceOperation</span>&lt;<span class="t">ClearResult[]</span>&gt; <span class="mn">ClearAllRoutine</span>()</td><td>Clear every manager: async, coroutine.</td></tr>
+        </table>
+      </div>
+    </div>
+
+
+    <!-- ═══════════════════════════════════════ Slots ═══ -->
+    <div class="type-section" id="Slots">
+      <div class="type-header"><h2>Slots</h2><span class="badge badge-static">static</span></div>
+      <p class="type-desc">Operate on a slot's saved data without loading it. See Multiple save slots.</p>
+      <div class="member-group">
+        <div class="member-group-title">Members</div>
+        <table class="mt">
+          <tr><td><span class="t">string</span> <span class="mn">GlobalSlot</span> { get; set; }</td><td>Slot shared by every manager; setting it switches all of them.</td></tr>
+          <tr><td><span class="t">ClearResult[]</span> <span class="mn">DeleteSync</span>(<span class="t">string</span> slot, params <span class="t">IMultiSlot</span>[] targets) / <span class="kw">void</span> <span class="mn">Delete</span>(...) / <span class="mn">Delete</span>(<span class="t">string</span> slot, <span class="t">Action</span>&lt;<span class="t">ClearResult[]</span>&gt; onComplete, ...)</td><td>Delete a slot's storage for each target: sync, fire-and-forget, callback. Permanently deletes data, no undo.</td></tr>
+          <tr><td><span class="t">Task</span>&lt;<span class="t">ClearResult[]</span>&gt; <span class="mn">DeleteAsync</span>(...) / <span class="t">PersistenceOperation</span>&lt;<span class="t">ClearResult[]</span>&gt; <span class="mn">DeleteRoutine</span>(...)</td><td>Delete a slot's storage: async, coroutine.</td></tr>
+          <tr><td><span class="t">SaveResult[]</span> <span class="mn">CopySync</span>(<span class="t">string</span> fromSlot, <span class="t">string</span> toSlot, params <span class="t">IMultiSlot</span>[] targets) / <span class="kw">void</span> <span class="mn">Copy</span>(...) / <span class="mn">Copy</span>(<span class="t">string</span> fromSlot, <span class="t">string</span> toSlot, <span class="t">Action</span>&lt;<span class="t">SaveResult[]</span>&gt; onComplete, ...)</td><td>Copy a slot's storage onto another: sync, fire-and-forget, callback. Overwrites the destination.</td></tr>
+          <tr><td><span class="t">Task</span>&lt;<span class="t">SaveResult[]</span>&gt; <span class="mn">CopyAsync</span>(...) / <span class="t">PersistenceOperation</span>&lt;<span class="t">SaveResult[]</span>&gt; <span class="mn">CopyRoutine</span>(...)</td><td>Copy a slot's storage: async, coroutine.</td></tr>
+          <tr><td><span class="t">SaveResult[]</span> <span class="mn">RenameSync</span>(<span class="t">string</span> fromSlot, <span class="t">string</span> toSlot, params <span class="t">IMultiSlot</span>[] targets) / <span class="kw">void</span> <span class="mn">Rename</span>(...) / <span class="mn">Rename</span>(<span class="t">string</span> fromSlot, <span class="t">string</span> toSlot, <span class="t">Action</span>&lt;<span class="t">SaveResult[]</span>&gt; onComplete, ...)</td><td>Rename a slot (copy then delete): sync, fire-and-forget, callback. Moves data, no undo.</td></tr>
+          <tr><td><span class="t">Task</span>&lt;<span class="t">SaveResult[]</span>&gt; <span class="mn">RenameAsync</span>(...) / <span class="t">PersistenceOperation</span>&lt;<span class="t">SaveResult[]</span>&gt; <span class="mn">RenameRoutine</span>(...)</td><td>Rename a slot's storage: async, coroutine. <span class="ex">Delete / Copy / Rename (all shapes) throw InvalidOperationException in the editor only when called outside play mode.</span></td></tr>
+          <tr><td><span class="mn">OnSlotUpdated</span> / <span class="mn">OnSlotDeleted</span> / <span class="mn">OnSlotCopied</span></td><td>Raised as slot storage changes.</td></tr>
+        </table>
+      </div>
+    </div>
+
+
+    <!-- ═══════════════════════════════════════ GlobalPersistedData ═══ -->
+    <div class="type-section" id="GlobalPersistedData">
+      <div class="type-header"><h2>GlobalPersistedData</h2><span class="badge badge-static">static</span></div>
+      <p class="type-desc">Reach a registered persistent object from anywhere, by type, with no serialized reference. An <code>IAlwaysGlobal</code> target registers itself; you can also register your own.</p>
+      <div class="member-group"><table class="mt">
+        <tr><td><span class="t">T</span> <span class="mn">Find</span>&lt;<span class="t">T</span>&gt;(<span class="t">Func</span>&lt;<span class="t">T</span>, <span class="t">bool</span>&gt; filter = null) where T : class</td><td>The first registered target assignable to <code>T</code> (a concrete type or interface) matching the optional filter, or <code>null</code>.</td></tr>
+        <tr><td><span class="t">IEnumerable</span>&lt;<span class="t">T</span>&gt; <span class="mn">FindAll</span>&lt;<span class="t">T</span>&gt;(<span class="t">Func</span>&lt;<span class="t">T</span>, <span class="t">bool</span>&gt; filter = null) where T : class</td><td>Every registered target assignable to <code>T</code> matching the filter, as a fresh snapshot.</td></tr>
+        <tr><td><span class="kw">void</span> <span class="mn">Add</span>(<span class="t">ScriptableObject</span> target) / <span class="mn">AddPermanent</span>(<span class="t">ScriptableObject</span> target)</td><td>Register a target manually (<code>AddPermanent</code> cannot be undone by <code>Remove</code>).</td></tr>
+        <tr><td><span class="t">bool</span> <span class="mn">Remove</span>(<span class="t">ScriptableObject</span> target)</td><td>Unregister a target added with <code>Add</code>; returns whether it was removed.</td></tr>
+      </table></div>
+    </div>
+
+
+    <!-- ═══════════════════════════════════════ Settings ═══ -->
+    <div class="type-section" id="Settings">
+      <div class="type-header"><h2>Settings</h2><span class="badge badge-static">static</span></div>
+      <p class="type-desc">Static access to the package settings (Project Settings &gt; Persistent Asset).</p>
+      <div class="member-group">
+        <div class="member-group-title">Members</div>
+        <table class="mt">
+          <tr><td><span class="t">T</span> <span class="mn">Get</span>&lt;<span class="t">T</span>&gt;() where T : SettingsEntry, new()</td><td>The project's instance of a settings section (or a default). Treat the result as read-only: runtime changes to it are not persisted.</td></tr>
+          <tr><td><span class="kw">void</span> <span class="mn">Save</span>()</td><td>Persist settings changed from code (editor only; safe to call anywhere).</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="type-section" id="SettingsEntry">
+      <div class="type-header"><h2>SettingsEntry</h2><span class="badge badge-class">abstract</span><span class="warn">extending</span></div>
+      <p class="type-desc">Base class for a settings section. Subclass and decorate with <code>[InspectorDisplay]</code> (see Extending).</p>
+    </div>
+
+
+    <!-- ═══════════════════════════════════════ Results ═══ -->
+    <div class="type-section" id="Result">
+      <div class="type-header"><h2>Result</h2><span class="badge badge-class">abstract</span></div>
+      <p class="type-desc">Base for operation outcomes. Use the intent-named flags rather than the raw <code>Type</code>.</p>
+      <div class="member-group">
+        <div class="member-group-title">Members</div>
+        <table class="mt">
+          <tr><td><span class="t">ResultType</span> <span class="mn">Type</span> { get; }</td><td>The outcome category.</td></tr>
+          <tr><td><span class="t">bool</span> <span class="mn">IsSuccess</span> / <span class="mn">IsFailure</span> / <span class="mn">IsIgnored</span> / <span class="mn">IsCancelled</span> / <span class="mn">IsBusy</span></td><td>Intent-named checks on the outcome.</td></tr>
+          <tr><td><span class="t">string</span> <span class="mn">Message</span> { get; }</td><td>Optional explanation (often set on Ignored / Failure).</td></tr>
+          <tr><td><span class="t">Exception</span> <span class="mn">Exception</span> { get; }</td><td>Set when <code>Type</code> is <code>Exception</code>.</td></tr>
+          <tr><td><span class="t">double</span> <span class="mn">ElapsedMilliseconds</span> { get; }</td><td>Operation duration (NaN in non-development builds).</td></tr>
+          <tr><td><span class="t">string</span> <span class="mn">ToString</span>() / <span class="kw">void</span> <span class="mn">Deconstruct</span>(out <span class="t">ResultType</span>, out <span class="t">string</span>, out <span class="t">Exception</span>[, out <span class="t">double</span>])</td><td>Readable summary; deconstruct into its fields (with or without the elapsed time).</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="type-section" id="LoadResult">
+      <div class="type-header"><h2>LoadResult</h2><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">A load outcome. Adds <code>IsInvalid</code> (no usable data, the normal first run). Factory methods <code>Success(string payload, string message = null)</code>, <code>Invalid(string message = null)</code>, <code>Failure(string message = null)</code> for managers.</p>
+    </div>
+    <div class="type-section" id="SaveResult">
+      <div class="type-header"><h2>SaveResult</h2><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">A save outcome. Factory methods <code>Success(string message = null)</code>, <code>Failure(string message = null)</code>.</p>
+    </div>
+    <div class="type-section" id="ClearResult">
+      <div class="type-header"><h2>ClearResult</h2><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">A clear outcome. Factory methods <code>Success(string message = null)</code>, <code>Failure(string message = null)</code>.</p>
+    </div>
+
+    <div class="type-section" id="ResultType">
+      <div class="type-header"><h2>ResultType</h2><span class="badge badge-enum">enum</span></div>
+      <div class="member-group"><table class="mt">
+        <tr><td><span class="mn">Success</span></td><td>The operation succeeded.</td></tr>
+        <tr><td><span class="mn">Failure</span></td><td>Failed; for a load, temporarily unavailable, a retry might help.</td></tr>
+        <tr><td><span class="mn">Exception</span></td><td>Code threw.</td></tr>
+        <tr><td><span class="mn">Cancelled</span></td><td>Started but abandoned (timeout, superseded, left scope).</td></tr>
+        <tr><td><span class="mn">Invalid</span></td><td>Load only: no usable data (missing or corrupt). The normal first run.</td></tr>
+        <tr><td><span class="mn">Ignored</span></td><td>Never ran (not dirty, blocked, no slot, not loaded yet, shutting down, superseded while queued, busy).</td></tr>
+      </table></div>
+    </div>
+
+    <div class="type-section" id="ExecutionMode">
+      <div class="type-header"><h2>ExecutionMode</h2><span class="badge badge-enum">enum</span></div>
+      <div class="member-group"><table class="mt">
+        <tr><td><span class="mn">PreferSync</span> / <span class="mn">PreferAsync</span></td><td>Supports both; defaults to the named one.</td></tr>
+        <tr><td><span class="mn">SyncOnly</span> / <span class="mn">AsyncOnly</span></td><td>Only that path; as an override, fails when unsupported.</td></tr>
+      </table></div>
+    </div>
+
+    <div class="type-section" id="PersistenceSource">
+      <div class="type-header"><h2>PersistenceSource</h2><span class="badge badge-enum">enum</span></div>
+      <div class="member-group"><table class="mt">
+        <tr><td><span class="mn">Manual</span></td><td>A load/save/clear method was called.</td></tr>
+        <tr><td><span class="mn">Automatic</span></td><td>Triggered by the system (launch, safe point, timer).</td></tr>
+      </table></div>
+    </div>
+
+    <div class="type-section" id="PersistenceOperation">
+      <div class="type-header"><h2>PersistenceOperation&lt;T&gt;</h2><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">Coroutine handle on a running operation (<code>where T : class</code>; <code>T</code> is a <code>Result</code> or <code>Result[]</code>). <code>yield return</code> it; <code>Result</code> (null while running), <code>IsDone</code>.</p>
+    </div>
+
+
+    <!-- ═══════════════════════════════════════ Optional interfaces ═══ -->
+    <div class="type-section" id="IMultiSlot">
+      <div class="type-header"><h2>IMultiSlot</h2><span class="badge badge-interface">iface</span></div>
+      <p class="type-desc">Marker: save and load under multiple named slots. No members.</p>
+    </div>
+    <div class="type-section" id="IUpgradable">
+      <div class="type-header"><h2>IUpgradable</h2><span class="badge badge-interface">iface</span></div>
+      <p class="type-desc">Migrate old saves forward. <code>int SaveVersion</code>, <code>void Upgrade(int fromVersion, SaveNode oldData)</code>, <code>bool Downgrade(int fromVersion)</code>.</p>
+    </div>
+    <div class="type-section" id="IFieldResettable">
+      <div class="type-header"><h2>IFieldResettable</h2><span class="badge badge-interface">iface</span></div>
+      <p class="type-desc">Reset or restore individual fields. Events <code>DefaultValuesRequested</code> and <code>CurrentValuesRequested</code> return a <code>SaveNode</code> (do not subscribe from your own code).</p>
+    </div>
+    <div class="type-section" id="IScopeCallbacks">
+      <div class="type-header"><h2>IScopeCallbacks</h2><span class="badge badge-interface">iface</span></div>
+      <p class="type-desc"><code>OnBeforeScopeIn(string slot, bool enable)</code>, <code>OnAfterScopeOut(string slot, bool disable)</code>. The flags mark the first scope-in and final scope-out of the session.</p>
+    </div>
+    <div class="type-section" id="ISerializationCallbacks">
+      <div class="type-header"><h2>ISerializationCallbacks</h2><span class="badge badge-interface">iface</span></div>
+      <p class="type-desc">Serializer-neutral <code>OnBeforeSerialize()</code> / <code>OnAfterDeserialize()</code>.</p>
+    </div>
+    <div class="type-section" id="IDirtyTracked">
+      <div class="type-header"><h2>IDirtyTracked</h2><span class="badge badge-interface">iface</span></div>
+      <p class="type-desc">Skip saves while unchanged. <code>bool IsDirty { get; set; }</code> (reset to false after a successful save).</p>
+    </div>
+    <div class="type-section" id="IDynamicInitialize">
+      <div class="type-header"><h2>IDynamicInitialize</h2><span class="badge badge-interface">iface</span></div>
+      <p class="type-desc"><code>void DynamicInitialize()</code> runs once after a load found no save (never overwrites a save, never in edit mode).</p>
+    </div>
+    <div class="type-section" id="IPersistencePolicy">
+      <div class="type-header"><h2>IPersistencePolicy</h2><span class="badge badge-interface">iface</span></div>
+      <p class="type-desc"><code>PersistencePolicy Policy { get; }</code>. The <code>PersistencePolicy</code> struct's non-null <code>AutoLoad</code> / <code>AutoSave</code> override the manager.</p>
+    </div>
+    <div class="type-section" id="IAlwaysGlobal">
+      <div class="type-header"><h2>IAlwaysGlobal</h2><span class="badge badge-interface">iface</span></div>
+      <p class="type-desc">Marker: keep the object loaded all session and reachable via <code>GlobalPersistedData</code>. No members.</p>
+    </div>
+
+    <div class="type-section" id="PersistencePolicy">
+      <div class="type-header"><h2>PersistencePolicy</h2><span class="badge badge-struct">struct</span></div>
+      <p class="type-desc">The manager settings an <code>IPersistencePolicy</code> object can drive; a <code>null</code> field leaves the manager's own setting in charge.</p>
+      <div class="member-group"><table class="mt">
+        <tr><td><span class="t">bool?</span> <span class="mn">AutoLoad</span> { get; set; } / <span class="t">bool?</span> <span class="mn">AutoSave</span> { get; set; }</td><td>Non-null values override the manager's <code>AutoLoad</code> / <code>AutoSave</code>.</td></tr>
+        <tr><td><span class="t">static readonly PersistencePolicy</span> <span class="mn">Default</span></td><td>Drives nothing (every field null).</td></tr>
+      </table></div>
+    </div>
+
+
+    <!-- ═══════════════════════════════════════ Serialization ═══ -->
+    <div class="type-section" id="Serializer">
+      <div class="type-header"><h2>Serializer</h2><span class="badge badge-class">abstract</span><span class="warn">extending</span></div>
+      <p class="type-desc">Custom serialization. Must not fail on valid data (see Extending).</p>
+      <div class="member-group"><table class="mt">
+        <tr><td><span class="t">string</span> <span class="mn">SerializeToString</span>(<span class="t">Object</span> obj, <span class="t">string</span> backReferenceFieldName)</td><td>Object to string.</td></tr>
+        <tr><td><span class="t">bool</span> <span class="mn">DeserializeFromString</span>(<span class="t">string</span> str, <span class="t">Object</span> obj)</td><td>String into object; returns success.</td></tr>
+        <tr><td><span class="t">SaveNode</span> <span class="mn">ParseToNode</span>(<span class="t">string</span> str)</td><td>Parse to a neutral tree for upgrades (null if unsupported).</td></tr>
+        <tr><td><span class="t">bool</span> <span class="mn">SupportsNode</span> { get; }</td><td>Whether <code>ParseToNode</code> returns a usable tree.</td></tr>
+      </table></div>
+    </div>
+
+    <div class="type-section" id="SaveNode">
+      <div class="type-header"><h2>SaveNode</h2><span class="badge badge-class">abstract</span></div>
+      <p class="type-desc">Read-only, format-neutral view of a saved payload, handed to <code>IUpgradable.Upgrade</code>.</p>
+      <div class="member-group"><table class="mt">
+        <tr><td><span class="mn">this</span>[<span class="t">string</span> key] / <span class="mn">this</span>[<span class="t">int</span> index]</td><td>Object member / array element (or <code>Missing</code>).</td></tr>
+        <tr><td><span class="t">bool</span> <span class="mn">Exists</span> { get; } / <span class="t">int</span> <span class="mn">Count</span> { get; }</td><td>Presence and array length.</td></tr>
+        <tr><td><span class="mn">AsInt</span> / <span class="mn">AsFloat</span> / <span class="mn">AsBool</span> / <span class="mn">AsString</span> / <span class="mn">AsEnum&lt;T&gt;</span> ...</td><td>Typed readers with a fallback.</td></tr>
+        <tr><td><span class="mn">AsVector2/3/4</span> / <span class="mn">AsVector2Int/3Int</span> / <span class="mn">AsColor</span> / <span class="mn">AsColor32</span> / <span class="mn">AsQuaternion</span> ...</td><td>Common Unity-type readers.</td></tr>
+        <tr><td><span class="mn">Missing</span> (static) &middot; <span class="t">SaveNode</span> <span class="mn">Object</span>(<span class="t">Dictionary</span>&lt;<span class="t">string</span>, <span class="t">SaveNode</span>&gt; members) / <span class="mn">Array</span>(<span class="t">List</span>&lt;<span class="t">SaveNode</span>&gt; elements) / <span class="mn">Value</span>(<span class="t">string</span> text)</td><td>Build nodes (for a custom serializer).</td></tr>
+        <tr><td><span class="t">IEnumerator&lt;SaveNode&gt;</span> <span class="mn">GetEnumerator</span>()</td><td><code>SaveNode</code> is <code>IEnumerable&lt;SaveNode&gt;</code>: <code>foreach</code> over an array node's elements.</td></tr>
+      </table></div>
+    </div>
+
+
+    <!-- ═══════════════════════════════════════ Attributes ═══ -->
+    <div class="type-section" id="Attributes">
+      <div class="type-header"><h2>Attributes</h2><span class="badge badge-class">attr</span></div>
+      <div class="member-group"><table class="mt">
+        <tr><td><span class="mn">[PersistentScriptableObject(<span class="t">string</span> persistenceManagerFieldName)]</span><br/><span class="t">string</span> <span class="mn">PersistenceManagerFieldName</span> { get; }</td><td>Make a ScriptableObject persistent without inheriting the base class, naming its serialized <code>PersistenceManager</code> field.</td></tr>
+        <tr><td><span class="mn">[InspectorDisplay(<span class="t">string</span> name, <span class="t">string</span> description = null)]</span><br/><span class="t">string</span> <span class="mn">Name</span> / <span class="mn">Description</span> { get; }, <span class="t">int</span> <span class="mn">Order</span> { get; set; }, <span class="t">string</span> <span class="mn">Category</span> { get; set; }</td><td>Display name, description, ordering and submenu for a manager, serializer or tooling method in the inspector / its menu. <span class="ex">The constructor throws ArgumentException when name is null or whitespace.</span></td></tr>
+        <tr><td><span class="mn">[Breaking(<span class="t">string</span> warning = null)]</span><br/><span class="t">string</span> <span class="mn">Warning</span> { get; }</td><td>Mark a manager field whose change would orphan existing saves, so the inspector warns and locks it.</td></tr>
+        <tr><td><span class="mn">[RequiredSerializer(<span class="t">Type</span> serializerType)]</span><br/><span class="t">Type</span> <span class="mn">SerializerType</span> { get; }</td><td>Lock a persistent object to a specific serializer (redeclarable on a subclass).</td></tr>
+      </table></div>
+    </div>
+
+
+    <!-- ═══════════════════════════════════════ Debugging ═══ -->
+    <div class="type-section" id="LogLevel">
+      <div class="type-header"><h2>LogLevel</h2><span class="badge badge-enum">enum</span></div>
+      <div class="member-group"><table class="mt">
+        <tr><td><span class="mn">None</span> / <span class="mn">Info</span> / <span class="mn">Warning</span> / <span class="mn">Error</span></td><td>Severity of a persistence log message, used with the manager's <code>Log()</code>.</td></tr>
+      </table></div>
+    </div>
+
+    <div class="type-section" id="InGameLogsViewer">
+      <div class="type-header"><h2>InGameLogsViewer</h2><span class="badge badge-mb">MB</span></div>
+      <p class="type-desc">Add this component to a GameObject for an on-screen view of every active manager's logs (editor and development builds only; in a release build it self-destroys on Awake). See Debugging.</p>
+    </div>
+
+    <div class="type-section" id="PersistentAssetConsole">
+      <div class="type-header"><h2>PersistentAssetConsole</h2><span class="badge badge-static">static</span><span class="warn">extending</span></div>
+      <p class="type-desc">Write to the Unity console with the standard colored "[Persistent Asset ...]" prefix. Pass the sub-module name as <code>module</code> (e.g. <code>nameof(BuiltIns)</code>), or <code>null</code> for Core.</p>
+      <div class="member-group"><table class="mt">
+        <tr><td><span class="kw">void</span> <span class="mn">Log</span>(<span class="t">string</span> module, <span class="t">string</span> message, <span class="t">Object</span> context = null)</td><td>Informational message.</td></tr>
+        <tr><td><span class="kw">void</span> <span class="mn">LogWarning</span>(<span class="t">string</span> module, <span class="t">string</span> message, <span class="t">Object</span> context = null) / <span class="mn">LogError</span>(...)</td><td>Warning / error message.</td></tr>
+        <tr><td><span class="kw">void</span> <span class="mn">LogException</span>(<span class="t">Exception</span> exception, <span class="t">Object</span> context = null)</td><td>Log an exception (native entry, no prefix).</td></tr>
+      </table></div>
+    </div>
+
+    <div class="doc-footer">Persistent Asset v1.0.0 &nbsp;&middot;&nbsp; For full signatures and remarks, see the XML doc comments in the source.</div>
+
+  </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Persistent Asset - Installation &amp; Demo</title>
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+<div id="layout">
+
+  <nav>
+    <div class="nav-title">Persistent Asset</div>
+    <a href="../User%20Manual.html">Home</a>
+    <a href="What%20is%20a%20ScriptableObject.html">What is a ScriptableObject?</a>
+    <a href="Getting%20Started.html">Getting Started</a>
+    <a href="Installation.html" class="active">Installation &amp; Demo</a>
+    <a href="#requirements"  class="indent">Requirements</a>
+    <a href="#platforms"     class="indent">Platform support</a>
+    <a href="#install"       class="indent">Installing</a>
+    <a href="#dependencies"  class="indent">Optional modules</a>
+    <a href="#demo"          class="indent">The demo</a>
+    <a href="Core%20Concepts.html">Core Concepts</a>
+    <a href="Local%20Saving.html">Local Saving</a>
+    <a href="Cloud%20and%20Remote.html">Cloud &amp; Remote</a>
+    <a href="Guides.html">Guides</a>
+    <a href="No-Code.html">No-Code</a>
+    <a href="Settings.html">Settings</a>
+    <a href="Extending.html">Extending</a>
+    <a href="Technical%20QA.html">Technical Q&amp;A</a>
+    <a href="Roadmap.html">Roadmap</a>
+  </nav>
+
+  <main>
+    <div class="page-header">
+      <h1>Installation &amp; Demo</h1>
+      <div class="sub">What you need, how to import, the optional modules, and the sample game.</div>
+    </div>
+
+
+    <!-- ══════════════════════════════════════ requirements ════ -->
+    <section id="requirements">
+      <h2>Requirements</h2>
+      <p>
+        <strong>Unity 6.0 or newer.</strong> The package is built and maintained on Unity 6 and works
+        across its versions, with nothing else required to start saving.
+      </p>
+    </section>
+
+
+    <!-- ══════════════════════════════════════ platforms ════ -->
+    <section id="platforms">
+      <h2>Platform support</h2>
+      <div class="member-group">
+        <table class="mt">
+          <tr><td><strong>Desktop</strong> (Windows, macOS, Linux)</td><td>Fully supported, every local manager.</td></tr>
+          <tr><td><strong>Mobile</strong> (iOS, Android)</td><td>Fully supported. Saves live in the app sandbox; the automatic save also fires on focus loss and pause.</td></tr>
+          <tr><td><strong>WebGL</strong></td><td>Fully supported, every local manager. Writes are flushed to the browser's IndexedDB.</td></tr>
+          <tr><td><strong>Consoles</strong></td><td>Console save APIs are proprietary (under a per-platform NDA), so the package cannot ship managers for them; you write a small custom manager against your console's SDK (see <a href="Extending.html">Extending</a>).</td></tr>
+          <tr><td><strong>Cloud / server</strong></td><td>Any platform with networking, through Server (HTTP) or Cloud Save (UGS); see <a href="Cloud%20and%20Remote.html">Cloud &amp; Remote</a>.</td></tr>
+        </table>
+      </div>
+      <div class="note">
+        WebGL runs single-threaded, and a mobile app can be suspended at any moment, so true background
+        asynchronous saving is constrained on these platforms. Persistent Asset accounts for this: the
+        automatic safe-point saves run synchronously, and remote managers can use a local cache, so in
+        practice the async limits there rarely cost you a save.
+      </div>
+    </section>
+
+
+    <!-- ══════════════════════════════════════ install ════ -->
+    <section id="install">
+      <h2>Installing</h2>
+      <ol>
+        <li>Import <strong>Persistent Asset</strong> from the Asset Store (Window &gt; Package Manager &gt; My Assets, or the Asset Store page's "Import").</li>
+        <li>That is all the core needs. Create your first persistent object as in <a href="Getting%20Started.html">Getting Started</a>.</li>
+        <li>If you want a networked or No-Code module, install its package (next section); the module then compiles automatically, with no define to set.</li>
+      </ol>
+      <p>
+        Everything lives under one <code>Assets/Persistent Asset</code> folder.
+      </p>
+    </section>
+
+
+    <!-- ══════════════════════════════════════ dependencies ════ -->
+    <section id="dependencies">
+      <h2>Optional modules</h2>
+      <p>
+        Each module below is inert until you add its Unity package via the Package Manager. Once the
+        package is present, the module compiles in on its own (no scripting define, no setup).
+      </p>
+
+      <div class="member-group">
+        <table class="mt">
+          <tr>
+            <td><strong>Cloud Save (UGS)</strong><br/>the Cloud Save (UGS) manager</td>
+            <td>Requires <code>com.unity.services.cloudsave</code> (Unity Gaming Services Cloud Save). Signing the player in to UGS Authentication is your game's job. See <a href="Cloud%20and%20Remote.html#cloudsave">Cloud &amp; Remote</a>.</td>
+          </tr>
+          <tr>
+            <td><strong>No-Code Input</strong><br/>persistable input bindings</td>
+            <td>Requires <code>com.unity.inputsystem</code> (the Input System). See <a href="No-Code.html#input">No-Code</a>.</td>
+          </tr>
+          <tr>
+            <td><strong>No-Code Localization</strong><br/>persistable selected locale</td>
+            <td>Requires <code>com.unity.localization</code> (the Localization package). See <a href="No-Code.html#localization">No-Code</a>.</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="note">
+        The Server (HTTP) manager and the rest of the No-Code module (Persistent Variables, the
+        components) need none of these, they are part of the base package.
+      </div>
+    </section>
+
+
+    <!-- ══════════════════════════════════════ demo ════ -->
+    <section id="demo">
+      <h2>The demo</h2>
+      <p>
+        The package ships a complete, playable sample: a main menu, profile (save-slot) selection, a
+        level select, and a gameplay scene, all persisting through Persistent Asset. It is the fastest
+        way to see the package work end to end.
+      </p>
+      <p>
+        Open <strong>[PA 0] Demo_MainMenu</strong> (under <code>Persistent Asset/Demo/Scenes</code>) and
+        press Play. From there the demo flows through the other scenes on its own. Make some progress,
+        stop, press Play again, and your profile, options and progress are restored. As you play, the
+        on-screen <strong>In Game Logs Viewer</strong> shows each load and save as it happens (see
+        <a href="Guides.html#debug">Debugging</a>).
+      </p>
+
+      <div class="img-block">
+        <img src="../img/demo_game" alt="The demo running"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">&#128247;</span>
+          <span><strong>img/demo_game</strong><br/>The demo gameplay scene</span>
+        </div>
+        <div class="img-caption">The demo persists profiles, options and progress through the package</div>
+      </div>
+
+      <p>Each scene demonstrates a different part of the package:</p>
+      <ul>
+        <li><strong>[PA 0] Demo_MainMenu</strong>: the entry point and bootstrap flow.</li>
+        <li><strong>[PA 1] Demo_ProfileSelect</strong>: multiple save slots and a save-select screen, built on a <a href="Guides.html#slots">slot registry</a> (<code>ProfileRegistry</code>) that lists profiles and thumbnails without loading them.</li>
+        <li><strong>[PA 2] Demo_LevelSelect</strong>: per-profile progression, and an options menu showing <a href="Guides.html#reset">per-field reset and Snapshot/Restore cancel</a>.</li>
+        <li><strong>[PA 3] Demo_Game</strong>: gameplay that saves progress and achievements, including an example of the <a href="Cloud%20and%20Remote.html#http">Server (HTTP)</a> manager talking to a bundled mock server.</li>
+      </ul>
+      <p>
+        The achievements in <strong>[PA 3]</strong> show the Server (HTTP) manager talking to a small
+        <strong>mock server</strong> bundled with the demo: a real local HTTP backend, so you see an
+        actual remote save flow with no external server to set up. An on-screen overlay lets you
+        <strong>start and stop that server and reset its data</strong>, so you can watch the offline
+        cache and reconnection behave (it deliberately starts offline). A mock HTTP server cannot run in
+        a <strong>WebGL</strong> build, so there the demo keeps a second achievements asset backed by a
+        local <a href="Local%20Saving.html">Prototype</a> manager and uses it instead, a small example of
+        choosing a persistence backend per platform.
+      </p>
+      <p>
+        The demo's scripts (under <code>Demo/Scripts</code>) are a useful reference for wiring the
+        package into a real project. It is self-contained under <code>Assets/Persistent Asset/Demo</code>:
+        delete that folder if you do not need it, nothing else depends on it.
+      </p>
+    </section>
+
+
+    <div class="pager">
+      <a class="prev" href="Getting%20Started.html">
+        <div class="dir">Back</div>
+        <div class="pg-title">Getting Started</div>
+      </a>
+      <a class="next" href="Core%20Concepts.html">
+        <div class="dir">Next</div>
+        <div class="pg-title">Core Concepts</div>
+      </a>
+    </div>
+
+  </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Persistent Asset - Public API - Built-Ins</title>
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+<div id="layout">
+
+  <nav>
+    <div class="nav-title">Public API</div>
+    <a href="../Public%20API.html">Overview</a>
+    <a class="nav-band" href="API%20-%20Core.html">Core</a>
+    <div class="nav-band active">Built-Ins</div>
+    <div class="nav-group">Serializer</div>
+    <a href="#UnityJsonSerializer"><span class="badge badge-class">class</span>UnityJsonSerializer</a>
+    <div class="nav-group">Built-In Managers</div>
+    <a href="#PrototypePersistenceManager"><span class="badge badge-pm">PM</span>Prototype</a>
+    <a href="#FilePersistenceManager"><span class="badge badge-pm">PM</span>Local File</a>
+    <a href="#PlayerPrefsPersistenceManager"><span class="badge badge-pm">PM</span>Player Prefs</a>
+    <a href="#SessionPersistenceManager"><span class="badge badge-pm">PM</span>Session</a>
+
+    <div class="nav-group">Persistent Objects</div>
+    <a href="#PersistentSlotRegistry"><span class="badge badge-so">SO</span>PersistentSlotRegistry</a>
+    <a href="#SlotEntry"><span class="badge badge-struct">struct</span>SlotEntry&lt;T&gt;</a>
+    <a href="#SaveScreenshot"><span class="badge badge-struct">struct</span>SaveScreenshot</a>
+    <a href="#ScreenshotFormat"><span class="badge badge-enum">enum</span>ScreenshotFormat</a>
+    <a href="#PersistentSingleton"><span class="badge badge-so">SO</span>PersistentSingleton</a>
+
+    <div class="nav-group">Security</div>
+    <a href="#Encryption"><span class="badge badge-enum">enum</span>Encryption</a>
+    <a href="#Compression"><span class="badge badge-enum">enum</span>Compression</a>
+    <a href="#SaveLock"><span class="badge badge-enum">enum</span>SaveLock</a>
+
+    <div class="nav-group">Remote</div>
+    <a href="#RemotePersistenceManager"><span class="badge badge-pm">PM</span>RemotePersistenceManager</a>
+    <a href="#HttpPersistenceManager"><span class="badge badge-pm">PM</span>Server (HTTP)</a>
+    <a href="#CloudSavePersistenceManager"><span class="badge badge-pm">PM</span>Cloud Save (UGS)</a>
+    <a href="#RemoteEnums"><span class="badge badge-enum">enum</span>Remote enums</a>
+    <a href="#RemoteManagerSettings"><span class="badge badge-class">class</span>RemoteManagerSettings</a>
+
+    <div class="nav-group">Utilities</div>
+    <a href="#SaveFileUtility"><span class="badge badge-static">static</span>SaveFileUtility</a>
+    <a href="#CheatProtectionUtility"><span class="badge badge-static">static</span>CheatProtectionUtility</a>
+    <a href="#GzipUtility"><span class="badge badge-static">static</span>GzipUtility</a>
+    <a href="#TaskUtility"><span class="badge badge-static">static</span>TaskUtility</a>
+    <a href="#SlotFormatUtility"><span class="badge badge-static">static</span>SlotFormatUtility</a>
+    <a href="#WebGLFileSync"><span class="badge badge-static">static</span>WebGLFileSync</a>
+    <a href="#UtilityEnums"><span class="badge badge-enum">enum</span>ThreadType / SaveLocation</a>
+
+    <div class="nav-group">Integration Testing</div>
+    <a href="#TestPersistenceManager"><span class="badge badge-pm">PM</span>TestPersistenceManager</a>
+    <a href="#TestPersistentScriptableObject"><span class="badge badge-so">SO</span>TestPersistentScriptableObject</a>
+    <a class="nav-band" href="API%20-%20No-Code.html">No-Code</a>
+    <a class="nav-band" href="API%20-%20Editor%20Extension.html">Editor Extension</a>
+  </nav>
+
+  <main>
+    <div class="page-header">
+      <h1>Public API</h1>
+      <div class="sub">Persistent Asset v1.0.0 &nbsp;&middot;&nbsp; namespaces <code>PersistentAsset(.BuiltIns/.NoCode)</code> and the editor mirrors <code>PersistentAsset.Editor(.BuiltIns/.NoCode)</code></div>
+    </div>
+
+    <p class="lead">Reference for every public type and member in the Built-Ins area. <span class="ex">Red text</span> flags the exceptions a member can throw. See the <a href="../Public%20API.html">API overview</a> for the other areas.</p>
+
+    <div class="module-band band-first"><span class="band-name">Built-Ins</span><span class="band-desc">Ready-made managers, storage backends, security and helpers.</span></div>
+
+
+    <!-- ═══════════════════════════════════════ Serializer ═══ -->
+    <div class="type-section" id="UnityJsonSerializer">
+      <div class="type-header"><h2>UnityJsonSerializer</h2><span class="badge badge-class">class</span></div>
+      <p class="type-desc">"Unity JSON", the default serializer: serializes fields by Unity's own rules into readable JSON, and supports save versioning. Its inspector <code>Format</code> option is <code>PrettyPrint</code>, <code>OneLine</code>, or <code>Obfuscated</code> (compact base64 so players cannot casually read or edit it, obfuscation, not encryption).</p>
+      <div class="member-group"><table class="mt">
+        <tr><td><span class="t">enum</span> <span class="mn">Format</span></td><td>PrettyPrint, OneLine, Obfuscated.</td></tr>
+      </table></div>
+    </div>
+
+
+    <!-- ═══════════════════════════════════════ Built-in managers ═══ -->
+    <div class="type-section" id="PrototypePersistenceManager">
+      <div class="type-header"><h2>PrototypePersistenceManager</h2><span class="badge badge-pm">PM</span></div>
+      <p class="type-desc">"Prototype". Zero-config local save, desktop/mobile/WebGL. No settings.</p>
+    </div>
+    <div class="type-section" id="FilePersistenceManager">
+      <div class="type-header"><h2>FilePersistenceManager</h2><span class="badge badge-pm">PM</span></div>
+      <p class="type-desc">"Local File". Configurable file save.</p>
+      <div class="member-group"><table class="mt">
+        <tr><td><span class="t">string</span> <span class="mn">FileName</span> / <span class="t">string</span> <span class="mn">HeaderText</span></td><td>File name (and subfolders), and an editable header line.</td></tr>
+        <tr><td><span class="t">Compression</span> <span class="mn">Compression</span> / <span class="t">Encryption</span> <span class="mn">Encryption</span> / <span class="t">SaveLock</span> <span class="mn">LockSaveTo</span></td><td>Storage protection.</td></tr>
+        <tr><td><span class="t">bool</span> <span class="mn">DoBackup</span></td><td>Keep a second copy against crashes mid-save.</td></tr>
+        <tr><td><span class="t">static string</span> <span class="mn">RuntimeSecret</span> { get; set; }</td><td>Secret supplied at runtime for the <code>RuntimeSecret</code> lock. <span class="ex">The setter throws ArgumentException when set to null/empty, and InvalidOperationException when set a second time with a different value.</span></td></tr>
+      </table></div>
+    </div>
+    <div class="type-section" id="PlayerPrefsPersistenceManager">
+      <div class="type-header"><h2>PlayerPrefsPersistenceManager</h2><span class="badge badge-pm">PM</span></div>
+      <p class="type-desc">"Player Prefs". Saves through <code>PlayerPrefs</code>; synchronous; good for small data.</p>
+    </div>
+    <div class="type-section" id="SessionPersistenceManager">
+      <div class="type-header"><h2>SessionPersistenceManager</h2><span class="badge badge-pm">PM</span></div>
+      <p class="type-desc">"Session (Memory)". In-memory only; never written to disk; wiped each session.</p>
+    </div>
+
+    <!-- ═══════════════════════════════════════ Persistent objects ═══ -->
+    <div class="type-section" id="PersistentSlotRegistry">
+      <div class="type-header"><h2>PersistentSlotRegistry&lt;TTarget, TInfo&gt;</h2><span class="badge badge-so">SO</span><span class="badge badge-class">abstract</span></div>
+      <p class="type-desc">Always-global object that records one entry per save slot with a summary you define, without loading the saves. Build a save-select menu on it. See Multiple save slots.</p>
+      <div class="member-group"><table class="mt">
+        <tr><td><span class="t">IReadOnlyList</span>&lt;<span class="t">SlotEntry</span>&lt;<span class="t">TInfo</span>&gt;&gt; <span class="mn">Entries</span> { get; }</td><td>Every recorded slot, each with its summary, save time and optional screenshot, most recently saved first (the natural order for a load-game menu). A fresh snapshot each call: cache it if you iterate a lot.</td></tr>
+        <tr><td><span class="t">bool</span> <span class="mn">TryGet</span>(<span class="t">string</span> slot, out <span class="t">SlotEntry</span>&lt;<span class="t">TInfo</span>&gt;) / <span class="mn">TryGetLatest</span>(...)</td><td>Look up one slot, or the most recently saved.</td></tr>
+        <tr><td><span class="t">string</span> <span class="mn">LatestSlot</span> { get; }</td><td>Slot of the newest save (for a "Continue" button).</td></tr>
+        <tr><td><span class="t">TInfo</span> <span class="mn">CaptureInfo</span>(<span class="t">TTarget</span> target) (protected abstract)</td><td>Return the per-slot summary to record on each save.</td></tr>
+        <tr><td><span class="t">Awaitable</span>&lt;<span class="t">SaveScreenshot</span>&gt; <span class="mn">CaptureScreenshotAsync</span>(<span class="t">TTarget</span>) / <span class="t">SaveScreenshot</span> <span class="mn">CaptureScreenshot</span>(<span class="t">TTarget</span>) (protected)</td><td>Optional per-slot preview image (override one; async is recommended). See <a href="#SaveScreenshot"><code>SaveScreenshot</code></a>.</td></tr>
+      </table></div>
+    </div>
+
+
+    <div class="type-section" id="SlotEntry">
+      <div class="type-header"><h2>SlotEntry&lt;TInfo&gt;</h2><span class="badge badge-struct">struct</span></div>
+      <p class="type-desc">Read-only record of one slot in a <code>PersistentSlotRegistry</code>.</p>
+      <div class="member-group"><table class="mt">
+        <tr><td><span class="t">string</span> <span class="mn">Slot</span> { get; }</td><td>The slot this entry describes.</td></tr>
+        <tr><td><span class="t">TInfo</span> <span class="mn">Info</span> { get; }</td><td>The summary your <code>CaptureInfo</code> returned.</td></tr>
+        <tr><td><span class="t">DateTime</span> <span class="mn">SavedUtc</span> { get; } / <span class="t">long</span> <span class="mn">SavedUtcTicks</span> { get; }</td><td>When the slot was last saved (UTC).</td></tr>
+        <tr><td><span class="t">SaveScreenshot</span> <span class="mn">Screenshot</span> { get; }</td><td>The slot's preview image, empty when none was recorded.</td></tr>
+      </table></div>
+    </div>
+
+
+    <div class="type-section" id="SaveScreenshot">
+      <div class="type-header"><h2>SaveScreenshot</h2><span class="badge badge-struct">struct</span></div>
+      <p class="type-desc">A save-slot preview image that serializes as a string, so it rides inside a slot summary. Capture it with the static methods, then decode it on demand for a save-select menu. Its <code>ScreenshotFormat</code> is <code>Jpg</code> (smaller, lossy, no alpha) or <code>Png</code> (lossless).</p>
+      <div class="member-group"><table class="mt">
+        <tr><td><span class="t">static SaveScreenshot</span> <span class="mn">Capture</span>(<span class="t">Camera</span> camera, <span class="t">int</span> maxSize = 256, <span class="t">ScreenshotFormat</span> format = Jpg, <span class="t">int</span> jpgQuality = 75)</td><td>Capture a camera's view at the wanted size (also a <code>Texture</code> overload).</td></tr>
+        <tr><td><span class="t">static Awaitable</span>&lt;<span class="t">SaveScreenshot</span>&gt; <span class="mn">CaptureAsync</span>(...)</td><td>The recommended capture: no main-thread stall on the GPU read back. <code>Camera</code> and <code>Texture</code> overloads.</td></tr>
+        <tr><td><span class="t">static SaveScreenshot</span> <span class="mn">CaptureScreen</span>(<span class="t">int</span> maxSize = 256, <span class="t">ScreenshotFormat</span> format = Jpg, <span class="t">int</span> jpgQuality = 75) / <span class="t">static Awaitable</span>&lt;<span class="t">SaveScreenshot</span>&gt; <span class="mn">CaptureScreenAsync</span>(...)</td><td>Capture the whole screen, sync or async (async recommended).</td></tr>
+        <tr><td><span class="t">Texture2D</span> <span class="mn">CreateTexture</span>() / <span class="t">Sprite</span> <span class="mn">CreateSprite</span>()</td><td>Decode into a new texture or sprite the caller owns and must <code>Object.Destroy</code> when done. <code>CreateSprite</code> owns both the sprite and its texture: destroy <code>sprite.texture</code> first, then the sprite.</td></tr>
+        <tr><td><span class="t">bool</span> <span class="mn">HasValue</span> { get; } / <span class="t">int</span> <span class="mn">Width</span> { get; } / <span class="mn">Height</span> { get; } / <span class="t">float</span> <span class="mn">Aspect</span> { get; }</td><td>Whether it holds an image, and its size, without decoding.</td></tr>
+      </table></div>
+    </div>
+
+
+    <div class="type-section" id="ScreenshotFormat">
+      <div class="type-header"><h2>ScreenshotFormat</h2><span class="badge badge-enum">enum</span></div>
+      <div class="member-group"><table class="mt">
+        <tr><td><span class="mn">Jpg</span> / <span class="mn">Png</span></td><td>Encoding of a <code>SaveScreenshot</code>: JPEG (smaller, lossy, no alpha) or PNG (lossless).</td></tr>
+      </table></div>
+    </div>
+
+
+    <div class="type-section" id="PersistentSingleton">
+      <div class="type-header"><h2>PersistentSingleton</h2><span class="badge badge-so">SO</span><span class="badge badge-class">abstract</span></div>
+      <p class="type-desc">A persistent object that exists once per project, with its asset auto-created and reachable from anywhere via <code>GlobalPersistedData.Find&lt;T&gt;()</code>. Inherit it for a settings or profile singleton. See Global &amp; always-loaded objects.</p>
+    </div>
+
+
+    <!-- ═══════════════════════════════════════ Security enums ═══ -->
+    <div class="type-section" id="Encryption">
+      <div class="type-header"><h2>Encryption</h2><span class="badge badge-enum">enum</span></div>
+      <div class="member-group"><table class="mt">
+        <tr><td><span class="mn">None</span></td><td>No encryption.</td></tr>
+        <tr><td><span class="mn">AppendHash</span></td><td>Readable, but with a secured hash so it cannot be modified.</td></tr>
+        <tr><td><span class="mn">Encrypt</span></td><td>Fully encrypted.</td></tr>
+      </table></div>
+    </div>
+    <div class="type-section" id="Compression">
+      <div class="type-header"><h2>Compression</h2><span class="badge badge-enum">enum</span></div>
+      <div class="member-group"><table class="mt">
+        <tr><td><span class="mn">None</span> / <span class="mn">Fast</span> / <span class="mn">Optimal</span></td><td>No compression, fast, or best (slower) gzip.</td></tr>
+      </table></div>
+    </div>
+    <div class="type-section" id="SaveLock">
+      <div class="type-header"><h2>SaveLock</h2><span class="badge badge-enum">enum [Flags]</span></div>
+      <div class="member-group"><table class="mt">
+        <tr><td><span class="mn">None</span></td><td>Readable by any copy of the project.</td></tr>
+        <tr><td><span class="mn">TargetMachine</span></td><td>Unreadable on another machine.</td></tr>
+        <tr><td><span class="mn">FileLocation</span></td><td>Unreadable if moved, renamed or swapped.</td></tr>
+        <tr><td><span class="mn">RuntimeSecret</span></td><td>Unreadable without the runtime secret.</td></tr>
+        <tr><td><span class="mn">Everything</span></td><td>All locks.</td></tr>
+      </table></div>
+    </div>
+
+
+    <!-- ═══════════════════════════════════════ Remote ═══ -->
+    <div class="type-section" id="RemotePersistenceManager">
+      <div class="type-header"><h2>RemotePersistenceManager</h2><span class="badge badge-pm">PM</span><span class="badge badge-class">abstract</span><span class="warn">extending</span></div>
+      <p class="type-desc">Base for remote managers. Implement the async <code>FetchRemote</code> / <code>StoreRemote</code> / <code>DeleteRemote</code> primitives (each reports an <code>Answer</code>); inherit async, cache and push.</p>
+      <div class="member-group"><table class="mt">
+        <tr><td><span class="t">Task</span>&lt;(<span class="t">Answer</span> answer, <span class="t">string</span> body, <span class="t">string</span> message)&gt; <span class="mn">FetchRemote</span>(<span class="t">string</span> slot, <span class="t">CancellationToken</span>) (protected abstract)</td><td>Read the slot's payload from the server (the <code>body</code> is null unless the answer is Success).</td></tr>
+        <tr><td><span class="t">Task</span>&lt;(<span class="t">Answer</span> answer, <span class="t">string</span> message)&gt; <span class="mn">StoreRemote</span>(<span class="t">string</span> slot, <span class="t">string</span> body, <span class="t">CancellationToken</span>) (protected abstract)</td><td>Write the slot's payload to the server.</td></tr>
+        <tr><td><span class="t">Task</span>&lt;(<span class="t">Answer</span> answer, <span class="t">string</span> message)&gt; <span class="mn">DeleteRemote</span>(<span class="t">string</span> slot, <span class="t">CancellationToken</span>) (protected abstract)</td><td>Delete the slot's payload on the server.</td></tr>
+        <tr><td><span class="t">RemoteCacheMode</span> <span class="mn">CacheMode</span> { get; protected set; } / <span class="t">OfflineColdStart</span> <span class="mn">OfflineColdStart</span> { get; protected set; } (virtual)</td><td>Offline-cache behavior; override to opt in (e.g. with <code>[field: SerializeField]</code>).</td></tr>
+        <tr><td><span class="t">RemoteStatus</span> <span class="mn">Status</span> { get; } / <span class="mn">StatusChanged</span></td><td>Up-to-date vs pending changes, and its event.</td></tr>
+        <tr><td><span class="t">Task</span>&lt;<span class="t">RemoteStatus</span>&gt; <span class="mn">PushPendingChanges</span>(CancellationToken)</td><td>Flush the cache to the server now.</td></tr>
+        <tr><td><span class="t">enum</span> <span class="mn">Answer</span></td><td>Success, NoSave, Corrupt, Error, Unreachable.</td></tr>
+        <tr><td><span class="t">string</span> <span class="mn">SetupError</span> (protected virtual) / <span class="t">string</span> <span class="mn">LocalCacheFolder</span> (protected virtual)</td><td>Override points: a permanent fault message (<code>null</code> = none); the cache subfolder name (the type name by default).</td></tr>
+        <tr><td><span class="t">static void</span> <span class="mn">ClearLocalCache</span>(<span class="t">string</span> managerName, <span class="t">string</span> folder)</td><td>Delete one manager type's offline cache (backs a <code>[ClearLocalData]</code> editor cleaner).</td></tr>
+      </table></div>
+    </div>
+    <div class="type-section" id="HttpPersistenceManager">
+      <div class="type-header"><h2>HttpPersistenceManager</h2><span class="badge badge-pm">PM</span></div>
+      <p class="type-desc">"Server (HTTP)". GET/PUT/DELETE at <code>url/slot/id</code>.</p>
+      <div class="member-group"><table class="mt">
+        <tr><td><span class="t">string</span> <span class="mn">ReleaseUrl</span> / <span class="mn">DevelopmentUrl</span> / <span class="mn">Id</span></td><td>Endpoint, dev override, and save id.</td></tr>
+        <tr><td><span class="t">bool</span> <span class="mn">UsePostRequests</span> / <span class="t">Compression</span> <span class="mn">Compression</span></td><td>POST fallback; gzip.</td></tr>
+        <tr><td><span class="t">static string</span> <span class="mn">Authorization</span> / <span class="t">static Action&lt;UnityWebRequest&gt;</span> <span class="mn">ConfigureRequest</span></td><td>Runtime auth and per-request hook.</td></tr>
+        <tr><td><span class="t">string</span> <span class="mn">GenerateAddress</span>(<span class="t">string</span> slot) (protected) / <span class="t">static Task</span> <span class="mn">Send</span>(<span class="t">UnityWebRequest</span>, <span class="t">CancellationToken</span>) (protected) / <span class="t">static string</span> <span class="mn">ErrorText</span>(<span class="t">UnityWebRequest</span>) (protected)</td><td>Subclassing helpers to adapt the server contract. <span class="ex"><code>Send</code> throws OperationCanceledException when the token is cancelled.</span></td></tr>
+      </table></div>
+    </div>
+    <div class="type-section" id="CloudSavePersistenceManager">
+      <div class="type-header"><h2>CloudSavePersistenceManager</h2><span class="badge badge-pm">PM</span></div>
+      <p class="type-desc">"Cloud Save (UGS)". Per signed-in player. Requires UGS init + sign-in.</p>
+      <div class="member-group"><table class="mt">
+        <tr><td><span class="t">string</span> <span class="mn">Key</span> / <span class="t">Compression</span> <span class="mn">Compression</span></td><td>Cloud Save key (accepts the <code>&lt;slot&gt;</code> placeholder; only letters, digits, <code>-</code> and <code>_</code> are valid, any other character is reported as invalid); gzip.</td></tr>
+      </table></div>
+    </div>
+    <div class="type-section" id="RemoteEnums">
+      <div class="type-header"><h2>Remote enums</h2><span class="badge badge-enum">enum</span></div>
+      <div class="member-group"><table class="mt">
+        <tr><td><span class="mn">RemoteCacheMode</span></td><td>None, ServerWithCache, LocalCacheServerBackup.</td></tr>
+        <tr><td><span class="mn">OfflineColdStart</span></td><td>WaitForServer, StartFresh.</td></tr>
+        <tr><td><span class="mn">RemoteStatus</span></td><td>UpToDate, PendingChanges.</td></tr>
+      </table></div>
+    </div>
+
+
+    <div class="type-section" id="RemoteManagerSettings">
+      <div class="type-header"><h2>RemoteManagerSettings</h2><span class="badge badge-class">class</span></div>
+      <p class="type-desc">Project-wide settings of the remote managers (Project Settings &gt; Persistent Asset &gt; Remote). Read via <code>Settings.Get&lt;RemoteManagerSettings&gt;()</code>.</p>
+      <div class="member-group"><table class="mt">
+        <tr><td><span class="t">float</span> <span class="mn">PushRetryDelay</span> { get; }</td><td>Seconds between attempts to push pending offline-cache data to the server (clamped to &ge; 5).</td></tr>
+        <tr><td><span class="t">int</span> <span class="mn">RequestTimeout</span> { get; }</td><td>Seconds before a single remote request is forced to time out: an absolute ceiling that always applies, capping a request even when a manager's own Load / Save / Clear Timeout is higher or unbounded (whichever bound is reached first ends it). 0 disables it.</td></tr>
+        <tr><td><span class="t">const float</span> <span class="mn">MinimumPushRetryDelay</span> = 5</td><td>Lower bound for <code>PushRetryDelay</code>.</td></tr>
+      </table></div>
+    </div>
+
+
+    <!-- ═══════════════════════════════════════ Utilities ═══ -->
+    <div class="type-section" id="SaveFileUtility">
+      <div class="type-header"><h2>SaveFileUtility</h2><span class="badge badge-static">static</span><span class="warn">extending</span></div>
+      <p class="type-desc">Low-level file IO shared by the file-backed managers and the offline cache. You only need it to build your own file-based manager.</p>
+      <div class="member-group"><table class="mt">
+        <tr><td><span class="t">const string</span> <span class="mn">FileExtension</span> = "save"</td><td>Extension (no dot) of every save file it reads and writes.</td></tr>
+        <tr><td><span class="t">string</span> <span class="mn">GetRootFolderPath</span>() / <span class="mn">EnsureRootFolderExists</span>()</td><td>Root folder under which every save location lives (the second creates it).</td></tr>
+        <tr><td><span class="t">string</span> <span class="mn">GetSaveFolderPath</span>(<span class="t">SaveLocation</span> location) / <span class="mn">GetSaveFilePath</span>(<span class="t">SaveLocation</span>, <span class="t">string</span> relativeFilePath)</td><td>Resolve a location's folder, or a file path within it (<code>GetSaveFilePath</code> appends the <code>.save</code> extension, so pass <code>relativeFilePath</code> without one). <span class="ex">Throws ArgumentOutOfRangeException for an undefined location.</span></td></tr>
+        <tr><td><span class="t">byte[]</span> <span class="mn">Read</span>(<span class="t">SaveLocation</span>, <span class="t">string</span> relativeFilePath) / <span class="t">byte[]</span> <span class="mn">ReadHeader</span>(<span class="t">SaveLocation</span>, <span class="t">string</span>, <span class="t">int</span> maxBytes)</td><td>Read a save file, or just its first bytes.</td></tr>
+        <tr><td><span class="kw">void</span> <span class="mn">Write</span>(<span class="t">SaveLocation</span>, <span class="t">string</span> relativeFilePath, <span class="t">string</span> uniqueId, <span class="t">byte[]</span> data) / <span class="mn">WriteAtomic</span>(<span class="t">string</span> path, <span class="t">string</span> tempPath, <span class="t">byte[]</span> data)</td><td>Write a save file atomically (stage then swap, crash-safe).</td></tr>
+        <tr><td><span class="kw">void</span> <span class="mn">Delete</span>(<span class="t">SaveLocation</span>, <span class="t">string</span> relativeFilePath)</td><td>Delete a save file (silent if absent).</td></tr>
+      </table></div>
+    </div>
+
+    <div class="type-section" id="CheatProtectionUtility">
+      <div class="type-header"><h2>CheatProtectionUtility</h2><span class="badge badge-static">static</span><span class="warn">extending</span></div>
+      <p class="type-desc">Encrypt or hash save data with a key derived from the project secret (Project Settings &gt; Persistent Asset &gt; Security). Backs the <code>FilePersistenceManager</code> protection options.</p>
+      <div class="member-group"><table class="mt">
+        <tr><td><span class="t">static string</span> <span class="mn">RuntimeSecret</span> { get; set; }</td><td>Runtime secret mixed into the key for a <code>SaveLock.RuntimeSecret</code> lock. <span class="ex">The setter throws ArgumentException when set to null/empty, and InvalidOperationException when set a second time with a different value.</span></td></tr>
+        <tr><td><span class="t">bool</span> <span class="mn">UsesRuntimeSecret</span>(<span class="t">SaveLock</span> lockTo)</td><td>Whether the lock effectively requires the runtime secret (the editor can opt out).</td></tr>
+        <tr><td><span class="t">byte[]</span> <span class="mn">Encrypt</span>(<span class="t">byte[]</span> data, <span class="t">SaveLock</span> lockTo, <span class="t">string</span> location) / <span class="t">byte[]</span> <span class="mn">Decrypt</span>(<span class="t">byte[]</span>, <span class="t">SaveLock</span>, <span class="t">string</span>)</td><td>Encrypt/decrypt with an embedded integrity hash. <code>Decrypt</code> returns <code>null</code> when the integrity check fails (data modified, moved, or from another machine or project). <span class="ex">Throws ArgumentNullException for null data, InvalidOperationException when the lock needs an unset RuntimeSecret.</span></td></tr>
+        <tr><td><span class="t">byte[]</span> <span class="mn">AppendSecuredHash</span>(<span class="t">byte[]</span>, <span class="t">SaveLock</span>, <span class="t">string</span>) / <span class="t">bool</span> <span class="mn">CheckSecuredHash</span>(<span class="t">byte[]</span> dataWithHash, <span class="t">SaveLock</span>, <span class="t">string</span>, out <span class="t">byte[]</span> originalData)</td><td>Append/verify a tamper-proof hash (data stays readable). <span class="ex">Same throws as Encrypt / Decrypt.</span></td></tr>
+      </table></div>
+    </div>
+
+    <div class="type-section" id="GzipUtility">
+      <div class="type-header"><h2>GzipUtility</h2><span class="badge badge-static">static</span><span class="warn">extending</span></div>
+      <p class="type-desc">Gzip compress and decompress byte data.</p>
+      <div class="member-group"><table class="mt">
+        <tr><td><span class="t">byte[]</span> <span class="mn">Compress</span>(<span class="t">byte[]</span> data, <span class="t">Compression</span> compression) / <span class="mn">Decompress</span>(<span class="t">byte[]</span> data, <span class="t">Compression</span> compression)</td><td>Compress/decompress per a <code>Compression</code> level (<code>None</code> passes through).</td></tr>
+        <tr><td><span class="t">byte[]</span> <span class="mn">Compress</span>(<span class="t">byte[]</span> data, <span class="t">CompressionLevel</span> compressionLevel = Optimal) / <span class="mn">Decompress</span>(<span class="t">byte[]</span> data)</td><td>Compress/decompress with a raw <code>System.IO.Compression</code> level. <span class="ex">Decompress throws InvalidDataException when the data inflates past the size ceiling.</span></td></tr>
+      </table></div>
+    </div>
+
+    <div class="type-section" id="TaskUtility">
+      <div class="type-header"><h2>TaskUtility</h2><span class="badge badge-static">static</span><span class="warn">extending</span></div>
+      <p class="type-desc">Helpers for asynchronous manager code: thread hopping and cancellation.</p>
+      <div class="member-group"><table class="mt">
+        <tr><td><span class="t">ThreadType</span> <span class="mn">CurrentThreadType</span> { get; }</td><td>Whether the caller is on the main or a background thread.</td></tr>
+        <tr><td><span class="t">Task</span> <span class="mn">SwitchToMainThread</span>()</td><td>Await to continue on the main thread.</td></tr>
+        <tr><td><span class="t">Task</span> <span class="mn">StartNew</span>(<span class="t">ThreadType</span>, <span class="t">Action</span>, <span class="t">CancellationToken</span> = default, <span class="t">Action&lt;AggregateException&gt;</span> = null) / <span class="t">Task&lt;TResult&gt;</span> <span class="mn">StartNew&lt;TResult&gt;</span>(<span class="t">ThreadType</span>, <span class="t">Func&lt;TResult&gt;</span>, ...)</td><td>Run work on the chosen thread as a task.</td></tr>
+        <tr><td><span class="t">Task&lt;T&gt;</span> <span class="mn">WithCancellation&lt;T&gt;</span>(<span class="t">Task&lt;T&gt;</span>, <span class="t">CancellationToken</span>) / <span class="t">Task</span> <span class="mn">WithCancellation</span>(<span class="t">Task</span>, <span class="t">CancellationToken</span>)</td><td>Make any task cancellable even when it ignores the token. <span class="ex">Surfaces OperationCanceledException on cancel.</span></td></tr>
+        <tr><td><span class="kw">void</span> <span class="mn">Observe</span>(<span class="t">Task</span> task)</td><td>Observe an abandoned task's eventual fault (avoids UnobservedTaskException).</td></tr>
+      </table></div>
+    </div>
+
+    <div class="type-section" id="SlotFormatUtility">
+      <div class="type-header"><h2>SlotFormatUtility</h2><span class="badge badge-static">static</span><span class="warn">extending</span></div>
+      <p class="type-desc">The "&lt;slot&gt;" placeholder handling and the reversible file-path slot codec the file-backed managers share.</p>
+      <div class="member-group"><table class="mt">
+        <tr><td><span class="t">const string</span> <span class="mn">Placeholder</span> = "&lt;slot&gt;"</td><td>The token a manager replaces with the current slot in a user path, key or address.</td></tr>
+        <tr><td><span class="t">string</span> <span class="mn">GenerateName</span>(<span class="t">string</span> customValue, <span class="t">string</span> slot, <span class="t">string</span> defaultName, params <span class="t">char[]</span> separators)</td><td>Resolve a storage name: default under the slot, or the custom value with the slot placed/prepended.</td></tr>
+        <tr><td><span class="t">bool</span> <span class="mn">Replace</span>(ref <span class="t">string</span> value, <span class="t">string</span> replacement, params <span class="t">char[]</span> separators)</td><td>Replace every placeholder, returning whether any was found.</td></tr>
+        <tr><td><span class="t">string</span> <span class="mn">EncodeForFilePath</span>(<span class="t">string</span> slot) / <span class="mn">DecodeForFilePath</span>(<span class="t">string</span> encoded)</td><td>Encode a slot into one safe, injective, reversible path segment (and back).</td></tr>
+        <tr><td><span class="t">bool</span> <span class="mn">IsValidFilePath</span>(<span class="t">string</span> value, out <span class="t">string</span> reason)</td><td>Whether a relative file path is valid on every platform.</td></tr>
+      </table></div>
+    </div>
+
+    <div class="type-section" id="WebGLFileSync">
+      <div class="type-header"><h2>WebGLFileSync</h2><span class="badge badge-static">static</span><span class="warn">extending</span></div>
+      <p class="type-desc">Flush the in-memory file system to IndexedDB on WebGL; call after writing or deleting save files. A no-op off WebGL.</p>
+      <div class="member-group"><table class="mt">
+        <tr><td><span class="kw">void</span> <span class="mn">RequestSync</span>()</td><td>Flush pending file writes to persistent browser storage.</td></tr>
+      </table></div>
+    </div>
+
+    <div class="type-section" id="UtilityEnums">
+      <div class="type-header"><h2>ThreadType / SaveLocation</h2><span class="badge badge-enum">enum</span></div>
+      <div class="member-group">
+        <div class="member-group-title">ThreadType</div>
+        <table class="mt">
+          <tr><td><span class="mn">Main</span> / <span class="mn">Background</span></td><td>The main thread (full Unity API) or a background thread (faster, most Unity API unavailable).</td></tr>
+        </table>
+      </div>
+      <div class="member-group">
+        <div class="member-group-title">SaveLocation</div>
+        <table class="mt">
+          <tr><td><span class="mn">Default</span> / <span class="mn">Backup</span> / <span class="mn">LocalCache</span></td><td>Subfolders of <code>Application.persistentDataPath</code>: the save folder, the backup copy, and the remote managers' offline cache.</td></tr>
+        </table>
+      </div>
+    </div>
+
+
+    <!-- ═══════════════════════════════════════ Integration Testing ═══ -->
+    <div class="type-section" id="TestPersistenceManager">
+      <div class="type-header"><h2>TestPersistenceManager</h2><span class="badge badge-pm">PM</span><span class="warn">#if PERSISTENT_ASSET_INTEGRATION_TEST</span></div>
+      <div class="note">The Integration Testing assembly compiles only when the project defines <code>PERSISTENT_ASSET_INTEGRATION_TEST</code> (an asmdef define constraint), so these types are absent from a normal project. They exist to stress-test the system, not to ship.</div>
+      <p class="type-desc">A fake in-memory manager: saves live only in memory (dropped on a domain reload), every operation can be forced to any outcome, and async delays can be injected, to exercise timing, cancellation and error handling. Exposes the base manager settings (<code>ReadExecutionMode</code>/<code>WriteExecutionMode</code> default to <code>PreferAsync</code>; <code>HasDurableStorage</code> is false) and the forced-outcome / delay fields in its inspector.</p>
+      <div class="member-group"><table class="mt">
+        <tr><td><span class="mn">enum ForcedLoadOutcome</span></td><td><code>Default</code> (run for real), <code>Success</code>, <code>Invalid</code>, <code>Failure</code>, <code>Exception</code>, <code>Cancelled</code>.</td></tr>
+        <tr><td><span class="mn">enum ForcedOutcome</span></td><td><code>Default</code>, <code>Success</code>, <code>Failure</code>, <code>Exception</code>, <code>Cancelled</code> (save/clear; no <code>Invalid</code>).</td></tr>
+      </table></div>
+    </div>
+
+    <div class="type-section" id="TestPersistentScriptableObject">
+      <div class="type-header"><h2>TestPersistentScriptableObject</h2><span class="badge badge-so">SO</span><span class="warn">#if PERSISTENT_ASSET_INTEGRATION_TEST</span></div>
+      <p class="type-desc">A fake persistent object implementing every optional interface at once: it drives what each one reports from inspector fields and counts every callback received, staying agnostic of the manager and serializer in charge. Compiled only with <code>PERSISTENT_ASSET_INTEGRATION_TEST</code> (see above).</p>
+      <div class="member-group"><table class="mt">
+        <tr><td><span class="t">int</span> <span class="mn">number</span> / <span class="t">string</span> <span class="mn">text</span> / <span class="t">List&lt;string&gt;</span> <span class="mn">items</span></td><td>Dummy persisted fields to round-trip through a save/load.</td></tr>
+        <tr><td><span class="mn">enum PolicyOverride</span></td><td><code>UseManagerSetting</code> (sends null), <code>ForceOn</code>, <code>ForceOff</code>; drives the <code>IPersistencePolicy</code> fields.</td></tr>
+        <tr><td>implements <span class="mn">IAlwaysGlobal</span>, <span class="mn">IMultiSlot</span>, <span class="mn">IUpgradable</span>, <span class="mn">IDynamicInitialize</span>, <span class="mn">IFieldResettable</span>, <span class="mn">IDirtyTracked</span>, <span class="mn">ISerializationCallbacks</span>, <span class="mn">IScopeCallbacks</span>, <span class="mn">IPersistencePolicy</span></td><td>Every optional interface, with inspector-driven inputs and callback counters.</td></tr>
+      </table></div>
+    </div>
+
+    <div class="doc-footer">Persistent Asset v1.0.0 &nbsp;&middot;&nbsp; For full signatures and remarks, see the XML doc comments in the source.</div>
+
+  </main>
+</div>
+</body>
+</html>

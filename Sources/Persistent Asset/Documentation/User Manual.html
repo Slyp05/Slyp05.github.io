@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Persistent Asset - User Manual</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div id="layout">
+
+  <!-- ─── Sidebar navigation ─── -->
+  <nav>
+    <div class="nav-title">Persistent Asset</div>
+    <a href="User%20Manual.html" class="active">Home</a>
+    <a href="pages/What%20is%20a%20ScriptableObject.html">What is a ScriptableObject?</a>
+    <a href="pages/Getting%20Started.html">Getting Started</a>
+    <a href="pages/Installation.html">Installation &amp; Demo</a>
+    <a href="pages/Core%20Concepts.html">Core Concepts</a>
+    <a href="pages/Local%20Saving.html">Local Saving</a>
+    <a href="pages/Cloud%20and%20Remote.html">Cloud &amp; Remote</a>
+    <a href="pages/Guides.html">Guides</a>
+    <a href="pages/No-Code.html">No-Code</a>
+    <a href="pages/Settings.html">Settings</a>
+    <a href="pages/Extending.html">Extending</a>
+    <a href="pages/Technical%20QA.html">Technical Q&amp;A</a>
+    <a href="pages/Roadmap.html">Roadmap</a>
+  </nav>
+
+  <!-- ─── Main content ─── -->
+  <main>
+
+    <div class="hero">
+      <h1>User Manual</h1>
+      <p class="tagline">
+        A save system for Unity that persists your ScriptableObject data between
+        play sessions. Inherit one class and your fields start saving themselves.
+      </p>
+    </div>
+
+
+    <!-- ════════════════════════════════════════ The whole idea ════ -->
+    <section id="the-idea">
+      <h2>The whole idea</h2>
+      <p>
+        Make a class that inherits <code>PersistentScriptableObject</code>. Every
+        serialized field on it now survives between play sessions, automatically.
+      </p>
+
+      <pre><code><span class="kw">using</span> PersistentAsset;
+<span class="kw">using</span> UnityEngine;
+
+[CreateAssetMenu(menuName = <span class="st">"Player Data"</span>)]
+<span class="kw">public class</span> <span class="ty">PlayerData</span> : <span class="ty">PersistentScriptableObject</span>
+{
+    <span class="kw">public int</span> gold;
+    <span class="kw">public int</span> level = <span class="nu">1</span>;
+}</code></pre>
+
+      <p>
+        That is the entire setup. Create the asset, press Play, change the values,
+        stop, press Play again, and they are still there. No save code, no file
+        paths, no boilerplate.
+      </p>
+
+      <div class="note">
+        Never used a ScriptableObject? Here is a
+        <a href="pages/What%20is%20a%20ScriptableObject.html">two-minute primer</a> before you start.
+      </div>
+
+      <div class="reassure">
+        The example above already covers most projects. Slots, encryption, cloud saves and
+        designer-friendly variables are optional, layered on top as a game needs them.
+      </div>
+    </section>
+
+
+    <!-- ════════════════════════════════════════════ Why ════ -->
+    <section id="why">
+      <h2>Why persist a ScriptableObject?</h2>
+      <p>
+        Your game data already wants to live in ScriptableObjects: decoupled from any scene, shared
+        across the whole project, and editable by designers right in the inspector. That makes a
+        ScriptableObject the natural single source of truth for player data, a profile, settings,
+        progression, an inventory.
+      </p>
+      <p>
+        A traditional save system breaks that clean design: you build a separate set of save
+        structures, copy fields into them to write, copy them back to read, and keep the two models in
+        sync release after release. Persistent Asset removes that whole layer. Your ScriptableObject
+        <em>is</em> the save, so the data you already designed persists in place, with no parallel data
+        model, no mapping code, and nothing to drift out of date. Design your data once, and it saves
+        itself.
+      </p>
+    </section>
+
+
+    <!-- ════════════════════════════════════════════ Where to go ════ -->
+    <section id="where-to-go">
+      <h2>Where to go next</h2>
+
+      <div class="cards">
+
+        <a class="card" href="pages/Getting%20Started.html">
+          <span class="num">Start here</span>
+          <h3>Getting Started <span class="tag tag-mustread">Must read</span></h3>
+          <p>Save your first value in about five minutes. The happy path, nothing else.</p>
+        </a>
+
+        <a class="card" href="pages/Installation.html">
+          <span class="num">Setup</span>
+          <h3>Installation &amp; Demo</h3>
+          <p>Requirements, platforms, optional modules, and the sample game to run.</p>
+        </a>
+
+        <a class="card" href="pages/Core%20Concepts.html">
+          <span class="num">The mental model</span>
+          <h3>Core Concepts <span class="tag tag-mustread">Must read</span></h3>
+          <p>The parts (your data, a manager, a serializer) and how saving flows.</p>
+        </a>
+
+        <a class="card" href="pages/Local%20Saving.html">
+          <span class="num">On the device</span>
+          <h3>Local Saving</h3>
+          <p>Prototype, Player Prefs, Local File, Session, and which one to choose.</p>
+        </a>
+
+        <a class="card" href="pages/Cloud%20and%20Remote.html">
+          <span class="num">Across devices</span>
+          <h3>Cloud &amp; Remote <span class="tag tag-advanced">Advanced</span></h3>
+          <p>Unity Gaming Services Cloud Save, or your own server over HTTP.</p>
+        </a>
+
+        <a class="card" href="pages/Guides.html">
+          <span class="num">How do I&hellip;?</span>
+          <h3>Guides</h3>
+          <p>Migrating saves, slots, security, versioning, singletons, debugging and more.</p>
+        </a>
+
+        <a class="card" href="pages/No-Code.html">
+          <span class="num">No scripting</span>
+          <h3>No-Code <span class="tag tag-designer">For designers</span></h3>
+          <p>Persist values, input bindings and locale from the inspector, without writing a line.</p>
+        </a>
+
+        <a class="card" href="pages/Settings.html">
+          <span class="num">Configuration</span>
+          <h3>Settings</h3>
+          <p>Everything under Project Settings &gt; Persistent Asset, in one place.</p>
+        </a>
+
+        <a class="card" href="pages/Extending.html">
+          <span class="num">Power users</span>
+          <h3>Extending <span class="tag tag-advanced">Advanced</span></h3>
+          <p>Write your own persistence manager, serializer, remote manager, codec or widget.</p>
+        </a>
+
+        <a class="card" href="pages/Technical%20QA.html">
+          <span class="num">Under the hood</span>
+          <h3>Technical Q&amp;A <span class="tag tag-advanced">Advanced</span></h3>
+          <p>Crash safety, atomic writes, async conflicts, security: the implementation answers.</p>
+        </a>
+
+        <a class="card" href="pages/Roadmap.html">
+          <span class="num">What's next</span>
+          <h3>Roadmap</h3>
+          <p>Planned and future features on the way for Persistent Asset.</p>
+        </a>
+
+      </div>
+    </section>
+
+
+    <!-- ══════════════════════════════════ Author &amp; Contact ════ -->
+    <section id="contact">
+      <h2>Author &amp; Contact</h2>
+      <p>Created by <strong>Juste Tools</strong>.</p>
+      <ul>
+        <li>Contact: <a href="mailto:justetools@gmail.com">justetools@gmail.com</a></li>
+        <li>License: <a href="https://unity.com/legal/as-terms">Unity Asset Store EULA</a></li>
+      </ul>
+      <p>If Persistent Asset helps your project, a review on the Asset Store goes a long way. Thank you!</p>
+    </section>
+
+
+    <!-- ══════════════════════════════════════ pager ════ -->
+    <div class="pager">
+      <a class="next" href="pages/Getting%20Started.html">
+        <div class="dir">Next</div>
+        <div class="pg-title">Getting Started</div>
+      </a>
+    </div>
+
+    <div class="doc-footer">Persistent Asset v1.0.0 &nbsp;·&nbsp; namespace <code>PersistentAsset</code></div>
+
+  </main>
+</div>
+</body>
+</html>
