@@ -34,7 +34,7 @@ A save system that loses progress is worthless, so reliability is the core desig
 
 - **A complete save API**: `PersistentScriptableObject` and a full save API, fire-and-forget, callback, sync, `async`/`await`, or coroutine, on one object or all at once; plus save slots with metadata, global events, typed results, and opt-in interfaces for advanced behavior.
 - **Move saves anywhere without a rewrite**: swap storage from a dropdown: Prototype, Local File, Player Prefs, Session, a self-hosted HTTP server, or Unity Cloud Save, with the server and cloud backends staying playable offline and syncing in the background once reconnected.
-- **Let designers ship settings without code**: persistent variables in 40+ built-in types, observable values, and UI binder components, plus optional Input System and Localization bindings.
+- **Let designers ship without code**: persistent variables in 40+ built-in types, observable values, and UI binder components, plus optional Input System and Localization bindings.
 
 *Protect player progress*
 
