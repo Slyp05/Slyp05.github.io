@@ -236,6 +236,16 @@ $content-width: 880px;
   }
 }
 
+.asset-store-btn--featured {
+  background: #312e81;
+  color: #fff !important;
+
+  &:hover {
+    background: #3f3aa0;
+    color: #fff !important;
+  }
+}
+
 .support-note {
   margin-top: 0.75rem;
   color: #666;
