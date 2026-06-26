@@ -14,6 +14,7 @@ layout: home
 <div class="package-grid">
 
   <div class="package-card">
+    <img src="/assets/images/auto-singleton-card.png" alt="Auto Singleton" class="package-card-image" width="420" height="280" loading="lazy" decoding="async">
     <img src="/assets/images/AS.png" alt="Auto Singleton icon" class="package-card-icon" width="160" height="160" loading="lazy" decoding="async">
     <div class="package-card-content">
       <h2><a href="/auto-singleton/">Auto Singleton</a></h2>
@@ -27,6 +28,7 @@ layout: home
   </div>
 
   <div class="package-card">
+    <img src="/assets/images/generic-arithmetic-card.png" alt="Generic Arithmetic" class="package-card-image" width="420" height="280" loading="lazy" decoding="async">
     <img src="/assets/images/GA.png" alt="Generic Arithmetic icon" class="package-card-icon" width="160" height="160" loading="lazy" decoding="async">
     <div class="package-card-content">
       <h2><a href="/generic-arithmetic/">Generic Arithmetic</a></h2>
@@ -40,6 +42,7 @@ layout: home
   </div>
 
   <div class="package-card">
+    <img src="/assets/images/infinite-value-card.png" alt="Infinite Value" class="package-card-image" width="420" height="280" loading="lazy" decoding="async">
     <img src="/assets/images/IV.png" alt="Infinite Value icon" class="package-card-icon" width="160" height="160" loading="lazy" decoding="async">
     <div class="package-card-content">
       <h2><a href="/infinite-value/">Infinite Value</a></h2>

@@ -89,11 +89,28 @@ $content-width: 880px;
   }
 }
 
+// Wide screens: show the landscape card image, hide the square icon.
+// Narrow screens (the card stacks into a column): swap back to the icon.
+.package-card-image {
+  width: 240px;
+  max-width: 38%;
+  height: auto;
+  flex-shrink: 0;
+  border-radius: 8px;
+  display: block;
+}
+
 .package-card-icon {
   width: 80px;
   height: 80px;
   flex-shrink: 0;
   border-radius: 14px;
+  display: none;
+}
+
+@media (max-width: 700px) {
+  .package-card-image { display: none; }
+  .package-card-icon { display: block; }
 }
 
 .package-card-content {
@@ -203,7 +220,7 @@ $content-width: 880px;
     border: 2px solid #d4d4d4;
   }
 
-  @media (max-width: 540px) {
+  @media (max-width: 700px) {
     flex-direction: column;
     align-items: center;
 
