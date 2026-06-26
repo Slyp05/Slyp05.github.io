@@ -89,7 +89,7 @@ Bug Fixes:
 </details>
 
 <details class="patch-note">
-<summary><strong>v1.0.0</strong> <span class="patch-date">Initial release</span></summary>
+<summary><strong>v1.0.0</strong> <span class="patch-date">October 23, 2023</span></summary>
 <div class="patch-note-body" markdown="1">
 
 Initial release.
