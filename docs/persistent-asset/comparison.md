@@ -66,17 +66,17 @@ See how [Persistent Asset](/persistent-asset/) holds up against the other save s
 | Saves & loads automatically, no code | ✅ Runs on its own | ⚠️ AutoSave component | ⚠️ AutoSave component |
 | Set up entirely in the Inspector | ✅ No C# needed | ⚠️ Mostly code | ⚠️ Mostly code |
 | Drop Save / Load onto a button | ✅ Ready for UnityEvents | ⚠️ Small script | ❌ Needs scripting |
-| Save or wipe everything in one call | ✅ One call, every object | ⚠️ One at a time | ⚠️ One at a time |
-| Change where saves go without rewriting code | ✅ Dropdown on the asset | ❌ Tied to your calls | ⚠️ Set in code |
+| Save or wipe everything in one call | ✅ One call, every object | ⚠️ Auto Save / DeleteFile | ⚠️ Auto Save Manager |
+| Change where saves go without rewriting code | ✅ Dropdown on the asset | ⚠️ Default in Settings window | ⚠️ Set in code |
 | **Where it saves** | | | |
 | Local files & PlayerPrefs | ✅ Built in | ✅ Built in | ✅ Built in |
 | Multiple save slots | ✅ Built in | ✅ Multiple files | ✅ Catalog API |
-| Cloud saves across devices, built-in | ✅ Unity Cloud Save | ❌ Your own server | ✅ Firebase / PlayFab |
-| Keeps working offline, syncs later | ✅ Auto-uploads later | ❌ Not built in | ⚠️ Manual |
-| Database storage (SQL / NoSQL) | ➖ Server owns the DB | ❌ No | ✅ Firebase (NoSQL) |
+| Cloud saves across devices, built-in | ✅ Unity Cloud Save | ✅ ES3Cloud (self-host) | ✅ Firebase / PlayFab |
+| Keeps working offline, syncs later | ✅ Auto-uploads later | ⚠️ ES3Cloud Sync (manual) | ⚠️ Manual |
+| Database storage (SQL / NoSQL) | ➖ By design: your backend | ✅ MySQL via ES3Cloud | ✅ Firebase (NoSQL) |
 | PC, mobile, WebGL & console | ✅ Console via add-on | ✅ Console via add-on | ✅ Console untested |
 | **Reliability & data safety** | | | |
-| Saves can't corrupt on crash or power loss | ✅ Atomic write-then-swap | ⚠️ Backup-based | ⚠️ Backup-based |
+| Saves can't corrupt on crash or power loss | ✅ Atomic write-then-swap | ✅ Temp-file then rename | ⚠️ Backup-based |
 | Automatic backup copy | ✅ Automatic fallback | ✅ Backup & restore | ✅ Built-in backup |
 | Never overwrites good progress with defaults | ✅ Won't wipe a real save | ⚠️ Up to your code | ⚠️ Up to your code |
 | Knows when async/cloud data is ready to use | ✅ Built-in ready signal | ⚠️ You track it | ⚠️ You track it |
@@ -111,7 +111,7 @@ See how [Persistent Asset](/persistent-asset/) holds up against the other save s
 | Add your own save destination | ✅ Custom manager (+ cloud base) | ⚠️ Write the IO yourself | ✅ Modular Storage API |
 | Swap in your own save format / serializer | ✅ Serializer is a slot | ⚠️ Harder to swap | ✅ Modular Serialization API |
 | Teach it your own custom data types | ✅ Custom codecs | ✅ Custom ES3 types | ✅ Custom converters |
-| React to saves & loads with events / hooks | ✅ Global events | ⚠️ Limited | ⚠️ Limited |
+| React to saves & loads with events / hooks | ✅ Global events | ⚠️ Limited | ✅ Auto Save events |
 | Add advanced behaviour with one small interface | ✅ Opt-in interfaces | ❌ No equivalent | ⚠️ Extensible APIs |
 | Free official serializer add-ons | ⏳ Newtonsoft / Odin (coming) | ⚠️ Community | ❌ JSON only |
 | Third-party integrations (Steam, PlayFab, Firebase…) | ⏳ On the roadmap | ⚠️ Some / community | ✅ Firebase, PlayFab, Steam, GPG, Xbox |
