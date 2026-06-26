@@ -32,28 +32,31 @@ A save system that loses progress is worthless, so reliability is the core desig
 
 *Save anything, your way*
 
-- **A complete save API**: `PersistentScriptableObject` and a full save API, fire-and-forget, callback, sync, `async`/`await`, or coroutine, on one object or all at once; plus save slots with metadata, global events, typed results, and opt-in interfaces for advanced behavior.
-- **Move saves anywhere without a rewrite**: swap storage from a dropdown: Prototype, Local File, Player Prefs, Session, a self-hosted HTTP server, or Unity Cloud Save, with the server and cloud backends staying playable offline and syncing in the background once reconnected.
-- **Let designers ship without code**: persistent variables in 40+ built-in types, observable values, and UI binder components, plus optional Input System and Localization bindings.
+- **Save and load automatically**: your objects load on launch, save at safe points and on a regular timer, and retry a failed load, all on their own with no save code; switch any of it off per manager when you want manual control.
+- **Call the save API however you code**: a complete save API you can run fire-and-forget, by callback, synchronously, with `async`/`await`, or from a coroutine, on one object or all at once.
+- **Reach for more when you need it**: save slots with metadata, global events, typed results, and opt-in interfaces for advanced behavior.
+- **Move saves anywhere without a rewrite**: swap your storage from a dropdown: Prototype, Local File, Player Prefs, Session, a self-hosted HTTP server, or Unity Cloud Save; the server and cloud backends stay fully playable offline and sync in the background once the connection returns.
+- **Let designers ship without code**: hand them persistent variables in 40+ built-in types, observable values, and UI binder components, plus optional Input System and Localization bindings.
 
 *Protect player progress*
 
-- **Keep saves safe from cheaters**: AES-256 encryption, tamper-detection, and device locks.
+- **Save at the right moments**: autosave when a mobile app loses focus or is paused, and on quit your game waits for any in-flight save to finish rather than dropping it.
+- **Keep saves safe from cheaters**: lock your saves down with AES-256 encryption, tamper-detection, and device locks.
 - **Never strand a shipped save**: lock a manager once it ships, and any change that would orphan existing saves prompts you to migrate them instead of silently wiping them.
 - **Upgrade saves across updates**: when your data changes between releases, old saves migrate to the new format on load, so an update never invalidates existing progress.
-- **Reset and roll back**: reset to defaults, or snapshot and restore in memory.
+- **Reset and roll back**: reset your data to defaults, or snapshot and restore it in memory.
 
 *Built for production*
 
-- **Ship on desktop, mobile and WebGL**: out of the box, with autosave on mobile focus-loss and pause, and WebGL writes flushed to the browser's IndexedDB; consoles are supported through a small custom manager.
-- **Save with no frame stutter**: off-thread background saving, gzip compression, and optional dirty-checking that skips no-op saves; on quit, the game waits for any in-flight save to finish rather than dropping it.
+- **Ship on desktop, mobile and WebGL**: out of the box, Mono and IL2CPP/AOT ready, with WebGL writes flushed to the browser's IndexedDB; consoles are supported through a small custom manager.
+- **Save with no frame stutter**: keep your frame rate smooth with off-thread background saving, gzip compression, and optional dirty-checking that skips no-op saves.
 - **Debug and stress-test your save handling**: live status and a running log, in the inspector or an on-device overlay, a one-click local-save wipe, plus an integration-test manager that forces slow or failed operations, so you can prove your game survives them.
-- **Plays nice with version control**: runtime play never dirties your authored assets, sparing your diffs play-session noise, and your project settings (including the encryption secret) live in one committed file the team shares.
+- **Keep version control clean**: runtime play never dirties your authored assets, sparing your diffs play-session noise, and your project settings (including the encryption secret) live in one committed file the team shares.
 
 *Yours to own*
 
-- **Own and edit everything**: full C# source with no mandatory dependencies, Mono and IL2CPP/AOT ready, and plain, human-readable JSON saves when unencrypted.
-- **Extras**: save-screenshot capture for slot thumbnails, a persistent-singleton helper, and a playable demo game.
+- **Own and edit everything**: full C# source with no mandatory dependencies, and plain, human-readable JSON saves when unencrypted.
+- **Get handy extras**: save-screenshot capture for slot thumbnails, a persistent-singleton helper, and a playable demo game.
 
 ## Requirements
 
