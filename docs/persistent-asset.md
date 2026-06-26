@@ -5,7 +5,7 @@ permalink: /persistent-asset/
 image: /assets/images/persistent-asset.png
 sitemap: false
 software:
-  description: "A ScriptableObject-based save system for Unity: the asset you read at runtime is the one that saves itself. Automatic, no-code-friendly, cloud-ready, and extendable."
+  description: "A ScriptableObject-based save system for Unity: the asset you read at runtime is the one that saves itself. Automatic, no-code-friendly, cloud-ready, and extensible."
   price: "49.99"
   store_url: ""
 ---
@@ -20,7 +20,7 @@ It is automatic and no-code-friendly to start, and becomes cloud-ready and exten
 
 - **Prototyping:** inherit `PersistentScriptableObject` and you're done; it saves to disk on its own, with no configuration.
 - **Designers:** no coding needed. Author variables, bind them to UI, and save settings from the Inspector, with live tools to watch it work while you play.
-- **Mid-size projects:** fully featured. Everything a shipping game needs is already in the box, ready to switch on as you grow into it, with no change to how your data is written.
+- **Mid-size projects:** you won't outgrow it. Real save files, slots, and cloud sync are a setting away on the same objects, never a rewrite.
 - **Large projects:** extension points throughout. Swap the storage, serializer, or save format; add your own data types and save policies; and hook into events and interfaces.
 - **Live games:** ship updates without breaking existing player saves; built-in versioning upgrades old saves to your new format the moment they load.
 

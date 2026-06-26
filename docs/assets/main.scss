@@ -1,6 +1,12 @@
 ---
 ---
 
+// Gentle bump to minima's default content width (800px). Overriding $content-width
+// before the import keeps all of minima's responsive padding and breakpoints, so
+// max-width only caps on large screens and small/mobile viewports stay full-width.
+// The comparison page widens its own content further, page-locally.
+$content-width: 880px;
+
 @import "minima";
 
 .site-header {

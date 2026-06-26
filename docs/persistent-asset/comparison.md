@@ -5,11 +5,11 @@ permalink: /persistent-asset/comparison/
 sitemap: false
 ---
 
-*A simpler way to save and load your game.* See how Persistent Asset holds up against the other save solutions on the store.
+See how [Persistent Asset](/persistent-asset/) holds up against the other save solutions on the store.
 
 <style>
-/* widen only the page content; leave the header and footer wrappers at their default width */
-.page-content .wrapper { max-width: 1200px; }
+/* widen only this page's content; the header and footer keep the site's default width */
+.page-content .wrapper { max-width: 1100px; }
 
 .page-content table {
   font-size: 13px;
