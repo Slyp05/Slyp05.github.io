@@ -51,7 +51,9 @@ Unity 6.0 or later (tested up to 6.5)
 
 ## Patch Notes
 
-**v2.1.0** (June 21, 2026)
+<details class="patch-note" open>
+<summary><strong>v2.1.0</strong> <span class="patch-date">June 21, 2026</span></summary>
+<div class="patch-note-body" markdown="1">
 
 Breaking Changes:
 - Casting an `InfVal` to `float`, `double`, or `decimal` now throws when the value is too big to fit, instead of silently returning 0. Values that fit are unaffected.
@@ -65,7 +67,12 @@ Bug Fixes:
 - Fixed `InfValInputField` registering its callbacks multiple times and not cleaning them up.
 - An invalid or unavailable `Culture` no longer causes an error; it falls back to a default.
 
-**v2.0.0** (June 1, 2026)
+</div>
+</details>
+
+<details class="patch-note">
+<summary><strong>v2.0.0</strong> <span class="patch-date">June 1, 2026</span></summary>
+<div class="patch-note-body" markdown="1">
 
 New Features:
 - **Formatter system**: format and parse behavior is now driven by `IInfValFormatter` implementations, wrapped in a `FormatterAsset` (`ScriptableObject`). Assign a `FormatterAsset` to `Configuration` or `InfValInputField` in the Inspector. Create one via `Assets > Create > Infinite Value > Formatter`. Four built-in formatters are provided:
@@ -97,11 +104,22 @@ Bug Fixes:
 - `MathInfVal.Repeat` and `PingPong`: now throw `ArgumentException` if `length` is zero (previously threw `DivideByZeroException`).
 - `InterpolateInfVal.InverseLinear`: now throws `ArgumentException` if `min == max` (previously returned `NaN` or infinity).
 
-**v1.2.1** (September 12, 2023)
+</div>
+</details>
+
+<details class="patch-note">
+<summary><strong>v1.2.1</strong> <span class="patch-date">September 12, 2023</span></summary>
+<div class="patch-note-body" markdown="1">
+
 - Fixed the Pow method, which could provide wrong results in some cases
 - Greatly improved the precision of Pow and NthRoot methods when used with a negative second parameter
 
-**v1.2.0** (June 15, 2023)
+</div>
+</details>
+
+<details class="patch-note">
+<summary><strong>v1.2.0</strong> <span class="patch-date">June 15, 2023</span></summary>
+<div class="patch-note-body" markdown="1">
 
 Potentially breaking changes:
 - Addition of assembly assets (runtime and editor)
@@ -124,7 +142,12 @@ Minor:
 Other:
 - Updated documentation and API to reflect the aforementioned changes
 
-**v1.1.0** (May 26, 2021)
+</div>
+</details>
+
+<details class="patch-note">
+<summary><strong>v1.1.0</strong> <span class="patch-date">May 26, 2021</span></summary>
+<div class="patch-note-body" markdown="1">
 
 This update makes the InfVal structure conserve precision instead of exponent, which is similar to what primitive value types do and simpler to use in most cases. Old usage can still be done using the ToExponent method. It makes the easiest way to use the structure also the most optimized way, allowing you to work with gigantic numbers.
 
@@ -136,4 +159,14 @@ This update makes the InfVal structure conserve precision instead of exponent, w
 - The inspector drawer now has a maximum count of digits displayed and can be used to call the ToPrecision method
 - Updated the demo, unit tests window, documentation and API to reflect these changes
 
-**v1.0.0** - Initial release
+</div>
+</details>
+
+<details class="patch-note">
+<summary><strong>v1.0.0</strong> <span class="patch-date">Initial release</span></summary>
+<div class="patch-note-body" markdown="1">
+
+Initial release.
+
+</div>
+</details>

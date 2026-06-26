@@ -76,4 +76,11 @@ Unity 6.0 or later (tested up to 6.6)
 
 ## Patch Notes
 
-**v1.0.0** - Initial release
+<details class="patch-note" open>
+<summary><strong>v1.0.0</strong> <span class="patch-date">Initial release</span></summary>
+<div class="patch-note-body" markdown="1">
+
+Initial release.
+
+</div>
+</details>

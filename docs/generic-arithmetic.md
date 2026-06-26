@@ -49,7 +49,9 @@ Unity 6.0 or later (tested up to 6.5)
 
 ## Patch Notes
 
-**v2.0.0** (June 2, 2026)
+<details class="patch-note" open>
+<summary><strong>v2.0.0</strong> <span class="patch-date">June 2, 2026</span></summary>
+<div class="patch-note-body" markdown="1">
 
 New Features:
 - **Source generator**: add `[assembly: GenerateComputators(typeof(T))]` to any script to generate all four computator classes at compile time, with no runtime reflection or expression compilation. AOT/IL2CPP-safe. A three-type form is also available for cross-type operations.
@@ -72,9 +74,25 @@ Bug Fixes:
 - `operator true` / `operator false` now produce correct results with the Dynamic computator for types that define those operators without an implicit cast to `bool`.
 - Unary `+` and `-` operator lookup was using wrong reflection names, causing expression fallback to fail for custom types.
 
-**v1.1.0** (January 2, 2024)
+</div>
+</details>
+
+<details class="patch-note">
+<summary><strong>v1.1.0</strong> <span class="patch-date">January 2, 2024</span></summary>
+<div class="patch-note-body" markdown="1">
+
 - Added Try versions of all methods in Calculate and Evaluate
 - Added a new overload to `Computable<T>.From` that takes a T as a parameter (same behaviour as the constructor)
 - Small improvements to the documentation
 
-**v1.0.0** - Initial release
+</div>
+</details>
+
+<details class="patch-note">
+<summary><strong>v1.0.0</strong> <span class="patch-date">Initial release</span></summary>
+<div class="patch-note-body" markdown="1">
+
+Initial release.
+
+</div>
+</details>

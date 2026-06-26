@@ -46,7 +46,9 @@ Unity 6.0 or later (tested up to 6.5)
 
 ## Patch Notes
 
-**v1.2.0** (June 1, 2026)
+<details class="patch-note" open>
+<summary><strong>v1.2.0</strong> <span class="patch-date">June 1, 2026</span></summary>
+<div class="patch-note-body" markdown="1">
 
 Breaking Changes:
 - The singleton list asset has been renamed to `Auto Singleton List` and moved from `Assets/Auto Singleton/Resources/` to `Assets/Resources/`. Existing projects must move it manually, or delete it and let it be recreated on the next refresh.
@@ -71,7 +73,13 @@ Bug Fixes:
 - The singleton icon now scales correctly with the Project window's zoom level.
 - Fixed path issues on Windows that could cause asset operations and the Documentation menu item to fail.
 
-**v1.1.0** (January 23, 2026)
+</div>
+</details>
+
+<details class="patch-note">
+<summary><strong>v1.1.0</strong> <span class="patch-date">January 23, 2026</span></summary>
+<div class="patch-note-body" markdown="1">
+
 - The tool now fully works with no reload on play mode enabled
 - Can now add and remove singletons at runtime using new methods, Add and Remove, in the Singleton class
 - Removed the Find method from the Singleton class (it still exists in the `Singleton<T>` class)
@@ -79,4 +87,14 @@ Bug Fixes:
 - Fixed a bug happening if you launched the project with compilation errors
 - Demo and documentation modified to reflect those changes
 
-**v1.0.0** - Initial release
+</div>
+</details>
+
+<details class="patch-note">
+<summary><strong>v1.0.0</strong> <span class="patch-date">Initial release</span></summary>
+<div class="patch-note-body" markdown="1">
+
+Initial release.
+
+</div>
+</details>
