@@ -21,7 +21,10 @@ See how [Persistent Asset](/persistent-asset/) holds up against the other save s
   padding: 7px 11px;
   vertical-align: middle;
   border-bottom: 1px solid #ebebf1;
+  overflow-wrap: anywhere;
 }
+/* let long inline-code tokens wrap instead of overflowing into the next cell */
+.page-content td code { white-space: normal; overflow-wrap: anywhere; word-break: break-word; }
 /* first column = the questions; the three product columns share equal width, centered */
 .page-content th:first-child, .page-content td:first-child { width: 31%; }
 .page-content th:not(:first-child), .page-content td:not(:first-child) { width: 23%; text-align: center; }
@@ -88,7 +91,7 @@ See how [Persistent Asset](/persistent-asset/) holds up against the other save s
 | Compress saves to shrink file size | ✅ gzip (Fast or Optimal) | ✅ gzip | ❌ Not built in |
 | Skips saving when nothing changed | ✅ Optional dirty-check | ⚠️ Manual / cache | ⚠️ Manual |
 | **What you can save** | | | |
-| Deep object graphs & polymorphism out of the box | ⏳ via `[SerializeReference]`; full serializers coming | ✅ Reflection serializer | ✅ Json.NET-based |
+| Deep object graphs & polymorphism out of the box | ⏳ via `[SerializeReference]`, full serializers coming | ✅ Reflection serializer | ✅ Json.NET-based |
 | Save any object from anywhere in code | ➖ By design: one clear asset | ✅ Save anything, anywhere | ✅ Save anything, anywhere |
 | Save entire scenes & GameObjects | ➖ By design: we save data | ✅ Snapshots scene objects | ✅ Unity objects & components |
 | Save references between objects | ⏳ Asset refs planned | ✅ Unity & shared refs | ✅ Resolvers + shared refs |
