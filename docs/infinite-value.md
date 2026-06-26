@@ -6,7 +6,7 @@ image: /assets/images/infinite-value.png
 software:
   description: "Arbitrary-precision number type for Unity that behaves like a primitive, works in real-time, and is fully configurable. Perfect for incremental games, RPGs, and monetary systems."
   price: "29.99"
-  store_url: https://assetstore.unity.com/packages/tools/integration/infinite-value-bigdecimal-194963
+  store_url: https://assetstore.unity.com/packages/tools/utilities/infinite-value-bigdecimal-194963
 ---
 
 <img src="/assets/images/infinite-value.png" alt="Infinite Value" class="package-image" width="1950" height="1300" decoding="async">
@@ -46,7 +46,7 @@ Unity 6.0 or later (tested up to 6.5)
 
 ## Get It
 
-<a href="https://assetstore.unity.com/packages/tools/integration/infinite-value-bigdecimal-194963" class="asset-store-btn">View on Unity Asset Store ($29.99)</a>
+<a href="https://assetstore.unity.com/packages/tools/utilities/infinite-value-bigdecimal-194963" class="asset-store-btn">View on Unity Asset Store ($29.99)</a>
 <a href="https://justetools.itch.io/infinite-value" class="asset-store-btn" target="_blank" rel="noopener">Play Demo</a>
 
 ## Patch Notes

@@ -50,7 +50,7 @@ Unity 6.0 or later (tested up to 6.5)
 ## Patch Notes
 
 <details class="patch-note" open>
-<summary><strong>v2.0.0</strong> <span class="patch-date">June 2, 2026</span></summary>
+<summary><strong>v2.0.0</strong> <span class="patch-date">June 5, 2026</span></summary>
 <div class="patch-note-body" markdown="1">
 
 New Features:
