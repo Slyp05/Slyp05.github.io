@@ -47,7 +47,7 @@ Unity 6.0 or later (tested up to 6.5)
 ## Get It
 
 <a href="https://assetstore.unity.com/packages/tools/integration/infinite-value-bigdecimal-194963" class="asset-store-btn">View on Unity Asset Store ($29.99)</a>
-<a href="https://justetools.itch.io/infinite-value" class="asset-store-btn">Play Demo</a>
+<a href="https://justetools.itch.io/infinite-value" class="asset-store-btn" target="_blank" rel="noopener">Play Demo</a>
 
 ## Patch Notes
 
