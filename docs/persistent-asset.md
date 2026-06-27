@@ -16,7 +16,7 @@ Most save systems mean data classes to maintain, save files to keep in sync, and
 No save code, no boilerplate, no rewrites as your project grows.  
 It is automatic and no-code-friendly to start, and becomes cloud-ready and extensible as you scale.
 
-New to ScriptableObjects? [Start here.](https://justetools.net/persistent-asset/user-manual/pages/What%20is%20a%20ScriptableObject.html)
+New to ScriptableObjects? [Start here](https://justetools.net/persistent-asset/user-manual/pages/What%20is%20a%20ScriptableObject.html).
 
 ## It grows with your project
 
