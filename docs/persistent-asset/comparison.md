@@ -73,7 +73,7 @@ See how [Persistent Asset](/persistent-asset/) holds up against the other save s
 | Multiple save slots | ✅ Built in | ✅ Multiple files | ✅ Catalog API |
 | Screenshot thumbnails for save slots | ✅ Built-in per-slot capture | ⚠️ Save a Texture2D yourself | ⚠️ Save images yourself |
 | Cloud saves across devices, built-in | ✅ Unity Cloud Save | ✅ ES3Cloud (self-host) | ⚠️ Firebase / PlayFab add-ons |
-| Keeps working offline, syncs later | ✅ Auto-uploads later | ⚠️ ES3Cloud.Sync, newest-timestamp-wins (per file) | ⚠️ Manual |
+| Keeps working offline, syncs later | ✅ Auto-uploads later | ⚠️ Saves locally, manual ES3Cloud.Sync | ⚠️ Manual |
 | Database storage (SQL / NoSQL) | ➖ By design: your backend | ✅ MySQL (SQL) via ES3Cloud | ⚠️ Firebase add-on (NoSQL) |
 | PC, mobile & WebGL | ✅ Fully supported | ✅ Fully supported | ✅ Fully supported |
 | Consoles | ⚠️ Custom code, integrated | ❌ Fully custom, no integration | ❌ Fully custom, no integration |
