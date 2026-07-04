@@ -10,30 +10,8 @@
 <body>
 <div id="layout">
 
-  <nav>
-    <div class="nav-title">Persistent Asset</div>
-    <a href="../index.html">Home</a>
-    <a href="What%20is%20a%20ScriptableObject.html">What is a ScriptableObject?</a>
-    <a href="Getting%20Started.html">Getting Started</a>
-    <a href="Installation.html">Installation &amp; Demo</a>
-    <a href="Core%20Concepts.html">Core Concepts</a>
-    <a href="Local%20Saving.html">Local Saving</a>
-    <a href="Cloud%20and%20Remote.html">Cloud &amp; Remote</a>
-    <a href="Guides.html">Guides</a>
-    <a href="No-Code.html">No-Code</a>
-    <a href="Settings.html">Settings</a>
-    <a href="Extending.html" class="active">Extending</a>
-    <a href="#manager"    class="indent">Custom manager</a>
-    <a href="#serializer" class="indent">Custom serializer</a>
-    <a href="#remote"     class="indent">Custom remote manager</a>
-    <a href="#settings"   class="indent">Custom settings</a>
-    <a href="#display"    class="indent">The InspectorDisplay attribute</a>
-    <a href="#codecs"     class="indent">Custom variable types</a>
-    <a href="#converters" class="indent">Custom value converters</a>
-    <a href="#widgets"    class="indent">Custom widgets</a>
-    <a href="Technical%20QA.html">Technical Q&amp;A</a>
-    <a href="Roadmap.html">Roadmap</a>
-  </nav>
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Persistent Asset</div><a href="../index.html">Home</a></nav></noscript>
 
   <main>
     <div class="page-header">
@@ -42,9 +20,8 @@
     </div>
 
     <p class="lead">
-      Persistent Asset is designed to be extended: the managers, the serializer, the remote managers
-      and the No-Code type system are all open base classes. Write your own and it plugs into the same
-      inspector dropdowns, settings and tooling as the built-ins.
+      Write your own manager, serializer, settings section or variable type, and it plugs into the
+      same inspector dropdowns, settings and tooling as the built-ins.
     </p>
 
 
@@ -76,7 +53,7 @@
         <span class="kw">return</span> <span class="ty">SaveResult</span>.Success();
     }
 
-    <span class="kw">protected override</span> <span class="ty">ClearResult</span> ClearPayloadSync(<span class="kw">string</span> slot)
+    <span class="kw">protected override</span> <span class="ty">ClearResult</span> ClearPayloadSync(<span class="ty">PersistenceSource</span> source, <span class="kw">string</span> slot)
     {
         MyBackend.Delete(Key(slot));
         <span class="kw">return</span> <span class="ty">ClearResult</span>.Success();
@@ -86,7 +63,7 @@
     <span class="kw">string</span> Key(<span class="kw">string</span> slot) =&gt; (slot != <span class="kw">null</span>) ? $<span class="st">"{UniqueID}_{slot}"</span> : UniqueID;
 }</code></pre>
 
-      <h3>The result contract</h3>
+      <h3 id="the-result-contract">The result contract</h3>
       <p>Returning the right result is what keeps saves safe. The rules:</p>
       <ul>
         <li><code>LoadResult.Success(payload)</code>: you read usable data.</li>
@@ -99,7 +76,7 @@
         first-run player (Failure on a clean miss) or risks overwriting a recoverable save (Invalid on
         a transient error).
       </div>
-      <h3>Going asynchronous</h3>
+      <h3 id="going-asynchronous">Going asynchronous</h3>
       <p>
         For a manager that should not block the main thread, override the async trio instead
         (<code>ReadPayloadAsync</code>, <code>WritePayloadAsync</code>, <code>ClearPayloadAsync</code>),
@@ -109,7 +86,7 @@
         does the async plumbing and adds an offline cache.
       </p>
 
-      <h3>Exposing and fixing settings</h3>
+      <h3 id="exposing-and-fixing-settings">Exposing and fixing settings</h3>
       <p>
         The base settings (<code>AutoLoad</code>, <code>AutoSave</code>, <code>AutoLoadRetryDelay</code>,
         <code>RegularSaveDelay</code>, <code>LoadTimeout</code>, <code>SaveTimeout</code>,
@@ -128,10 +105,10 @@
 <span class="kw">public override</span> <span class="ty">ExecutionMode</span> WriteExecutionMode =&gt; <span class="ty">ExecutionMode</span>.AsyncOnly;</code></pre>
       <p>Other hooks worth knowing:</p>
       <ul>
-        <li><code>StorageLocation(slot)</code>: report a stable path or key (backs <code>GetStorageLocation()</code>).</li>
+        <li><code>StorageLocation(slot)</code>: report a stable path or key (backs <code>GetStorageLocation()</code>). Two managers must only report the same string when they genuinely share that storage, so shape yours so no other storage can produce it; the editor reports managers resolving to one same location as a conflict (see <a href="Technical%20QA.html#portability">Technical Q&amp;A</a>).</li>
         <li><code>OnEnteringScope</code> / <code>OnLeavingScope</code>: per-session setup and teardown.</li>
         <li><code>Constraint</code>: pin a setting your manager cannot function without, so a target's policy cannot override it. For example, an in-memory manager that is pointless unless it loads and saves automatically can fix both on; a write-only manager might fix <code>AutoLoad</code> off.</li>
-        <li><code>HasDurableStorage</code>: return <code>false</code> for a manager that keeps nothing recoverable (no import copy, never lockable).</li>
+        <li><code>[PersistenceManagerInfo(StorageKind = ...)]</code> on the class: declare what your manager's storage holds, a fact of the type rather than a setting. <code>Durable</code> (real player saves; the default without the attribute), <code>Transient</code> for a manager that keeps nothing recoverable (no import copy of it, never lockable), or <code>Test</code> for a fake manager that must never ship (see below). The attribute is inherited by subclasses.</li>
         <li><code>SelfBoundsAsyncOperations</code>: return <code>true</code> only when every async path is guaranteed to return on its own, so the core stops bounding it with the Load / Save / Clear timeouts. A self-bounding manager that hangs is never stopped by the core, so leave it <code>false</code> unless you enforce your own deadlines.</li>
         <li><code>Log(text, level)</code>: write to the manager's inspector log (see <a href="Guides.html#debug">Debugging</a>; stripped from non-development builds).</li>
       </ul>
@@ -140,7 +117,19 @@
         warn and lock them after release, the same protection the built-ins use.
       </p>
 
-      <h3>A "delete local data" cleaner</h3>
+      <h3 id="writing-a-test-manager">Writing a test manager</h3>
+      <p>
+        A fake manager meant for testing only (the built-in <strong>Test</strong> manager is one) declares
+        <code>[PersistenceManagerInfo(StorageKind = StorageKind.Test)]</code> on its class, and the editor
+        handles the rest:
+      </p>
+      <ul>
+        <li>Assigning it always keeps a read-only import copy of the setup it replaces, whatever that setup was, so the previous settings (and saves) stay intact.</li>
+        <li>Its inspector shows a warning box and a one-click button that restores the previous setup, or removes the test manager when there was none.</li>
+        <li>It never ships: a non-development build fails while a test manager exists in the project, a development build logs a warning instead (so a QA build can carry one on purpose), and a player that still scopes one in reports it at runtime too.</li>
+      </ul>
+
+      <h3 id="a-delete-local-data-cleaner">A "delete local data" cleaner</h3>
       <p>
         If your manager writes local data, expose a cleaner so it appears in
         <strong>Tools &gt; Persistent Asset &gt; Actions &gt; Delete Local Data</strong>. Mark a parameterless static
@@ -154,7 +143,7 @@
     <span class="cm">// delete your local files or keys here</span>
 }</code></pre>
 
-      <h3>A custom inspector</h3>
+      <h3 id="a-custom-inspector">A custom inspector</h3>
       <p>
         To customize the manager's inspector, inherit <code>PersistenceManagerEditor</code> with a
         <code>[CustomEditor]</code> attribute and override one of the <code>Draw</code> hooks
@@ -181,7 +170,7 @@
         match the built-in look.
       </p>
 
-      <h3>Reusable building blocks</h3>
+      <h3 id="reusable-building-blocks">Reusable building blocks</h3>
       <p>
         You do not have to reimplement everything for a local manager, several public helpers in
         <code>PersistentAsset.BuiltIns</code> are there to reuse:
@@ -234,7 +223,7 @@
         neutral <code>SaveNode</code> tree) and set <code>SupportsNode</code> to <code>true</code>.
       </p>
 
-      <h3>A custom serializer drawer</h3>
+      <h3 id="a-custom-serializer-drawer">A custom serializer drawer</h3>
       <p>
         To control how your serializer's own fields draw under the serializer dropdown, inherit
         <code>SerializerDrawer</code>, decorate it with
@@ -331,7 +320,7 @@
         <code>Settings.Save()</code> to persist it. It is a no-op outside the editor (the call is
         stripped from a build), so it is always safe to call.
       </p>
-      <h3>A custom settings drawer</h3>
+      <h3 id="a-custom-settings-drawer">A custom settings drawer</h3>
       <p>
         By default a section's fields are drawn flat, one under another, with no foldout. To lay them
         out yourself, inherit <code>SettingsEntryDrawer</code>, decorate it with
@@ -384,27 +373,41 @@
         <code>PersistentVariables</code> asset saves, and back, then register it with
         <code>[VariableType]</code>:
       </p>
-      <pre><code><span class="kw">using</span> PersistentAsset.NoCode;
+      <pre><code><span class="kw">using</span> System.Globalization;
+<span class="kw">using</span> PersistentAsset.NoCode;
 
 [VariableType(<span class="kw">typeof</span>(<span class="ty">Color32</span>), <span class="st">"Color32"</span>)]
 <span class="kw">public class</span> <span class="ty">Color32Codec</span> : <span class="ty">VariableTypeCodec</span>&lt;<span class="ty">Color32</span>&gt;
 {
     <span class="kw">protected override string</span> Write(<span class="ty">Color32</span> value)
-        =&gt; $<span class="st">"{value.r},{value.g},{value.b},{value.a}"</span>;
+        =&gt; <span class="kw">string</span>.Format(<span class="ty">CultureInfo</span>.InvariantCulture, <span class="st">"{0},{1},{2},{3}"</span>, value.r, value.g, value.b, value.a);
 
     <span class="kw">protected override</span> <span class="ty">Color32</span> Read(<span class="kw">string</span> text)
     {
         <span class="kw">if</span> (<span class="kw">string</span>.IsNullOrEmpty(text))
             <span class="kw">return default</span>;   <span class="cm">// an empty string means the default value</span>
 
+        <span class="cm">// Corrupt input degrades to the default instead of throwing, like every built-in codec.</span>
         <span class="kw">string</span>[] p = text.Split(<span class="st">','</span>);
-        <span class="kw">return new</span> <span class="ty">Color32</span>(byte.Parse(p[<span class="nu">0</span>]), byte.Parse(p[<span class="nu">1</span>]), byte.Parse(p[<span class="nu">2</span>]), byte.Parse(p[<span class="nu">3</span>]));
+        <span class="kw">if</span> (p.Length != <span class="nu">4</span>
+            || <span class="kw">byte</span>.TryParse(p[<span class="nu">0</span>], <span class="ty">NumberStyles</span>.Integer, <span class="ty">CultureInfo</span>.InvariantCulture, <span class="kw">out byte</span> r) == <span class="kw">false</span>
+            || <span class="kw">byte</span>.TryParse(p[<span class="nu">1</span>], <span class="ty">NumberStyles</span>.Integer, <span class="ty">CultureInfo</span>.InvariantCulture, <span class="kw">out byte</span> g) == <span class="kw">false</span>
+            || <span class="kw">byte</span>.TryParse(p[<span class="nu">2</span>], <span class="ty">NumberStyles</span>.Integer, <span class="ty">CultureInfo</span>.InvariantCulture, <span class="kw">out byte</span> b) == <span class="kw">false</span>
+            || <span class="kw">byte</span>.TryParse(p[<span class="nu">3</span>], <span class="ty">NumberStyles</span>.Integer, <span class="ty">CultureInfo</span>.InvariantCulture, <span class="kw">out byte</span> a) == <span class="kw">false</span>)
+            <span class="kw">return default</span>;
+        <span class="kw">return new</span> <span class="ty">Color32</span>(r, g, b, a);
     }
 }</code></pre>
       <p>
         The type then appears in the variable type dropdown, with a default value field. This is exactly
         how every built-in variable type is built, the simple values, Input Binding and Locale Identifier
         alike.
+      </p>
+      <p>
+        The sample shows the two habits every codec must copy: format and parse with
+        <code>CultureInfo.InvariantCulture</code> (the string lands in save files, which must read the same on every
+        machine locale, and a comma decimal separator would even collide with the component separator here), and
+        never throw on corrupt input, degrade to the default value instead.
       </p>
       <p>
         Two constraints: enums need no codec (they are handled generically, so do not write one), and a

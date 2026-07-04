@@ -10,26 +10,8 @@
 <body>
 <div id="layout">
 
-  <nav>
-    <div class="nav-title">Persistent Asset</div>
-    <a href="../index.html">Home</a>
-    <a href="What%20is%20a%20ScriptableObject.html">What is a ScriptableObject?</a>
-    <a href="Getting%20Started.html">Getting Started</a>
-    <a href="Installation.html">Installation &amp; Demo</a>
-    <a href="Core%20Concepts.html">Core Concepts</a>
-    <a href="Local%20Saving.html">Local Saving</a>
-    <a href="Cloud%20and%20Remote.html">Cloud &amp; Remote</a>
-    <a href="Guides.html">Guides</a>
-    <a href="No-Code.html">No-Code</a>
-    <a href="Settings.html">Settings</a>
-    <a href="Extending.html">Extending</a>
-    <a href="Technical%20QA.html">Technical Q&amp;A</a>
-    <a href="Roadmap.html" class="active">Roadmap</a>
-    <a href="#planned"    class="indent">Planned for the package</a>
-    <a href="#free"       class="indent">Free add-on packages</a>
-    <a href="#considered" class="indent">Considered packages</a>
-    <a href="#feedback"   class="indent">Your feedback</a>
-  </nav>
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Persistent Asset</div><a href="../index.html">Home</a></nav></noscript>
 
   <main>
     <div class="page-header">
@@ -38,15 +20,14 @@
     </div>
 
     <p class="lead">
-      Features that are planned but not yet shipped. Nothing here is a commitment to a date or a
-      final design.
+      Nothing here is a commitment to a date or a final design.
     </p>
 
 
     <!-- ══════════════════════════════════════ planned ════ -->
     <section id="planned">
       <h2>Planned for the package</h2>
-      <p>Coming to Persistent Asset itself (planned for the upcoming weeks):</p>
+      <p>Coming to Persistent Asset itself, first in line:</p>
       <ul>
         <li><strong>Multi-slot support in No-Code</strong>: save slots for Persistent Variables, so designers can use multiple slots without writing code.</li>
         <li><strong><code>IMergeable</code> for manual conflict resolution</strong>: an interface to merge two diverging saves field by field instead of last-write-wins, especially useful for the remote managers when a player progresses on two devices.</li>
@@ -61,15 +42,15 @@
       <h2>Free add-on packages</h2>
       <p>Confirmed separate packages, all <strong>free</strong>, that plug into Persistent Asset.</p>
 
-      <h3>Serializers</h3>
-      <p>Drop-in alternatives to the built-in JSON serializer (planned for the upcoming weeks):</p>
+      <h3 id="serializers">Serializers</h3>
+      <p>Drop-in alternatives to the built-in JSON serializer, first in line among the add-ons:</p>
       <ul>
         <li><strong>Newtonsoft JSON</strong></li>
         <li><strong>Odin Serializer</strong></li>
         <li><strong>MemoryPack</strong></li>
       </ul>
 
-      <h3>Save managers</h3>
+      <h3 id="save-managers">Save managers</h3>
       <p>More managers to save to:</p>
       <ul>
         <li><strong>Steam</strong> (Steam Cloud / remote storage).</li>

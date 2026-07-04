@@ -4,39 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Persistent Asset - Guides</title>
-  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="../shared/styles.css" />
 </head>
 <body>
 <div id="layout">
 
-  <nav>
-    <div class="nav-title">Persistent Asset</div>
-    <a href="../User%20Manual.html">Home</a>
-    <a href="What%20is%20a%20ScriptableObject.html">What is a ScriptableObject?</a>
-    <a href="Getting%20Started.html">Getting Started</a>
-    <a href="Installation.html">Installation &amp; Demo</a>
-    <a href="Core%20Concepts.html">Core Concepts</a>
-    <a href="Local%20Saving.html">Local Saving</a>
-    <a href="Cloud%20and%20Remote.html">Cloud &amp; Remote</a>
-    <a href="Guides.html" class="active">Guides</a>
-    <a href="#migration"   class="indent">Locking &amp; migrating saves</a>
-    <a href="#versioning"  class="indent">Versioning your data</a>
-    <a href="#slots"       class="indent">Multiple save slots</a>
-    <a href="#reacting"    class="indent">Reacting to load &amp; save</a>
-    <a href="#drain"       class="indent">Saving on quit</a>
-    <a href="#reset"       class="indent">Resetting &amp; Restoring</a>
-    <a href="#globals"     class="indent">Global objects</a>
-    <a href="#security"    class="indent">Securing saves</a>
-    <a href="#interfaces"  class="indent">Other optional hooks</a>
-    <a href="#attribute"   class="indent">Without the base class</a>
-    <a href="#erasure"     class="indent">Deleting a player's data</a>
-    <a href="#debug"       class="indent">Debugging</a>
-    <a href="No-Code.html">No-Code</a>
-    <a href="Settings.html">Settings</a>
-    <a href="Extending.html">Extending</a>
-    <a href="Technical%20QA.html">Technical Q&amp;A</a>
-    <a href="Roadmap.html">Roadmap</a>
-  </nav>
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Persistent Asset</div><a href="../User%20Manual.html">Home</a></nav></noscript>
 
   <main>
     <div class="page-header">
@@ -44,196 +18,27 @@
       <div class="sub">Task-oriented recipes for specific needs.</div>
     </div>
 
-    <p class="lead">
-      The specific things you will reach for once the basics work: extra save slots, reacting to load
-      and save, resetting and securing data, evolving your saves across updates, and more.
-    </p>
-
-
-    <!-- ══════════════════════════════════════ migration ════ -->
-    <section id="migration">
-      <h2>Locking &amp; migrating saves</h2>
-      <p>
-        A few settings on a persistence manager decide <em>where and how</em> a save is stored: the
-        file name, compression, encryption, the lock, the server URL, the serializer. Change one after
-        players already have saves, and the new setup points at a different location that holds nothing,
-        the old saves are stranded. These are the manager's <strong>breaking fields</strong>, and the
-        package gives you two tools around them: locking to prevent accidental changes, and import
-        sources to migrate on purpose.
-      </p>
-
-      <h3>Locking a manager</h3>
-      <p>
-        Locking a manager is your signal that <strong>this setup is shipped to players</strong>. Lock
-        it from its inspector and its breaking fields go read-only behind a padlock; from then on, a
-        change that would strand those players' saves first prompts you to migrate (see below). To
-        lock every manager in the project at once, use <strong>Tools &gt; Persistent Asset &gt; Actions
-        &gt; Lock All Persistence Managers</strong>.
-      </p>
-      <div class="note">
-        An <em>unlocked</em> manager is treated as not yet shipped: changing it discards its old saves
-        silently, with no prompt. Lock a manager once players have it to turn the save-protection
-        prompts on.
-      </div>
-      <p>
-        You can also have the project lock every manager for you when a build is made, configured in
-        <strong>Project Settings &gt; Persistent Asset &gt; <a href="Settings.html#general">General</a></strong>:
-      </p>
-      <ul>
-        <li><strong>Auto Lock On Build</strong>: <code>Release Build</code> (the default, locks on a non-development build), <code>Any Build</code>, or <code>None</code>.</li>
-        <li><strong>Prompt Before Auto Lock</strong>: off by default, so saves are protected without a prompt; turn it on to confirm first (a command-line build never prompts).</li>
-      </ul>
-
-      <h3>Import sources</h3>
-      <p>
-        When you change a <em>locked</em> persistence manager in a way that would strand its
-        saves, unlocking it to edit a breaking field, or switching its type, the inspector offers to
-        <strong>keep a read-only import copy</strong> of the old setup:
-      </p>
-
-      <div class="img-block">
-        <img src="../img/import_copy_dialog" alt="Keep import copy dialog"
-             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
-        <div class="img-placeholder" style="display:none">
-          <span class="icon">&#128247;</span>
-          <span><strong>img/import_copy_dialog</strong><br/>The "Keep a read-only import copy?" dialog shown when changing the setup</span>
-        </div>
-        <div class="img-caption">Changing the setup offers to preserve the old one as an import source</div>
-      </div>
-
-      <p>
-        Keep it, and the old configuration is preserved as a read-only sub-asset named
-        <code>[Import N] ...</code>. The next time the new manager runs a load and finds no save of
-        its own, it reads that import copy, brings the data into the object, and immediately re-saves
-        it in the new format and location. From then on the new save exists, so the import is a
-        one-time, automatic migration. If several import copies exist, they are tried newest first,
-        and if none holds a save the object falls back to its
-        <a href="#interfaces">fresh-start initialization</a>.
-      </p>
-      <div class="note">
-        This is a normal load, so it runs the same in a build and in the editor's Play mode: testing
-        the new setup in the editor will import (and transfer) your own edit-time save just as a
-        player's would. Because the import re-saves and then deletes the old copy, it only happens
-        once per save, so re-stage the old data if you want to test the migration again.
-      </div>
-
-      <div class="img-block">
-        <img src="../img/import_sources_list" alt="Import sources under the asset"
-             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
-        <div class="img-placeholder" style="display:none">
-          <span class="icon">&#128247;</span>
-          <span><strong>img/import_sources_list</strong><br/>The "[Import 1] ..." sub-assets sitting under the active manager</span>
-        </div>
-        <div class="img-caption">Each kept setup becomes a numbered, read-only import source</div>
-      </div>
-
-      <p>
-        Delete an import copy once your players have all migrated (it only matters while someone still
-        has a save in the old format). You can also <strong>roll back</strong> to a kept setup from the
-        inspector, making it the active manager again, useful if a change turns out wrong.
-      </p>
-      <div class="note">
-        Import sources migrate <em>how and where</em> data is stored. To handle changes to <em>what</em>
-        the data contains (renamed or removed fields), see
-        <a href="#versioning">Versioning your data</a>.
-      </div>
-    </section>
-
-
-    <!-- ══════════════════════════════════════ versioning ════ -->
-    <section id="versioning">
-      <h2>Versioning your data</h2>
-      <p>
-        Versioning is about <em>what</em> your data contains: fields you add, rename or remove between
-        releases.
-      </p>
-      <p>
-        For simple changes you often need nothing from Persistent Asset at all, the serializer's own
-        rules cover them. Adding a field just loads it at its default; renaming one is handled by
-        Unity's <code>[FormerlySerializedAs("oldName")]</code>:
-      </p>
-      <pre><code>[FormerlySerializedAs(<span class="st">"hp"</span>)]
-<span class="kw">public int</span> health;   <span class="cm">// old saves that stored "hp" still load</span></code></pre>
-      <p>
-        Reach for <code>IUpgradable</code> when the change is beyond what those can express: splitting
-        one field into two, changing units, deriving a new value from old ones, and so on. Increment
-        <code>SaveVersion</code> whenever the saved fields change in a way that needs handling, and do
-        the work in <code>Upgrade</code>:
-      </p>
-      <pre><code><span class="kw">public class</span> <span class="ty">PlayerData</span> : <span class="ty">PersistentScriptableObject</span>, <span class="ty">IUpgradable</span>
-{
-    <span class="kw">public int</span> coins;
-
-    <span class="kw">public int</span> SaveVersion =&gt; <span class="nu">1</span>;
-
-    <span class="kw">public void</span> Upgrade(<span class="kw">int</span> fromVersion, <span class="ty">SaveNode</span> oldData)
-    {
-        <span class="cm">// v0 stored "gold" and "silver" separately; combine them</span>
-        <span class="kw">if</span> (fromVersion &lt; <span class="nu">1</span>)
-            coins = oldData[<span class="st">"gold"</span>].AsInt() + oldData[<span class="st">"silver"</span>].AsInt();
-    }
-
-    <span class="kw">public bool</span> Downgrade(<span class="kw">int</span> fromVersion) =&gt; <span class="kw">false</span>;
-}</code></pre>
-      <p>
-        <code>Upgrade</code> runs after loading, only when the loaded save is older than the current
-        version. The <code>oldData</code> parameter is a serializer-neutral <code>SaveNode</code> tree
-        of the original payload, so you can recover values the deserialization dropped. It exposes typed
-        readers: <code>AsInt()</code>, <code>AsString()</code>, <code>AsVector3()</code>,
-        <code>AsEnum&lt;T&gt;()</code>, and indexing for objects (<code>node["x"]</code>) and arrays
-        (<code>node[0]</code>).
-      </p>
-      <p>
-        <code>Downgrade</code> handles the reverse: a save written by a <em>newer</em> build than the one
-        running. Return <code>false</code> to refuse it (saving is blocked, so the newer save is left
-        intact on disk for the newer build), or <code>true</code> to accept it in the older format.
-      </p>
-      <div class="note">
-        An object with no <code>IUpgradable</code> ships as version 0, so you can add the interface in a
-        <em>later</em> release and handle the upgrade <code>from</code> version 0, every existing save
-        is treated as version 0.
-      </div>
-      <div class="note">
-        Save versioning needs a serializer whose <code>SupportsNode</code> is <code>true</code> (the
-        built-in JSON serializer is). The inspector warns if you pair an <code>IUpgradable</code> object
-        with one that does not.
-      </div>
-
-      <h3>The escape hatch: migrate into a fresh object</h3>
-      <p>
-        For a rare change that neither import sources nor <code>IUpgradable</code> can express cleanly,
-        there is a blunt but reliable option: keep the old persistent object as it is, create a
-        <em>new</em> one for the new shape, and have the new object copy across on first run via
-        <a href="#interfaces"><code>IDynamicInitialize</code></a> (which runs once when a load finds no
-        save of its own). Load the old object on demand rather than holding a permanent reference to it:
-      </p>
-      <pre><code><span class="kw">public class</span> <span class="ty">PlayerDataV2</span> : <span class="ty">PersistentScriptableObject</span>, <span class="ty">IDynamicInitialize</span>
-{
-    <span class="kw">public int</span> coins;
-
-    <span class="kw">public void</span> DynamicInitialize()
-    {
-        <span class="cm">// No V2 save yet: pull the old object from Resources and copy its data across.</span>
-        <span class="ty">PlayerDataV1</span> old = <span class="ty">Resources</span>.Load&lt;<span class="ty">PlayerDataV1</span>&gt;(<span class="st">"PlayerDataV1"</span>);
-        <span class="kw">if</span> (old != <span class="kw">null</span> &amp;&amp; old.PersistenceManager.IsReady)
-        {
-            coins = old.gold;
-            old.PersistenceManager.Clear();   <span class="cm">// wipe the old save now it has been migrated</span>
-        }
-    }
-}</code></pre>
-      <p>
-        After migrating, your game reads only the new object; the old one can be retired once players
-        have moved over.
-      </p>
-    </section>
+    <div class="guide-index">
+      <a href="#slots">Multiple save slots</a>
+      <a href="#reacting">Reacting to load &amp; save</a>
+      <a href="#drain">Saving on quit</a>
+      <a href="#reset">Resetting &amp; Restoring</a>
+      <a href="#globals">Global objects</a>
+      <a href="#interfaces">Optional hooks</a>
+      <a href="#attribute">Without the base class</a>
+      <a href="#security">Securing saves</a>
+      <a href="#migration">Locking &amp; migrating saves</a>
+      <a href="#versioning">Versioning your data</a>
+      <a href="#erasure">Deleting a player's data</a>
+      <a href="#debug">Debugging</a>
+    </div>
 
 
     <!-- ══════════════════════════════════════ slots ════ -->
     <section id="slots">
       <h2>Multiple save slots</h2>
       <p>
-        A slot is a named save: "Slot 1", "Autosave", a player profile id. To make a persistent object
+        A slot is a named save: "Slot 1", "Hardcore", a player profile id. To make a persistent object
         support slots, add the empty marker interface <code>IMultiSlot</code>:
       </p>
       <pre><code><span class="kw">public class</span> <span class="ty">PlayerData</span> : <span class="ty">PersistentScriptableObject</span>, <span class="ty">IMultiSlot</span>
@@ -257,23 +62,31 @@ Slots.GlobalSlot = <span class="st">"Slot 1"</span>;</code></pre>
         picks up the current global slot on its own.
       </p>
 
-      <h3>Managing slot storage</h3>
+      <h3 id="managing-slot-storage">Managing slot storage</h3>
       <p>
-        The static <code>Slots</code> class operates on a slot's saved data <em>without loading it</em>,
-        so you can build a save-select screen: copy, rename and delete slots.
+        The static <code>Slots</code> class operates on a slot's saved data <em>without switching
+        slots</em>, so you can build a save-select screen: copy, rename and delete slots, snapshot
+        the live data onto one, or bring one's data into the ongoing game.
       </p>
       <pre><code><span class="cm">// Duplicate Slot 1 onto Slot 2 for these targets</span>
 Slots.Copy(<span class="st">"Slot 1"</span>, <span class="st">"Slot 2"</span>, playerData, worldData);
 
 <span class="cm">// Rename, then delete</span>
 Slots.Rename(<span class="st">"Slot 2"</span>, <span class="st">"Backup"</span>, playerData);
-Slots.Delete(<span class="st">"Backup"</span>, playerData);</code></pre>
+Slots.Delete(<span class="st">"Backup"</span>, playerData);
+
+<span class="cm">// Snapshot the LIVE data onto another slot; the current slot's save is untouched</span>
+Slots.SaveTo(<span class="st">"snapshot 0"</span>, playerData);
+
+<span class="cm">// Bring a slot's saved data into the ongoing game: a real load of that slot,</span>
+<span class="cm">// the next save persists it onto the current slot, the source is never modified</span>
+Slots.LoadFrom(<span class="st">"snapshot 0"</span>, playerData);</code></pre>
       <p>
         <code>Slots</code> also raises <code>OnSlotUpdated</code>, <code>OnSlotCopied</code> and
         <code>OnSlotDeleted</code> so your UI can refresh as storage changes.
       </p>
 
-      <h3>Listing slots without loading them (slot registry)</h3>
+      <h3 id="listing-slots-without-loading-them-slot-registry">Listing slots without loading them (slot registry)</h3>
       <p>
         A save-select menu needs to show what saves exist, and a small summary of each (level
         reached, play time, a thumbnail), without loading every profile in full. That is what a
@@ -322,6 +135,63 @@ Slots.Delete(<span class="st">"Backup"</span>, playerData);</code></pre>
         <div class="img-caption">A registry feeds a load-game menu without loading any profile</div>
       </div>
 
+      <h3 id="rotating-snapshots">Rotating snapshots</h3>
+      <p>
+        Some games keep the last few automatic snapshots alongside the manual save and let the
+        player load any of them (a common pattern in adventure games and RPGs). The game
+        plays on one slot as usual; on your trigger of choice, a single <code>Slots.SaveTo</code>
+        snapshots the live data into a rotating ring of snapshot slots. The current slot's save is
+        never touched, so the manual save stays exactly where the player left it:
+      </p>
+      <pre><code><span class="kw">const int</span> MaxSnapshots = <span class="nu">3</span>;
+
+<span class="cm">// Call it from your trigger of choice: a timer, a checkpoint, an area transition.</span>
+<span class="kw">void</span> TakeSnapshot() =&gt; Slots.SaveTo(NextSnapshotSlot(), profileData);
+
+<span class="cm">// Each profile keeps its own ring: its snapshot slots carry its slot name as a prefix.</span>
+<span class="kw">string</span> SnapshotPrefix =&gt; profileData.PersistenceManager.Slot + <span class="st">" snapshot "</span>;
+
+<span class="cm">// Overwrite the oldest snapshot slot, or fill a free one. No rotation index to</span>
+<span class="cm">// persist: the registry's save times already order the ring.</span>
+<span class="kw">string</span> NextSnapshotSlot()
+{
+    <span class="ty">List</span>&lt;<span class="ty">SlotEntry</span>&lt;<span class="ty">ProfileSummary</span>&gt;&gt; snapshots = <span class="kw">new</span>();
+    <span class="kw">foreach</span> (<span class="ty">SlotEntry</span>&lt;<span class="ty">ProfileSummary</span>&gt; entry <span class="kw">in</span> profileRegistry.Entries)
+        <span class="kw">if</span> (entry.Slot.StartsWith(SnapshotPrefix))
+            snapshots.Add(entry);
+
+    <span class="kw">if</span> (snapshots.Count &lt; MaxSnapshots)
+        <span class="kw">return</span> SnapshotPrefix + snapshots.Count;
+    <span class="kw">return</span> snapshots[snapshots.Count - <span class="nu">1</span>].Slot;   <span class="cm">// Entries is newest-first, so last is oldest</span>
+}</code></pre>
+      <p>
+        Each snapshot records its summary, save time and thumbnail in the slot registry above, so
+        the ring shows up in the load menu for free. When the player picks one, a single
+        <code>Slots.LoadFrom</code> brings it into the game: a real load of the snapshot slot's data
+        into the object. The snapshot slot itself is never modified, so the ring stays an intact
+        history, and later saves keep landing on the current slot (the next one persists the
+        brought-over state there):
+      </p>
+      <pre><code><span class="cm">// From the load menu, in game or after a game over: no slot switching involved.</span>
+Slots.LoadFrom(chosenSnapshotSlot, profileData);</code></pre>
+      <div class="note">
+        <code>LoadFrom</code> only changes the object's live, in-memory state; no save is copied or
+        overwritten. It does need a current slot (for later saves to land on), so on a title screen
+        pick the profile first (<code>Slots.GlobalSlot = ...</code>) and then call
+        <code>LoadFrom</code>; in game, you are already on the slot. Since no slot switching is
+        involved, no automatic save runs on the way.
+      </div>
+
+      <p>
+        The same two calls also cover multiple <em>manual</em> saves. When each manual save is a
+        slot the player plays on (a profile), the ring above already follows it through its
+        prefix. When manual saves must instead stay untouched while playing (a "save as" list),
+        treat them exactly like snapshots: the game plays on one working slot, a save command is a
+        <code>Slots.SaveTo("manual ...")</code>, and the load menu is a <code>LoadFrom</code> of
+        any entry, manual or snapshot alike; only the working slot ever receives the automatic
+        saves.
+      </p>
+
       <div class="note">
         Any string works as a slot: special characters are escaped to fit the manager's storage.
         Where a length limit matters (Cloud Save keys), prefer short slot names.
@@ -337,7 +207,7 @@ Slots.Delete(<span class="st">"Backup"</span>, playerData);</code></pre>
         it, through the object's own callbacks.
       </p>
 
-      <h3>From outside the object: manager events</h3>
+      <h3 id="from-outside-the-object-manager-events">From outside the object: manager events</h3>
       <p>
         Subscribe to the manager's events to observe operations (drive a "saving..." spinner, log
         analytics, refresh UI after a load):
@@ -358,11 +228,14 @@ manager.OnBeforeSave += source =&gt; ShowSavingSpinner();</code></pre>
         The <code>source</code> each load and save event carries is a <code>PersistenceSource</code>
         telling you <em>why</em> it ran: <code>Manual</code> for an explicit <code>Save</code> or
         <code>Load</code> call, <code>Automatic</code> for one the system triggered
-        (the auto-load on scope-in, an auto-save safe point, a slot change). Use it to treat the two
+        (the auto-load on scope-in, an auto-save safe point, a slot change),
+        and <code>SlotCopy</code> / <code>SlotSnapshot</code>, seen only by the storage methods of
+        a custom manager (a <code>Slots</code> copy or rename moving a payload verbatim, and a
+        <code>Slots.SaveTo</code> writing the live data to another slot). Use it to treat them
         apart, for instance only flashing a "Saved!" toast on a <code>Manual</code> save.
       </p>
 
-      <h3>From inside the object: serialization callbacks</h3>
+      <h3 id="from-inside-the-object-serialization-callbacks">From inside the object: serialization callbacks</h3>
       <p>
         The object itself can react by implementing <code>ISerializationCallbacks</code> (a
         serializer-neutral equivalent of Unity's <code>ISerializationCallbackReceiver</code>):
@@ -373,7 +246,7 @@ manager.OnBeforeSave += source =&gt; ShowSavingSpinner();</code></pre>
     <span class="kw">public void</span> OnAfterDeserialize() { <span class="cm">/* rebuild caches, validate, clamp */</span> }
 }</code></pre>
 
-      <h3>Lifecycle: entering and leaving scope</h3>
+      <h3 id="lifecycle-entering-and-leaving-scope">Lifecycle: entering and leaving scope</h3>
       <p>
         For one-time setup and teardown (and reacting to slot changes), implement
         <code>IScopeCallbacks</code>. Its <code>enable</code> / <code>disable</code> flags are
@@ -455,14 +328,14 @@ manager.OnBeforeSave += source =&gt; ShowSavingSpinner();</code></pre>
         capturing the current values to put them back later.
       </p>
 
-      <h3>Reset to defaults</h3>
+      <h3 id="reset-to-defaults">Reset to defaults</h3>
       <p>
         <code>ResetToDefaults()</code> on the persistence manager resets every persisted field to its
         pre-play authored values, in memory only (the save is untouched, and a later save persists the
         defaults). To also delete the save, use <code>Clear()</code>.
       </p>
 
-      <h3>Snapshot and restore</h3>
+      <h3 id="snapshot-and-restore">Snapshot and restore</h3>
       <p>
         To capture the whole object's current values and put them back later, an options menu the
         player can cancel, a rollback point, capture them to a string with <code>Snapshot()</code> and
@@ -473,7 +346,7 @@ manager.OnBeforeSave += source =&gt; ShowSavingSpinner();</code></pre>
 <span class="kw">if</span> (cancelled)
     manager.Restore(checkpoint);   <span class="cm">// back to the checkpoint, in memory; the save is untouched</span></code></pre>
 
-      <h3>Resetting or restoring individual fields</h3>
+      <h3 id="resetting-or-restoring-individual-fields">Resetting or restoring individual fields</h3>
       <p>
         To reset or restore <em>some</em> fields rather than the whole object (a "reset this one
         setting to default" button), implement <code>IFieldResettable</code>. It declares two events
@@ -519,7 +392,7 @@ manager.OnBeforeSave += source =&gt; ShowSavingSpinner();</code></pre>
         object, the player profile, a registry of save slots.
       </p>
 
-      <h3>PersistentSingleton (the easy path)</h3>
+      <h3 id="persistentsingleton-the-easy-path">PersistentSingleton (the easy path)</h3>
       <p>
         For one project-wide persistent object, inherit <code>PersistentSingleton</code> and add your
         fields:
@@ -537,14 +410,14 @@ manager.OnBeforeSave += source =&gt; ShowSavingSpinner();</code></pre>
         through the <code>GlobalPersistedData</code> class, with no serialized reference:
       </p>
       <pre><code><span class="ty">GameSettings</span> settings = <span class="ty">GlobalPersistedData</span>.Find&lt;<span class="ty">GameSettings</span>&gt;();
-<span class="kw">if</span> (settings != <span class="kw">null</span> &amp;&amp; settings.PersistenceManager.IsReady)
+<span class="kw">if</span> (settings != <span class="kw">null</span>)
     ApplyVolume(settings.masterVolume);</code></pre>
       <div class="note">
         With no manager assigned, a singleton is neither persisted nor registered, so
         <code>Find</code> returns <code>null</code>.
       </div>
 
-      <h3>IAlwaysGlobal (the raw interface)</h3>
+      <h3 id="ialwaysglobal-the-raw-interface">IAlwaysGlobal (the raw interface)</h3>
       <p>
         <code>PersistentSingleton</code> is simply a persistent object that implements
         <code>IAlwaysGlobal</code>, with its asset auto-created. Implement <code>IAlwaysGlobal</code>
@@ -559,7 +432,7 @@ manager.OnBeforeSave += source =&gt; ShowSavingSpinner();</code></pre>
         it ever leaving scope, just as if it were marked <code>IAlwaysGlobal</code>.
       </div>
 
-      <h3>Registering a global by hand</h3>
+      <h3 id="registering-a-global-by-hand">Registering a global by hand</h3>
       <p>
         A <code>PersistentSingleton</code> and anything marked <code>IAlwaysGlobal</code> register
         themselves. To make an <em>ordinary</em> persistent object globally findable without that
@@ -571,58 +444,8 @@ manager.OnBeforeSave += source =&gt; ShowSavingSpinner();</code></pre>
         <code>Add</code> keeps the object in scope until you <code>Remove</code> it, so removing it when
         you are done is your responsibility (the same reason you would not hold a static reference
         yourself). <code>AddPermanent</code> does the same but can never be removed; the package uses it
-        for the objects it pins itself. Only a persistent object can be registered, anything else is
-        ignored with a warning.
+        for the objects it pins itself. Only a persistent object can be registered.
       </p>
-    </section>
-
-
-    <!-- ══════════════════════════════════════ security ════ -->
-    <section id="security">
-      <h2>Securing saves</h2>
-      <p>
-        The Local File and remote managers can protect saves from tampering and snooping. On the Local
-        File manager you have two independent levers:
-      </p>
-      <ul>
-        <li><strong>Compression</strong> (<code>Fast</code> / <code>Optimal</code>): shrink the save with gzip.</li>
-        <li><strong>Encryption</strong>:
-          <ul>
-            <li><code>AppendHash</code>: the data stays readable but carries a secured hash, so a player cannot modify it undetected.</li>
-            <li><code>Encrypt</code>: the data is fully encrypted.</li>
-          </ul>
-        </li>
-      </ul>
-      <p>
-        The encryption key is derived from a project secret that is <strong>generated automatically,
-        unique to your project</strong>, stored in <strong>Project Settings &gt; Persistent Asset &gt;
-        <a href="Settings.html#security">Security</a></strong> (you do not have to invent or manage a
-        key yourself). You can additionally bind protected data with <strong>Lock Save To</strong> (a
-        <code>[Flags]</code> choice):
-      </p>
-      <ul>
-        <li><code>TargetMachine</code>: the save cannot be read on another machine.</li>
-        <li><code>FileLocation</code>: the file cannot be read if moved, renamed or swapped (a copy or rename you make through the <code>Slots</code> API still works, it re-protects the data for its new path; a player moving files on disk does not).</li>
-        <li><code>RuntimeSecret</code>: the save cannot be read without a secret your code supplies at runtime, which never ships in the build.</li>
-      </ul>
-      <pre><code><span class="cm">// Provide the runtime secret once during startup (e.g. from your server)</span>
-FilePersistenceManager.RuntimeSecret = sessionSecretFromServer;</code></pre>
-
-      <div class="img-block">
-        <img src="../img/security_settings" alt="Security project settings"
-             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
-        <div class="img-placeholder" style="display:none">
-          <span class="icon">&#128247;</span>
-          <span><strong>img/security_settings</strong><br/>Project Settings &gt; Persistent Asset &gt; Security</span>
-        </div>
-        <div class="img-caption">The auto-generated project secret backing every manager's encryption</div>
-      </div>
-
-      <div class="note">
-        Keep this secret identical for everyone building the project: commit the settings file (it holds
-        the secret) to version control. For the cryptographic detail and the threat model, see
-        <a href="Technical%20QA.html#security">Technical Q&amp;A</a>.
-      </div>
     </section>
 
 
@@ -630,7 +453,7 @@ FilePersistenceManager.RuntimeSecret = sessionSecretFromServer;</code></pre>
     <section id="interfaces">
       <h2>Other optional hooks</h2>
 
-      <h3>Only save when changed</h3>
+      <h3 id="only-save-when-changed">Only save when changed</h3>
       <p>
         Implement <code>IDirtyTracked</code> so a save is skipped while nothing changed. Set
         <code>IsDirty = true</code> when you modify a persisted field; it is reset to
@@ -644,7 +467,7 @@ FilePersistenceManager.RuntimeSecret = sessionSecretFromServer;</code></pre>
     IsDirty = <span class="kw">true</span>;
 }</code></pre>
 
-      <h3>Fresh-start initialization</h3>
+      <h3 id="fresh-start-initialization">Fresh-start initialization</h3>
       <p>
         Implement <code>IDynamicInitialize</code> to set values programmatically the first time an
         object loads with no save found. It never overwrites a loaded save, and never runs in edit
@@ -653,7 +476,7 @@ FilePersistenceManager.RuntimeSecret = sessionSecretFromServer;</code></pre>
       <pre><code><span class="kw">public void</span> DynamicInitialize()
     =&gt; startingSeed = <span class="ty">Random</span>.Range(<span class="nu">0</span>, <span class="kw">int</span>.MaxValue);</code></pre>
 
-      <h3>Forcing behavior by data type</h3>
+      <h3 id="forcing-behavior-by-data-type">Forcing behavior by data type</h3>
       <p>
         Implement <code>IPersistencePolicy</code> when the <em>kind</em> of data dictates how it must
         persist regardless of the manager, for example a settings object that must always auto-load
@@ -662,7 +485,7 @@ FilePersistenceManager.RuntimeSecret = sessionSecretFromServer;</code></pre>
       </p>
       <pre><code><span class="kw">public</span> <span class="ty">PersistencePolicy</span> Policy =&gt; <span class="kw">new</span>() { AutoSave = <span class="kw">true</span> };</code></pre>
 
-      <h3>Requiring a specific serializer</h3>
+      <h3 id="requiring-a-specific-serializer">Requiring a specific serializer</h3>
       <p>
         When an object's data only works with a particular serializer, put
         <code>[RequiredSerializer(typeof(...))]</code> on the class. The editor locks the manager's
@@ -708,6 +531,252 @@ FilePersistenceManager.RuntimeSecret = sessionSecretFromServer;</code></pre>
     </section>
 
 
+    <!-- ══════════════════════════════════════ security ════ -->
+    <section id="security">
+      <h2>Securing saves</h2>
+      <p>
+        The Local File and remote managers can protect saves from tampering and snooping. On the Local
+        File manager you have two independent levers:
+      </p>
+      <ul>
+        <li><strong>Compression</strong> (<code>Fast</code> / <code>Optimal</code>): shrink the save with gzip.</li>
+        <li><strong>Encryption</strong>:
+          <ul>
+            <li><code>AppendHash</code>: the data stays readable, and a modified save is not rejected: it still loads but is detected and <strong>permanently marked as tampered</strong>, for your code to react to (disable achievements or leaderboards, show a badge...).</li>
+            <li><code>Encrypt</code>: the data is fully encrypted, and a modified save cannot be loaded at all.</li>
+          </ul>
+        </li>
+      </ul>
+      <p>
+        With <code>AppendHash</code>, react to tampered saves through the static file-manager API. The mark is sticky:
+        it is written into every save of the tampered data (protected by the hash itself, so it cannot be edited out),
+        surviving sessions and slot copies until the save is cleared or a pristine file is loaded again:
+      </p>
+      <pre><code><span class="cm">// Query it anytime (also up to date inside an OnAfterLoad handler)</span>
+bool cheated = FilePersistenceManager.IsTampered(myData);
+
+<span class="cm">// Or react to the load that brought tampered data in</span>
+FilePersistenceManager.OnTamperedLoaded += target =&gt; DisableAchievements();
+
+<span class="cm">// And when your own checks catch a cheat, brand the save yourself: a flag in your own</span>
+<span class="cm">// data could simply be edited back, this mark cannot</span>
+FilePersistenceManager.MarkTampered(myData);</code></pre>
+      <p>
+        The encryption key is derived from a project secret that is <strong>generated automatically,
+        unique to your project</strong>, stored in <strong>Project Settings &gt; Persistent Asset &gt;
+        <a href="Settings.html#security">Security</a></strong> (you do not have to invent or manage a
+        key yourself). You can additionally bind protected data with <strong>Lock Save To</strong> (a
+        <code>[Flags]</code> choice):
+      </p>
+      <ul>
+        <li><code>TargetMachine</code>: the save cannot be read on another machine.</li>
+        <li><code>FileLocation</code>: the file cannot be read if moved, renamed or swapped (a copy or rename you make through the <code>Slots</code> API still works, it re-protects the data for its new path; a player moving files on disk does not).</li>
+        <li><code>RuntimeSecret</code>: the save cannot be read without a secret your code supplies at runtime, which never ships in the build.</li>
+      </ul>
+      <div class="note">
+        The locks describe what fails the integrity check, and the <code>Encryption</code> level decides what a failed
+        check does: under <code>Encrypt</code> the save is unreadable (blocked), under <code>AppendHash</code> it still
+        loads, marked as tampered. Use <code>Encrypt</code> when a lock must physically block.
+      </div>
+      <pre><code><span class="cm">// Provide the runtime secret once during startup (e.g. from your server)</span>
+FilePersistenceManager.RuntimeSecret = sessionSecretFromServer;</code></pre>
+
+      <div class="img-block">
+        <img src="../img/security_settings" alt="Security project settings"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">&#128247;</span>
+          <span><strong>img/security_settings</strong><br/>Project Settings &gt; Persistent Asset &gt; Security</span>
+        </div>
+        <div class="img-caption">The auto-generated project secret backing every manager's encryption</div>
+      </div>
+
+      <div class="note">
+        Keep this secret identical for everyone building the project: commit the settings file (it holds
+        the secret) to version control. For the cryptographic detail and the threat model, see
+        <a href="Technical%20QA.html#security">Technical Q&amp;A</a>.
+      </div>
+    </section>
+
+
+    <!-- ══════════════════════════════════════ migration ════ -->
+    <section id="migration">
+      <h2>Locking &amp; migrating saves</h2>
+      <p>
+        A few settings on a persistence manager decide <em>where and how</em> a save is stored: the
+        file name, compression, encryption, the lock, the server URL, the serializer. Change one after
+        players already have saves, and the new setup points at a different location that holds nothing,
+        the old saves are stranded. These are the manager's <strong>breaking fields</strong>, and the
+        package gives you two tools around them: locking to prevent accidental changes, and import
+        sources to migrate on purpose.
+      </p>
+
+      <h3 id="locking-a-manager">Locking a manager</h3>
+      <p>
+        Locking a manager is your signal that <strong>this setup is shipped to players</strong>. Lock
+        it from its inspector and its breaking fields go read-only behind a padlock; from then on, a
+        change that would strand those players' saves first prompts you to migrate (see below). To
+        lock every manager in the project at once, use <strong>Tools &gt; Persistent Asset &gt; Actions
+        &gt; Lock All Persistence Managers</strong>.
+      </p>
+      <div class="note">
+        An <em>unlocked</em> manager is treated as not yet shipped: changing it discards its old saves
+        silently, with no prompt. Lock a manager once players have it to turn the save-protection
+        prompts on.
+      </div>
+      <p>
+        You can also have the project lock every manager for you when a build is made, configured in
+        <strong>Project Settings &gt; Persistent Asset &gt; <a href="Settings.html#general">General</a></strong>:
+      </p>
+      <ul>
+        <li><strong>Auto Lock On Build</strong>: <code>Release Build</code> (the default, locks on a non-development build), <code>Any Build</code>, or <code>None</code>.</li>
+        <li><strong>Prompt Before Auto Lock</strong>: off by default, so saves are protected without a prompt; turn it on to confirm first (a command-line build never prompts).</li>
+      </ul>
+
+      <h3 id="import-sources">Import sources</h3>
+      <p>
+        When you change a <em>locked</em> persistence manager in a way that would strand its
+        saves, unlocking it to edit a breaking field, or switching its type, the inspector offers to
+        <strong>keep a read-only import copy</strong> of the old setup:
+      </p>
+
+      <div class="img-block">
+        <img src="../img/import_copy_dialog" alt="Keep import copy dialog"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">&#128247;</span>
+          <span><strong>img/import_copy_dialog</strong><br/>The "Keep a read-only import copy?" dialog shown when changing the setup</span>
+        </div>
+        <div class="img-caption">Changing the setup offers to preserve the old one as an import source</div>
+      </div>
+
+      <p>
+        Keep it, and the old configuration is preserved as a read-only sub-asset named
+        <code>[Import N] ...</code>. The next time the new manager runs a load and finds no save of
+        its own, it reads that import copy, brings the data into the object, and immediately re-saves
+        it in the new format and location. From then on the new save exists, so the import is a
+        one-time, automatic migration. If several import copies exist, they are tried newest first,
+        and if none holds a save the object falls back to its
+        <a href="#interfaces">fresh-start initialization</a>.
+      </p>
+      <div class="note">
+        This is a normal load, so it runs the same in a build and in the editor's Play mode: testing
+        the new setup in the editor will import (and transfer) your own edit-time save just as a
+        player's would. Because the import re-saves and then deletes the old copy, it only happens
+        once per save, so re-stage the old data if you want to test the migration again.
+      </div>
+
+      <div class="img-block">
+        <img src="../img/import_sources_list" alt="Import sources under the asset"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">&#128247;</span>
+          <span><strong>img/import_sources_list</strong><br/>The "[Import 1] ..." sub-assets sitting under the active manager</span>
+        </div>
+        <div class="img-caption">Each kept setup becomes a numbered, read-only import source</div>
+      </div>
+
+      <p>
+        Delete an import copy once your players have all migrated (it only matters while someone still
+        has a save in the old format). You can also <strong>roll back</strong> to a kept setup from the
+        inspector, making it the active manager again, useful if a change turns out wrong.
+      </p>
+    </section>
+
+
+    <!-- ══════════════════════════════════════ versioning ════ -->
+    <section id="versioning">
+      <h2>Versioning your data</h2>
+      <p>
+        Versioning is about <em>what</em> your data contains: fields you add, rename or remove between
+        releases.
+      </p>
+      <p>
+        For simple changes you often need nothing from Persistent Asset at all, the serializer's own
+        rules cover them. Adding a field just loads it at its default, and renaming one is handled
+        by the serializer's rename mechanism: for the default Unity JSON serializer, that is Unity's
+        <code>[FormerlySerializedAs("oldName")]</code>:
+      </p>
+      <pre><code>[FormerlySerializedAs(<span class="st">"hp"</span>)]
+<span class="kw">public int</span> health;   <span class="cm">// old saves that stored "hp" still load</span></code></pre>
+      <p>
+        Reach for <code>IUpgradable</code> when the change is beyond what those can express: splitting
+        one field into two, changing units, deriving a new value from old ones, and so on. Increment
+        <code>SaveVersion</code> whenever the saved fields change in a way that needs handling, and do
+        the work in <code>Upgrade</code>:
+      </p>
+      <pre><code><span class="kw">public class</span> <span class="ty">PlayerData</span> : <span class="ty">PersistentScriptableObject</span>, <span class="ty">IUpgradable</span>
+{
+    <span class="kw">public int</span> coins;
+
+    <span class="kw">public int</span> SaveVersion =&gt; <span class="nu">1</span>;
+
+    <span class="kw">public void</span> Upgrade(<span class="kw">int</span> fromVersion, <span class="ty">SaveNode</span> oldData)
+    {
+        <span class="cm">// v0 stored "gold" and "silver" separately; combine them</span>
+        <span class="kw">if</span> (fromVersion &lt; <span class="nu">1</span>)
+            coins = oldData[<span class="st">"gold"</span>].AsInt() + oldData[<span class="st">"silver"</span>].AsInt();
+    }
+
+    <span class="kw">public bool</span> Downgrade(<span class="kw">int</span> fromVersion) =&gt; <span class="kw">false</span>;
+}</code></pre>
+      <p>
+        <code>Upgrade</code> runs after loading, only when the loaded save is older than the current
+        version. The <code>oldData</code> parameter is a serializer-neutral <code>SaveNode</code> tree
+        of the original payload, so you can recover values the deserialization dropped. It exposes typed
+        readers: <code>AsInt()</code>, <code>AsString()</code>, <code>AsVector3()</code>,
+        <code>AsEnum&lt;T&gt;()</code>, and indexing for objects (<code>node["x"]</code>) and arrays
+        (<code>node[0]</code>).
+      </p>
+      <p>
+        <code>Downgrade</code> handles the reverse: a save written by a <em>newer</em> build than the one
+        running. Return <code>false</code> to refuse it (saving is blocked, so the newer save is left
+        intact on disk for the newer build), or <code>true</code> to accept it in the older format.
+      </p>
+      <div class="note">
+        An object with no <code>IUpgradable</code> ships as version 0, so you can add the interface in a
+        <em>later</em> release and handle the upgrade <code>from</code> version 0, every existing save
+        is treated as version 0.
+      </div>
+      <div class="note">
+        Save versioning needs a serializer whose <code>SupportsNode</code> is <code>true</code> (the
+        built-in JSON serializer is).
+      </div>
+
+      <h3 id="the-escape-hatch-migrate-into-a-fresh">The escape hatch: migrate into a fresh object</h3>
+      <p>
+        For a rare change that neither import sources nor <code>IUpgradable</code> can express cleanly,
+        there is a blunt but reliable option: keep the old persistent object as it is, create a
+        <em>new</em> one for the new shape, and have the new object copy across on first run via
+        <a href="#interfaces"><code>IDynamicInitialize</code></a> (which runs once when a load finds no
+        save of its own):
+      </p>
+      <pre><code><span class="kw">public class</span> <span class="ty">PlayerDataV2</span> : <span class="ty">PersistentScriptableObject</span>, <span class="ty">IDynamicInitialize</span>
+{
+    <span class="kw">public int</span> coins;
+
+    <span class="kw">public void</span> DynamicInitialize()
+    {
+        <span class="cm">// No V2 save yet: fetch the old object on demand and copy its data across. Fetched,</span>
+        <span class="cm">// not kept in a serialized field: that field would be persisted into the V2 save itself.</span>
+        <span class="ty">PlayerDataV1</span> old = <span class="ty">Resources</span>.Load&lt;<span class="ty">PlayerDataV1</span>&gt;(<span class="st">"PlayerDataV1"</span>);
+        <span class="kw">if</span> (old != <span class="kw">null</span> &amp;&amp; old.PersistenceManager.IsReady)
+        {
+            coins = old.gold;
+            old.PersistenceManager.Clear();   <span class="cm">// wipe the old save now it has been migrated</span>
+        }
+    }
+}</code></pre>
+      <p>
+        The <code>IsReady</code> check guards against a <em>failed</em> load: it stays
+        <code>false</code> when an old save exists but could not be read, so the migration (and its
+        <code>Clear</code>) never runs on data that never loaded. A player with no old save passes
+        the check on defaults, and copying those across is simply their fresh start. From then on
+        your game reads only the new object; retire the old one once players have moved over.
+      </p>
+    </section>
+
+
     <!-- ══════════════════════════════════════ erasure ════ -->
     <section id="erasure">
       <h2>Deleting a player's data (privacy / account deletion)</h2>
@@ -727,25 +796,37 @@ FilePersistenceManager.RuntimeSecret = sessionSecretFromServer;</code></pre>
       <p>To erase a player completely, do all three steps in order:</p>
       <ol>
         <li><strong>Bring every persistent object into scope.</strong> Load or reference your save objects and any slot-tracked profile objects so their managers are active; anything still unloaded is invisible to the next steps. (<a href="#globals">Always-global</a> objects, such as singletons and slot registries, are already in scope, so they need nothing here.) How you do this is game-specific (direct references, Resources, Addressables, your own registry of them).</li>
-        <li><strong>Snapshot the slot list, then clear everything active.</strong> Read the slot names from your <a href="#slots">slot registries</a> <em>first</em>, because the next call wipes the registry that lists them. Then <code>await Persistence.ClearAllAsync()</code> deletes each active manager's current-slot save and resets the object to defaults, on the device and, for a <a href="Cloud%20and%20Remote.html">remote</a> manager, on the backend (it also drops the offline cache).</li>
+        <li><strong>Snapshot the slot list, then clear everything active.</strong> Read the slot names from your <a href="#slots">slot registries</a> <em>first</em>, because the next call wipes the registry that lists them. Then <code>await Persistence.ClearAllAsync()</code> deletes each active manager's current-slot save and resets the object to defaults, on the device and, for a <a href="Cloud%20and%20Remote.html">remote</a> manager, on the backend. A backend delete can only land while the server is reachable. With no cache, the awaited result reports whether it did; with a cache on, the clear lands in the cache as a pending clear request, pushed to the server in the background, so confirm it with <code>await PushPendingChanges()</code> (see <a href="Cloud%20and%20Remote.html#status">the saving indicator</a>).</li>
         <li><strong>Delete every remaining slot.</strong> <code>ClearAll</code> only emptied the current slot, so for each <a href="#slots">multi-slot</a> object delete each of the snapshotted slots with <code>Slots.DeleteAsync(slot, targets)</code> (a slot that happens to be the current one is simply ignored, it is already gone).</li>
       </ol>
-      <pre><code><span class="cm">// 1. Make sure the player's save objects and slot-tracked profiles are loaded / in scope</span>
-<span class="cm">//    (game-specific). Always-global objects, singletons and slot registries, already are.</span>
+      <pre><code><span class="cm">// Returns false when something could not be deleted: keep the erasure request open and retry.</span>
+<span class="kw">async</span> <span class="ty">Task</span>&lt;<span class="kw">bool</span>&gt; EraseEverything()
+{
+    <span class="cm">// 1. The player's save objects and slot-tracked profiles must be loaded / in scope</span>
+    <span class="cm">//    (game-specific). Always-global objects, singletons and slot registries, already are.</span>
 
-<span class="cm">// 2. Snapshot the slot names BEFORE clearing wipes the registry that lists them...</span>
-<span class="ty">List</span>&lt;<span class="kw">string</span>&gt; slots = profileRegistry.Entries.Select(e =&gt; e.Slot).ToList();
+    <span class="cm">// 2. Snapshot the slot names BEFORE clearing wipes the registry that lists them...</span>
+    <span class="ty">List</span>&lt;<span class="kw">string</span>&gt; slots = profileRegistry.Entries.Select(e =&gt; e.Slot).ToList();
 
-<span class="cm">// ...then clear the current slot of every active manager (device + remote + cache).</span>
-<span class="kw">await</span> <span class="ty">Persistence</span>.ClearAllAsync();
+    <span class="cm">// ...then clear the current slot of every active manager (device + remote + cache).</span>
+    <span class="ty">ClearResult</span>[] cleared = <span class="kw">await</span> <span class="ty">Persistence</span>.ClearAllAsync();
+    <span class="kw">bool</span> erased = cleared.All(r =&gt; r.IsFailure == <span class="kw">false</span> &amp;&amp; r.IsCancelled == <span class="kw">false</span>);
 
-<span class="cm">// 3. Delete every remaining slot of each multi-slot object.</span>
-<span class="kw">foreach</span> (<span class="kw">string</span> slot <span class="kw">in</span> slots)
-    <span class="kw">await</span> <span class="ty">Slots</span>.DeleteAsync(slot, playerData, worldData);</code></pre>
+    <span class="cm">// 3. Delete every remaining slot of each multi-slot object (the current slot's delete</span>
+    <span class="cm">//    reports Ignored, it is already gone; only a Failure or Cancelled means not erased).</span>
+    <span class="kw">foreach</span> (<span class="kw">string</span> slot <span class="kw">in</span> slots)
+    {
+        <span class="ty">ClearResult</span>[] deleted = <span class="kw">await</span> <span class="ty">Slots</span>.DeleteAsync(slot, playerData, worldData);
+        erased &amp;= deleted.All(r =&gt; r.IsFailure == <span class="kw">false</span> &amp;&amp; r.IsCancelled == <span class="kw">false</span>);
+    }
+
+    <span class="cm">// For a remote manager with a cache on, also flush: await remoteManager.PushPendingChanges().</span>
+    <span class="kw">return</span> erased;
+}</code></pre>
       <div class="note">
         Use the awaitable overloads (<code>ClearAllAsync</code>, <code>DeleteAsync</code>) and await
-        them, so you only confirm the data is gone once every delete, including the remote ones, has
-        actually landed.
+        them, so the deletes have actually run before you confirm anything to the player (and for a
+        cached remote manager, flush with <code>PushPendingChanges()</code> as above).
       </div>
       <div class="note">
         The editor's <a href="Local%20Saving.html#deleting">Delete Local Data</a> tool is developer
@@ -763,7 +844,7 @@ FilePersistenceManager.RuntimeSecret = sessionSecretFromServer;</code></pre>
         development builds only, and stripped from release builds, so it costs nothing in what you ship.
       </p>
 
-      <h3>In the inspector</h3>
+      <h3 id="in-the-inspector">In the inspector</h3>
       <p>
         While you play, the manager's <strong>Status</strong> section is your live window into it:
         whether the object is ready, the current slot, the last operation and its result, and a running
@@ -782,7 +863,7 @@ FilePersistenceManager.RuntimeSecret = sessionSecretFromServer;</code></pre>
         <div class="img-caption">Each manager shows its live state and activity during play</div>
       </div>
 
-      <h3>In game</h3>
+      <h3 id="in-game">In game</h3>
       <p>
         To read the same logs from a running build or on a device, add the <strong>In Game Logs
         Viewer</strong>: an on-screen overlay that lists every active manager and shows the selected
@@ -809,7 +890,7 @@ FilePersistenceManager.RuntimeSecret = sessionSecretFromServer;</code></pre>
         open. The fine-grained per-operation log stays in the inspector and the in-game viewer.
       </div>
 
-      <h3>From your own manager</h3>
+      <h3 id="from-your-own-manager">From your own manager</h3>
       <p>
         A custom manager writes to these logs with <code>Log()</code>, choosing a severity from
         <code>LogLevel</code> (<code>None</code>, <code>Info</code>, <code>Warning</code>,
@@ -824,9 +905,9 @@ FilePersistenceManager.RuntimeSecret = sessionSecretFromServer;</code></pre>
 
 
     <div class="pager">
-      <a class="prev" href="Cloud%20and%20Remote.html">
+      <a class="prev" href="Quick%20Help.html">
         <div class="dir">Back</div>
-        <div class="pg-title">Cloud &amp; Remote</div>
+        <div class="pg-title">Quick Help</div>
       </a>
       <a class="next" href="No-Code.html">
         <div class="dir">Next</div>

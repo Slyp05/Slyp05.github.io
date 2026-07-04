@@ -4,35 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Persistent Asset - Local Saving</title>
-  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="../shared/styles.css" />
 </head>
 <body>
 <div id="layout">
 
-  <nav>
-    <div class="nav-title">Persistent Asset</div>
-    <a href="../User%20Manual.html">Home</a>
-    <a href="What%20is%20a%20ScriptableObject.html">What is a ScriptableObject?</a>
-    <a href="Getting%20Started.html">Getting Started</a>
-    <a href="Installation.html">Installation &amp; Demo</a>
-    <a href="Core%20Concepts.html">Core Concepts</a>
-    <a href="Local%20Saving.html" class="active">Local Saving</a>
-    <a href="#choosing"   class="indent">Which one?</a>
-    <a href="#prototype"  class="indent">Prototype</a>
-    <a href="#file"       class="indent">Local File</a>
-    <a href="#playerprefs" class="indent">Player Prefs</a>
-    <a href="#session"    class="indent">Session (Memory)</a>
-    <a href="#remote"     class="indent">Server &amp; Cloud</a>
-    <a href="#none"       class="indent">None</a>
-    <a href="#deleting"   class="indent">Deleting local data</a>
-    <a href="Cloud%20and%20Remote.html">Cloud &amp; Remote</a>
-    <a href="Guides.html">Guides</a>
-    <a href="No-Code.html">No-Code</a>
-    <a href="Settings.html">Settings</a>
-    <a href="Extending.html">Extending</a>
-    <a href="Technical%20QA.html">Technical Q&amp;A</a>
-    <a href="Roadmap.html">Roadmap</a>
-  </nav>
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Persistent Asset</div><a href="../User%20Manual.html">Home</a></nav></noscript>
 
   <main>
     <div class="page-header">
@@ -44,7 +22,8 @@
       A persistence manager is what saves and loads a persistent object. You pick one from the
       dropdown at the top of the object's inspector, and can switch at any time without touching
       code. The package ships several local ones, plus two that save to a server or the cloud (see
-      <a href="Cloud%20and%20Remote.html">Cloud &amp; Remote</a>).
+      <a href="Cloud%20and%20Remote.html">Cloud &amp; Remote</a>). To compare them all at a glance,
+      see <a href="Quick%20Help.html#choosing">Which manager should I pick?</a>.
     </p>
 
     <div class="img-block">
@@ -56,24 +35,6 @@
       </div>
       <div class="img-caption">Every built-in manager, chosen per object</div>
     </div>
-
-
-    <!-- ══════════════════════════════════════ choosing ════ -->
-    <section id="choosing">
-      <h2>Which one?</h2>
-      <ul>
-        <li><strong>Just starting, or prototyping?</strong> Use <a href="#prototype">Prototype</a>. Zero setup, works everywhere.</li>
-        <li><strong>Want control over the file</strong> (compression, anti-tamper, backups, a custom path)? Use <a href="#file">Local File</a>.</li>
-        <li><strong>Small data, like settings or a high score?</strong> <a href="#playerprefs">Player Prefs</a>.</li>
-        <li><strong>State you want within a play session but never across them?</strong> <a href="#session">Session (Memory)</a>.</li>
-        <li><strong>Saves that follow the player across devices?</strong> <a href="Cloud%20and%20Remote.html">Cloud Save (UGS) or Server (HTTP)</a>.</li>
-      </ul>
-      <p>
-        A common path: start on Prototype, then switch to Local File (or a cloud manager) when
-        you need its options. Because the choice is data on the asset, switching is a dropdown
-        change, not a refactor.
-      </p>
-    </section>
 
 
     <!-- ══════════════════════════════════════ prototype ════ -->
@@ -119,10 +80,10 @@
       <ul>
         <li><strong>File Name</strong>: override the file name and optionally place it in subfolders (no extension).</li>
         <li><strong>Compression</strong>: <code>None</code>, <code>Fast</code>, or <code>Optimal</code> gzip.</li>
-        <li><strong>Encryption</strong>: <code>None</code>, <code>Append Hash</code> (tamper-proof but readable), or <code>Encrypt</code> (fully encrypted). See the <a href="Guides.html#security">security guide</a>.</li>
-        <li><strong>Lock Save To</strong>: tie protected data to the machine, the file location, and/or a runtime secret.</li>
-        <li><strong>Header Text</strong>: a free line at the top of the file that players can edit without breaking the save.</li>
-        <li><strong>Do Backup</strong>: keep a second copy as extra insurance on top of the atomic write, so even an unreadable primary still has a fallback.</li>
+        <li><strong>Encryption</strong>: <code>None</code>, <code>Append Hash</code> (readable; a modified save still loads but is permanently marked as tampered, see <code>FilePersistenceManager.IsTampered</code>), or <code>Encrypt</code> (fully encrypted, modifications rejected). See the <a href="Guides.html#security">security guide</a>.</li>
+        <li><strong>Lock Save To</strong>: tie protected data to the machine, the file location, and/or a runtime secret your code provides (until it does, the data stays unloaded).</li>
+        <li><strong>Header Text</strong>: a free line of text at the top of the file, written as a comment line starting with '#'. Players can edit the text or delete the whole line without breaking the save; leave it empty to write no header line at all.</li>
+        <li><strong>Do Backup</strong>: keep a second copy as extra insurance on top of the atomic write, so even an unreadable or undecodable primary still has a fallback.</li>
         <li><strong>Auto Load / Auto Save / delays</strong>: full control over the automatic behavior and timing.</li>
         <li><strong>Read / Write Execution Mode</strong>: prefer synchronous or asynchronous. Under a Prefer mode the safe-point saves (on quit, unload, focus loss) still run synchronously; set Async Only and they run asynchronously too, where a save can fail if it overruns its timeout.</li>
       </ul>
@@ -138,8 +99,10 @@
       <h2>Player Prefs</h2>
       <p>
         Stores saves through Unity's <code>PlayerPrefs</code>. Synchronous, simple, and a good fit
-        for small amounts of data (settings, a high score). It works on every platform, WebGL
-        included. Every key it writes is prefixed so the package can recognize and clear them.
+        for small amounts of data (settings, a high score). It works on desktop, mobile and WebGL
+        (consoles gate saving behind their platform SDK, so like the file managers it is not
+        supported there). Every key it writes is prefixed so the package
+        can recognize and clear them.
       </p>
       <p>
         For larger or structured saves, prefer Local File: Player Prefs is not designed for big
@@ -157,25 +120,26 @@
         empty. Saves and loads still go through the normal API.
       </p>
       <p>
-        Use it for state you want within a play session but never across them: a checkpoint within a
-        level, a quick stand-in while prototyping, or test scaffolding.
+        Use it for state you want within a play session but never across them: a mid-level
+        checkpoint to respawn from, or a run's progress in a game where quitting is meant to
+        forfeit the run.
       </p>
     </section>
 
 
-    <!-- ══════════════════════════════════════ remote ════ -->
-    <section id="remote">
-      <h2>Server &amp; Cloud</h2>
+    <!-- ══════════════════════════════════════ test ════ -->
+    <section id="test">
+      <h2>Test</h2>
       <p>
-        Two more built-in managers save off the device:
+        A fake in-memory manager to test how your game behaves when persistence misbehaves, without
+        touching a real save: force any operation to any outcome (a failed load, a cancelled save, an
+        exception) and inject delays to simulate a slow server, then watch what your title screen,
+        save indicator or error handling does. It is the easiest way to rehearse a slow or failed
+        load before going remote.
       </p>
-      <ul>
-        <li><strong>Server (HTTP)</strong>: save to your own server over HTTP.</li>
-        <li><strong>Cloud Save (UGS)</strong>: save to Unity Gaming Services Cloud Save, per signed-in player.</li>
-      </ul>
       <p>
-        Both can keep the game playable offline through a local cache. They have their own page:
-        <a href="Cloud%20and%20Remote.html">Cloud &amp; Remote</a>.
+        Assigning it always keeps a read-only import copy of the setup it replaces, so its inspector
+        restores your real setup in one click once you are done.
       </p>
     </section>
 
@@ -206,7 +170,7 @@
           <span class="icon">&#128247;</span>
           <span><strong>img/delete_local_data</strong><br/>The Delete Local Data window listing each manager and an "All" option</span>
         </div>
-        <div class="img-caption">Tools &gt; Persistent Asset &gt; Actions &gt; Delete Local Data</div>
+        <div class="img-caption"><strong>Tools &gt; Persistent Asset &gt; Actions &gt; Delete Local Data</strong></div>
       </div>
 
       <div class="note">

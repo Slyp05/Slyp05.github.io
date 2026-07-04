@@ -4,11 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Persistent Asset - Public API - Core</title>
-  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="../shared/styles.css" />
 </head>
 <body>
 <div id="layout">
 
+  <script src="../shared/nav.js"></script>
   <nav>
     <div class="nav-title">Public API</div>
     <a href="../Public%20API.html">Overview</a>
@@ -87,13 +88,13 @@
     <!-- ═══════════════════════════════════════ PersistenceManager ═══ -->
     <div class="type-section" id="PersistenceManager">
       <div class="type-header"><h2>PersistenceManager</h2><span class="badge badge-pm">PM</span><span class="badge badge-class">abstract</span><span class="warn">extending</span></div>
-      <p class="type-desc">Saves and loads a persistent object. The built-in managers derive from it; so does any custom one (see Extending).</p>
+      <p class="type-desc">Saves and loads a persistent object. The built-in managers derive from it; so does any custom one.</p>
 
       <div class="member-group">
         <div class="member-group-title">State &amp; identity</div>
         <table class="mt">
           <tr><td><span class="t">bool</span> <span class="mn">IsReady</span> { get; }</td><td>Whether the target holds its data and is safe to read and save. The one rule.</td></tr>
-          <tr><td><span class="t">Awaitable</span> <span class="mn">WhenReady</span> { get; }</td><td>Await (or yield) until the automatic load has settled, then read <code>IsReady</code>.</td></tr>
+          <tr><td><span class="t">Awaitable</span> <span class="mn">WhenReady</span> { get; }</td><td>Await (or yield) until everything that decides readiness has settled (the automatic load and its imports, a queued load or <code>Slots.LoadFrom</code>, an in-flight or queued clear, and any follow-up issued while waiting), then read <code>IsReady</code>.</td></tr>
           <tr><td><span class="t">Object</span> <span class="mn">Target</span> { get; }</td><td>The persistent object this manager saves and loads.</td></tr>
           <tr><td><span class="t">string</span> <span class="mn">UniqueID</span> { get; }</td><td>Identifier unique to this manager.</td></tr>
           <tr><td><span class="t">Serializer</span> <span class="mn">Serializer</span> { get; protected set; }</td><td>The serialization system in use.</td></tr>
@@ -153,7 +154,6 @@
           <tr><td><span class="t">const float</span> <span class="mn">MinimumRegularSaveDelay</span> / <span class="mn">MinimumAutoLoadRetryDelay</span> = 5 &middot; <span class="mn">NoRegularSave</span> / <span class="mn">NoAutoLoadRetry</span> = 0</td><td>A positive delay is clamped up to the minimum; the <code>No*</code> value (or lower) disables the timer.</td></tr>
           <tr><td><span class="t">ExecutionMode</span> <span class="mn">ReadExecutionMode</span> / <span class="mn">WriteExecutionMode</span></td><td>Which sync/async paths the manager supports, and the default.</td></tr>
           <tr><td><span class="t">float</span> <span class="mn">LoadTimeout</span> / <span class="mn">SaveTimeout</span> / <span class="mn">ClearTimeout</span></td><td>Seconds an async operation may run before cancellation.</td></tr>
-          <tr><td><span class="t">bool</span> <span class="mn">HasDurableStorage</span> { get; }</td><td>Whether the storage outlives the session (false for an in-memory manager).</td></tr>
         </table>
       </div>
 
@@ -162,10 +162,12 @@
         <table class="mt">
           <tr><td><span class="t">LoadResult</span> <span class="mn">ReadPayloadSync</span>(<span class="t">PersistenceSource</span> source, <span class="t">string</span> slot)</td><td>Read and return the stored payload (or Invalid / Failure).</td></tr>
           <tr><td><span class="t">SaveResult</span> <span class="mn">WritePayloadSync</span>(<span class="t">PersistenceSource</span> source, <span class="t">string</span> slot, <span class="t">string</span> payload)</td><td>Persist the payload.</td></tr>
-          <tr><td><span class="t">ClearResult</span> <span class="mn">ClearPayloadSync</span>(<span class="t">string</span> slot)</td><td>Delete the stored data.</td></tr>
-          <tr><td><span class="mn">ReadPayloadAsync</span> / <span class="mn">WritePayloadAsync</span> / <span class="mn">ClearPayloadAsync</span></td><td>Async equivalents (with a <code>CancellationToken</code>).</td></tr>
+          <tr><td><span class="t">ClearResult</span> <span class="mn">ClearPayloadSync</span>(<span class="t">PersistenceSource</span> source, <span class="t">string</span> slot)</td><td>Delete the stored data. <code>Manual</code> for a clear or slot delete the game requested, <code>Automatic</code> for the system wiping a consumed import source.</td></tr>
+          <tr><td><span class="t">LoadResult</span> <span class="mn">ReadFallbackPayloadSync</span>(<span class="t">PersistenceSource</span> source, <span class="t">string</span> slot)</td><td>The payload the read returned would not decode: return an alternate copy of the save if your storage keeps one (the default returns Invalid, meaning none).</td></tr>
+          <tr><td><span class="mn">ReadPayloadAsync</span> / <span class="mn">WritePayloadAsync</span> / <span class="mn">ClearPayloadAsync</span> / <span class="mn">ReadFallbackPayloadAsync</span></td><td>Async equivalents (with a <code>CancellationToken</code>).</td></tr>
           <tr><td><span class="t">string</span> <span class="mn">StorageLocation</span>(<span class="t">string</span> slot)</td><td>Report a stable storage path or key.</td></tr>
           <tr><td><span class="kw">void</span> <span class="mn">OnEnteringScope</span>() / <span class="mn">OnLeavingScope</span>()</td><td>Per-session setup and teardown.</td></tr>
+          <tr><td><span class="kw">void</span> <span class="mn">OnImportingFrom</span>(<span class="t">PersistenceManager</span> source, <span class="t">string</span> slot)</td><td>An empty load is recovering by importing this source's save: it was just decoded into the target and is about to be re-persisted here. Override to carry storage facts your manager keeps about a save across the import.</td></tr>
           <tr><td><span class="t">PersistencePolicy</span> <span class="mn">Constraint</span> / <span class="t">bool</span> <span class="mn">SelfBoundsAsyncOperations</span></td><td>Fix auto-load/save the manager cannot work without; declare it bounds its own async timeouts.</td></tr>
           <tr><td><span class="kw">void</span> <span class="mn">Log</span>(<span class="t">string</span> text, <span class="t">LogLevel</span> level = None)</td><td>Write to the manager's inspector log (development only).</td></tr>
         </table>
@@ -214,7 +216,7 @@
     <!-- ═══════════════════════════════════════ Slots ═══ -->
     <div class="type-section" id="Slots">
       <div class="type-header"><h2>Slots</h2><span class="badge badge-static">static</span></div>
-      <p class="type-desc">Operate on a slot's saved data without loading it. See Multiple save slots.</p>
+      <p class="type-desc">Operate on a slot's saved data (copy, rename, delete, snapshot to, load from).</p>
       <div class="member-group">
         <div class="member-group-title">Members</div>
         <table class="mt">
@@ -224,8 +226,12 @@
           <tr><td><span class="t">SaveResult[]</span> <span class="mn">CopySync</span>(<span class="t">string</span> fromSlot, <span class="t">string</span> toSlot, params <span class="t">IMultiSlot</span>[] targets) / <span class="kw">void</span> <span class="mn">Copy</span>(...) / <span class="mn">Copy</span>(<span class="t">string</span> fromSlot, <span class="t">string</span> toSlot, <span class="t">Action</span>&lt;<span class="t">SaveResult[]</span>&gt; onComplete, ...)</td><td>Copy a slot's storage onto another: sync, fire-and-forget, callback. Overwrites the destination.</td></tr>
           <tr><td><span class="t">Task</span>&lt;<span class="t">SaveResult[]</span>&gt; <span class="mn">CopyAsync</span>(...) / <span class="t">PersistenceOperation</span>&lt;<span class="t">SaveResult[]</span>&gt; <span class="mn">CopyRoutine</span>(...)</td><td>Copy a slot's storage: async, coroutine.</td></tr>
           <tr><td><span class="t">SaveResult[]</span> <span class="mn">RenameSync</span>(<span class="t">string</span> fromSlot, <span class="t">string</span> toSlot, params <span class="t">IMultiSlot</span>[] targets) / <span class="kw">void</span> <span class="mn">Rename</span>(...) / <span class="mn">Rename</span>(<span class="t">string</span> fromSlot, <span class="t">string</span> toSlot, <span class="t">Action</span>&lt;<span class="t">SaveResult[]</span>&gt; onComplete, ...)</td><td>Rename a slot (copy then delete): sync, fire-and-forget, callback. Moves data, no undo.</td></tr>
-          <tr><td><span class="t">Task</span>&lt;<span class="t">SaveResult[]</span>&gt; <span class="mn">RenameAsync</span>(...) / <span class="t">PersistenceOperation</span>&lt;<span class="t">SaveResult[]</span>&gt; <span class="mn">RenameRoutine</span>(...)</td><td>Rename a slot's storage: async, coroutine. <span class="ex">Delete / Copy / Rename (all shapes) throw InvalidOperationException in the editor only when called outside play mode.</span></td></tr>
-          <tr><td><span class="mn">OnSlotUpdated</span> / <span class="mn">OnSlotDeleted</span> / <span class="mn">OnSlotCopied</span></td><td>Raised as slot storage changes.</td></tr>
+          <tr><td><span class="t">Task</span>&lt;<span class="t">SaveResult[]</span>&gt; <span class="mn">RenameAsync</span>(...) / <span class="t">PersistenceOperation</span>&lt;<span class="t">SaveResult[]</span>&gt; <span class="mn">RenameRoutine</span>(...)</td><td>Rename a slot's storage: async, coroutine.</td></tr>
+          <tr><td><span class="t">SaveResult[]</span> <span class="mn">SaveToSync</span>(<span class="t">string</span> slot, params <span class="t">IMultiSlot</span>[] targets) / <span class="kw">void</span> <span class="mn">SaveTo</span>(...) / <span class="mn">SaveTo</span>(<span class="t">string</span> slot, <span class="t">Action</span>&lt;<span class="t">SaveResult[]</span>&gt; onComplete, ...)</td><td>A real save aimed at another slot: snapshot each target's live data onto that slot's storage (the current slot's save is untouched): sync, fire-and-forget, callback. Raises the save events; overwrites the destination; refused on the current slot, a not-ready target, or when saving is blocked.</td></tr>
+          <tr><td><span class="t">Task</span>&lt;<span class="t">SaveResult[]</span>&gt; <span class="mn">SaveToAsync</span>(...) / <span class="t">PersistenceOperation</span>&lt;<span class="t">SaveResult[]</span>&gt; <span class="mn">SaveToRoutine</span>(...)</td><td>Snapshot to a slot: async, coroutine.</td></tr>
+          <tr><td><span class="t">LoadResult[]</span> <span class="mn">LoadFromSync</span>(<span class="t">string</span> slot, params <span class="t">IMultiSlot</span>[] targets) / <span class="kw">void</span> <span class="mn">LoadFrom</span>(...) / <span class="mn">LoadFrom</span>(<span class="t">string</span> slot, <span class="t">Action</span>&lt;<span class="t">LoadResult[]</span>&gt; onComplete, ...)</td><td>A real load aimed at another slot: bring its saved data into the ongoing game (load events, save upgrades and readiness included); the next save persists it onto the current slot, and the source slot is never modified. Refused on the current slot or with no slot set; does nothing when the source holds no usable save.</td></tr>
+          <tr><td><span class="t">Task</span>&lt;<span class="t">LoadResult[]</span>&gt; <span class="mn">LoadFromAsync</span>(...) / <span class="t">PersistenceOperation</span>&lt;<span class="t">LoadResult[]</span>&gt; <span class="mn">LoadFromRoutine</span>(...)</td><td>Load from a slot: async, coroutine. <span class="ex">Delete / Copy / Rename / SaveTo / LoadFrom (all shapes) throw InvalidOperationException in the editor only when called outside play mode.</span></td></tr>
+          <tr><td><span class="mn">OnSlotUpdated</span> / <span class="mn">OnSlotDeleted</span> / <span class="mn">OnSlotCopied</span></td><td>Raised as slot storage changes (a <code>SaveTo</code> snapshot raises <code>OnSlotUpdated</code> with the written slot).</td></tr>
         </table>
       </div>
     </div>
@@ -251,6 +257,7 @@
       <div class="member-group">
         <div class="member-group-title">Members</div>
         <table class="mt">
+          <tr><td><span class="t">bool</span> <span class="mn">Loaded</span></td><td>Whether the configured settings are available. Always true in the editor; in a player it turns true when the settings shipped with the build finish loading, before the first scene, so only code running earlier (typically the automatic load of a preloaded persistent asset) can observe false. While false, <code>Get</code> answers defaults: an operation whose outcome must match the configured values (deriving a key from the security secret) should fail retryably instead of proceeding on them.</td></tr>
           <tr><td><span class="t">T</span> <span class="mn">Get</span>&lt;<span class="t">T</span>&gt;() where T : SettingsEntry, new()</td><td>The project's instance of a settings section (or a default). Treat the result as read-only: runtime changes to it are not persisted.</td></tr>
           <tr><td><span class="kw">void</span> <span class="mn">Save</span>()</td><td>Persist settings changed from code (editor only; safe to call anywhere).</td></tr>
         </table>
@@ -259,7 +266,7 @@
 
     <div class="type-section" id="SettingsEntry">
       <div class="type-header"><h2>SettingsEntry</h2><span class="badge badge-class">abstract</span><span class="warn">extending</span></div>
-      <p class="type-desc">Base class for a settings section. Subclass and decorate with <code>[InspectorDisplay]</code> (see Extending).</p>
+      <p class="type-desc">Base class for a settings section. Subclass and decorate with <code>[InspectorDisplay]</code>.</p>
     </div>
 
 
@@ -317,7 +324,9 @@
       <div class="type-header"><h2>PersistenceSource</h2><span class="badge badge-enum">enum</span></div>
       <div class="member-group"><table class="mt">
         <tr><td><span class="mn">Manual</span></td><td>A load/save/clear method was called.</td></tr>
-        <tr><td><span class="mn">Automatic</span></td><td>Triggered by the system (launch, safe point, timer).</td></tr>
+        <tr><td><span class="mn">Automatic</span></td><td>Triggered by the system (launch, safe point, timer, import-source read or wipe).</td></tr>
+        <tr><td><span class="mn">SlotCopy</span></td><td>A <code>Slots</code> copy or rename is reading or writing a slot's storage, moving the payload verbatim.</td></tr>
+        <tr><td><span class="mn">SlotSnapshot</span></td><td>A <code>Slots.SaveTo</code> is writing the target's live data to a slot other than the current one: like a manual save, aimed elsewhere. Only seen by the read/write methods of a custom manager; the events only ever carry <code>Manual</code> or <code>Automatic</code>.</td></tr>
       </table></div>
     </div>
 
@@ -378,7 +387,7 @@
     <!-- ═══════════════════════════════════════ Serialization ═══ -->
     <div class="type-section" id="Serializer">
       <div class="type-header"><h2>Serializer</h2><span class="badge badge-class">abstract</span><span class="warn">extending</span></div>
-      <p class="type-desc">Custom serialization. Must not fail on valid data (see Extending).</p>
+      <p class="type-desc">Custom serialization. Must not fail on valid data.</p>
       <div class="member-group"><table class="mt">
         <tr><td><span class="t">string</span> <span class="mn">SerializeToString</span>(<span class="t">Object</span> obj, <span class="t">string</span> backReferenceFieldName)</td><td>Object to string.</td></tr>
         <tr><td><span class="t">bool</span> <span class="mn">DeserializeFromString</span>(<span class="t">string</span> str, <span class="t">Object</span> obj)</td><td>String into object; returns success.</td></tr>
@@ -408,6 +417,7 @@
         <tr><td><span class="mn">[PersistentScriptableObject(<span class="t">string</span> persistenceManagerFieldName)]</span><br/><span class="t">string</span> <span class="mn">PersistenceManagerFieldName</span> { get; }</td><td>Make a ScriptableObject persistent without inheriting the base class, naming its serialized <code>PersistenceManager</code> field.</td></tr>
         <tr><td><span class="mn">[InspectorDisplay(<span class="t">string</span> name, <span class="t">string</span> description = null)]</span><br/><span class="t">string</span> <span class="mn">Name</span> / <span class="mn">Description</span> { get; }, <span class="t">int</span> <span class="mn">Order</span> { get; set; }, <span class="t">string</span> <span class="mn">Category</span> { get; set; }</td><td>Display name, description, ordering and submenu for a manager, serializer or tooling method in the inspector / its menu. <span class="ex">The constructor throws ArgumentException when name is null or whitespace.</span></td></tr>
         <tr><td><span class="mn">[Breaking(<span class="t">string</span> warning = null)]</span><br/><span class="t">string</span> <span class="mn">Warning</span> { get; }</td><td>Mark a manager field whose change would orphan existing saves, so the inspector warns and locks it.</td></tr>
+        <tr><td><span class="mn">[PersistenceManagerInfo]</span><br/><span class="t">StorageKind</span> <span class="mn">StorageKind</span> { get; set; }</td><td>Declare type-level facts of a manager class (inherited by subclasses). <code>StorageKind</code>: <code>Durable</code> (real player saves, the default without the attribute), <code>Transient</code> (nothing recoverable: never lockable, no import copy kept of it), or <code>Test</code> (a fake manager: assigning it always keeps an import copy of the replaced setup, restorable in one click, and it never ships: a non-development build fails while one exists, a development build warns).</td></tr>
         <tr><td><span class="mn">[RequiredSerializer(<span class="t">Type</span> serializerType)]</span><br/><span class="t">Type</span> <span class="mn">SerializerType</span> { get; }</td><td>Lock a persistent object to a specific serializer (redeclarable on a subclass).</td></tr>
       </table></div>
     </div>
@@ -423,7 +433,7 @@
 
     <div class="type-section" id="InGameLogsViewer">
       <div class="type-header"><h2>InGameLogsViewer</h2><span class="badge badge-mb">MB</span></div>
-      <p class="type-desc">Add this component to a GameObject for an on-screen view of every active manager's logs (editor and development builds only; in a release build it self-destroys on Awake). See Debugging.</p>
+      <p class="type-desc">Add this component to a GameObject for an on-screen view of every active manager's logs (editor and development builds only; in a release build it self-destroys on Awake).</p>
     </div>
 
     <div class="type-section" id="PersistentAssetConsole">

@@ -11,28 +11,8 @@
 <div id="layout">
 
   <!-- ─── Sidebar navigation ─── -->
-  <nav>
-    <div class="nav-title">Persistent Asset</div>
-    <a href="../index.html">Home</a>
-    <a href="What%20is%20a%20ScriptableObject.html">What is a ScriptableObject?</a>
-    <a href="Getting%20Started.html" class="active">Getting Started</a>
-    <a href="#step-class"   class="indent">1. Make a data class</a>
-    <a href="#step-asset"   class="indent">2. Create the asset</a>
-    <a href="#step-manager" class="indent">3. Pick a manager</a>
-    <a href="#step-play"    class="indent">4. Press Play</a>
-    <a href="#save-location" class="indent">Wiping test data</a>
-    <a href="#what-happened" class="indent">What just happened?</a>
-    <a href="Installation.html">Installation &amp; Demo</a>
-    <a href="Core%20Concepts.html">Core Concepts</a>
-    <a href="Local%20Saving.html">Local Saving</a>
-    <a href="Cloud%20and%20Remote.html">Cloud &amp; Remote</a>
-    <a href="Guides.html">Guides</a>
-    <a href="No-Code.html">No-Code</a>
-    <a href="Settings.html">Settings</a>
-    <a href="Extending.html">Extending</a>
-    <a href="Technical%20QA.html">Technical Q&amp;A</a>
-    <a href="Roadmap.html">Roadmap</a>
-  </nav>
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Persistent Asset</div><a href="../index.html">Home</a></nav></noscript>
 
   <!-- ─── Main content ─── -->
   <main>
@@ -40,10 +20,6 @@
       <h1>Getting Started <span class="tag tag-mustread">Must read</span></h1>
       <div class="sub">From zero to a value that survives between play sessions, in four steps.</div>
     </div>
-
-    <p class="lead">
-      Four steps to a value that saves and loads, no prior concepts needed.
-    </p>
 
     <div class="note">
       New to ScriptableObjects? Spend two minutes on
@@ -56,7 +32,7 @@
     <section id="step-class">
       <div class="step-head">
         <div class="step-num">1</div>
-        <h3>Make a data class</h3>
+        <h3 id="make-a-data-class">Make a data class</h3>
       </div>
       <p>
         Create a script and inherit <code>PersistentScriptableObject</code>. Add
@@ -85,7 +61,7 @@
     <section id="step-asset">
       <div class="step-head">
         <div class="step-num">2</div>
-        <h3>Create the asset</h3>
+        <h3 id="create-the-asset">Create the asset</h3>
       </div>
       <p>
         In the Project window, right-click and choose
@@ -104,7 +80,7 @@
     <section id="step-manager">
       <div class="step-head">
         <div class="step-num">3</div>
-        <h3>Pick a manager</h3>
+        <h3 id="pick-a-manager">Pick a manager</h3>
       </div>
       <p>
         Select the asset. At the top of its inspector is a
@@ -117,7 +93,7 @@
              onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
         <div class="img-placeholder" style="display:none">
           <span class="icon">&#128247;</span>
-          <span><strong>img/manager_dropdown.png</strong><br/>Persistence Manager dropdown at the top of the inspector</span>
+          <span><strong>img/manager_dropdown</strong><br/>Persistence Manager dropdown at the top of the inspector</span>
         </div>
         <div class="img-caption">The Persistence Manager dropdown: start with Prototype</div>
       </div>
@@ -136,7 +112,7 @@
     <section id="step-play">
       <div class="step-head">
         <div class="step-num">4</div>
-        <h3>Press Play</h3>
+        <h3 id="press-play">Press Play</h3>
       </div>
       <p>That is everything. To see it work:</p>
       <ol>
@@ -176,10 +152,9 @@
         <li><strong>The operations</strong>: a load when the game starts and a save when it stops, both run for you.</li>
       </ul>
       <div class="note">
-        One thing that surprises people: back in the editor, after you stop playing, the asset shows
-        your <strong>authored defaults</strong> again, not the values from the play session. That is
-        intentional; the save itself is untouched and still loads on the next launch.
-        <a href="Core%20Concepts.html">Core Concepts</a> explains why.
+        After you stop playing, the asset shows your <strong>authored defaults</strong> again: the
+        save is untouched and loads on the next launch
+        (<a href="Core%20Concepts.html#editor">Core Concepts</a> explains why).
       </div>
       <div class="reassure">
         That is the whole basic workflow. Slots, encryption, cloud sync, persisting values without
@@ -196,7 +171,7 @@
       </a>
       <a class="next" href="Installation.html">
         <div class="dir">Next</div>
-        <div class="pg-title">Installation</div>
+        <div class="pg-title">Installation &amp; Demo</div>
       </a>
     </div>
 

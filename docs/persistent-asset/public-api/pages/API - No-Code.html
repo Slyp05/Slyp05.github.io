@@ -10,6 +10,7 @@
 <body>
 <div id="layout">
 
+  <script src="../shared/nav.js"></script>
   <nav>
     <div class="nav-title">Public API</div>
     <a href="../index.html">Overview</a>
@@ -44,7 +45,7 @@
     <!-- ═══════════════════════════════════════ No-Code ═══ -->
     <div class="type-section" id="PersistentVariables">
       <div class="type-header"><h2>PersistentVariables</h2><span class="badge badge-so">SO</span></div>
-      <p class="type-desc">A persistent object holding a named, typed set of variables authored in the inspector. It derives from <code>PersistentScriptableObject</code>, so the full load / save / slot API is available on the asset. See No-Code.</p>
+      <p class="type-desc">A persistent object holding a named, typed set of variables authored in the inspector. It derives from <code>PersistentScriptableObject</code>, so the full load / save API is available on the asset.</p>
       <div class="member-group">
         <div class="member-group-title">Read &amp; write values</div>
         <table class="mt">
@@ -174,12 +175,15 @@
     </div>
     <div class="type-section" id="NoCodeExtending">
       <div class="type-header"><h2>Codecs &amp; converters</h2><span class="badge badge-class">class</span><span class="warn">extending</span></div>
-      <p class="type-desc">Add a persistable No-Code type with a codec; bridge differing types in a binder with converters. See Extending.</p>
+      <p class="type-desc">Add a persistable No-Code type with a codec; bridge differing types in a binder with converters.</p>
       <div class="member-group">
         <div class="member-group-title">Codecs</div>
         <table class="mt">
           <tr><td><span class="mn">VariableTypeCodec</span> (abstract) &middot; <span class="kw">abstract string</span> <span class="mn">Format</span>(<span class="t">object</span>) / <span class="kw">abstract object</span> <span class="mn">Parse</span>(<span class="t">string</span>)</td><td>String round trip for a type.</td></tr>
           <tr><td><span class="mn">VariableTypeCodec&lt;T&gt;</span> (abstract) &middot; <span class="kw">protected abstract string</span> <span class="mn">Write</span>(<span class="t">T</span>) / <span class="kw">protected abstract T</span> <span class="mn">Read</span>(<span class="t">string</span>)</td><td>The typed codec to implement (an empty string passed to <code>Read</code> means the default); pair with <code>[VariableType(type, id)]</code>.</td></tr>
+          <tr><td><span class="mn">VariableTypes</span> (static) &middot; <span class="kw">void</span> <span class="mn">Register</span>(<span class="t">Type</span>, <span class="t">string</span> id, <span class="t">VariableTypeCodec</span>)</td><td>The registry of supported variable types. <code>[VariableType]</code> codecs are discovered automatically; <code>Register</code> adds (or replaces) one manually. <span class="ex">Throws ArgumentNullException / ArgumentException on a null or empty argument, NotSupportedException for a collection type (register the element type instead).</span></td></tr>
+          <tr><td><span class="t">bool</span> <span class="mn">TryGetCodec</span>(<span class="t">Type</span>, out <span class="t">VariableTypeCodec</span>) / <span class="mn">TryGetCodec</span>(<span class="t">string</span> id, out <span class="t">VariableTypeCodec</span>) / <span class="mn">TryGetId</span>(<span class="t">Type</span>, out <span class="t">string</span>) / <span class="mn">TryGetType</span>(<span class="t">string</span> id, out <span class="t">Type</span>)</td><td>Look up between the registered types, their stable save ids and their codecs.</td></tr>
+          <tr><td><span class="t">IEnumerable&lt;KeyValuePair&lt;string, Type&gt;&gt;</span> <span class="mn">All</span> { get; } / <span class="t">string</span> <span class="mn">EnumId</span>(<span class="t">Type</span> enumType)</td><td>Every registered id and type (unregistered enums excluded); the on-demand id an unregistered enum's values are stored under (that id embeds the enum's full type name, so register an explicit codec for an enum you may later rename).</td></tr>
         </table>
       </div>
       <div class="member-group">

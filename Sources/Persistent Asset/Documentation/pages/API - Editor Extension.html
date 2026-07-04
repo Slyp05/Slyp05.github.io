@@ -4,11 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Persistent Asset - Public API - Editor Extension</title>
-  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="../shared/styles.css" />
 </head>
 <body>
 <div id="layout">
 
+  <script src="../shared/nav.js"></script>
   <nav>
     <div class="nav-title">Public API</div>
     <a href="../Public%20API.html">Overview</a>
@@ -114,7 +115,8 @@
         <tr><td><span class="kw">void</span> <span class="mn">DrawLockRow</span>(<span class="t">PersistenceManager[]</span>) / <span class="t">bool</span> <span class="mn">IsLocked</span>(<span class="t">PersistenceManager</span>)</td><td>Draw the lock toolbar; query whether a manager is locked.</td></tr>
         <tr><td><span class="kw">void</span> <span class="mn">DrawBreakingLockIcon</span>(<span class="t">Rect</span>, <span class="t">SerializedProperty</span>) / <span class="t">bool</span> <span class="mn">IsBreakingFieldLocked</span>(<span class="t">SerializedProperty</span>)</td><td>Draw / query the padlock for a <code>[Breaking]</code> field.</td></tr>
         <tr><td><span class="t">struct</span> <span class="mn">BreakingFieldScope</span> : IDisposable &middot; <span class="mn">BreakingFieldScope</span>(params <span class="t">PersistenceManager</span>[])</td><td>A <code>using</code> block that mirrors the managers' locked state onto every field drawn inside it.</td></tr>
-        <tr><td><span class="kw">void</span> <span class="mn">DrawPersistenceDisabledError</span>(<span class="t">PersistenceManager[]</span>) / <span class="mn">DrawPolicyConstraintConflictError</span>(<span class="t">PersistenceManager[]</span>)</td><td>Error boxes for a disabled manager / a policy-versus-constraint conflict.</td></tr>
+        <tr><td><span class="kw">void</span> <span class="mn">DrawPersistenceDisabledError</span>(<span class="t">PersistenceManager[]</span>) / <span class="mn">DrawPolicyConstraintConflictError</span>(<span class="t">PersistenceManager[]</span>) / <span class="mn">DrawStorageLocationConflictError</span>(<span class="t">PersistenceManager[]</span>)</td><td>Error boxes for a disabled manager / a policy-versus-constraint conflict / a manager resolving to the same storage location as another one in the project.</td></tr>
+        <tr><td><span class="kw">void</span> <span class="mn">DrawTestManagerBox</span>(<span class="t">PersistenceManager[]</span>)</td><td>Warning box and exit button of a test manager (restores the kept setup it replaced, or removes it); draws nothing for any other manager.</td></tr>
       </table></div>
     </div>
 
@@ -184,7 +186,7 @@
     <div class="type-section" id="EditorAttributes">
       <div class="type-header"><h2>Attributes</h2><span class="badge badge-class">attr</span><span class="warn">extending</span><span class="ns">PersistentAsset.Editor</span></div>
       <div class="member-group"><table class="mt">
-        <tr><td><span class="mn">[ClearLocalData(<span class="t">Type</span> persistenceManagerType)]</span><br/><span class="t">Type</span> <span class="mn">PersistenceManagerType</span> { get; }</td><td>Mark a parameterless static method as a "clear local data" cleaner for a manager type, run from <code>Tools &gt; Persistent Asset &gt; Delete Local Data</code>. <span class="ex">The constructor throws ArgumentNullException when persistenceManagerType is null.</span></td></tr>
+        <tr><td><span class="mn">[ClearLocalData(<span class="t">Type</span> persistenceManagerType)]</span><br/><span class="t">Type</span> <span class="mn">PersistenceManagerType</span> { get; }</td><td>Mark a parameterless static method as a "clear local data" cleaner for a manager type, run from <code>Tools &gt; Persistent Asset &gt; Actions &gt; Delete Local Data</code>. <span class="ex">The constructor throws ArgumentNullException when persistenceManagerType is null.</span></td></tr>
       </table></div>
     </div>
 

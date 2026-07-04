@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Persistent Asset - Quick Help</title>
+  <link rel="stylesheet" href="../shared/styles.css" />
+</head>
+<body>
+<div id="layout">
+
+  <!-- ─── Sidebar navigation (shared) ─── -->
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Persistent Asset</div><a href="../User%20Manual.html">Home</a></nav></noscript>
+
+  <main>
+    <div class="page-header">
+      <h1>Quick Help <span class="tag tag-mustread">Must read</span></h1>
+      <div class="sub">Every manager side by side, and the common surprises explained.</div>
+    </div>
+
+
+    <!-- ══════════════════════════════════════ choosing ════ -->
+    <section id="choosing">
+      <h2>Which manager should I pick?</h2>
+      <p>
+        Start on <strong>Prototype</strong> and move when a concrete need appears: the choice is
+        data on the asset, so switching later is a dropdown change, not a refactor. Each local
+        manager is detailed in <a href="Local%20Saving.html">Local Saving</a>, the two remote ones
+        in <a href="Cloud%20and%20Remote.html">Cloud &amp; Remote</a>.
+      </p>
+      <div class="table-scroll">
+        <table class="cmp">
+          <tr><th>Manager</th><th>Where it saves</th><th>Best for</th></tr>
+          <tr>
+            <td><a href="Local%20Saving.html#prototype">Prototype</a></td>
+            <td>One save file per object, managed for you.</td>
+            <td>Starting out and prototyping: zero setup, works on desktop, mobile and WebGL.</td>
+          </tr>
+          <tr>
+            <td><a href="Local%20Saving.html#file">Local File</a></td>
+            <td>A file you configure: name, compression, encryption, backups.</td>
+            <td>The usual choice for a shipped game: every option is there when a need appears.</td>
+          </tr>
+          <tr>
+            <td><a href="Local%20Saving.html#playerprefs">Player Prefs</a></td>
+            <td>Unity's <code>PlayerPrefs</code>.</td>
+            <td>Small data: settings, a high score.</td>
+          </tr>
+          <tr>
+            <td><a href="Local%20Saving.html#session">Session (Memory)</a></td>
+            <td>Memory only; everything is gone when the game closes.</td>
+            <td>State you want within a play session but never across them.</td>
+          </tr>
+          <tr>
+            <td><a href="Cloud%20and%20Remote.html#http">Server (HTTP)</a></td>
+            <td>Your own server, through three simple HTTP routes.</td>
+            <td>Saves that follow the player across devices, on a backend you control.</td>
+          </tr>
+          <tr>
+            <td><a href="Cloud%20and%20Remote.html#cloudsave">Cloud Save (UGS)</a></td>
+            <td>Unity Gaming Services Cloud Save, per signed-in player.</td>
+            <td>Cross-device saves without running a backend of your own.</td>
+          </tr>
+          <tr>
+            <td><a href="Local%20Saving.html#test">Test</a></td>
+            <td>Nowhere: every operation's outcome is forced by you.</td>
+            <td>Rehearsing failed or slow persistence, temporarily.</td>
+          </tr>
+          <tr>
+            <td><a href="Local%20Saving.html#none">None</a></td>
+            <td>Nowhere: persistence is off.</td>
+            <td>An object that should behave like a plain ScriptableObject.</td>
+          </tr>
+        </table>
+      </div>
+      <p>
+        With their default settings, the local managers have the data loaded before your code can
+        touch the object, so you just read and write it.
+        The two remote managers reach a server, so their data arrives asynchronously: gate once on
+        <code>await WhenReady</code> in your boot flow. Some settings shift a local manager toward
+        the remote behavior too (turning Auto Load off, an Async Only read mode, or Local File's
+        Runtime Secret lock); <a href="Core%20Concepts.html#ready">when the data is ready</a>
+        explains the whole spectrum.
+      </p>
+      <div class="note">
+        Consoles gate saving behind their platform SDK, so no built-in manager covers them: there you
+        write a small custom manager against your console's SDK (see <a href="Extending.html">Extending</a>).
+      </div>
+    </section>
+
+
+    <!-- ══════════════════════════════════════ surprises ════ -->
+    <section id="surprises">
+      <h2>Common surprises</h2>
+      <ul>
+        <li><strong>My asset shows its default values again after I stop playing.</strong> Intentional: the editor restores your authored defaults at play-exit; the save still exists and reloads next launch. See <a href="Technical%20QA.html#editor">Editor safety</a>.</li>
+        <li><strong>A field never saves.</strong> Only fields Unity serializes are persisted, the same rules as the inspector: public fields or <code>[SerializeField]</code> ones, with custom classes marked <code>[Serializable]</code>. A property, a static field, or a <code>[NonSerialized]</code> field is never saved. The rule of thumb: if it does not show in the inspector, it does not save.</li>
+        <li><strong>A save is being ignored.</strong> A no-op result means one of: no slot selected (a multi-slot object without a slot), the object is <code>IDirtyTracked</code> and not dirty, the manager has not loaded yet (not ready), or a block hook vetoed it. The result's <code>Message</code> says which.</li>
+        <li><strong>Data does not load, or loads as defaults.</strong> The read returned <code>Invalid</code> (no save yet, or unreadable, so the object kept its defaults) or <code>Failure</code> (temporarily unavailable, so it is still retrying). The manager's <a href="Guides.html#debug">log</a> shows which.</li>
+        <li><strong>I changed a manager setting and an existing save is gone.</strong> Settings like the file name, compression, encryption or the serializer decide <em>where and how</em> the save is stored, so changing one points the manager at a fresh location. Nothing is deleted; the old save is stranded. <a href="Guides.html#migration">Locking &amp; migrating saves</a> is the protection: lock the manager once players have it, and migrate through an import copy.</li>
+        <li><strong>An error says two managers share a storage location.</strong> They would silently overwrite each other's saves there, so the editor refuses it and a build fails at start. It only happens with overridden names (Local File's File Name, the HTTP URL and Id, the Cloud Save Key): two managers ended up with the same one, so change one of them. See <a href="Technical%20QA.html#what-stops-two-managers-from-saving-to">Identity &amp; portability</a>.</li>
+        <li><strong>A manager or component does not appear</strong> (Cloud Save, a No-Code Input/Localization component). Each needs its Unity package installed: see <a href="Installation.html#dependencies">optional modules</a>.</li>
+        <li><strong>A remote save never lands.</strong> The player is likely not authenticated yet or offline; <code>IsReady</code> stays false and the load keeps retrying. See <a href="Cloud%20and%20Remote.html">Cloud &amp; Remote</a>.</li>
+      </ul>
+    </section>
+
+
+    <!-- ══════════════════════════════════════ digging ════ -->
+    <section id="digging">
+      <h2>Digging deeper</h2>
+      <p>
+        When the answers above do not settle it, the package tells you what actually happened:
+      </p>
+      <ul>
+        <li><strong>The manager's Status section</strong> in the inspector: live state, the last operation's result, and a running log of every load, save and clear with its outcome and messages. See <a href="Guides.html#debug">Debugging</a>.</li>
+        <li><strong>The In Game Logs Viewer</strong>: the same logs as an overlay in a running build or on a device.</li>
+        <li><strong>The Unity console</strong>: warnings and errors carry a <code>[Persistent Asset]</code> prefix, so real problems surface even with no inspector open.</li>
+      </ul>
+      <p>
+        The deeper behavior questions (crash safety, concurrency, security, performance) are answered
+        in the <a href="Technical%20QA.html">Technical Q&amp;A</a>. And if you are genuinely stuck,
+        email <a href="mailto:justetools@gmail.com">justetools@gmail.com</a>; a clear repro
+        description gets a fast answer.
+      </p>
+    </section>
+
+
+    <!-- ══════════════════════════════════════ pager ════ -->
+    <div class="pager">
+      <a class="prev" href="Cloud%20and%20Remote.html">
+        <div class="dir">Back</div>
+        <div class="pg-title">Cloud &amp; Remote</div>
+      </a>
+      <a class="next" href="Guides.html">
+        <div class="dir">Next</div>
+        <div class="pg-title">Guides</div>
+      </a>
+    </div>
+
+  </main>
+</div>
+</body>
+</html>

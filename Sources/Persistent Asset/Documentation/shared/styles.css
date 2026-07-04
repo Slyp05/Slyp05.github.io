@@ -471,14 +471,14 @@ nav .nav-band {
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: #7a92c0;
+  color: #cdd6f4;
   padding: 12px 20px 6px;
   margin-top: 16px;
   border-top: 1px solid #45475a;
 }
 /* A sidebar band that links to another API sub-page (collapsed: title + link only) */
 nav a.nav-band:hover { color: #89b4fa; }
-nav .nav-band.active { color: #cdd6f4; border-top-color: #585b70; }
+nav .nav-band.active { color: #89b4fa; border-top-color: #585b70; }
 
 /* Public API summary: per-area index of type links into the sub-pages */
 .api-open { margin: 2px 0 6px; }
@@ -517,4 +517,134 @@ nav .nav-band.active { color: #cdd6f4; border-top-color: #585b70; }
 }
 .img-block svg.diagram text {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Sidebar search box (rendered by nav.js) */
+.nav-search { padding: 0 20px 12px; }
+.nav-search input {
+  width: 100%;
+  background: #313244;
+  border: 1px solid #45475a;
+  border-radius: 6px;
+  color: #cdd6f4;
+  font-size: 13px;
+  padding: 5px 9px;
+  outline: none;
+}
+.nav-search input:focus { border-color: #89b4fa; }
+.nav-search input::placeholder { color: #6c7086; }
+
+/* Search results (replace the page links while typing) */
+#pa-results { padding: 0 8px; }
+#pa-results .sr {
+  display: block;
+  padding: 6px 12px;
+  border-radius: 6px;
+  text-decoration: none;
+}
+#pa-results .sr:hover { background: #313244; }
+#pa-results .sr .sr-page {
+  display: block;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #6c7086;
+}
+#pa-results .sr .sr-head { display: block; font-size: 13px; color: #cdd6f4; }
+#pa-results .sr:hover .sr-head { color: #89b4fa; }
+#pa-results .sr-none { padding: 6px 12px; font-size: 12.5px; color: #6c7086; }
+#pa-results .sr-group {
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #89b4fa;
+  padding: 10px 12px 4px;
+  border-top: 1px solid #313244;
+  margin-top: 6px;
+}
+#pa-results .sr-group:first-child { border-top: none; margin-top: 0; }
+
+/* Copy button on code blocks (added by nav.js) */
+pre { position: relative; }
+.copy-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: #313244;
+  border: 1px solid #45475a;
+  border-radius: 6px;
+  color: #a6adc8;
+  font-size: 11px;
+  padding: 3px 9px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.12s;
+}
+pre:hover .copy-btn, .copy-btn:focus { opacity: 1; }
+.copy-btn:hover { color: #cdd6f4; border-color: #89b4fa; }
+
+/* Section index chips at the top of a long page */
+.guide-index { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 8px; }
+.guide-index a {
+  padding: 4px 12px;
+  background: #fff;
+  border: 1px solid #e3e3ec;
+  border-radius: 999px;
+  font-size: 12.5px;
+  color: #3a3a5c;
+}
+.guide-index a:hover { border-color: #89b4fa; color: #1e1e2e; text-decoration: none; }
+
+/* Plain-text comparison table (unlike the monospace API member tables) */
+.table-scroll { overflow-x: auto; margin: 14px 0 18px; }
+table.cmp { width: 100%; border-collapse: collapse; min-width: 560px; }
+table.cmp th {
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #888;
+  padding: 6px 10px;
+  border-bottom: 1px solid #e0e0e0;
+}
+table.cmp td {
+  padding: 8px 10px;
+  vertical-align: top;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 13.5px;
+}
+table.cmp tr:hover td { background: #f0f4ff; }
+
+/* Responsive layout */
+@media (max-width: 1000px) {
+  main { padding: 36px 32px 64px; }
+}
+@media (max-width: 760px) {
+  #layout { flex-direction: column; }
+  nav {
+    position: static;
+    width: 100%;
+    height: auto;
+    padding: 14px 8px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 2px 4px;
+  }
+  nav .nav-title { width: 100%; padding: 0 12px 8px; }
+  .nav-search { width: 100%; padding: 0 12px 10px; }
+  #pa-results { width: 100%; }
+  #pa-links { display: contents; }
+  nav a { padding: 4px 10px; border-radius: 6px; }
+  nav a.indent { display: none; }
+  nav .nav-sep, nav .nav-group, nav .nav-band { padding-top: 6px; margin-top: 0; border-top: none; }
+  main { padding: 28px 18px 56px; max-width: none; }
+  .page-header { margin-bottom: 32px; }
+  .page-header h1 { font-size: 28px; }
+  .hero h1 { font-size: 32px; }
+  .pager { flex-direction: column; }
+  .pager a.next { text-align: left; }
+  .member-group { overflow-x: auto; }
 }

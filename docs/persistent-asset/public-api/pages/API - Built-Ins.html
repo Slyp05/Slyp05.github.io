@@ -10,6 +10,7 @@
 <body>
 <div id="layout">
 
+  <script src="../shared/nav.js"></script>
   <nav>
     <div class="nav-title">Public API</div>
     <a href="../index.html">Overview</a>
@@ -22,6 +23,7 @@
     <a href="#FilePersistenceManager"><span class="badge badge-pm">PM</span>Local File</a>
     <a href="#PlayerPrefsPersistenceManager"><span class="badge badge-pm">PM</span>Player Prefs</a>
     <a href="#SessionPersistenceManager"><span class="badge badge-pm">PM</span>Session</a>
+    <a href="#TestPersistenceManager"><span class="badge badge-pm">PM</span>Test</a>
 
     <div class="nav-group">Persistent Objects</div>
     <a href="#PersistentSlotRegistry"><span class="badge badge-so">SO</span>PersistentSlotRegistry</a>
@@ -51,9 +53,6 @@
     <a href="#WebGLFileSync"><span class="badge badge-static">static</span>WebGLFileSync</a>
     <a href="#UtilityEnums"><span class="badge badge-enum">enum</span>ThreadType / SaveLocation</a>
 
-    <div class="nav-group">Integration Testing</div>
-    <a href="#TestPersistenceManager"><span class="badge badge-pm">PM</span>TestPersistenceManager</a>
-    <a href="#TestPersistentScriptableObject"><span class="badge badge-so">SO</span>TestPersistentScriptableObject</a>
     <a class="nav-band" href="API%20-%20No-Code.html">No-Code</a>
     <a class="nav-band" href="API%20-%20Editor%20Extension.html">Editor Extension</a>
   </nav>
@@ -88,10 +87,13 @@
       <div class="type-header"><h2>FilePersistenceManager</h2><span class="badge badge-pm">PM</span></div>
       <p class="type-desc">"Local File". Configurable file save.</p>
       <div class="member-group"><table class="mt">
-        <tr><td><span class="t">string</span> <span class="mn">FileName</span> / <span class="t">string</span> <span class="mn">HeaderText</span></td><td>File name (and subfolders), and an editable header line.</td></tr>
+        <tr><td><span class="t">string</span> <span class="mn">FileName</span> / <span class="t">string</span> <span class="mn">HeaderText</span></td><td>File name (and subfolders), and an optional '#' comment line at the top of the file (players can edit or delete it; empty writes none).</td></tr>
         <tr><td><span class="t">Compression</span> <span class="mn">Compression</span> / <span class="t">Encryption</span> <span class="mn">Encryption</span> / <span class="t">SaveLock</span> <span class="mn">LockSaveTo</span></td><td>Storage protection.</td></tr>
         <tr><td><span class="t">bool</span> <span class="mn">DoBackup</span></td><td>Keep a second copy against crashes mid-save.</td></tr>
         <tr><td><span class="t">static string</span> <span class="mn">RuntimeSecret</span> { get; set; }</td><td>Secret supplied at runtime for the <code>RuntimeSecret</code> lock. <span class="ex">The setter throws ArgumentException when set to null/empty, and InvalidOperationException when set a second time with a different value.</span></td></tr>
+        <tr><td><span class="t">static event Action</span>&lt;<span class="t">Object</span>&gt; <span class="mn">OnTamperedLoaded</span></td><td>Raised after a load completed with tampered data now on the target (passed to the handler): the file failed its <code>AppendHash</code> integrity check, or carried the sticky mark of a previous detection.</td></tr>
+        <tr><td><span class="t">static bool</span> <span class="mn">IsTampered</span>(<span class="t">Object</span> target)</td><td>Whether the data currently loaded on the target descends from a tampered save. The mark is sticky: it is rewritten into every save of the lineage (slot copies and <code>Slots.SaveTo</code> snapshots included), so it survives sessions; it resets on a clear, or when a load finds pristine data again. <span class="ex">Throws ArgumentNullException for a null target.</span></td></tr>
+        <tr><td><span class="t">static void</span> <span class="mn">MarkTampered</span>(<span class="t">Object</span> target)</td><td>Brand the current save lineage as tampered from your own cheat detection: same sticky, authenticated mark as an automatic detection, and the only flag a player cannot edit back out of a readable save. Deliberately no unmark (nothing in the API can launder the mark); <code>OnTamperedLoaded</code> is not raised. <span class="ex">Throws ArgumentNullException for a null target, InvalidOperationException when no active file manager is in charge of it or its Encryption is not AppendHash.</span></td></tr>
       </table></div>
     </div>
     <div class="type-section" id="PlayerPrefsPersistenceManager">
@@ -100,19 +102,28 @@
     </div>
     <div class="type-section" id="SessionPersistenceManager">
       <div class="type-header"><h2>SessionPersistenceManager</h2><span class="badge badge-pm">PM</span></div>
-      <p class="type-desc">"Session (Memory)". In-memory only; never written to disk; wiped each session.</p>
+      <p class="type-desc">"Session (Memory)". In-memory only; never written to disk; wiped each session. Declares <code>StorageKind.Transient</code>.</p>
+    </div>
+    <div class="type-section" id="TestPersistenceManager">
+      <div class="type-header"><h2>TestPersistenceManager</h2><span class="badge badge-pm">PM</span></div>
+      <p class="type-desc">"Test". A fake in-memory manager to test how the game behaves when persistence misbehaves: every operation can be forced to any outcome, and async delays can be injected, to exercise timing, cancellation and error handling (<code>ReadExecutionMode</code>/<code>WriteExecutionMode</code> default to <code>PreferAsync</code>). Declares <code>StorageKind.Test</code>: assigning it always keeps an import copy of the setup it replaces, restored in one click from its inspector, and it never ships (a non-development build fails while one exists in the project; a development build logs a warning).</p>
+      <div class="member-group"><table class="mt">
+        <tr><td><span class="mn">enum ForcedLoadOutcome</span></td><td><code>Default</code> (run for real), <code>Success</code>, <code>Invalid</code>, <code>Failure</code>, <code>Exception</code>, <code>Cancelled</code>.</td></tr>
+        <tr><td><span class="mn">enum ForcedOutcome</span></td><td><code>Default</code>, <code>Success</code>, <code>Failure</code>, <code>Exception</code>, <code>Cancelled</code> (save/clear; no <code>Invalid</code>).</td></tr>
+      </table></div>
     </div>
 
     <!-- ═══════════════════════════════════════ Persistent objects ═══ -->
     <div class="type-section" id="PersistentSlotRegistry">
       <div class="type-header"><h2>PersistentSlotRegistry&lt;TTarget, TInfo&gt;</h2><span class="badge badge-so">SO</span><span class="badge badge-class">abstract</span></div>
-      <p class="type-desc">Always-global object that records one entry per save slot with a summary you define, without loading the saves. Build a save-select menu on it. See Multiple save slots.</p>
+      <p class="type-desc">Always-global object that records one entry per save slot with a summary you define, without loading the saves. Build a save-select menu on it.</p>
       <div class="member-group"><table class="mt">
         <tr><td><span class="t">IReadOnlyList</span>&lt;<span class="t">SlotEntry</span>&lt;<span class="t">TInfo</span>&gt;&gt; <span class="mn">Entries</span> { get; }</td><td>Every recorded slot, each with its summary, save time and optional screenshot, most recently saved first (the natural order for a load-game menu). A fresh snapshot each call: cache it if you iterate a lot.</td></tr>
         <tr><td><span class="t">bool</span> <span class="mn">TryGet</span>(<span class="t">string</span> slot, out <span class="t">SlotEntry</span>&lt;<span class="t">TInfo</span>&gt;) / <span class="mn">TryGetLatest</span>(...)</td><td>Look up one slot, or the most recently saved.</td></tr>
         <tr><td><span class="t">string</span> <span class="mn">LatestSlot</span> { get; }</td><td>Slot of the newest save (for a "Continue" button).</td></tr>
         <tr><td><span class="t">TInfo</span> <span class="mn">CaptureInfo</span>(<span class="t">TTarget</span> target) (protected abstract)</td><td>Return the per-slot summary to record on each save.</td></tr>
         <tr><td><span class="t">Awaitable</span>&lt;<span class="t">SaveScreenshot</span>&gt; <span class="mn">CaptureScreenshotAsync</span>(<span class="t">TTarget</span>) / <span class="t">SaveScreenshot</span> <span class="mn">CaptureScreenshot</span>(<span class="t">TTarget</span>) (protected)</td><td>Optional per-slot preview image (override one; async is recommended). See <a href="#SaveScreenshot"><code>SaveScreenshot</code></a>.</td></tr>
+        <tr><td><span class="t">PersistencePolicy</span> <span class="mn">Policy</span> { get; }</td><td>Forces auto-load on and auto-save off: the registry must mirror the real save state, and it saves itself on every change.</td></tr>
       </table></div>
     </div>
 
@@ -123,7 +134,7 @@
       <div class="member-group"><table class="mt">
         <tr><td><span class="t">string</span> <span class="mn">Slot</span> { get; }</td><td>The slot this entry describes.</td></tr>
         <tr><td><span class="t">TInfo</span> <span class="mn">Info</span> { get; }</td><td>The summary your <code>CaptureInfo</code> returned.</td></tr>
-        <tr><td><span class="t">DateTime</span> <span class="mn">SavedUtc</span> { get; } / <span class="t">long</span> <span class="mn">SavedUtcTicks</span> { get; }</td><td>When the slot was last saved (UTC).</td></tr>
+        <tr><td><span class="t">DateTime</span> <span class="mn">SavedUtc</span> { get; } / <span class="t">long</span> <span class="mn">SavedUtcTicks</span> { get; }</td><td>When the slot was last saved (UTC). Out-of-range ticks in a tampered or corrupt registry save are clamped into the valid DateTime range rather than throwing.</td></tr>
         <tr><td><span class="t">SaveScreenshot</span> <span class="mn">Screenshot</span> { get; }</td><td>The slot's preview image, empty when none was recorded.</td></tr>
       </table></div>
     </div>
@@ -152,7 +163,7 @@
 
     <div class="type-section" id="PersistentSingleton">
       <div class="type-header"><h2>PersistentSingleton</h2><span class="badge badge-so">SO</span><span class="badge badge-class">abstract</span></div>
-      <p class="type-desc">A persistent object that exists once per project, with its asset auto-created and reachable from anywhere via <code>GlobalPersistedData.Find&lt;T&gt;()</code>. Inherit it for a settings or profile singleton. See Global &amp; always-loaded objects.</p>
+      <p class="type-desc">A persistent object that exists once per project, with its asset auto-created and reachable from anywhere via <code>GlobalPersistedData.Find&lt;T&gt;()</code>. Inherit it for a settings or profile singleton.</p>
     </div>
 
 
@@ -161,8 +172,8 @@
       <div class="type-header"><h2>Encryption</h2><span class="badge badge-enum">enum</span></div>
       <div class="member-group"><table class="mt">
         <tr><td><span class="mn">None</span></td><td>No encryption.</td></tr>
-        <tr><td><span class="mn">AppendHash</span></td><td>Readable, but with a secured hash so it cannot be modified.</td></tr>
-        <tr><td><span class="mn">Encrypt</span></td><td>Fully encrypted.</td></tr>
+        <tr><td><span class="mn">AppendHash</span></td><td>Readable, with a secured hash: a modified save still loads but is permanently marked as tampered (see <code>FilePersistenceManager.IsTampered</code>).</td></tr>
+        <tr><td><span class="mn">Encrypt</span></td><td>Fully encrypted; a modified save cannot be loaded at all.</td></tr>
       </table></div>
     </div>
     <div class="type-section" id="Compression">
@@ -258,7 +269,7 @@
         <tr><td><span class="t">static string</span> <span class="mn">RuntimeSecret</span> { get; set; }</td><td>Runtime secret mixed into the key for a <code>SaveLock.RuntimeSecret</code> lock. <span class="ex">The setter throws ArgumentException when set to null/empty, and InvalidOperationException when set a second time with a different value.</span></td></tr>
         <tr><td><span class="t">bool</span> <span class="mn">UsesRuntimeSecret</span>(<span class="t">SaveLock</span> lockTo)</td><td>Whether the lock effectively requires the runtime secret (the editor can opt out).</td></tr>
         <tr><td><span class="t">byte[]</span> <span class="mn">Encrypt</span>(<span class="t">byte[]</span> data, <span class="t">SaveLock</span> lockTo, <span class="t">string</span> location) / <span class="t">byte[]</span> <span class="mn">Decrypt</span>(<span class="t">byte[]</span>, <span class="t">SaveLock</span>, <span class="t">string</span>)</td><td>Encrypt/decrypt with an embedded integrity hash. <code>Decrypt</code> returns <code>null</code> when the integrity check fails (data modified, moved, or from another machine or project). <span class="ex">Throws ArgumentNullException for null data, InvalidOperationException when the lock needs an unset RuntimeSecret.</span></td></tr>
-        <tr><td><span class="t">byte[]</span> <span class="mn">AppendSecuredHash</span>(<span class="t">byte[]</span>, <span class="t">SaveLock</span>, <span class="t">string</span>) / <span class="t">bool</span> <span class="mn">CheckSecuredHash</span>(<span class="t">byte[]</span> dataWithHash, <span class="t">SaveLock</span>, <span class="t">string</span>, out <span class="t">byte[]</span> originalData)</td><td>Append/verify a tamper-proof hash (data stays readable). <span class="ex">Same throws as Encrypt / Decrypt.</span></td></tr>
+        <tr><td><span class="t">byte[]</span> <span class="mn">AppendSecuredHash</span>(<span class="t">byte[]</span>, <span class="t">SaveLock</span>, <span class="t">string</span>, <span class="t">bool</span> tampered = false) / <span class="t">bool</span> <span class="mn">CheckSecuredHash</span>(<span class="t">byte[]</span> dataWithHash, <span class="t">SaveLock</span>, <span class="t">string</span>, out <span class="t">byte[]</span> originalData, out <span class="t">bool</span> tampered)</td><td>Append/verify a tamper-evident hash (data stays readable). <code>tampered</code> writes/reads the tampered-lineage mark, covered by the hash itself so editing it in or out reads as freshly tampered; <code>originalData</code> is extracted even when the check fails, so a caller can carry a tampered payload onward. A <code>CheckSecuredHash</code> overload without the out <code>tampered</code> also exists. <span class="ex">Same throws as Encrypt / Decrypt.</span></td></tr>
       </table></div>
     </div>
 
@@ -266,8 +277,8 @@
       <div class="type-header"><h2>GzipUtility</h2><span class="badge badge-static">static</span><span class="warn">extending</span></div>
       <p class="type-desc">Gzip compress and decompress byte data.</p>
       <div class="member-group"><table class="mt">
-        <tr><td><span class="t">byte[]</span> <span class="mn">Compress</span>(<span class="t">byte[]</span> data, <span class="t">Compression</span> compression) / <span class="mn">Decompress</span>(<span class="t">byte[]</span> data, <span class="t">Compression</span> compression)</td><td>Compress/decompress per a <code>Compression</code> level (<code>None</code> passes through).</td></tr>
-        <tr><td><span class="t">byte[]</span> <span class="mn">Compress</span>(<span class="t">byte[]</span> data, <span class="t">CompressionLevel</span> compressionLevel = Optimal) / <span class="mn">Decompress</span>(<span class="t">byte[]</span> data)</td><td>Compress/decompress with a raw <code>System.IO.Compression</code> level. <span class="ex">Decompress throws InvalidDataException when the data inflates past the size ceiling.</span></td></tr>
+        <tr><td><span class="t">byte[]</span> <span class="mn">Compress</span>(<span class="t">byte[]</span> data, <span class="t">Compression</span> compression) / <span class="mn">Decompress</span>(<span class="t">byte[]</span> data, <span class="t">Compression</span> compression)</td><td>Compress/decompress per a <code>Compression</code> level (<code>None</code> passes through). <span class="ex">Throws ArgumentNullException for null data; Decompress throws InvalidDataException on invalid gzip input or past the size ceiling.</span></td></tr>
+        <tr><td><span class="t">byte[]</span> <span class="mn">Compress</span>(<span class="t">byte[]</span> data, <span class="t">CompressionLevel</span> compressionLevel = Optimal) / <span class="mn">Decompress</span>(<span class="t">byte[]</span> data)</td><td>Compress/decompress with a raw <code>System.IO.Compression</code> level. <span class="ex">Throws ArgumentNullException for null data; Decompress throws InvalidDataException on invalid gzip input or past the size ceiling.</span></td></tr>
       </table></div>
     </div>
 
@@ -319,27 +330,6 @@
       </div>
     </div>
 
-
-    <!-- ═══════════════════════════════════════ Integration Testing ═══ -->
-    <div class="type-section" id="TestPersistenceManager">
-      <div class="type-header"><h2>TestPersistenceManager</h2><span class="badge badge-pm">PM</span><span class="warn">#if PERSISTENT_ASSET_INTEGRATION_TEST</span></div>
-      <div class="note">The Integration Testing assembly compiles only when the project defines <code>PERSISTENT_ASSET_INTEGRATION_TEST</code> (an asmdef define constraint), so these types are absent from a normal project. They exist to stress-test the system, not to ship.</div>
-      <p class="type-desc">A fake in-memory manager: saves live only in memory (dropped on a domain reload), every operation can be forced to any outcome, and async delays can be injected, to exercise timing, cancellation and error handling. Exposes the base manager settings (<code>ReadExecutionMode</code>/<code>WriteExecutionMode</code> default to <code>PreferAsync</code>; <code>HasDurableStorage</code> is false) and the forced-outcome / delay fields in its inspector.</p>
-      <div class="member-group"><table class="mt">
-        <tr><td><span class="mn">enum ForcedLoadOutcome</span></td><td><code>Default</code> (run for real), <code>Success</code>, <code>Invalid</code>, <code>Failure</code>, <code>Exception</code>, <code>Cancelled</code>.</td></tr>
-        <tr><td><span class="mn">enum ForcedOutcome</span></td><td><code>Default</code>, <code>Success</code>, <code>Failure</code>, <code>Exception</code>, <code>Cancelled</code> (save/clear; no <code>Invalid</code>).</td></tr>
-      </table></div>
-    </div>
-
-    <div class="type-section" id="TestPersistentScriptableObject">
-      <div class="type-header"><h2>TestPersistentScriptableObject</h2><span class="badge badge-so">SO</span><span class="warn">#if PERSISTENT_ASSET_INTEGRATION_TEST</span></div>
-      <p class="type-desc">A fake persistent object implementing every optional interface at once: it drives what each one reports from inspector fields and counts every callback received, staying agnostic of the manager and serializer in charge. Compiled only with <code>PERSISTENT_ASSET_INTEGRATION_TEST</code> (see above).</p>
-      <div class="member-group"><table class="mt">
-        <tr><td><span class="t">int</span> <span class="mn">number</span> / <span class="t">string</span> <span class="mn">text</span> / <span class="t">List&lt;string&gt;</span> <span class="mn">items</span></td><td>Dummy persisted fields to round-trip through a save/load.</td></tr>
-        <tr><td><span class="mn">enum PolicyOverride</span></td><td><code>UseManagerSetting</code> (sends null), <code>ForceOn</code>, <code>ForceOff</code>; drives the <code>IPersistencePolicy</code> fields.</td></tr>
-        <tr><td>implements <span class="mn">IAlwaysGlobal</span>, <span class="mn">IMultiSlot</span>, <span class="mn">IUpgradable</span>, <span class="mn">IDynamicInitialize</span>, <span class="mn">IFieldResettable</span>, <span class="mn">IDirtyTracked</span>, <span class="mn">ISerializationCallbacks</span>, <span class="mn">IScopeCallbacks</span>, <span class="mn">IPersistencePolicy</span></td><td>Every optional interface, with inspector-driven inputs and callback counters.</td></tr>
-      </table></div>
-    </div>
 
     <div class="doc-footer">Persistent Asset v1.0.0 &nbsp;&middot;&nbsp; For full signatures and remarks, see the XML doc comments in the source.</div>
 

@@ -4,12 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Persistent Asset - Public API</title>
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="shared/styles.css" />
 </head>
 <body>
 <div id="layout">
 
   <!-- ─── Sidebar: the API overview lists its four areas; each opens its own reference page ─── -->
+  <script src="shared/nav.js"></script>
   <nav>
     <div class="nav-title">Persistent Asset</div>
     <a href="Public%20API.html" class="active">Overview</a>
@@ -84,6 +85,7 @@
     <a href="pages/API%20-%20Built-Ins.html#FilePersistenceManager"><span class="badge badge-pm">PM</span>Local File</a>
     <a href="pages/API%20-%20Built-Ins.html#PlayerPrefsPersistenceManager"><span class="badge badge-pm">PM</span>Player Prefs</a>
     <a href="pages/API%20-%20Built-Ins.html#SessionPersistenceManager"><span class="badge badge-pm">PM</span>Session</a>
+    <a href="pages/API%20-%20Built-Ins.html#TestPersistenceManager"><span class="badge badge-pm">PM</span>Test</a>
     <div class="summary-group">Persistent Objects</div>
     <a href="pages/API%20-%20Built-Ins.html#PersistentSlotRegistry"><span class="badge badge-so">SO</span>PersistentSlotRegistry</a>
     <a href="pages/API%20-%20Built-Ins.html#SlotEntry"><span class="badge badge-struct">struct</span>SlotEntry&lt;T&gt;</a>
@@ -111,10 +113,6 @@
     <a href="pages/API%20-%20Built-Ins.html#SlotFormatUtility"><span class="badge badge-static">static</span>SlotFormatUtility</a>
     <a href="pages/API%20-%20Built-Ins.html#WebGLFileSync"><span class="badge badge-static">static</span>WebGLFileSync</a>
     <a href="pages/API%20-%20Built-Ins.html#UtilityEnums"><span class="badge badge-enum">enum</span>ThreadType / SaveLocation</a>
-
-    <div class="summary-group">Integration Testing</div>
-    <a href="pages/API%20-%20Built-Ins.html#TestPersistenceManager"><span class="badge badge-pm">PM</span>TestPersistenceManager</a>
-    <a href="pages/API%20-%20Built-Ins.html#TestPersistentScriptableObject"><span class="badge badge-so">SO</span>TestPersistentScriptableObject</a>
     </div>
 
     <div class="module-band"><span class="band-name">No-Code</span><span class="band-desc">Persist data straight from the inspector, no scripting.</span></div>

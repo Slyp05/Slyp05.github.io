@@ -10,29 +10,8 @@
 <body>
 <div id="layout">
 
-  <nav>
-    <div class="nav-title">Persistent Asset</div>
-    <a href="../index.html">Home</a>
-    <a href="What%20is%20a%20ScriptableObject.html">What is a ScriptableObject?</a>
-    <a href="Getting%20Started.html">Getting Started</a>
-    <a href="Installation.html">Installation &amp; Demo</a>
-    <a href="Core%20Concepts.html">Core Concepts</a>
-    <a href="Local%20Saving.html">Local Saving</a>
-    <a href="Cloud%20and%20Remote.html">Cloud &amp; Remote</a>
-    <a href="Guides.html">Guides</a>
-    <a href="No-Code.html" class="active">No-Code</a>
-    <a href="#variables"  class="indent">Persistent Variables</a>
-    <a href="#components" class="indent">The components</a>
-    <a href="#dragdrop"   class="indent">Connecting variables</a>
-    <a href="#wiring"     class="indent">Saving from the inspector</a>
-    <a href="#input"      class="indent">Input bindings</a>
-    <a href="#localization" class="indent">Localization</a>
-    <a href="#developers" class="indent">For developers</a>
-    <a href="Settings.html">Settings</a>
-    <a href="Extending.html">Extending</a>
-    <a href="Technical%20QA.html">Technical Q&amp;A</a>
-    <a href="Roadmap.html">Roadmap</a>
-  </nav>
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Persistent Asset</div><a href="../index.html">Home</a></nav></noscript>
 
   <main>
     <div class="page-header">
@@ -42,8 +21,8 @@
 
     <p class="lead">
       The No-Code modules let you store values and react to them entirely in the editor, with assets,
-      components and UnityEvents, no C# required. (Programmers can reach everything from code too;
-      that is the <a href="#developers">last section</a>.)
+      components and UnityEvents. (Programmers can reach everything from code too; that is the
+      <a href="#developers">last section</a>.)
     </p>
 
 
@@ -73,14 +52,14 @@
              onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
         <div class="img-placeholder" style="display:none">
           <span class="icon">&#128247;</span>
-          <span><strong>img/nocode_variables_inspector.png</strong><br/>The Persistent Variables asset with several authored variables</span>
+          <span><strong>img/nocode_variables_inspector</strong><br/>The Persistent Variables asset with several authored variables</span>
         </div>
         <div class="img-caption">Author variables, names and defaults in the inspector</div>
       </div>
 
       <div class="note">
-        Variables are tracked by a stable internal id, so renaming one keeps every reference and saved
-        value intact: names are for display, not identity.
+        Renaming a variable is safe at any time, even after release: components stay wired to it
+        and existing saves still load into it.
       </div>
       <div class="note">
         Handy for programmers too: a <code>PersistentVariables</code> asset is a ready-made
@@ -106,7 +85,7 @@
              onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
         <div class="img-placeholder" style="display:none">
           <span class="icon">&#128247;</span>
-          <span><strong>img/nocode_components.png</strong><br/>A Binder, a Listener and a Setter component wired to variables</span>
+          <span><strong>img/nocode_components</strong><br/>A Binder, a Listener and a Setter component wired to variables</span>
         </div>
         <div class="img-caption">Bind, listen and set, all from the inspector</div>
       </div>
@@ -134,7 +113,7 @@
         the Persistent Variables inspector.
       </p>
 
-      <h3>Onto a component field</h3>
+      <h3 id="onto-a-component-field">Onto a component field</h3>
       <p>
         Every component has a variable field. Fill it by <strong>dragging a variable</strong> from the
         Persistent Variables asset onto the field, or by <strong>assigning the asset and picking the
@@ -146,12 +125,12 @@
              onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
         <div class="img-placeholder" style="display:none">
           <span class="icon">&#128247;</span>
-          <span><strong>img/nocode_assign_field.png</strong><br/>A variable field: drag a variable in, or pick it from the dropdown</span>
+          <span><strong>img/nocode_assign_field</strong><br/>A variable field: drag a variable in, or pick it from the dropdown</span>
         </div>
         <div class="img-caption">Drag a variable in, or choose it from the dropdown</div>
       </div>
 
-      <h3>Onto a GameObject</h3>
+      <h3 id="onto-a-gameobject">Onto a GameObject</h3>
       <p>
         Even quicker: <strong>drag a variable straight onto a GameObject</strong> (in the Hierarchy or
         the Scene). Persistent Asset asks what to create, a Binder, a Listener or a Setter, then
@@ -164,7 +143,7 @@
              onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
         <div class="img-placeholder" style="display:none">
           <span class="icon">&#128247;</span>
-          <span><strong>img/nocode_drag_to_gameobject.png</strong><br/>Dropping a variable on a GameObject: the "Binder / Listener / Setter?" menu</span>
+          <span><strong>img/nocode_drag_to_gameobject</strong><br/>Dropping a variable on a GameObject: the "Binder / Listener / Setter?" menu</span>
         </div>
         <div class="img-caption">Drop a variable on a GameObject and pick what to create</div>
       </div>
@@ -193,7 +172,7 @@
              onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
         <div class="img-placeholder" style="display:none">
           <span class="icon">&#128247;</span>
-          <span><strong>img/nocode_unityevent.png</strong><br/>A button's OnClick calling the manager's Save()</span>
+          <span><strong>img/nocode_unityevent</strong><br/>A button's OnClick calling the manager's Save()</span>
         </div>
         <div class="img-caption">Drop Save / Load / Clear straight onto a UnityEvent</div>
       </div>
@@ -245,7 +224,7 @@
         no-code setup.
       </p>
 
-      <h3>Reading and writing variables</h3>
+      <h3 id="reading-and-writing-variables">Reading and writing variables</h3>
       <p>
         Reference a variable with a non-generic <code>VariableRef</code> field when the type is not
         known ahead of time, or a typed <code>VariableValueRef&lt;T&gt;</code>,
@@ -271,7 +250,7 @@
     }
 }</code></pre>
 
-      <h3>Type conversion on binders</h3>
+      <h3 id="type-conversion-on-binders">Type conversion on binders</h3>
       <p>
         A <code>VariableBinder</code> can route through a <code>ValueConverter</code> to adapt the
         variable's type to the bound member's type (an <code>int</code> variable driving a
@@ -284,7 +263,7 @@
     <span class="kw">protected override string</span> Convert(<span class="kw">int</span> value) =&gt; value.ToString();
 }</code></pre>
 
-      <h3>Input &amp; localization helpers</h3>
+      <h3 id="input-and-localization-helpers">Input &amp; localization helpers</h3>
       <p>
         The Input and Localization modules each expose a static helper for the bits that need code:
       </p>
@@ -308,7 +287,7 @@ variables.SelectLocale(<span class="st">"Language"</span>, <span class="kw">new<
         <code>OnDestroy</code>, so its completion callback never runs on a destroyed object.
       </div>
 
-      <h3>Custom types and converters</h3>
+      <h3 id="custom-types-and-converters">Custom types and converters</h3>
       <p>
         You can add your own persistable variable types (a <code>VariableTypeCodec&lt;T&gt;</code> with
         <code>[VariableType(typeof(T), "id")]</code>), your own

@@ -4,37 +4,18 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Persistent Asset - Settings</title>
-  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="../shared/styles.css" />
 </head>
 <body>
 <div id="layout">
 
-  <nav>
-    <div class="nav-title">Persistent Asset</div>
-    <a href="../User%20Manual.html">Home</a>
-    <a href="What%20is%20a%20ScriptableObject.html">What is a ScriptableObject?</a>
-    <a href="Getting%20Started.html">Getting Started</a>
-    <a href="Installation.html">Installation &amp; Demo</a>
-    <a href="Core%20Concepts.html">Core Concepts</a>
-    <a href="Local%20Saving.html">Local Saving</a>
-    <a href="Cloud%20and%20Remote.html">Cloud &amp; Remote</a>
-    <a href="Guides.html">Guides</a>
-    <a href="No-Code.html">No-Code</a>
-    <a href="Settings.html" class="active">Settings</a>
-    <a href="#general"   class="indent">General</a>
-    <a href="#singleton" class="indent">Singleton</a>
-    <a href="#security"  class="indent">Security</a>
-    <a href="#remote"    class="indent">Remote</a>
-    <a href="#variables" class="indent">Variables Binding</a>
-    <a href="Extending.html">Extending</a>
-    <a href="Technical%20QA.html">Technical Q&amp;A</a>
-    <a href="Roadmap.html">Roadmap</a>
-  </nav>
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Persistent Asset</div><a href="../User%20Manual.html">Home</a></nav></noscript>
 
   <main>
     <div class="page-header">
       <h1>Settings</h1>
-      <div class="sub">Everything under Project Settings &gt; Persistent Asset.</div>
+      <div class="sub">Everything under <strong>Project Settings &gt; Persistent Asset</strong>.</div>
     </div>
 
     <p class="lead">
@@ -50,7 +31,7 @@
         <span class="icon">&#128247;</span>
         <span><strong>img/settings_overview</strong><br/>Project Settings &gt; Persistent Asset, every section</span>
       </div>
-      <div class="img-caption">Edit &gt; Project Settings &gt; Persistent Asset, all sections in one place</div>
+      <div class="img-caption"><strong>Edit &gt; Project Settings &gt; Persistent Asset</strong>, all sections in one place</div>
     </div>
 
 
@@ -110,7 +91,7 @@
       <h2>Variables Binding</h2>
       <div class="member-group">
         <table class="mt">
-          <tr><td><strong>Binder Poll Delay</strong></td><td>Seconds between a <a href="No-Code.html#components">Variable Binder</a> re-reading its bound components for changes (0 means every frame).</td></tr>
+          <tr><td><strong>Binder Poll Delay</strong></td><td>Seconds between a <a href="No-Code.html#components">Variable Binder</a> re-reading its bound components for changes. Defaults to 0.1; 0 means every frame, at a per-frame reflection and allocation cost.</td></tr>
         </table>
       </div>
     </section>

@@ -10,27 +10,8 @@
 <body>
 <div id="layout">
 
-  <nav>
-    <div class="nav-title">Persistent Asset</div>
-    <a href="../index.html">Home</a>
-    <a href="What%20is%20a%20ScriptableObject.html">What is a ScriptableObject?</a>
-    <a href="Getting%20Started.html">Getting Started</a>
-    <a href="Installation.html" class="active">Installation &amp; Demo</a>
-    <a href="#requirements"  class="indent">Requirements</a>
-    <a href="#platforms"     class="indent">Platform support</a>
-    <a href="#install"       class="indent">Installing</a>
-    <a href="#dependencies"  class="indent">Optional modules</a>
-    <a href="#demo"          class="indent">The demo</a>
-    <a href="Core%20Concepts.html">Core Concepts</a>
-    <a href="Local%20Saving.html">Local Saving</a>
-    <a href="Cloud%20and%20Remote.html">Cloud &amp; Remote</a>
-    <a href="Guides.html">Guides</a>
-    <a href="No-Code.html">No-Code</a>
-    <a href="Settings.html">Settings</a>
-    <a href="Extending.html">Extending</a>
-    <a href="Technical%20QA.html">Technical Q&amp;A</a>
-    <a href="Roadmap.html">Roadmap</a>
-  </nav>
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Persistent Asset</div><a href="../index.html">Home</a></nav></noscript>
 
   <main>
     <div class="page-header">
@@ -74,8 +55,8 @@
     <section id="install">
       <h2>Installing</h2>
       <ol>
-        <li>Import <strong>Persistent Asset</strong> from the Asset Store (Window &gt; Package Manager &gt; My Assets, or the Asset Store page's "Import").</li>
-        <li>That is all the core needs. Create your first persistent object as in <a href="Getting%20Started.html">Getting Started</a>.</li>
+        <li>Import <strong>Persistent Asset</strong> from the Asset Store (<strong>Window &gt; Package Manager &gt; My Assets</strong>, or the Asset Store page's "Import").</li>
+        <li>Nothing more to set up: you can create your first persistent object right away, as in <a href="Getting%20Started.html">Getting Started</a>.</li>
         <li>If you want a networked or No-Code module, install its package (next section); the module then compiles automatically, with no define to set.</li>
       </ol>
       <p>
@@ -137,7 +118,7 @@
              onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
         <div class="img-placeholder" style="display:none">
           <span class="icon">&#128247;</span>
-          <span><strong>img/demo_game.png</strong><br/>The demo gameplay scene</span>
+          <span><strong>img/demo_game</strong><br/>The demo gameplay scene</span>
         </div>
         <div class="img-caption">The demo persists profiles, options and progress through the package</div>
       </div>
@@ -147,22 +128,30 @@
         <li><strong>[PA 0] Demo_MainMenu</strong>: the entry point and bootstrap flow.</li>
         <li><strong>[PA 1] Demo_ProfileSelect</strong>: multiple save slots and a save-select screen, built on a <a href="Guides.html#slots">slot registry</a> (<code>ProfileRegistry</code>) that lists profiles and thumbnails without loading them.</li>
         <li><strong>[PA 2] Demo_LevelSelect</strong>: per-profile progression, and an options menu showing <a href="Guides.html#reset">per-field reset and Snapshot/Restore cancel</a>.</li>
-        <li><strong>[PA 3] Demo_Game</strong>: gameplay that saves progress and achievements, including an example of the <a href="Cloud%20and%20Remote.html#http">Server (HTTP)</a> manager talking to a bundled mock server.</li>
+        <li><strong>[PA 3] Demo_Game</strong>: gameplay that saves progress and achievements as you play.</li>
       </ul>
       <p>
-        The achievements in <strong>[PA 3]</strong> show the Server (HTTP) manager talking to a small
-        <strong>mock server</strong> bundled with the demo: a real local HTTP backend, so you see an
-        actual remote save flow with no external server to set up. An on-screen overlay lets you
-        <strong>start and stop that server and reset its data</strong>, so you can watch the offline
+        The demo's achievements persist through the <a href="Cloud%20and%20Remote.html#http">Server
+        (HTTP)</a> manager talking to a bundled <strong>mock server</strong>: a real local HTTP
+        backend running in every scene, so you see an actual remote save flow with no external
+        server to set up. An on-screen overlay lets you
+        <strong>start and stop it and reset its data</strong>, so you can watch the offline
         cache and reconnection behave (it deliberately starts offline). A mock HTTP server cannot run in
-        a <strong>WebGL</strong> build, so there the demo keeps a second achievements asset backed by a
-        local <a href="Local%20Saving.html">Prototype</a> manager and uses it instead, a small example of
+        a <strong>WebGL</strong> build, so there the demo backs the achievements with a local
+        <a href="Local%20Saving.html">Prototype</a> manager instead, a small example of
         choosing a persistence backend per platform.
       </p>
       <p>
         The demo's scripts (under <code>Demo/Scripts</code>) are a useful reference for wiring the
         package into a real project. It is self-contained under <code>Assets/Persistent Asset/Demo</code>:
-        delete that folder if you do not need it, nothing else depends on it.
+        nothing else depends on it.
+      </p>
+      <p>
+        <strong>Delete the Demo folder before shipping your own game.</strong> The demo's achievement
+        assets are global save assets, so a build made with the folder still present ships them too
+        (they stay dormant outside the demo's own scenes, but they are dead weight in your build, and
+        keeping demo content out of a released game is basic hygiene). Deleting the folder is one
+        keystroke and nothing else depends on it; do it as soon as you are done exploring the demo.
       </p>
     </section>
 

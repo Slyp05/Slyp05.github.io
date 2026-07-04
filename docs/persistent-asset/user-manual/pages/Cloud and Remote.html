@@ -10,28 +10,8 @@
 <body>
 <div id="layout">
 
-  <nav>
-    <div class="nav-title">Persistent Asset</div>
-    <a href="../index.html">Home</a>
-    <a href="What%20is%20a%20ScriptableObject.html">What is a ScriptableObject?</a>
-    <a href="Getting%20Started.html">Getting Started</a>
-    <a href="Installation.html">Installation &amp; Demo</a>
-    <a href="Core%20Concepts.html">Core Concepts</a>
-    <a href="Local%20Saving.html">Local Saving</a>
-    <a href="Cloud%20and%20Remote.html" class="active">Cloud &amp; Remote</a>
-    <a href="#async"   class="indent">Remote means async</a>
-    <a href="#cache"   class="indent">The offline cache</a>
-    <a href="#status"  class="indent">Saving indicator</a>
-    <a href="#http"    class="indent">Server (HTTP)</a>
-    <a href="#cloudsave" class="indent">Cloud Save (UGS)</a>
-    <a href="#custom"  class="indent">Custom managers</a>
-    <a href="Guides.html">Guides</a>
-    <a href="No-Code.html">No-Code</a>
-    <a href="Settings.html">Settings</a>
-    <a href="Extending.html">Extending</a>
-    <a href="Technical%20QA.html">Technical Q&amp;A</a>
-    <a href="Roadmap.html">Roadmap</a>
-  </nav>
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Persistent Asset</div><a href="../index.html">Home</a></nav></noscript>
 
   <main>
     <div class="page-header">
@@ -40,8 +20,8 @@
     </div>
 
     <p class="lead">
-      Two built-in managers save off the device so they follow the player across devices. Each can
-      use an optional offline cache that keeps the game playable with no connection.
+      A save that lives on a server follows the player across devices. Both managers here can also
+      keep the game playable with no connection, through an optional offline cache.
     </p>
 
 
@@ -56,11 +36,12 @@
         background), but a load still goes to the server.
       </p>
       <p>
-        As always, gate your reads on <code>IsReady</code>
-        (the general contract is in <a href="Core%20Concepts.html#ready">Core Concepts</a>). The remote-specific effect: until the player is
-        authenticated or the server is reachable, the automatic load keeps retrying and
-        <code>IsReady</code> stays <code>false</code>, so a save never clobbers data a retry could
-        still fetch.
+        Unlike the local managers, where the data is ready before your code runs, readiness is a
+        real state here: gate once on <code>await WhenReady</code> in your boot flow (the general
+        contract is in <a href="Core%20Concepts.html#ready">Core Concepts</a>). The remote-specific
+        effect: until the player is authenticated or the server is reachable, the automatic load
+        keeps retrying and <code>IsReady</code> stays <code>false</code>, so a save never clobbers
+        data a retry could still fetch.
       </p>
     </section>
 
@@ -170,7 +151,7 @@
              onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
         <div class="img-placeholder" style="display:none">
           <span class="icon">&#128247;</span>
-          <span><strong>img/http_manager_inspector.png</strong><br/>The Server (HTTP) manager fields</span>
+          <span><strong>img/http_manager_inspector</strong><br/>The Server (HTTP) manager fields</span>
         </div>
         <div class="img-caption">Server (HTTP): point it at your endpoint</div>
       </div>
@@ -215,13 +196,13 @@ HttpPersistenceManager.ConfigureRequest = request =&gt;
              onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
         <div class="img-placeholder" style="display:none">
           <span class="icon">&#128247;</span>
-          <span><strong>img/cloudsave_manager_inspector.png</strong><br/>The Cloud Save (UGS) manager fields</span>
+          <span><strong>img/cloudsave_manager_inspector</strong><br/>The Cloud Save (UGS) manager fields</span>
         </div>
         <div class="img-caption">Cloud Save (UGS): per-player cloud storage</div>
       </div>
 
       <ul>
-        <li><strong>Key</strong>: the storage key (defaults to the manager's unique id). Cloud Save keys allow only letters, digits, <code>-</code> and <code>_</code>; other characters are reported as invalid rather than silently changed.</li>
+        <li><strong>Key</strong>: the storage key (defaults to the manager's unique id). Cloud Save keys allow only letters, digits, <code>-</code> and <code>_</code>.</li>
         <li><strong>Compression</strong>: gzip (and base64, since Cloud Save stores a string) to fit larger saves under the value-size limit.</li>
       </ul>
       <div class="note">
@@ -256,9 +237,9 @@ HttpPersistenceManager.ConfigureRequest = request =&gt;
         <div class="dir">Back</div>
         <div class="pg-title">Local Saving</div>
       </a>
-      <a class="next" href="Guides.html">
+      <a class="next" href="Quick%20Help.html">
         <div class="dir">Next</div>
-        <div class="pg-title">Guides</div>
+        <div class="pg-title">Quick Help</div>
       </a>
     </div>
 
