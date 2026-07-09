@@ -132,5 +132,5 @@ See how [Persistent Asset](/persistent-asset/) holds up against the other save s
 | Years of proven track record | ❌ New release | ✅ Long-established | ✅ Established |
 | Actively developed (new features) | ✅ Active | ✅ Frequent updates | ❌ No release since Dec 2024 |
 | Big community, tutorials & integrations | ❌ New | ✅ Large ecosystem | ⚠️ Smaller |
-| Tested | ✅ 1,300+ automated tests (EditMode & PlayMode) | ✅ Field-proven over years | ⚠️ Platform-tested |
+| Tested | ✅ 1,600+ automated tests (EditMode & PlayMode) | ✅ Field-proven over years | ⚠️ Platform-tested |
 | Thorough documentation | ✅ Full docs | ✅ Full docs | ✅ Docs site |
