@@ -48,9 +48,9 @@ plugins:
   - jekyll-sitemap
 
 header_pages:
-  - auto-singleton.md
-  - generic-arithmetic.md
   - infinite-value.md
+  - generic-arithmetic.md
+  - auto-singleton.md
 
 # Exclude from processing.
 # The following items will not be processed, by default.

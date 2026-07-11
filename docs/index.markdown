@@ -14,16 +14,16 @@ layout: home
 <div class="package-grid">
 
   <div class="package-card">
-    <img src="/assets/images/auto-singleton-card.png" alt="Auto Singleton" class="package-card-image" width="420" height="280" loading="lazy" decoding="async">
-    <img src="/assets/images/AS.png" alt="Auto Singleton icon" class="package-card-icon" width="160" height="160" loading="lazy" decoding="async">
+    <img src="/assets/images/infinite-value-card.png" alt="Infinite Value" class="package-card-image" width="420" height="280" loading="lazy" decoding="async">
+    <img src="/assets/images/IV.png" alt="Infinite Value icon" class="package-card-icon" width="160" height="160" loading="lazy" decoding="async">
     <div class="package-card-content">
-      <h2><a href="/auto-singleton/">Auto Singleton</a></h2>
+      <h2><a href="/infinite-value/">Infinite Value</a></h2>
       <div class="card-meta">
-        <span class="badge badge-free">Free</span>
+        <span class="badge badge-paid">$29.99</span>
         <span class="card-updated">Updated June 2026</span>
       </div>
-      <p>Add <code>[Singleton]</code> to any class and the asset handles everything: asset generation, cleanup, polymorphic access, and inspector integration.</p>
-      <a href="/auto-singleton/" class="card-link">Learn more →</a>
+      <p>Numbers of any size and precision in Unity. Behaves like a primitive type, works in real-time, and is fully configurable. Perfect for incremental games, RPGs, and monetary systems.</p>
+      <a href="/infinite-value/" class="card-link">Learn more →</a>
     </div>
   </div>
 
@@ -42,16 +42,16 @@ layout: home
   </div>
 
   <div class="package-card">
-    <img src="/assets/images/infinite-value-card.png" alt="Infinite Value" class="package-card-image" width="420" height="280" loading="lazy" decoding="async">
-    <img src="/assets/images/IV.png" alt="Infinite Value icon" class="package-card-icon" width="160" height="160" loading="lazy" decoding="async">
+    <img src="/assets/images/auto-singleton-card.png" alt="Auto Singleton" class="package-card-image" width="420" height="280" loading="lazy" decoding="async">
+    <img src="/assets/images/AS.png" alt="Auto Singleton icon" class="package-card-icon" width="160" height="160" loading="lazy" decoding="async">
     <div class="package-card-content">
-      <h2><a href="/infinite-value/">Infinite Value</a></h2>
+      <h2><a href="/auto-singleton/">Auto Singleton</a></h2>
       <div class="card-meta">
-        <span class="badge badge-paid">$29.99</span>
+        <span class="badge badge-free">Free</span>
         <span class="card-updated">Updated June 2026</span>
       </div>
-      <p>Numbers of any size and precision in Unity. Behaves like a primitive type, works in real-time, and is fully configurable. Perfect for incremental games, RPGs, and monetary systems.</p>
-      <a href="/infinite-value/" class="card-link">Learn more →</a>
+      <p>Add <code>[Singleton]</code> to any class and the asset handles everything: asset generation, cleanup, polymorphic access, and inspector integration.</p>
+      <a href="/auto-singleton/" class="card-link">Learn more →</a>
     </div>
   </div>
 
