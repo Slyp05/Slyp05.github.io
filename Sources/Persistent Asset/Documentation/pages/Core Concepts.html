@@ -341,8 +341,6 @@ pm.Save(result =&gt; ShowSavedTick());         <span class="cm">// callback when
         after a load that <em>failed</em>, so a save never overwrites data a retry might still
         recover.
       </p>
-      <pre><code><span class="kw">if</span> (playerData.PersistenceManager.IsReady)
-    playerData.gold += <span class="nu">100</span>;</code></pre>
 
       <div class="img-block">
         <svg class="diagram" viewBox="0 0 720 210" role="img"
@@ -445,6 +443,65 @@ Persistence.SaveAll();
         from anywhere by type, with no serialized reference, through
         <code>GlobalPersistedData.Find&lt;GameSettings&gt;()</code>.
       </p>
+    </section>
+
+
+    <!-- ══════════════════════════════════════ choosing ════ -->
+    <section id="choosing">
+      <h2>The built-in managers</h2>
+      <p>
+        Those are the parts. The last choice is which manager does the saving, picked from the
+        dropdown at the top of the object. Start on <strong>Prototype</strong> and move when a
+        concrete need appears; because the choice is data on the asset, switching later is a dropdown
+        change, not a refactor. The local managers are covered in
+        <a href="Local%20Saving.html">Local Saving</a>, the two remote ones in
+        <a href="Cloud%20and%20Remote.html">Cloud &amp; Remote</a>.
+      </p>
+      <div class="table-scroll">
+        <table class="cmp">
+          <tr><th>Manager</th><th>Where it saves</th><th>Best for</th></tr>
+          <tr>
+            <td><a href="Local%20Saving.html#prototype">Prototype</a></td>
+            <td>One save file per object, managed for you.</td>
+            <td>Starting out and prototyping: zero setup, works on desktop, mobile and WebGL.</td>
+          </tr>
+          <tr>
+            <td><a href="Local%20Saving.html#file">Local File</a></td>
+            <td>A file you configure: name, compression, encryption, backups.</td>
+            <td>The usual choice for a shipped game: every option is there when a need appears.</td>
+          </tr>
+          <tr>
+            <td><a href="Local%20Saving.html#playerprefs">Player Prefs</a></td>
+            <td>Unity's <code>PlayerPrefs</code>.</td>
+            <td>Small data: settings, a high score.</td>
+          </tr>
+          <tr>
+            <td><a href="Local%20Saving.html#session">Session (Memory)</a></td>
+            <td>Memory only; everything is gone when the game closes.</td>
+            <td>State you want within a play session but never across them.</td>
+          </tr>
+          <tr>
+            <td><a href="Cloud%20and%20Remote.html#http">Server (HTTP)</a></td>
+            <td>Your own server, through three simple HTTP routes.</td>
+            <td>Saves that follow the player across devices, on a backend you control.</td>
+          </tr>
+          <tr>
+            <td><a href="Cloud%20and%20Remote.html#cloudsave">Cloud Save (UGS)</a></td>
+            <td>Unity Gaming Services Cloud Save, per signed-in player.</td>
+            <td>Cross-device saves without running a backend of your own.</td>
+          </tr>
+          <tr>
+            <td><a href="Local%20Saving.html#test">Test</a></td>
+            <td>Nowhere: every operation's outcome is forced by you.</td>
+            <td>Rehearsing failed or slow persistence, temporarily.</td>
+          </tr>
+          <tr>
+            <td><a href="Local%20Saving.html#none">None</a></td>
+            <td>Nowhere: persistence is off.</td>
+            <td>An object that should behave like a plain ScriptableObject.</td>
+          </tr>
+        </table>
+      </div>
     </section>
 
 

@@ -16,79 +16,9 @@
 
   <main>
     <div class="page-header">
-      <h1>Quick Help <span class="tag tag-mustread">Must read</span></h1>
-      <div class="sub">Every manager side by side, and the common surprises explained.</div>
+      <h1>Quick Help</h1>
+      <div class="sub">The common surprises explained, and where to look when something is off.</div>
     </div>
-
-
-    <!-- ══════════════════════════════════════ choosing ════ -->
-    <section id="choosing">
-      <h2>Which manager should I pick?</h2>
-      <p>
-        Start on <strong>Prototype</strong> and move when a concrete need appears: the choice is
-        data on the asset, so switching later is a dropdown change, not a refactor. Each local
-        manager is detailed in <a href="Local%20Saving.html">Local Saving</a>, the two remote ones
-        in <a href="Cloud%20and%20Remote.html">Cloud &amp; Remote</a>.
-      </p>
-      <div class="table-scroll">
-        <table class="cmp">
-          <tr><th>Manager</th><th>Where it saves</th><th>Best for</th></tr>
-          <tr>
-            <td><a href="Local%20Saving.html#prototype">Prototype</a></td>
-            <td>One save file per object, managed for you.</td>
-            <td>Starting out and prototyping: zero setup, works on desktop, mobile and WebGL.</td>
-          </tr>
-          <tr>
-            <td><a href="Local%20Saving.html#file">Local File</a></td>
-            <td>A file you configure: name, compression, encryption, backups.</td>
-            <td>The usual choice for a shipped game: every option is there when a need appears.</td>
-          </tr>
-          <tr>
-            <td><a href="Local%20Saving.html#playerprefs">Player Prefs</a></td>
-            <td>Unity's <code>PlayerPrefs</code>.</td>
-            <td>Small data: settings, a high score.</td>
-          </tr>
-          <tr>
-            <td><a href="Local%20Saving.html#session">Session (Memory)</a></td>
-            <td>Memory only; everything is gone when the game closes.</td>
-            <td>State you want within a play session but never across them.</td>
-          </tr>
-          <tr>
-            <td><a href="Cloud%20and%20Remote.html#http">Server (HTTP)</a></td>
-            <td>Your own server, through three simple HTTP routes.</td>
-            <td>Saves that follow the player across devices, on a backend you control.</td>
-          </tr>
-          <tr>
-            <td><a href="Cloud%20and%20Remote.html#cloudsave">Cloud Save (UGS)</a></td>
-            <td>Unity Gaming Services Cloud Save, per signed-in player.</td>
-            <td>Cross-device saves without running a backend of your own.</td>
-          </tr>
-          <tr>
-            <td><a href="Local%20Saving.html#test">Test</a></td>
-            <td>Nowhere: every operation's outcome is forced by you.</td>
-            <td>Rehearsing failed or slow persistence, temporarily.</td>
-          </tr>
-          <tr>
-            <td><a href="Local%20Saving.html#none">None</a></td>
-            <td>Nowhere: persistence is off.</td>
-            <td>An object that should behave like a plain ScriptableObject.</td>
-          </tr>
-        </table>
-      </div>
-      <p>
-        With their default settings, the local managers have the data loaded before your code can
-        touch the object, so you just read and write it.
-        The two remote managers reach a server, so their data arrives asynchronously: gate once on
-        <code>await WhenReady</code> in your boot flow. Some settings shift a local manager toward
-        the remote behavior too (turning Auto Load off, an Async Only read mode, or Local File's
-        Runtime Secret lock); <a href="Core%20Concepts.html#ready">when the data is ready</a>
-        explains the whole spectrum.
-      </p>
-      <div class="note">
-        Consoles gate saving behind their platform SDK, so no built-in manager covers them: there you
-        write a small custom manager against your console's SDK (see <a href="Extending.html">Extending</a>).
-      </div>
-    </section>
 
 
     <!-- ══════════════════════════════════════ surprises ════ -->
@@ -99,7 +29,7 @@
         <li><strong>A field never saves.</strong> Only fields Unity serializes are persisted, the same rules as the inspector: public fields or <code>[SerializeField]</code> ones, with custom classes marked <code>[Serializable]</code>. A property, a static field, or a <code>[NonSerialized]</code> field is never saved. The rule of thumb: if it does not show in the inspector, it does not save.</li>
         <li><strong>A save is being ignored.</strong> A no-op result means one of: no slot selected (a multi-slot object without a slot), the object is <code>IDirtyTracked</code> and not dirty, the manager has not loaded yet (not ready), or a block hook vetoed it. The result's <code>Message</code> says which.</li>
         <li><strong>Data does not load, or loads as defaults.</strong> The read returned <code>Invalid</code> (no save yet, or unreadable, so the object kept its defaults) or <code>Failure</code> (temporarily unavailable, so it is still retrying). The manager's <a href="Guides.html#debug">log</a> shows which.</li>
-        <li><strong>I changed a manager setting and an existing save is gone.</strong> Settings like the file name, compression, encryption or the serializer decide <em>where and how</em> the save is stored, so changing one points the manager at a fresh location. Nothing is deleted; the old save is stranded. <a href="Guides.html#migration">Locking &amp; migrating saves</a> is the protection: lock the manager once players have it, and migrate through an import copy.</li>
+        <li><strong>I changed a manager setting and an existing save is gone.</strong> What is recoverable depends on the setting. Changing <em>where</em> it saves (the file name, an HTTP URL, the Cloud Save Key) points the manager at a fresh location, so the old save is stranded but still sits at the old one. Changing <em>how</em> it saves (compression, encryption, the serializer) keeps the same location but makes the old data undecodable, so it loads as defaults and the next save overwrites it for good. Either way, <a href="Guides.html#migration">Locking &amp; migrating saves</a> is the protection: lock the manager once players have it, and migrate through an import copy.</li>
         <li><strong>An error says two managers share a storage location.</strong> They would silently overwrite each other's saves there, so the editor refuses it and a build fails at start. It only happens with overridden names (Local File's File Name, the HTTP URL and Id, the Cloud Save Key): two managers ended up with the same one, so change one of them. See <a href="Technical%20QA.html#what-stops-two-managers-from-saving-to">Identity &amp; portability</a>.</li>
         <li><strong>A manager or component does not appear</strong> (Cloud Save, a No-Code Input/Localization component). Each needs its Unity package installed: see <a href="Installation.html#dependencies">optional modules</a>.</li>
         <li><strong>A remote save never lands.</strong> The player is likely not authenticated yet or offline; <code>IsReady</code> stays false and the load keeps retrying. See <a href="Cloud%20and%20Remote.html">Cloud &amp; Remote</a>.</li>

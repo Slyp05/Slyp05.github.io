@@ -606,10 +606,11 @@ FilePersistenceManager.RuntimeSecret = sessionSecretFromServer;</code></pre>
       <p>
         A few settings on a persistence manager decide <em>where and how</em> a save is stored: the
         file name, compression, encryption, the lock, the server URL, the serializer. Change one after
-        players already have saves, and the new setup points at a different location that holds nothing,
-        the old saves are stranded. These are the manager's <strong>breaking fields</strong>, and the
-        package gives you two tools around them: locking to prevent accidental changes, and import
-        sources to migrate on purpose.
+        players already have saves and those saves stop loading: the new setup either looks in a new
+        place that holds nothing (a different file name or server URL) or can no longer decode the data
+        where it sits (a different compression, encryption, lock or serializer). These are the manager's
+        <strong>breaking fields</strong>, and the package gives you two tools around them: locking to
+        prevent accidental changes, and import sources to migrate on purpose.
       </p>
 
       <h3 id="locking-a-manager">Locking a manager</h3>

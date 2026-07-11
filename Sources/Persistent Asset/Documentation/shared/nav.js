@@ -43,7 +43,8 @@
       ["results", "Results"],
       ["ready", "When the data is ready"],
       ["editor", "Editor vs play mode"],
-      ["global", "Acting on everything"]
+      ["global", "Acting on everything"],
+      ["choosing", "The built-in managers"]
     ] },
     { file: "pages/Local Saving.html", title: "Local Saving", sections: [
       ["prototype", "Prototype"],
@@ -63,7 +64,6 @@
       ["custom", "Custom managers"]
     ] },
     { file: "pages/Quick Help.html", title: "Quick Help", sections: [
-      ["choosing", "Which manager?"],
       ["surprises", "Common surprises"],
       ["digging", "Digging deeper"]
     ] },
