@@ -39,6 +39,12 @@ defaults:
       path: "persistent-asset"
     values:
       sitemap: false
+  # Settings Kit is unreleased: keep its whole doc tree out of the sitemap.
+  # Remove this entry (and `sitemap: false` in settings-kit.md) on release.
+  - scope:
+      path: "settings-kit"
+    values:
+      sitemap: false
 
 # Build settings
 theme: minima

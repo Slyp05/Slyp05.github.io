@@ -1,0 +1,708 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Settings Kit — Documentation</title>
+  <link rel="stylesheet" href="/assets/css/doc-styles.css" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<div id="layout">
+
+  <!-- Sidebar navigation -->
+  <nav>
+    <div class="nav-title">Settings Kit</div>
+    <a href="#namespace">Namespace</a>
+    <a href="#how-it-works">How It Works</a>
+    <a href="#kinds">Kinds of Settings</a>
+    <a href="#quick-start">Quick Start</a>
+    <a href="#pages">Declaring a Page</a>
+    <a href="#entries">Declaring Settings</a>
+    <a href="#entry-shared"   class="indent">Build Settings</a>
+    <a href="#entry-platform" class="indent">Per-Platform Settings</a>
+    <a href="#entry-editor"   class="indent">Editor-Project Settings</a>
+    <a href="#entry-user"     class="indent">User Settings</a>
+    <a href="#reading">Reading Settings</a>
+    <a href="#sections">Sections &amp; Ordering</a>
+    <a href="#custom-drawer">Custom Rendering</a>
+    <a href="#validation">Validation</a>
+    <a href="#migration">Migration</a>
+    <a href="#migration-versioned" class="indent">Versioned</a>
+    <a href="#migration-crosstype" class="indent">Cross-Type</a>
+    <a href="#navigation">Navigation</a>
+    <a href="#testing">Testing</a>
+    <a href="#build">Build &amp; Shipping</a>
+    <a href="#samples">Samples</a>
+    <a href="#contact">Author &amp; Contact</a>
+  </nav>
+
+  <!-- Main content -->
+  <main>
+    <div class="page-header">
+      <h1>Documentation</h1>
+      <div class="version">Settings Kit v1.0.0</div>
+    </div>
+
+
+    <!-- Namespace -->
+    <section id="namespace">
+      <h2>Namespace</h2>
+      <p>
+        All public Settings Kit types are in the <strong>SettingsKit</strong> namespace.
+        Add this at the top of your scripts to access them:
+      </p>
+      <pre><code><span class="kw">using</span> SettingsKit;</code></pre>
+    </section>
+
+
+    <!-- How It Works -->
+    <section id="how-it-works">
+      <h2>How It Works</h2>
+      <p>
+        Settings Kit lets you declare Project Settings and Preferences pages, read their values
+        <strong>anywhere, including at runtime in a built player</strong>, without writing editor
+        boilerplate and without putting anything under <code>Assets/Resources/</code>.
+      </p>
+      <p>
+        You write one small <strong>page</strong> class and one or more serializable
+        <strong>entry</strong> classes. From that alone, the settings automatically appear in the
+        right window (Project Settings or Preferences), are stored in the right place
+        (<code>ProjectSettings/</code> or <code>UserSettings/</code>), ship into builds when
+        appropriate, and are read through a tiny static API.
+      </p>
+      <p>
+        There is no registration step and no <code>Resources/</code> folder. Entry types are
+        discovered automatically in the editor: each is stored once, kept in sync as you add or
+        remove types, and (for build settings) injected into the build so a player can read the
+        same values.
+      </p>
+      <p>
+        Settings Kit is aimed primarily at <strong>package makers</strong> who need configuration:
+        add it as a dependency, declare a page, and your settings surface in the editor and travel
+        with the build. It works just as well for a single project that wants clean, version-control
+        friendly settings.
+      </p>
+      <div class="note">
+        <strong>A small surface by design.</strong> Settings Kit deliberately exposes only a handful
+        of types, so there is little to learn and your settings code stays stable as the package grows.
+      </div>
+    </section>
+
+
+    <!-- The Three Kinds -->
+    <section id="kinds">
+      <h2>Kinds of Settings</h2>
+      <p>
+        Which base class an entry inherits decides where it appears, how it is stored, and whether it
+        ships into the build. There are four:
+      </p>
+      <table class="mt">
+        <tr>
+          <td><span class="mn">SettingsEntry&lt;TPage&gt;</span></td>
+          <td><strong>Build setting.</strong> Project Settings window, stored in
+          <code>ProjectSettings/SettingsKit.asset</code>, ships into the build and is readable at
+          runtime.</td>
+        </tr>
+        <tr>
+          <td><span class="mn">PlatformSettingsEntry&lt;TPage&gt;</span></td>
+          <td><strong>Per-platform build setting.</strong> Like <code>SettingsEntry&lt;TPage&gt;</code>,
+          but its values can differ per build target.</td>
+        </tr>
+        <tr>
+          <td><span class="mn">EditorSettingsEntry&lt;TPage&gt;</span></td>
+          <td><strong>Editor-project setting.</strong> Project Settings window, stored in
+          <code>ProjectSettings/SettingsKit.asset</code>, but never shipped into a build.</td>
+        </tr>
+        <tr>
+          <td><span class="mn">UserSettingsEntry&lt;TPage&gt;</span></td>
+          <td><strong>Per-developer setting.</strong> Preferences window, stored in
+          <code>UserSettings/SettingsKit.asset</code>, never shipped.</td>
+        </tr>
+      </table>
+      <div class="note">
+        <strong>Where to declare them.</strong> Editor-project and user settings never ship, so in a
+        build <code>Settings.Get</code> returns their type defaults. Put them in an Editor assembly,
+        or, for convenience, in your Runtime assembly (gating with <code>#if UNITY_EDITOR</code> if
+        they use editor-only types).
+      </div>
+    </section>
+
+
+    <!-- Quick Start -->
+    <section id="quick-start">
+      <h2>Quick Start</h2>
+      <p>Three steps: declare a page, declare settings on it, read them anywhere.</p>
+      <pre><code><span class="kw">using</span> SettingsKit;
+<span class="kw">using</span> UnityEngine;
+
+<span class="cm">// 1. Declare a page (once).</span>
+<span class="kw">public sealed class</span> <span class="ty">MyGamePage</span> : <span class="ty">SettingsPage</span>
+{
+    <span class="kw">public override string</span> Path =&gt; <span class="st">"My Game"</span>;              <span class="cm">// shown under Project Settings &gt; My Game</span>
+    <span class="kw">public override string</span> Description =&gt; <span class="st">"Runtime tunables for My Game."</span>;
+}
+
+<span class="cm">// 2. Declare settings on that page.</span>
+[<span class="ty">System.Serializable</span>]
+<span class="kw">public sealed class</span> <span class="ty">AudioDefaults</span> : <span class="ty">SettingsEntry</span>&lt;<span class="ty">MyGamePage</span>&gt;
+{
+    [<span class="ty">SerializeField</span>, <span class="ty">Range</span>(<span class="nu">0f</span>, <span class="nu">1f</span>)] <span class="kw">float</span> masterVolume = <span class="nu">0.8f</span>;
+    <span class="kw">public float</span> MasterVolume =&gt; masterVolume;
+}
+
+<span class="cm">// 3. Read them anywhere, including at runtime in a built player.</span>
+<span class="kw">float</span> volume = <span class="ty">Settings</span>.Get&lt;<span class="ty">AudioDefaults</span>&gt;().MasterVolume;</code></pre>
+      <p>
+        That is the whole loop: the page appears in Project Settings, and the value ships into the
+        build.
+      </p>
+
+      <div class="img-block">
+        <img src="img/project_settings_page" alt="A declared page under Project Settings"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">&#128444;</span>
+          <span><strong>img/project_settings_page</strong><br/>The Unity Project Settings window with a "My Game" page selected, showing one or more bold entry sections with their fields, and the muted "committed / shared across the team" footer note</span>
+        </div>
+        <div class="img-caption">A declared page under Project Settings</div>
+      </div>
+    </section>
+
+
+    <!-- Declaring a Page -->
+    <section id="pages">
+      <h2>Declaring a Page</h2>
+      <p>
+        A page is the tree node that groups your settings. Declare it once by inheriting
+        <code>SettingsPage</code>. It shows in Project Settings, in Preferences, or both, depending on
+        the entries attached to it: build and editor-project entries appear under Project Settings,
+        user entries under Preferences.
+      </p>
+      <pre><code><span class="kw">public sealed class</span> <span class="ty">MyGamePage</span> : <span class="ty">SettingsPage</span>
+{
+    <span class="kw">public override string</span> Path =&gt; <span class="st">"My Game"</span>;                 <span class="cm">// required; "/" nests, e.g. "My Game/Networking"</span>
+    <span class="kw">public override string</span> Description =&gt; <span class="st">"Runtime tunables."</span>;   <span class="cm">// optional; help box at the top of the page</span>
+    <span class="kw">public override string</span> HelpUrl =&gt; <span class="st">"https://docs.example.com"</span>;  <span class="cm">// optional; draws a "?" button</span>
+}</code></pre>
+      <p>
+        The tree label and the page's ordering among its siblings come from an optional
+        <code><a href="#sections">[SettingsDisplay]</a></code> attribute (the same one used for entry
+        sections). Without it, the label is the last segment of <code>Path</code> and the order is
+        zero.
+      </p>
+      <p>
+        A page is identified by its type, not its title, so two packages that each declare a page
+        named "Settings" get <strong>separate</strong> pages. Entries sharing the same page type land
+        on the same page.
+      </p>
+      <div class="note">
+        <code>Path</code> is read once per editor session and cached, so it must be constant.
+        <code>Description</code> and <code>HelpUrl</code> are read each time the page is drawn, so they
+        may be computed.
+      </div>
+    </section>
+
+
+    <!-- Declaring Settings -->
+    <section id="entries">
+      <h2>Declaring Settings</h2>
+      <p>
+        A settings <strong>entry</strong> is a serializable class bound to a page through one of four
+        base types. The base you inherit decides its kind.
+      </p>
+      <p>Every concrete entry must:</p>
+      <ul>
+        <li>be marked <code>[System.Serializable]</code>,</li>
+        <li>have a parameterless constructor (the implicit one is fine),</li>
+        <li>expose its data with <code>[SerializeField]</code> fields.</li>
+      </ul>
+      <p>
+        A field's initializer, or your constructor, sets its <strong>default</strong>, which is also
+        what a per-entry <a href="#reading">reset</a> restores.
+      </p>
+      <div class="note">
+        <strong>Version control.</strong> Unity's standard <code>.gitignore</code> tracks
+        <code>ProjectSettings/</code> but ignores <code>UserSettings/</code>. So build and
+        editor-project settings (<code>ProjectSettings/SettingsKit.asset</code>) are committed and
+        shared with the whole team, while user settings (<code>UserSettings/SettingsKit.asset</code>)
+        stay per-developer. Keep it that way.
+      </div>
+
+      <h3 id="entry-shared">Build Settings</h3>
+      <p>
+        <code>SettingsEntry&lt;TPage&gt;</code> is the default kind: committed, shipped into the
+        build, and readable at runtime, with the same value on every platform.
+      </p>
+      <pre><code>[<span class="ty">System.Serializable</span>]
+[<span class="ty">SettingsDisplay</span>(<span class="st">"Audio"</span>, Order = <span class="nu">0</span>)]
+<span class="kw">public sealed class</span> <span class="ty">AudioDefaults</span> : <span class="ty">SettingsEntry</span>&lt;<span class="ty">MyGamePage</span>&gt;
+{
+    [<span class="ty">SerializeField</span>, <span class="ty">Range</span>(<span class="nu">0f</span>, <span class="nu">1f</span>)] <span class="kw">float</span> masterVolume = <span class="nu">0.8f</span>;
+    <span class="kw">public float</span> MasterVolume =&gt; masterVolume;
+}</code></pre>
+      <p>
+        A build entry can also reference project assets (a <code>Texture2D</code>, a
+        <code>Material</code>, a <code>ScriptableObject</code>, ...). Because the shipped container is
+        a real asset, those references are pulled into the build and loaded at runtime alongside it.
+      </p>
+
+      <h3 id="entry-platform">Per-Platform Settings</h3>
+      <p>
+        <code>PlatformSettingsEntry&lt;TPage&gt;</code> is a build entry whose
+        <strong>whole set of values can differ per build target</strong>. You mark the entry as
+        per-platform and read plain fields; the system resolves them to the right platform.
+      </p>
+      <pre><code>[<span class="ty">System.Serializable</span>]
+[<span class="ty">SettingsDisplay</span>(<span class="st">"Backend"</span>, Order = <span class="nu">10</span>)]
+<span class="kw">public sealed class</span> <span class="ty">BackendConfig</span> : <span class="ty">PlatformSettingsEntry</span>&lt;<span class="ty">MyGamePage</span>&gt;
+{
+    [<span class="ty">SerializeField</span>] <span class="kw">string</span> apiUrl = <span class="st">"https://api.mygame.com"</span>;   <span class="cm">// plain field, no per-platform wrapper</span>
+    <span class="kw">public string</span> ApiUrl =&gt; apiUrl;
+}</code></pre>
+      <p>
+        In the editor, the section gains a tab strip for adding per-platform values. Entering Play
+        previews the active build target's values.
+      </p>
+
+      <div class="img-block">
+        <img src="img/platform_tab_strip" alt="A per-platform section with its tab strip"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">&#128444;</span>
+          <span><strong>img/platform_tab_strip</strong><br/>A per-platform entry section showing the toolbar tab strip: a "Default" tab plus one or two platform tabs (with build-target icons), the +/- add/remove buttons, and the selected variant's fields drawn below</span>
+        </div>
+        <div class="img-caption">A per-platform section with its tab strip</div>
+      </div>
+
+      <p>
+        At build time, each per-platform entry is <strong>baked</strong> to the target's values, so
+        a player carries only its own platform's data.
+      </p>
+      <div class="note">
+        For values that are the same on every platform, use an ordinary
+        <code>SettingsEntry&lt;TPage&gt;</code> instead.
+      </div>
+
+      <h3 id="entry-editor">Editor-Project Settings</h3>
+      <p>
+        <code>EditorSettingsEntry&lt;TPage&gt;</code> is edited under Project Settings, but
+        <strong>never shipped</strong>. Use it for team tooling configuration.
+      </p>
+      <pre><code>[<span class="ty">System.Serializable</span>]
+[<span class="ty">SettingsDisplay</span>(<span class="st">"Asset Pipeline"</span>)]
+<span class="kw">public sealed class</span> <span class="ty">ToolingSettings</span> : <span class="ty">EditorSettingsEntry</span>&lt;<span class="ty">ToolingPage</span>&gt;
+{
+    [<span class="ty">SerializeField</span>] <span class="kw">string</span> exportFolder = <span class="st">"Exports"</span>;
+    <span class="kw">public string</span> ExportFolder =&gt; exportFolder;
+}</code></pre>
+
+      <h3 id="entry-user">User Settings</h3>
+      <p>
+        <code>UserSettingsEntry&lt;TPage&gt;</code> is per-developer and local, edited under
+        Preferences.
+      </p>
+      <pre><code><span class="kw">public sealed class</span> <span class="ty">PreferencesPage</span> : <span class="ty">SettingsPage</span>
+{
+    <span class="kw">public override string</span> Path =&gt; <span class="st">"My Game"</span>;   <span class="cm">// shown under Preferences &gt; My Game</span>
+}
+
+[<span class="ty">System.Serializable</span>]
+[<span class="ty">SettingsDisplay</span>(<span class="st">"Editor Comfort"</span>)]
+<span class="kw">public sealed class</span> <span class="ty">UserPreferences</span> : <span class="ty">UserSettingsEntry</span>&lt;<span class="ty">PreferencesPage</span>&gt;
+{
+    [<span class="ty">SerializeField</span>] <span class="ty">Color</span> highlight = <span class="ty">Color</span>.cyan;
+    <span class="kw">public</span> <span class="ty">Color</span> Highlight =&gt; highlight;
+}</code></pre>
+
+      <div class="img-block">
+        <img src="img/preferences_page" alt="A user page under Preferences"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">&#128444;</span>
+          <span><strong>img/preferences_page</strong><br/>The Unity Preferences window with a "My Game" page selected, showing a user-settings section (for example "Editor Comfort" with a color field)</span>
+        </div>
+        <div class="img-caption">A user page under Preferences</div>
+      </div>
+
+      <div class="note">
+        A page is not tied to one window. Attach a user entry and it appears in Preferences; attach a
+        build or editor-project entry to the same page and it also appears in Project Settings, each
+        window showing only its own entries.
+      </div>
+    </section>
+
+
+    <!-- Reading Settings -->
+    <section id="reading">
+      <h2>Reading Settings</h2>
+      <p>Read any entry through the static <code>Settings</code> facade.</p>
+      <pre><code><span class="kw">float</span> volume = <span class="ty">Settings</span>.Get&lt;<span class="ty">AudioDefaults</span>&gt;().MasterVolume;
+<span class="kw">string</span> url = <span class="ty">Settings</span>.Get&lt;<span class="ty">BackendConfig</span>&gt;().ApiUrl;   <span class="cm">// resolves to the running platform</span></code></pre>
+      <p>
+        <code>Get&lt;T&gt;()</code> returns your settings; a per-platform entry resolves to the running
+        platform.
+      </p>
+      <p>
+        At runtime, treat what you read as <strong>read-only</strong>: any changes you make to it are
+        not saved. To change values, edit them in the settings window, or from editor code (see below).
+      </p>
+
+      <h3>Waiting for load in a player</h3>
+      <p>
+        In the editor, <code>Settings.Loaded</code> is always <code>true</code>. In a player it is
+        <code>false</code> only during startup, before the preloaded container the build ships has
+        enabled, which happens before the first scene loads. While <code>false</code>,
+        <code>Get&lt;T&gt;()</code> answers with default values.
+      </p>
+      <div class="note">
+        <strong>When the check is needed.</strong> The container enables before the first scene, so from
+        the first scene's <code>Awake</code> onward a read is always safe: any scene
+        <code>MonoBehaviour</code> (<code>Awake</code> / <code>OnEnable</code> / <code>Start</code>) and
+        <code>RuntimeInitializeLoadType.AfterSceneLoad</code> never observe <code>false</code>. Only code
+        that can run <em>before</em> the first scene needs to gate on <code>Settings.Loaded</code>: an
+        early <code>[RuntimeInitializeOnLoadMethod]</code> (<code>AfterAssembliesLoaded</code>,
+        <code>BeforeSplashScreen</code>, or <code>BeforeSceneLoad</code>), a static constructor, or a
+        field initializer.
+      </div>
+      <p>
+        When it is needed, gate the read:
+      </p>
+      <pre><code><span class="kw">if</span> (<span class="ty">Settings</span>.Loaded)
+    Apply(<span class="ty">Settings</span>.Get&lt;<span class="ty">AudioDefaults</span>&gt;());
+<span class="cm">// else retry later; the value would otherwise be a default, not the configured one</span></code></pre>
+
+      <h3>Saving edits made from editor code</h3>
+      <p>
+        <code>Settings.Save()</code> persists changes made from editor tooling. It is editor-only and
+        <strong>stripped from builds</strong>, so it is always safe to call.
+      </p>
+    </section>
+
+
+    <!-- Sections & Ordering -->
+    <section id="sections">
+      <h2>Sections &amp; Ordering</h2>
+      <p>
+        Each entry appears as a <strong>section</strong> on its page, headed by the nicified type name
+        (<code>AudioDefaults</code> becomes "Audio Defaults"). Use <code>[SettingsDisplay]</code> to set
+        an explicit title, a tooltip, and an order.
+      </p>
+      <pre><code>[<span class="ty">SettingsDisplay</span>(<span class="st">"Audio"</span>, Tooltip = <span class="st">"Master mix defaults."</span>, Order = <span class="nu">0</span>)]
+<span class="kw">public sealed class</span> <span class="ty">AudioDefaults</span> : <span class="ty">SettingsEntry</span>&lt;<span class="ty">MyGamePage</span>&gt; { <span class="cm">/* ... */</span> }</code></pre>
+      <p>
+        The same <code>[SettingsDisplay]</code> attribute sets a <a href="#pages">page's</a> tree label
+        and order. Sections within a page are ordered by <code>(Order, type name)</code>, lower first,
+        and pages among their siblings by their own order.
+      </p>
+      <p>
+        Sections whose value differs from the declared default are marked with a thin neutral-grey
+        accent bar on the left, and offer a right-click <strong>Revert</strong> that resets the entry
+        to a fresh default.
+      </p>
+
+      <div class="img-block">
+        <img src="img/section_modified_bar" alt="A modified section with its revert menu"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">&#128444;</span>
+          <span><strong>img/section_modified_bar</strong><br/>A section whose value differs from its default, showing the thin grey left accent bar, with the right-click context menu open on its header showing a "Revert" item</span>
+        </div>
+        <div class="img-caption">A modified section with its revert menu</div>
+      </div>
+    </section>
+
+
+    <!-- Custom Rendering -->
+    <section id="custom-drawer">
+      <h2>Custom Rendering</h2>
+      <p>
+        By default an entry's fields are drawn flat under its section header. To customize how a
+        section looks, write an ordinary <code>PropertyDrawer</code> targeting your settings type,
+        exactly as you would for any serializable class.
+      </p>
+      <pre><code>[<span class="ty">CustomPropertyDrawer</span>(<span class="kw">typeof</span>(<span class="ty">NetworkConfig</span>))]
+<span class="kw">public sealed class</span> <span class="ty">NetworkConfigDrawer</span> : <span class="ty">PropertyDrawer</span>
+{
+    <span class="kw">public override float</span> GetPropertyHeight(<span class="ty">SerializedProperty</span> property, <span class="ty">GUIContent</span> label)
+        =&gt; <span class="ty">EditorGUIUtility</span>.singleLineHeight;
+
+    <span class="kw">public override void</span> OnGUI(<span class="ty">Rect</span> position, <span class="ty">SerializedProperty</span> property, <span class="ty">GUIContent</span> label)
+    {
+        <span class="ty">SerializedProperty</span> host = property.FindPropertyRelative(<span class="st">"host"</span>);
+        <span class="ty">SerializedProperty</span> port = property.FindPropertyRelative(<span class="st">"port"</span>);
+        <span class="cm">// ... draw host and port on one line ...</span>
+    }
+}</code></pre>
+      <div class="img-block">
+        <img src="img/custom_drawer" alt="A section rendered by a custom PropertyDrawer"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">&#128444;</span>
+          <span><strong>img/custom_drawer</strong><br/>A "Networking" section whose fields are drawn by a custom PropertyDrawer, showing Host and Port laid out on a single line rather than the default stacked fields</span>
+        </div>
+        <div class="img-caption">A section rendered by a custom PropertyDrawer</div>
+      </div>
+    </section>
+
+
+    <!-- Validation -->
+    <section id="validation">
+      <h2>Validation</h2>
+      <p>
+        Implement <code>IValidatedSettings</code> on any entry to validate it. The single hook is
+        used in two places: an inline help box in the settings window, and, for a build entry, a
+        build-time gate.
+      </p>
+      <pre><code>[<span class="ty">System.Serializable</span>]
+[<span class="ty">SettingsDisplay</span>(<span class="st">"Networking"</span>)]
+<span class="kw">public sealed class</span> <span class="ty">NetworkConfig</span> : <span class="ty">SettingsEntry</span>&lt;<span class="ty">MyGamePage</span>&gt;, <span class="ty">IValidatedSettings</span>
+{
+    [<span class="ty">SerializeField</span>] <span class="kw">int</span> port = <span class="nu">7777</span>;
+
+    <span class="kw">public bool</span> Validate(<span class="kw">out string</span> error)
+    {
+        <span class="kw">if</span> (port &lt; <span class="nu">1024</span> || port &gt; <span class="nu">65535</span>)
+        {
+            error = $<span class="st">"Port must be between 1024 and 65535 (was {port})."</span>;
+            <span class="kw">return false</span>;
+        }
+
+        error = <span class="kw">null</span>;
+        <span class="kw">return true</span>;
+    }
+}</code></pre>
+      <p>
+        In the settings window, a failing entry draws its message as a help box under the section:
+        <strong>error-styled</strong> (red) for a build entry, since it will block a build, and
+        <strong>warning-styled</strong> (yellow) for editor-project and user entries.
+      </p>
+      <p>
+        At build time, the injector calls the same <code>Validate</code> on each build entry,
+        collects every failure, and throws a single <code>BuildFailedException</code> naming the
+        offending page and section.
+      </p>
+
+      <div class="img-block">
+        <img src="img/validation_helpbox" alt="A validation help box under a section"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">&#128444;</span>
+          <span><strong>img/validation_helpbox</strong><br/>A section with an invalid value showing a red error-styled help box below its fields (for a build entry); optionally a second example of a yellow warning-styled box for a user or editor-project entry</span>
+        </div>
+        <div class="img-caption">A validation help box under a section</div>
+      </div>
+    </section>
+
+
+    <!-- Migration -->
+    <section id="migration">
+      <h2>Migration</h2>
+      <p>
+        Two opt-in hooks let a package evolve its own settings across releases without losing a
+        consumer's stored data. Both run in the editor only, when the settings load; a player reads
+        already-migrated, baked data, so there is no runtime migration cost.
+      </p>
+      <p>
+        Pure field renames and type moves are handled by Unity's own
+        <code>[FormerlySerializedAs]</code> and <code>[MovedFrom]</code> attributes; use those first.
+        The hooks below cover what those cannot: transforming <em>values</em>, and rescuing data from
+        a <em>deleted</em> type.
+      </p>
+
+      <h3 id="migration-versioned">Versioned same-type migration</h3>
+      <p>
+        Implement <code>IVersionedSettings</code> to transform an entry's already-deserialized fields
+        forward, gated by a version stamp. Bump <code>Version</code> whenever the stored shape
+        changes; Settings Kit records the version each entry was saved at and calls
+        <code>Migrate</code> once per upgrade step.
+      </p>
+      <pre><code>[<span class="ty">System.Serializable</span>]
+<span class="kw">public sealed class</span> <span class="ty">AudioDefaults</span> : <span class="ty">SettingsEntry</span>&lt;<span class="ty">MyGamePage</span>&gt;, <span class="ty">IVersionedSettings</span>
+{
+    [<span class="ty">SerializeField</span>, <span class="ty">Range</span>(<span class="nu">0f</span>, <span class="nu">1f</span>)] <span class="kw">float</span> masterVolume = <span class="nu">0.8f</span>;
+
+    <span class="cm">// Kept only so version 1 data (volume was stored 0..100) can migrate forward.</span>
+    [<span class="ty">SerializeField</span>, <span class="ty">HideInInspector</span>] <span class="kw">int</span> legacyVolume0To100 = -<span class="nu">1</span>;
+
+    <span class="kw">public int</span> Version =&gt; <span class="nu">2</span>;
+
+    <span class="kw">public void</span> Migrate(<span class="kw">int</span> fromVersion)
+    {
+        <span class="kw">if</span> (fromVersion &lt; <span class="nu">2</span> &amp;&amp; legacyVolume0To100 &gt;= <span class="nu">0</span>)
+        {
+            masterVolume = <span class="ty">Mathf</span>.Clamp01(legacyVolume0To100 / <span class="nu">100f</span>);
+            legacyVolume0To100 = -<span class="nu">1</span>;
+        }
+    }
+}</code></pre>
+      <p>
+        The version gate guarantees each step runs exactly once. Cumulative
+        <code>if (fromVersion &lt; n)</code> steps cover multi-release upgrades. For a per-platform
+        entry, <code>Migrate</code> runs on every variant.
+      </p>
+
+      <h3 id="migration-crosstype">Cross-type rescue</h3>
+      <p>
+        When an entry type is <strong>deleted</strong> outright, its stored data is orphaned.
+        Implement <code>ISettingsMigrator</code> anywhere to recover that data into surviving types
+        before the orphan is cleared. Each discovered migrator is offered every orphaned record; it
+        recognizes its own old type by identity.
+      </p>
+      <pre><code><span class="kw">public sealed class</span> <span class="ty">LegacySettingsMigrator</span> : <span class="ty">ISettingsMigrator</span>
+{
+    [<span class="ty">System.Serializable</span>]
+    <span class="kw">struct</span> <span class="ty">OldNetworkSettings</span>   <span class="cm">// mirrors only the deleted NetworkSettings fields we want to recover (need not be all of them)</span>
+    {
+        <span class="kw">public string</span> address;
+        <span class="kw">public int</span> portNumber;
+    }
+
+    <span class="kw">public void</span> OnMissing(<span class="ty">MissingSettings</span> missing)
+    {
+        <span class="cm">// Match the deleted type by its original name (a plain string, since the type no longer exists to nameof),</span>
+        <span class="cm">// and its namespace and assembly, taken from a surviving sibling.</span>
+        <span class="kw">if</span> (missing.ClassName != <span class="st">"NetworkSettings"</span>
+            || missing.Namespace != <span class="kw">typeof</span>(<span class="ty">NetworkConfig</span>).Namespace
+            || missing.AssemblyName != <span class="kw">typeof</span>(<span class="ty">NetworkConfig</span>).Assembly.GetName().Name)
+            <span class="kw">return</span>;
+
+        <span class="kw">if</span> (missing.TryRead(<span class="kw">out</span> <span class="ty">OldNetworkSettings</span> old) == <span class="kw">false</span>)
+            <span class="kw">return</span>;
+
+        <span class="cm">// Write the recovered values into a surviving entry, then persist.</span>
+        <span class="ty">NetworkConfig</span> current = <span class="ty">Settings</span>.Get&lt;<span class="ty">NetworkConfig</span>&gt;();
+        <span class="cm">// ... copy old.address / old.portNumber into current ...</span>
+        <span class="ty">Settings</span>.Save();
+    }
+}</code></pre>
+      <p>
+        <code>MissingSettings</code> exposes the deleted type's class, namespace, and assembly names,
+        plus <code>TryRead&lt;TOld&gt;</code>, which parses the stored serialized data into a mirror
+        type you declare. The mirror only needs the fields you want to recover, not every field the
+        original had; any it leaves out are simply ignored. Each orphan is offered once, then cleared,
+        so the rescue is not repeated.
+      </p>
+    </section>
+
+
+    <!-- Navigation -->
+    <section id="navigation">
+      <h2>Navigation</h2>
+      <p>
+        <code>Settings.OpenPage&lt;TPage&gt;()</code> focuses a page in its window (Project Settings
+        or Preferences), so you can add a button in your own tooling that jumps straight to your
+        settings. It is editor-only and stripped from builds.
+      </p>
+      <pre><code>[<span class="ty">MenuItem</span>(<span class="st">"Tools/My Game/Open Settings"</span>)]
+<span class="kw">static void</span> Open() =&gt; <span class="ty">Settings</span>.OpenPage&lt;<span class="ty">MyGamePage</span>&gt;();</code></pre>
+    </section>
+
+
+    <!-- Testing -->
+    <section id="testing">
+      <h2>Testing</h2>
+      <p>
+        <code>Settings.OverrideForTests&lt;T&gt;()</code> returns a disposable that substitutes what
+        <code>Get&lt;T&gt;()</code> returns for the life of the handle, so you can unit-test code that
+        reads settings without touching the stored file. The override reverts automatically on
+        dispose.
+      </p>
+      <pre><code>[<span class="ty">Test</span>]
+<span class="kw">public void</span> UsesConfiguredVolume()
+{
+    <span class="ty">AudioDefaults</span> stub = <span class="kw">new</span>() { <span class="cm">/* set up a test instance */</span> };
+
+    <span class="kw">using</span> (<span class="ty">Settings</span>.OverrideForTests(stub))
+    {
+        <span class="cm">// code under test reads Settings.Get&lt;AudioDefaults&gt;() and sees the stub</span>
+    }
+    <span class="cm">// substitution is reverted here</span>
+}</code></pre>
+      <p>
+        Because the seam is scoped and reverting, there are no permanent "for tests" setters leaking
+        into the shipped API.
+      </p>
+    </section>
+
+
+    <!-- Build & Shipping -->
+    <section id="build">
+      <h2>Build &amp; Shipping</h2>
+      <p>
+        You do not configure anything for a build; shipping is automatic. During a build, an editor
+        hook injects a temporary copy of the <strong>project</strong> container into the player's
+        preloaded assets, containing only build entries. Editor-project entries and the user
+        container are excluded, so editor-only types never reach the build.
+      </p>
+      <ul>
+        <li><strong>Object references ship too.</strong> Because the injected container is a real
+        asset, any project assets a build entry references are pulled into the build and loaded at
+        runtime alongside it.</li>
+        <li><strong>Per-platform entries are baked</strong> to the target's resolved values, so a
+        player carries only its own platform's data.</li>
+        <li><strong>Validation gates the build:</strong> a failing build entry throws a
+        <code>BuildFailedException</code> naming the page and section.</li>
+        <li><strong>The injected copy is temporary:</strong> it is stripped and deleted after the
+        build, and a leftover from a crashed build is swept up automatically.</li>
+      </ul>
+    </section>
+
+
+    <!-- Samples -->
+    <section id="samples">
+      <h2>Samples</h2>
+      <p>
+        The package ships a <strong>Showcase</strong> sample that puts every feature in one place:
+        shared and per-platform build settings, editor-project and user settings, validation,
+        both migration layers, a custom section drawer, an object reference, and a runtime reader.
+        Import it from the package's page in the Package Manager.
+      </p>
+
+      <div class="img-block">
+        <img src="img/samples_import" alt="Importing the Showcase sample"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">&#128444;</span>
+          <span><strong>img/samples_import</strong><br/>The Package Manager window with Settings Kit selected and the Samples tab open, showing the "Showcase" sample with its Import button</span>
+        </div>
+        <div class="img-caption">Importing the Showcase sample</div>
+      </div>
+
+      <p>
+        Once imported, the sample adds pages under <strong>Project Settings &gt; My Game</strong> and
+        <strong>Preferences &gt; My Game</strong>, plus <strong>Tools &gt; Settings Kit &gt;
+        Samples</strong> entries that log current values and open the pages, showing how you can link
+        to your own settings from custom tooling.
+      </p>
+
+      <div class="img-block">
+        <img src="img/showcase_menu" alt="The Showcase tools menu"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">&#128444;</span>
+          <span><strong>img/showcase_menu</strong><br/>The Tools &gt; Settings Kit &gt; Samples submenu showing its entries: Log Current Settings, Open My Game Page, and Open Preferences Page</span>
+        </div>
+        <div class="img-caption">The Showcase tools menu</div>
+      </div>
+
+      <p>
+        Delete the imported sample folder once you are done to remove it from your project.
+      </p>
+    </section>
+
+
+    <!-- Author & Contact -->
+    <section id="contact">
+      <h2>Author &amp; Contact</h2>
+      <p>Created by <strong>JusteTools</strong>.</p>
+      <p>
+        If you find Settings Kit useful, a review helps other developers discover it and helps guide
+        the tool's direction. Thank you!
+      </p>
+    </section>
+
+  </main>
+</div>
+</body>
+</html>
