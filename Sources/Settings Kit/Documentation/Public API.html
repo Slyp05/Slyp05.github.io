@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Settings Kit - Public API</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div id="layout">
+
+  <!-- Sidebar -->
+  <nav>
+    <div class="nav-title">Settings Kit</div>
+    <a href="#SettingsPage"><span class="badge badge-class">abstract</span>SettingsPage</a>
+    <a href="#SettingsEntry"><span class="badge badge-class">abstract</span>SettingsEntry</a>
+    <a href="#SettingsEntryT"><span class="badge badge-class">abstract</span>SettingsEntry&lt;TPage&gt;</a>
+    <a href="#PlatformSettingsEntryT"><span class="badge badge-class">abstract</span>PlatformSettingsEntry&lt;...&gt;</a>
+    <a href="#EditorSettingsEntryT"><span class="badge badge-class">abstract</span>EditorSettingsEntry&lt;...&gt;</a>
+    <a href="#UserSettingsEntryT"><span class="badge badge-class">abstract</span>UserSettingsEntry&lt;...&gt;</a>
+    <a href="#SettingsDisplayAttribute"><span class="badge badge-class">attr</span>SettingsDisplayAttribute</a>
+    <a href="#Settings"><span class="badge badge-static">static</span>Settings</a>
+    <a href="#IValidatedSettings"><span class="badge badge-interface">interface</span>IValidatedSettings</a>
+    <a href="#IVersionedSettings"><span class="badge badge-interface">interface</span>IVersionedSettings</a>
+    <a href="#ISettingsMigrator"><span class="badge badge-interface">interface</span>ISettingsMigrator</a>
+    <a href="#MissingSettings"><span class="badge badge-struct">struct</span>MissingSettings</a>
+  </nav>
+
+  <!-- Main -->
+  <main>
+    <div class="page-header">
+      <h1>Public API</h1>
+      <div class="sub">Settings Kit v1.0.0 &nbsp;&middot;&nbsp; namespace <code>SettingsKit</code></div>
+    </div>
+
+
+    <!-- ================================================================ SettingsPage === -->
+    <div class="type-section" id="SettingsPage">
+      <div class="type-header">
+        <h2>SettingsPage</h2>
+        <span class="badge badge-class">abstract class</span>
+      </div>
+      <p class="type-desc">
+        Declares a settings page. Inherit it once, then attach entries through a
+        <a href="#SettingsEntryT">SettingsEntry&lt;TPage&gt;</a> base. The page appears in Project
+        Settings, in Preferences, or both, depending on the kinds of entries attached to it, each
+        window listing only its own entries. Its tree label and ordering come from an optional
+        <a href="#SettingsDisplayAttribute">SettingsDisplayAttribute</a>.
+      </p>
+
+      <div class="member-group">
+        <div class="member-group-title">Abstract Members</div>
+        <table class="mt">
+          <tr>
+            <td><span class="kw">abstract</span> <span class="t">string</span> <span class="mn">Path</span> { get; }</td>
+            <td>The page location in the settings tree, where <code>/</code> nests under a parent (for example "My Game" or "My Game/Networking"). Read once per editor session and cached, so it must be constant.</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="member-group">
+        <div class="member-group-title">Virtual Members</div>
+        <div class="note">Both are read each time the page is drawn, so they may be computed.</div>
+        <table class="mt">
+          <tr>
+            <td><span class="kw">virtual</span> <span class="t">string</span> <span class="mn">Description</span> { get; }</td>
+            <td>An optional help box drawn at the top of the page. Defaults to <code>null</code> (none).</td>
+          </tr>
+          <tr>
+            <td><span class="kw">virtual</span> <span class="t">string</span> <span class="mn">HelpUrl</span> { get; }</td>
+            <td>An optional documentation URL. When set, a "?" button linking to it is drawn on the page. Defaults to <code>null</code>.</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+
+    <!-- =============================================================== SettingsEntry === -->
+    <div class="type-section" id="SettingsEntry">
+      <div class="type-header">
+        <h2>SettingsEntry</h2>
+        <span class="badge badge-class">abstract class</span>
+      </div>
+      <p class="type-desc">
+        The non-generic root of every settings entry. Its constructor is inaccessible outside
+        Settings Kit, so you never inherit it directly. Inherit one of the four generic bases below,
+        which bind an entry to a page. The stored container holds a
+        <code>List&lt;SettingsEntry&gt;</code>; this type has no public members.
+      </p>
+    </div>
+
+
+    <!-- ============================================================ SettingsEntry<T> === -->
+    <div class="type-section" id="SettingsEntryT">
+      <div class="type-header">
+        <h2>SettingsEntry&lt;TPage&gt;</h2>
+        <span class="badge badge-class">abstract class</span>
+      </div>
+      <p class="type-desc">
+        The base for a shared build setting: committed, shipped into builds, and readable at runtime
+        through <a href="#Settings">Settings.Get&lt;T&gt;</a>, with the same value on every platform.
+        The concrete type must be <code>[System.Serializable]</code> with a parameterless
+        constructor; its field initializers and that constructor set the defaults.
+        <code>TPage</code> is constrained to <code>SettingsPage, new()</code>.
+      </p>
+      <div class="member-group">
+        <div class="member-group-title">Constructor</div>
+        <table class="mt">
+          <tr>
+            <td><span class="kw">protected</span> <span class="mn">SettingsEntry</span>()</td>
+            <td>Inherited by a concrete entry; not called directly.</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+
+    <!-- ==================================================== PlatformSettingsEntry<T> === -->
+    <div class="type-section" id="PlatformSettingsEntryT">
+      <div class="type-header">
+        <h2>PlatformSettingsEntry&lt;TPage&gt;</h2>
+        <span class="badge badge-class">abstract class</span>
+      </div>
+      <p class="type-desc">
+        The base for a per-platform build setting: like
+        <a href="#SettingsEntryT">SettingsEntry&lt;TPage&gt;</a>, but the whole entry can hold
+        different values per build target. <a href="#Settings">Settings.Get&lt;T&gt;</a> returns the
+        instance resolved for the running platform; a player carries only its own platform's baked
+        values. <code>TPage</code> is constrained to <code>SettingsPage, new()</code>.
+      </p>
+      <div class="member-group">
+        <div class="member-group-title">Constructor</div>
+        <table class="mt">
+          <tr>
+            <td><span class="kw">protected</span> <span class="mn">PlatformSettingsEntry</span>()</td>
+            <td>Inherited by a concrete entry; not called directly.</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+
+    <!-- ====================================================== EditorSettingsEntry<T> === -->
+    <div class="type-section" id="EditorSettingsEntryT">
+      <div class="type-header">
+        <h2>EditorSettingsEntry&lt;TPage&gt;</h2>
+        <span class="badge badge-class">abstract class</span>
+      </div>
+      <p class="type-desc">
+        The base for an editor-project setting: committed to version control but never shipped into a
+        build, so in a player <a href="#Settings">Settings.Get&lt;T&gt;</a> returns the type defaults.
+        <code>TPage</code> is constrained to <code>SettingsPage, new()</code>.
+      </p>
+      <div class="member-group">
+        <div class="member-group-title">Constructor</div>
+        <table class="mt">
+          <tr>
+            <td><span class="kw">protected</span> <span class="mn">EditorSettingsEntry</span>()</td>
+            <td>Inherited by a concrete entry; not called directly.</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+
+    <!-- ======================================================== UserSettingsEntry<T> === -->
+    <div class="type-section" id="UserSettingsEntryT">
+      <div class="type-header">
+        <h2>UserSettingsEntry&lt;TPage&gt;</h2>
+        <span class="badge badge-class">abstract class</span>
+      </div>
+      <p class="type-desc">
+        The base for a per-developer setting: local and shown in the Preferences window. Its value is
+        not shipped, so in a player <a href="#Settings">Settings.Get&lt;T&gt;</a> returns the type
+        defaults. <code>TPage</code> is constrained to <code>SettingsPage, new()</code>.
+      </p>
+      <div class="member-group">
+        <div class="member-group-title">Constructor</div>
+        <table class="mt">
+          <tr>
+            <td><span class="kw">protected</span> <span class="mn">UserSettingsEntry</span>()</td>
+            <td>Inherited by a concrete entry; not called directly.</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+
+    <!-- ==================================================== SettingsDisplayAttribute === -->
+    <div class="type-section" id="SettingsDisplayAttribute">
+      <div class="type-header">
+        <h2>SettingsDisplayAttribute</h2>
+        <span class="badge badge-class">Attribute</span>
+      </div>
+      <p class="type-desc">
+        Optional display metadata for a <a href="#SettingsPage">page</a> or an entry: the title (a
+        page's tree label or an entry's section header), a tooltip, and the ordering among siblings.
+        Omit it and the title defaults to the last segment of the page path, or the nicified entry
+        type name (<code>AudioDefaults</code> becomes "Audio Defaults"). Applies to a class, not
+        inherited, single use. Read once when the settings window is built, so its values must be
+        constant.
+      </p>
+
+      <div class="member-group">
+        <div class="member-group-title">Constructors</div>
+        <table class="mt">
+          <tr>
+            <td><span class="mn">SettingsDisplayAttribute</span>()</td>
+            <td>Declares display metadata, leaving the title to its default.</td>
+          </tr>
+          <tr>
+            <td><span class="mn">SettingsDisplayAttribute</span>(<span class="t">string</span> title)</td>
+            <td>Declares display metadata with an explicit title.</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="member-group">
+        <div class="member-group-title">Properties</div>
+        <table class="mt">
+          <tr>
+            <td><span class="t">string</span> <span class="mn">Title</span> { get; set; }</td>
+            <td>The title shown in the settings window: a page's tree label, or an entry's section header.</td>
+          </tr>
+          <tr>
+            <td><span class="t">string</span> <span class="mn">Tooltip</span> { get; set; }</td>
+            <td>An optional tooltip for the title.</td>
+          </tr>
+          <tr>
+            <td><span class="t">int</span> <span class="mn">Order</span> { get; set; }</td>
+            <td>The ordering among sibling pages or sections, lower first.</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+
+    <!-- ==================================================================== Settings === -->
+    <div class="type-section" id="Settings">
+      <div class="type-header">
+        <h2>Settings</h2>
+        <span class="badge badge-static">static class</span>
+      </div>
+      <p class="type-desc">
+        Static access to the settings declared with Settings Kit.
+      </p>
+
+      <div class="member-group">
+        <div class="member-group-title">Properties</div>
+        <table class="mt">
+          <tr>
+            <td><span class="kw">static</span> <span class="t">bool</span> <span class="mn">Loaded</span> { get; }</td>
+            <td>Whether the configured settings are available. Always <code>true</code> in the editor; in a player, <code>true</code> once the shipped settings finish loading (before the first scene). While <code>false</code>, <code>Get&lt;T&gt;</code> answers with defaults, so treat <code>false</code> as retry-later.</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="member-group">
+        <div class="member-group-title">Methods</div>
+        <table class="mt">
+          <tr>
+            <td><span class="kw">static</span> <span class="t">T</span> <span class="mn">Get</span>&lt;<span class="t">T</span>&gt;() <span class="kw">where</span> <span class="t">T</span> : <span class="t">SettingsEntry</span>, <span class="kw">new</span>()</td>
+            <td>Returns the project instance of <code>T</code>, or a default one if it was never configured. Treat the result as read-only: runtime changes are not persisted. Routes user entries to the user store and everything else to the project store; resolves a per-platform entry to the running platform. Safe to call off the main thread once settings have loaded.</td>
+          </tr>
+          <tr>
+            <td><span class="kw">static</span> <span class="t">void</span> <span class="mn">Save</span>()</td>
+            <td>Persists changes made to a settings entry from editor code. <code>[Conditional("UNITY_EDITOR")]</code>: the call is stripped from a build, so it is always safe to call.</td>
+          </tr>
+          <tr>
+            <td><span class="kw">static</span> <span class="t">void</span> <span class="mn">OpenPage</span>&lt;<span class="t">TPage</span>&gt;() <span class="kw">where</span> <span class="t">TPage</span> : <span class="t">SettingsPage</span>, <span class="kw">new</span>()</td>
+            <td>Focuses the page of <code>TPage</code> in its settings window (Project Settings or Preferences). <code>[Conditional("UNITY_EDITOR")]</code>: stripped from a build.</td>
+          </tr>
+          <tr>
+            <td><span class="kw">static</span> <span class="t">IDisposable</span> <span class="mn">OverrideForTests</span>&lt;<span class="t">T</span>&gt;(<span class="t">T</span> value) <span class="kw">where</span> <span class="t">T</span> : <span class="t">SettingsEntry</span>, <span class="kw">new</span>()</td>
+            <td>Substitutes what <code>Get&lt;T&gt;</code> returns for <code>T</code> until the returned handle is disposed, so a consumer can unit-test code that reads settings without touching the stored file. The substitution reverts on dispose. Throws <code>ArgumentNullException</code> when <code>value</code> is null.</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+
+    <!-- ========================================================== IValidatedSettings === -->
+    <div class="type-section" id="IValidatedSettings">
+      <div class="type-header">
+        <h2>IValidatedSettings</h2>
+        <span class="badge badge-interface">interface</span>
+      </div>
+      <p class="type-desc">
+        Opt-in on a settings entry to validate it in the inspector, and at build time for build
+        settings. One hook, two uses: an inline help box under the section, and a build gate that
+        throws a <code>BuildFailedException</code> on failure.
+      </p>
+
+      <div class="member-group">
+        <div class="member-group-title">Methods</div>
+        <table class="mt">
+          <tr>
+            <td><span class="t">bool</span> <span class="mn">Validate</span>(<span class="kw">out</span> <span class="t">string</span> error)</td>
+            <td>Returns whether the entry is valid; on <code>false</code>, sets <code>error</code> to a message shown in the settings window and, for a build setting, fails the build.</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+
+    <!-- ========================================================== IVersionedSettings === -->
+    <div class="type-section" id="IVersionedSettings">
+      <div class="type-header">
+        <h2>IVersionedSettings</h2>
+        <span class="badge badge-interface">interface</span>
+      </div>
+      <p class="type-desc">
+        Opt-in on a settings entry to transform its already-deserialized fields forward across schema
+        versions, for value changes that Unity's field-rename and type-move attributes cannot
+        express. Editor-only; runs once when the settings load.
+      </p>
+
+      <div class="member-group">
+        <div class="member-group-title">Members</div>
+        <table class="mt">
+          <tr>
+            <td><span class="t">int</span> <span class="mn">Version</span> { get; }</td>
+            <td>The current schema version; increment it whenever the entry's stored shape changes.</td>
+          </tr>
+          <tr>
+            <td><span class="t">void</span> <span class="mn">Migrate</span>(<span class="t">int</span> fromVersion)</td>
+            <td>Transforms the entry from an older stored version up to <code>Version</code>. Runs once per upgrade (retried on the next load if it throws, so it must be idempotent); for a per-platform entry, runs on every variant.</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+
+    <!-- =========================================================== ISettingsMigrator === -->
+    <div class="type-section" id="ISettingsMigrator">
+      <div class="type-header">
+        <h2>ISettingsMigrator</h2>
+        <span class="badge badge-interface">interface</span>
+      </div>
+      <p class="type-desc">
+        Opt-in to recover data from a settings entry type that was deleted, into surviving types.
+        Discovered implementations are offered every orphaned record when the settings load in the
+        editor, before the record is cleared.
+      </p>
+
+      <div class="member-group">
+        <div class="member-group-title">Methods</div>
+        <table class="mt">
+          <tr>
+            <td><span class="t">void</span> <span class="mn">OnMissing</span>(<span class="t">MissingSettings</span> missing)</td>
+            <td>Called once per stored record whose type no longer exists. Recognize your own old type by its identity, read it with <a href="#MissingSettings">MissingSettings.TryRead</a>, and write its data into current entries through <a href="#Settings">Settings.Get</a> and <a href="#Settings">Settings.Save</a>.</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+
+    <!-- ============================================================= MissingSettings === -->
+    <div class="type-section" id="MissingSettings">
+      <div class="type-header">
+        <h2>MissingSettings</h2>
+        <span class="badge badge-struct">readonly struct</span>
+      </div>
+      <p class="type-desc">
+        A stored settings record whose declaring type no longer exists, offered to every
+        <a href="#ISettingsMigrator">ISettingsMigrator</a>.
+      </p>
+
+      <div class="member-group">
+        <div class="member-group-title">Properties</div>
+        <table class="mt">
+          <tr>
+            <td><span class="t">string</span> <span class="mn">ClassName</span> { get; }</td>
+            <td>The class name of the deleted type.</td>
+          </tr>
+          <tr>
+            <td><span class="t">string</span> <span class="mn">Namespace</span> { get; }</td>
+            <td>The namespace of the deleted type, or an empty string when it had none.</td>
+          </tr>
+          <tr>
+            <td><span class="t">string</span> <span class="mn">AssemblyName</span> { get; }</td>
+            <td>The name of the assembly the deleted type belonged to.</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="member-group">
+        <div class="member-group-title">Methods</div>
+        <table class="mt">
+          <tr>
+            <td><span class="t">bool</span> <span class="mn">TryRead</span>&lt;<span class="t">TOld</span>&gt;(<span class="kw">out</span> <span class="t">TOld</span> value)</td>
+            <td>Deserializes the stored fields of the deleted type into a mirror type you declare (<code>TOld</code> should be a <code>[System.Serializable]</code> type mirroring the deleted type's fields). Returns <code>false</code> when there is no stored data or it cannot be read.</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+  </main>
+</div>
+</body>
+</html>
