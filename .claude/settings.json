@@ -1,0 +1,28 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "shell": "powershell",
+            "statusMessage": "Starting Jekyll server (docs/) in its own window",
+            "command": "& \".claude\\start-jekyll.ps1\""
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "shell": "powershell",
+            "statusMessage": "Stopping Jekyll server",
+            "command": "& \".claude\\stop-jekyll.ps1\""
+          }
+        ]
+      }
+    ]
+  }
+}
