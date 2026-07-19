@@ -20,6 +20,7 @@
     <a href="#UserSettingsEntryT"><span class="badge badge-class">abstract</span>UserSettingsEntry&lt;...&gt;</a>
     <a href="#SettingsDisplayAttribute"><span class="badge badge-class">attr</span>SettingsDisplayAttribute</a>
     <a href="#Settings"><span class="badge badge-static">static</span>Settings</a>
+    <a href="#SettingsT"><span class="badge badge-static">static</span>Settings&lt;T&gt;</a>
     <a href="#IValidatedSettings"><span class="badge badge-interface">interface</span>IValidatedSettings</a>
     <a href="#IVersionedSettings"><span class="badge badge-interface">interface</span>IVersionedSettings</a>
     <a href="#ISettingsMigrator"><span class="badge badge-interface">interface</span>ISettingsMigrator</a>
@@ -98,7 +99,7 @@
       </div>
       <p class="type-desc">
         The base for a shared build setting: committed, shipped into builds, and readable at runtime
-        through <a href="#Settings">Settings.Get&lt;T&gt;</a>, with the same value on every platform.
+        through <a href="#SettingsT">Settings&lt;T&gt;.Instance</a>, with the same value on every platform.
         The concrete type must be <code>[System.Serializable]</code> with a parameterless
         constructor; its field initializers and that constructor set the defaults.
         <code>TPage</code> is constrained to <code>SettingsPage, new()</code>.
@@ -124,7 +125,7 @@
       <p class="type-desc">
         The base for a per-platform build setting: like
         <a href="#SettingsEntryT">SettingsEntry&lt;TPage&gt;</a>, but the whole entry can hold
-        different values per build target. <a href="#Settings">Settings.Get&lt;T&gt;</a> returns the
+        different values per build target. <a href="#SettingsT">Settings&lt;T&gt;.Instance</a> returns the
         instance resolved for the running platform; a player carries only its own platform's baked
         values. <code>TPage</code> is constrained to <code>SettingsPage, new()</code>.
       </p>
@@ -148,7 +149,7 @@
       </div>
       <p class="type-desc">
         The base for an editor-project setting: committed to version control but never shipped into a
-        build, so in a player <a href="#Settings">Settings.Get&lt;T&gt;</a> returns the type defaults.
+        build, so in a player <a href="#SettingsT">Settings&lt;T&gt;.Instance</a> returns the type defaults.
         <code>TPage</code> is constrained to <code>SettingsPage, new()</code>.
       </p>
       <div class="member-group">
@@ -171,7 +172,7 @@
       </div>
       <p class="type-desc">
         The base for a per-developer setting: local and shown in the Preferences window. Its value is
-        not shipped, so in a player <a href="#Settings">Settings.Get&lt;T&gt;</a> returns the type
+        not shipped, so in a player <a href="#SettingsT">Settings&lt;T&gt;.Instance</a> returns the type
         defaults. <code>TPage</code> is constrained to <code>SettingsPage, new()</code>.
       </p>
       <div class="member-group">
@@ -197,8 +198,7 @@
         page's tree label or an entry's section header), a tooltip, and the ordering among siblings.
         Omit it and the title defaults to the last segment of the page path, or the nicified entry
         type name (<code>AudioDefaults</code> becomes "Audio Defaults"). Applies to a class, not
-        inherited, single use. Read once when the settings window is built, so its values must be
-        constant.
+        inherited, single use.
       </p>
 
       <div class="member-group">
@@ -242,7 +242,8 @@
         <span class="badge badge-static">static class</span>
       </div>
       <p class="type-desc">
-        Static access to the settings declared with Settings Kit.
+        Settings Kit's load state, editor saving, page navigation, and test seam. Read settings values
+        through <a href="#SettingsT">Settings&lt;T&gt;.Instance</a>.
       </p>
 
       <div class="member-group">
@@ -250,18 +251,15 @@
         <table class="mt">
           <tr>
             <td><span class="kw">static</span> <span class="t">bool</span> <span class="mn">Loaded</span> { get; }</td>
-            <td>Whether the configured settings are available. Always <code>true</code> in the editor; in a player, <code>true</code> once the shipped settings finish loading (before the first scene). While <code>false</code>, <code>Get&lt;T&gt;</code> answers with defaults, so treat <code>false</code> as retry-later.</td>
+            <td>Whether the configured settings are available. Always <code>true</code> in the editor; in a player, <code>true</code> once the shipped settings finish loading (before the first scene). While <code>false</code>, a read answers with defaults, so treat <code>false</code> as retry-later.</td>
           </tr>
         </table>
       </div>
 
       <div class="member-group">
         <div class="member-group-title">Methods</div>
+        <div class="note">Reads go through <a href="#SettingsT">Settings&lt;T&gt;.Instance</a>.</div>
         <table class="mt">
-          <tr>
-            <td><span class="kw">static</span> <span class="t">T</span> <span class="mn">Get</span>&lt;<span class="t">T</span>&gt;() <span class="kw">where</span> <span class="t">T</span> : <span class="t">SettingsEntry</span>, <span class="kw">new</span>()</td>
-            <td>Returns the project instance of <code>T</code>, or a default one if it was never configured. Treat the result as read-only: runtime changes are not persisted. Routes user entries to the user store and everything else to the project store; resolves a per-platform entry to the running platform. Safe to call off the main thread once settings have loaded.</td>
-          </tr>
           <tr>
             <td><span class="kw">static</span> <span class="t">void</span> <span class="mn">Save</span>()</td>
             <td>Persists changes made to a settings entry from editor code. <code>[Conditional("UNITY_EDITOR")]</code>: the call is stripped from a build, so it is always safe to call.</td>
@@ -272,7 +270,37 @@
           </tr>
           <tr>
             <td><span class="kw">static</span> <span class="t">IDisposable</span> <span class="mn">OverrideForTests</span>&lt;<span class="t">T</span>&gt;(<span class="t">T</span> value) <span class="kw">where</span> <span class="t">T</span> : <span class="t">SettingsEntry</span>, <span class="kw">new</span>()</td>
-            <td>Substitutes what <code>Get&lt;T&gt;</code> returns for <code>T</code> until the returned handle is disposed, so a consumer can unit-test code that reads settings without touching the stored file. The substitution reverts on dispose. Throws <code>ArgumentNullException</code> when <code>value</code> is null.</td>
+            <td>Substitutes what <a href="#SettingsT">Settings&lt;T&gt;.Instance</a> returns for <code>T</code> until the returned handle is disposed, so a consumer can unit-test code that reads settings without touching the stored file. The substitution reverts on dispose. Throws <code>ArgumentNullException</code> when <code>value</code> is null.</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+
+    <!-- ================================================================= Settings<T> === -->
+    <div class="type-section" id="SettingsT">
+      <div class="type-header">
+        <h2>Settings&lt;T&gt;</h2>
+        <span class="badge badge-static">static class</span>
+      </div>
+      <p class="type-desc">
+        A cached read of a single entry, and the way to read a setting.
+        <code>Settings&lt;T&gt;.Instance</code> returns the configured instance of <code>T</code> (a default
+        one if it was never configured, and the variant resolved for the running platform for a
+        per-platform entry). A built player resolves it once and then serves it from a field, so a read is
+        a plain field access with no lookup; the editor and test builds re-resolve on every read, so it
+        stays live with settings-window edits and honors
+        <a href="#Settings">Settings.OverrideForTests</a>. Reading through it means consuming code never
+        has to cache the value itself. Safe to read off the main thread once settings have loaded.
+        <code>T</code> is constrained to <code>SettingsEntry, new()</code>.
+      </p>
+
+      <div class="member-group">
+        <div class="member-group-title">Properties</div>
+        <table class="mt">
+          <tr>
+            <td><span class="kw">static</span> <span class="t">T</span> <span class="mn">Instance</span> { get; }</td>
+            <td>The project instance of <code>T</code>, or a default one if it was never configured. Treat the result as read-only: runtime changes are not persisted. Prefer this over caching the value in your own field: a private cache is bypassed by <a href="#Settings">OverrideForTests</a> and goes stale when the resolved instance is replaced (a revert or undo in the editor, or a build-target change for a per-platform entry), while <code>Instance</code> is already a raw field read in a shipping build.</td>
           </tr>
         </table>
       </div>
@@ -348,7 +376,7 @@
         <table class="mt">
           <tr>
             <td><span class="t">void</span> <span class="mn">OnMissing</span>(<span class="t">MissingSettings</span> missing)</td>
-            <td>Called once per stored record whose type no longer exists. Recognize your own old type by its identity, read it with <a href="#MissingSettings">MissingSettings.TryRead</a>, and write its data into current entries through <a href="#Settings">Settings.Get</a> and <a href="#Settings">Settings.Save</a>.</td>
+            <td>Called once per stored record whose type no longer exists. Recognize your own old type by its identity, read it with <a href="#MissingSettings">MissingSettings.TryRead</a>, and write its data into current entries through <a href="#SettingsT">Settings&lt;T&gt;.Instance</a> and <a href="#Settings">Settings.Save</a>.</td>
           </tr>
         </table>
       </div>

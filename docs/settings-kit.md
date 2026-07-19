@@ -22,7 +22,7 @@ Settings Kit is aimed first at **package makers** who need configuration: add it
 
 - **A small surface by design**: only a handful of public types, so there is little to learn and your settings code stays stable as the package grows.
 - **No boilerplate, no Resources**: entry types are discovered automatically, stored once, and kept in sync as you add or remove them.
-- **Readable at runtime**: build settings are injected into the player automatically, so `Settings.Get<T>()` returns the same values in a built game.
+- **Readable at runtime**: build settings are injected into the player automatically, so `Settings<T>.Instance` returns the same values in a built game, optimized to a plain field read.
 
 ## Four kinds of settings
 
@@ -35,13 +35,13 @@ The base class an entry inherits decides where it appears, how it is stored, and
 
 ## What's Included
 
-- **Declare once, read anywhere**: one `SettingsPage` class plus serializable entries; read them through the static `Settings` facade, in the editor or at runtime.
+- **Declare once, read anywhere**: one `SettingsPage` class plus serializable entries; read them through `Settings<T>.Instance`, in the editor or at runtime.
 - **The right window automatically**: build and editor-project entries land under Project Settings, user entries under Preferences, each window showing only its own.
 - **Sections, ordering, and tooltips**: an optional `[SettingsDisplay]` attribute sets titles, tooltips, and ordering for pages and sections.
 - **Custom rendering**: style any section with an ordinary `PropertyDrawer` on your settings type.
 - **Validation**: implement `IValidatedSettings` for an inline help box in the window and a build-time gate that fails the build on invalid build settings.
 - **Migration**: `IVersionedSettings` transforms an entry's values forward across schema versions, and `ISettingsMigrator` rescues data from types you deleted.
-- **Testing seam**: `Settings.OverrideForTests<T>()` substitutes what `Get<T>()` returns for the life of a disposable, with no permanent "for tests" setters in the shipped API.
+- **Testing seam**: `Settings.OverrideForTests<T>()` substitutes what `Settings<T>.Instance` returns for the life of a disposable, with no permanent "for tests" setters in the shipped API.
 - **Navigation**: `Settings.OpenPage<TPage>()` jumps straight to a page from your own tooling.
 - **A Showcase sample**: every feature in one place, imported from the Package Manager.
 

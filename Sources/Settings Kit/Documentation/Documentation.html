@@ -121,7 +121,7 @@
       </table>
       <div class="note">
         <strong>Where to declare them.</strong> Editor-project and user settings never ship, so in a
-        build <code>Settings.Get</code> returns their type defaults. Put them in an Editor assembly,
+        build a read returns their type defaults. Put them in an Editor assembly,
         or, for convenience, in your Runtime assembly (gating with <code>#if UNITY_EDITOR</code> if
         they use editor-only types).
       </div>
@@ -151,7 +151,7 @@
 }
 
 <span class="cm">// 3. Read them anywhere, including at runtime in a built player.</span>
-<span class="kw">float</span> volume = <span class="ty">Settings</span>.Get&lt;<span class="ty">AudioDefaults</span>&gt;().MasterVolume;</code></pre>
+<span class="kw">float</span> volume = <span class="ty">Settings</span>&lt;<span class="ty">AudioDefaults</span>&gt;.Instance.MasterVolume;</code></pre>
       <p>
         That is the whole loop: the page appears in Project Settings, and the value ships into the
         build.
@@ -335,13 +335,24 @@
     <!-- Reading Settings -->
     <section id="reading">
       <h2>Reading Settings</h2>
-      <p>Read any entry through the static <code>Settings</code> facade.</p>
-      <pre><code><span class="kw">float</span> volume = <span class="ty">Settings</span>.Get&lt;<span class="ty">AudioDefaults</span>&gt;().MasterVolume;
-<span class="kw">string</span> url = <span class="ty">Settings</span>.Get&lt;<span class="ty">BackendConfig</span>&gt;().ApiUrl;   <span class="cm">// resolves to the running platform</span></code></pre>
+      <p>Read any entry through <code>Settings&lt;T&gt;.Instance</code>.</p>
+      <pre><code><span class="kw">float</span> volume = <span class="ty">Settings</span>&lt;<span class="ty">AudioDefaults</span>&gt;.Instance.MasterVolume;
+<span class="kw">string</span> url = <span class="ty">Settings</span>&lt;<span class="ty">BackendConfig</span>&gt;.Instance.ApiUrl;   <span class="cm">// resolves to the running platform</span></code></pre>
       <p>
-        <code>Get&lt;T&gt;()</code> returns your settings; a per-platform entry resolves to the running
-        platform.
+        A per-platform entry resolves to the running platform. In a built player
+        <code>Settings&lt;T&gt;.Instance</code> resolves once and then serves the value straight from a
+        field, so reading it every frame costs no more than a field access.
       </p>
+      <div class="note">
+        <strong>Use <code>Settings&lt;T&gt;.Instance</code> instead of caching the value yourself.</strong>
+        It is already the cheapest possible read in a build, so a private cached field buys nothing and
+        can silently go stale. The resolved instance is not always the same object: a test's
+        <a href="#testing"><code>Settings.OverrideForTests&lt;T&gt;()</code></a> substitutes a different
+        one; in the editor a <em>Revert to Default</em> or an undo replaces it; and a per-platform entry
+        resolves a different variant when the active build target changes. A value you captured once
+        would miss all of these, whereas <code>Instance</code> re-resolves in the editor and in tests so
+        it always tracks the current instance, while still being a raw field read in a shipping build.
+      </div>
       <p>
         At runtime, treat what you read as <strong>read-only</strong>: any changes you make to it are
         not saved. To change values, edit them in the settings window, or from editor code (see below).
@@ -351,8 +362,8 @@
       <p>
         In the editor, <code>Settings.Loaded</code> is always <code>true</code>. In a player it is
         <code>false</code> only during startup, before the preloaded container the build ships has
-        enabled, which happens before the first scene loads. While <code>false</code>,
-        <code>Get&lt;T&gt;()</code> answers with default values.
+        enabled, which happens before the first scene loads. While <code>false</code>, a read
+        answers with default values.
       </p>
       <div class="note">
         <strong>When the check is needed.</strong> The container enables before the first scene, so from
@@ -368,7 +379,7 @@
         When it is needed, gate the read:
       </p>
       <pre><code><span class="kw">if</span> (<span class="ty">Settings</span>.Loaded)
-    Apply(<span class="ty">Settings</span>.Get&lt;<span class="ty">AudioDefaults</span>&gt;());
+    Apply(<span class="ty">Settings</span>&lt;<span class="ty">AudioDefaults</span>&gt;.Instance);
 <span class="cm">// else retry later; the value would otherwise be a default, not the configured one</span></code></pre>
 
       <h3>Saving edits made from editor code</h3>
@@ -570,7 +581,7 @@
             <span class="kw">return</span>;
 
         <span class="cm">// Write the recovered values into a surviving entry, then persist.</span>
-        <span class="ty">NetworkConfig</span> current = <span class="ty">Settings</span>.Get&lt;<span class="ty">NetworkConfig</span>&gt;();
+        <span class="ty">NetworkConfig</span> current = <span class="ty">Settings</span>&lt;<span class="ty">NetworkConfig</span>&gt;.Instance;
         <span class="cm">// ... copy old.address / old.portNumber into current ...</span>
         <span class="ty">Settings</span>.Save();
     }
@@ -603,9 +614,14 @@
       <h2>Testing</h2>
       <p>
         <code>Settings.OverrideForTests&lt;T&gt;()</code> returns a disposable that substitutes what
-        <code>Get&lt;T&gt;()</code> returns for the life of the handle, so you can unit-test code that
-        reads settings without touching the stored file. The override reverts automatically on
+        <code>Settings&lt;T&gt;.Instance</code> returns for the life of the handle, so you can unit-test
+        code that reads settings without touching the stored file. The override reverts automatically on
         dispose.
+      </p>
+      <p>
+        The code under test sees the stub as long as it reads through
+        <code>Settings&lt;T&gt;.Instance</code>. Only a value it had copied into its own field would escape
+        the override, which is the reason to read through the facade rather than caching.
       </p>
       <pre><code>[<span class="ty">Test</span>]
 <span class="kw">public void</span> UsesConfiguredVolume()
@@ -614,7 +630,7 @@
 
     <span class="kw">using</span> (<span class="ty">Settings</span>.OverrideForTests(stub))
     {
-        <span class="cm">// code under test reads Settings.Get&lt;AudioDefaults&gt;() and sees the stub</span>
+        <span class="cm">// code under test reads Settings&lt;AudioDefaults&gt;.Instance and sees the stub</span>
     }
     <span class="cm">// substitution is reverted here</span>
 }</code></pre>
