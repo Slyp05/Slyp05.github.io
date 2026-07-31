@@ -96,7 +96,7 @@ See how [Persistent Asset](/persistent-asset/) holds up against the other save s
 | **What you can save** | | | |
 | Deep object graphs & polymorphism out of the box | ⏳ `[SerializeReference]` now, full serializers coming | ✅ Reflection serializer | ✅ Json.NET-based |
 | Save any object from anywhere in code | ➖ By design: one clear asset | ✅ Save anything, anywhere | ✅ Save anything, anywhere |
-| Reach saved data anywhere, no string keys | ✅ Find by type, no refs | ⚠️ Via string keys | ⚠️ Via string keys |
+| Reach saved data anywhere, no string keys | ✅ Type-safe `Find<T>()` | ⚠️ Via string keys | ⚠️ Via string keys |
 | Save entire scenes & GameObjects | ➖ By design: we save data | ✅ Snapshots scene objects | ✅ Unity objects & components |
 | Save references between objects | ⏳ Asset refs planned | ✅ Unity & shared refs | ✅ Resolvers + shared refs |
 | Save individual values / keys | ✅ Via Persistent Variables bag | ✅ Per-key partial saves | ✅ Per-key |
