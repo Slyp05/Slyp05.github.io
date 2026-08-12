@@ -2,7 +2,6 @@
 layout: page
 title: How Persistent Asset Compares
 permalink: /persistent-asset/comparison/
-sitemap: false
 ---
 
 See how [Persistent Asset](/persistent-asset/) holds up against the other save solutions on the store.

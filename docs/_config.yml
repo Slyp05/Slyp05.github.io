@@ -33,12 +33,6 @@ defaults:
       path: ""
     values:
       image: /assets/images/home.jpg
-  # Persistent Asset is unreleased: keep its whole doc tree out of the sitemap.
-  # Remove this entry (and `sitemap: false` in persistent-asset.md) on release.
-  - scope:
-      path: "persistent-asset"
-    values:
-      sitemap: false
   # Settings Kit is unreleased: keep its whole doc tree out of the sitemap.
   # Remove this entry (and `sitemap: false` in settings-kit.md) on release.
   - scope:
@@ -54,6 +48,7 @@ plugins:
   - jekyll-sitemap
 
 header_pages:
+  - persistent-asset.md
   - infinite-value.md
   - generic-arithmetic.md
   - auto-singleton.md

@@ -14,6 +14,20 @@ layout: home
 <div class="package-grid">
 
   <div class="package-card">
+    <img src="/assets/images/persistent-asset-card.png" alt="Persistent Asset" class="package-card-image" width="420" height="280" loading="lazy" decoding="async">
+    <img src="/assets/images/PA.png" alt="Persistent Asset icon" class="package-card-icon" width="160" height="160" loading="lazy" decoding="async">
+    <div class="package-card-content">
+      <h2><a href="/persistent-asset/">Persistent Asset</a></h2>
+      <div class="card-meta">
+        <span class="badge badge-paid">$49.99</span>
+        <span class="card-updated">Released August 2026</span>
+      </div>
+      <p>A ScriptableObject-based save system: the asset you read at runtime is the one that saves and loads itself. Automatic, no-code-friendly, cloud-ready, and extensible.</p>
+      <a href="/persistent-asset/" class="card-link">Learn more →</a>
+    </div>
+  </div>
+
+  <div class="package-card">
     <img src="/assets/images/infinite-value-card.png" alt="Infinite Value" class="package-card-image" width="420" height="280" loading="lazy" decoding="async">
     <img src="/assets/images/IV.png" alt="Infinite Value icon" class="package-card-icon" width="160" height="160" loading="lazy" decoding="async">
     <div class="package-card-content">

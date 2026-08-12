@@ -3,11 +3,10 @@ layout: page
 title: Persistent Asset
 permalink: /persistent-asset/
 image: /assets/images/persistent-asset.png
-sitemap: false
 software:
   description: "A ScriptableObject-based save system for Unity: the asset you read at runtime is the one that saves and loads itself. Automatic, no-code-friendly, cloud-ready, and extensible."
   price: "49.99"
-  store_url: ""
+  store_url: https://assetstore.unity.com/packages/tools/utilities/persistent-asset-runtime-scriptableobject-saves-389310
 ---
 
 <img src="/assets/images/persistent-asset.png" alt="Persistent Asset" class="package-image" width="1950" height="1300" decoding="async">
@@ -76,14 +75,13 @@ Unity 6.0 or later (tested up to 6.6)
 
 ## Get It
 
-<!-- TODO: unreleased; replace href="#" with the Unity Asset Store URL on release, then set store_url in the front matter above and remove `sitemap: false` (here and the persistent-asset scope in _config.yml). -->
-<a href="#" class="asset-store-btn">View on Unity Asset Store ($49.99)</a>
+<a href="https://assetstore.unity.com/packages/tools/utilities/persistent-asset-runtime-scriptableobject-saves-389310" class="asset-store-btn">View on Unity Asset Store ($49.99)</a>
 <a href="https://justetools.itch.io/persistent-asset" class="asset-store-btn" target="_blank" rel="noopener">Play Demo</a>
 
 ## Patch Notes
 
 <details class="patch-note" open>
-<summary><strong>v1.0.0</strong> <span class="patch-date">Initial release</span></summary>
+<summary><strong>v1.0.0</strong> <span class="patch-date">August 12, 2026</span></summary>
 <div class="patch-note-body" markdown="1">
 
 Initial release.
