@@ -18,7 +18,7 @@ No registration step, no `Resources/` folder, no runtime plumbing.
 
 ## Built for package makers
 
-Settings Kit is aimed first at **package makers** who need configuration: add it as a dependency, declare a page, and your settings surface in the editor and travel with the build. It works just as well for a single project that wants clean, version-control-friendly settings.
+Settings Kit is aimed primarily at **package makers** who need configuration: declare a page, and your settings surface in the editor and travel with the build. It works just as well for a single project that wants clean, version-control-friendly settings.
 
 - **A small surface by design**: only a handful of public types, so there is little to learn and your settings code stays stable as the package grows.
 - **No boilerplate, no Resources**: entry types are discovered automatically, stored once, and kept in sync as you add or remove them.
