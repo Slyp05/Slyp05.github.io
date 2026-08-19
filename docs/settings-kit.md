@@ -6,7 +6,6 @@ image: /assets/images/settings-kit-social.jpg
 sitemap: false
 description: "Declare Project Settings and Preferences pages in Unity from a small class, read them anywhere including at runtime in a built player, with no editor boilerplate and nothing under Resources/."
 software:
-  price: "0"
   store_url: ""
 ---
 

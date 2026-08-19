@@ -6,7 +6,6 @@ image: /assets/images/persistent-asset-social.jpg
 description: "A complete save system for Unity: automatic saving, save slots, cloud sync, AES-256 encryption, save versioning and crash-safe writes, with no save code to write."
 software:
   name: "Persistent Asset - Premium Save System"
-  price: "49.99"
   store_url: https://assetstore.unity.com/packages/slug/389310
 ---
 
@@ -68,7 +67,7 @@ Desktop, mobile and WebGL are supported out of the box. Consoles gate saving beh
 
 ## Get It
 
-<a href="https://assetstore.unity.com/packages/slug/389310" class="asset-store-btn">View on Unity Asset Store ($49.99)</a>
+<a href="https://assetstore.unity.com/packages/slug/389310" class="asset-store-btn">View on Unity Asset Store (Paid)</a>
 <a href="https://justetools.itch.io/persistent-asset" class="asset-store-btn" target="_blank" rel="noopener">Play Demo</a>
 
 ## Patch Notes

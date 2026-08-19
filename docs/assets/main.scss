@@ -558,7 +558,10 @@ $content-width: 880px;
   display: none;
   position: absolute;
   top: 100%;
-  left: 0;
+  // Anchored to the trigger's RIGHT edge so the menu grows leftward into the page.
+  // Anchoring left made it grow toward the viewport edge, and on a narrow window
+  // the badges fell off the right side.
+  right: 0;
   z-index: 10;
   min-width: 250px;
   padding: 0.4rem 0;
@@ -584,16 +587,6 @@ $content-width: 880px;
 
 .nav-dropdown-toggle[aria-expanded="true"] .nav-caret {
   transform: rotate(180deg);
-}
-
-.nav-group-label {
-  display: block;
-  padding: 0.45rem 0.9rem 0.2rem;
-  font-size: 0.72em;
-  font-weight: bold;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: #999;
 }
 
 .nav-dropdown-link {
@@ -633,7 +626,10 @@ $content-width: 880px;
     display: none;
   }
 
-  .nav-dropdown-menu {
+  // Scoped to .site-nav so it outweighs the token override block at the end of
+  // this file, which is top-level and would otherwise re-apply the desktop
+  // panel's background, border and shadow inside the mobile hamburger.
+  .site-nav .nav-dropdown-menu {
     display: block;
     position: static;
     min-width: 0;
@@ -647,12 +643,7 @@ $content-width: 880px;
 
   // Match minima's palm .page-link box (padding: 5px 10px; margin-left: 20px)
   // so the dropdown entries line up with the standalone links above them.
-  .nav-group-label {
-    padding: 6px 10px 2px;
-    text-align: right;
-  }
-
-  .nav-dropdown-link {
+  .site-nav .nav-dropdown-link {
     justify-content: flex-end;
     padding: 5px 10px;
     margin-left: 20px;
@@ -762,6 +753,5 @@ table td { border-color: var(--border-soft); }
   border-color: var(--border);
   box-shadow: 0 4px 14px var(--shadow);
 }
-.nav-group-label { color: var(--text-fainter); }
 .nav-dropdown-link { color: var(--text); }
 .nav-dropdown-link:hover { background: var(--bg-subtle); }

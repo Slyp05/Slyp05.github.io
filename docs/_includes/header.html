@@ -4,8 +4,8 @@ so the nav stays three items wide no matter how many packages ship. Standalone p
 (About, etc.) still come from `header_pages` in _config.yml.
 {%- endcomment -%}
 {%- assign live = site.data.packages | where: "released", true -%}
-{%- assign paid_packages = live | where_exp: "p", "p.price != '0'" -%}
-{%- assign free_packages = live | where_exp: "p", "p.price == '0'" -%}
+{%- assign paid_packages = live | where_exp: "p", "p.free != true" -%}
+{%- assign free_packages = live | where_exp: "p", "p.free == true" -%}
 
 <header class="site-header" role="banner">
 
@@ -36,17 +36,15 @@ so the nav stays three items wide no matter how many packages ship. Standalone p
 
           <div class="nav-dropdown-menu" id="nav-assets-menu">
             {%- if paid_packages.size > 0 -%}
-            <span class="nav-group-label">Paid</span>
             {%- for pkg in paid_packages -%}
             <a class="nav-dropdown-link" href="{{ pkg.url | relative_url }}">
               <span class="nav-dropdown-name">{{ pkg.title | escape }}</span>
-              <span class="badge badge-paid">${{ pkg.price }}</span>
+              <span class="badge badge-paid">Paid</span>
             </a>
             {%- endfor -%}
             {%- endif -%}
 
             {%- if free_packages.size > 0 -%}
-            <span class="nav-group-label">Free</span>
             {%- for pkg in free_packages -%}
             <a class="nav-dropdown-link" href="{{ pkg.url | relative_url }}">
               <span class="nav-dropdown-name">{{ pkg.title | escape }}</span>

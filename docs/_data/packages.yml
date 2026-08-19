@@ -6,7 +6,9 @@
 # Fields:
 #   title     Display name. Must match the `title:` in the package's own .md page.
 #   url       Must match the `permalink:` in the package's own .md page.
-#   price     String. "0" means free; anything else renders as a $ badge.
+#   free      true renders a "Free" badge, false a "Paid" badge. Deliberately not a
+#             price: Unity localises prices per currency and runs sales, so any
+#             figure here goes stale. The store stays the source of truth.
 #   meta      Small grey line next to the badge, e.g. "Updated June 2026".
 #   blurb     One or two sentences for the home card. Inline HTML is allowed.
 #   card      420x280 landscape image, shown on wide screens.
@@ -22,7 +24,7 @@
 - title: Persistent Asset
   url: /persistent-asset/
   released: true
-  price: "49.99"
+  free: false
   meta: Released August 2026
   card: /assets/images/persistent-asset-card.jpg
   icon: /assets/images/PA.png
@@ -33,7 +35,7 @@
 - title: Infinite Value
   url: /infinite-value/
   released: true
-  price: "29.99"
+  free: false
   meta: Updated June 2026
   card: /assets/images/infinite-value-card.jpg
   icon: /assets/images/IV.png
@@ -44,7 +46,7 @@
 - title: Generic Arithmetic
   url: /generic-arithmetic/
   released: true
-  price: "0"
+  free: true
   meta: Updated June 2026
   card: /assets/images/generic-arithmetic-card.jpg
   icon: /assets/images/GA.png
@@ -55,7 +57,7 @@
 - title: Auto Singleton
   url: /auto-singleton/
   released: true
-  price: "0"
+  free: true
   meta: Updated June 2026
   card: /assets/images/auto-singleton-card.jpg
   icon: /assets/images/AS.png
@@ -68,7 +70,7 @@
 - title: Settings Kit
   url: /settings-kit/
   released: false
-  price: "0"
+  free: true
   meta: Coming soon
   card: /assets/images/settings-kit-card.jpg
   icon: /assets/images/SK.png

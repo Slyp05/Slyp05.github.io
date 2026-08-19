@@ -10,8 +10,8 @@ layout: home
 </div>
 
 {%- assign live = site.data.packages | where: "released", true -%}
-{%- assign paid_packages = live | where_exp: "p", "p.price != '0'" -%}
-{%- assign free_packages = live | where_exp: "p", "p.price == '0'" -%}
+{%- assign paid_packages = live | where_exp: "p", "p.free != true" -%}
+{%- assign free_packages = live | where_exp: "p", "p.free == true" -%}
 
 ## Paid Assets {#assets}
 
@@ -23,7 +23,7 @@ layout: home
     <div class="package-card-content">
       <h2><a href="{{ pkg.url }}">{{ pkg.title }}</a></h2>
       <div class="card-meta">
-        <span class="badge badge-paid">${{ pkg.price }}</span>
+        <span class="badge badge-paid">Paid</span>
         <span class="card-updated">{{ pkg.meta }}</span>
       </div>
       <p>{{ pkg.blurb }}</p>
