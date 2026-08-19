@@ -22,7 +22,7 @@
     <p class="lead">
       Project-wide settings live in <strong>Edit &gt; Project Settings &gt; Persistent Asset</strong>
       (or <strong>Tools &gt; Persistent Asset &gt; Settings</strong>), split into the sections below.
-      You should commit the settings file to your VCS.
+      Commit the settings file to your version control.
     </p>
 
     <div class="img-block">
@@ -49,6 +49,27 @@
           <tr><td><strong>Editor Default Slot</strong><br/><strong>Slot Name</strong></td><td>Editor convenience: the toggle seeds a starting <a href="Guides.html#slots">slot</a> (named in <strong>Slot Name</strong>) so a multi-slot object works when you press Play straight into a gameplay scene. Off by default, ignored in a build.</td></tr>
         </table>
       </div>
+    </section>
+
+
+    <!-- ══════════════════════════════════════ asset references ════ -->
+    <section id="assetreferences">
+      <h2>Asset References</h2>
+      <p>
+        Which project assets your save data is allowed to point at. See
+        <a href="Guides.html#assetrefs">saving asset references</a> for what this is for.
+      </p>
+      <div class="member-group">
+        <table class="mt">
+          <tr><td><strong>Register Referenced Assets</strong></td><td>Automatically register the assets your persistent objects point at, so assigning one to a field is all that is needed. On by default; an unregistered reference cannot be saved.</td></tr>
+          <tr><td><strong>Registered Folders</strong></td><td>Every asset in these folders is registered, without having to assign it anywhere first. Use it for a family your code picks from at runtime, such as an items folder. Sub-assets are not covered, register those by hand.</td></tr>
+        </table>
+      </div>
+      <p>
+        The section also shows how many assets are registered, with a button opening the full list
+        (also at Tools &gt; Persistent Asset &gt; Actions &gt; Asset References). Every entry is an
+        asset your build carries and loads at startup.
+      </p>
     </section>
 
 
@@ -87,7 +108,6 @@
     </section>
 
 
-    <!-- ══════════════════════════════════════ variables ════ -->
     <section id="variables">
       <h2>Variables Binding</h2>
       <div class="member-group">

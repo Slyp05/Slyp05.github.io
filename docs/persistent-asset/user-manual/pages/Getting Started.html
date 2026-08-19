@@ -22,9 +22,8 @@
     </div>
 
     <div class="note">
-      New to ScriptableObjects? Spend two minutes on
-      <a href="What%20is%20a%20ScriptableObject.html">What is a ScriptableObject?</a> first,
-      then come back here.
+      New to ScriptableObjects? See
+      <a href="What%20is%20a%20ScriptableObject.html">What is a ScriptableObject?</a> first.
     </div>
 
 
@@ -35,9 +34,9 @@
         <h3 id="make-a-data-class">Make a data class</h3>
       </div>
       <p>
-        Create a script and inherit <code>PersistentScriptableObject</code>. Add
-        whatever serialized fields you want to persist, the same fields you
-        would put on any <code>ScriptableObject</code>.
+        Create a script and inherit <code>PersistentScriptableObject</code>. Add the
+        serialized fields you want to persist, exactly as on any
+        <code>ScriptableObject</code>.
       </p>
       <pre><code><span class="kw">using</span> PersistentAsset;
 <span class="kw">using</span> UnityEngine;
@@ -49,10 +48,9 @@
     <span class="kw">public int</span> level = <span class="nu">1</span>;
 }</code></pre>
       <div class="note">
-        Your <strong>defaults</strong> are whatever the fields hold outside play mode: the initial
-        values in the script, plus anything you set on the asset in the inspector once you create it
-        (step 2). They are what a brand-new player starts with, and what the data falls back to when
-        there is no save. Tuning them on the asset is a designer-friendly, no-code job.
+        Your <strong>defaults</strong> are the values the fields hold outside play mode: what the
+        script initializes them to, plus anything set on the asset in the inspector. They are what a
+        new player starts with, and what the data falls back to when there is no save.
       </div>
     </section>
 
@@ -65,13 +63,13 @@
       </div>
       <p>
         In the Project window, right-click and choose
-        <strong>Create &gt; Player Data</strong> (the menu name you set in
+        <strong>Create &gt; Player Data</strong> (the menu name set in
         <code>[CreateAssetMenu]</code>). This makes one <code>PlayerData</code> asset:
-        the single, shared instance your game reads and writes at runtime.
+        the shared instance your game reads and writes at runtime.
       </p>
       <p>
-        Reference it like any ScriptableObject: a serialized field on a
-        MonoBehaviour, a <code>Resources.Load</code>, or your own dependency setup.
+        Reference it like any ScriptableObject: a serialized field on a MonoBehaviour, a
+        <code>Resources.Load</code>, or your own dependency setup.
       </p>
     </section>
 
@@ -84,7 +82,7 @@
       </div>
       <p>
         Select the asset. At the top of its inspector is a
-        <strong>Persistence Manager</strong> dropdown: this is <em>where and how</em>
+        <strong>Persistence Manager</strong> dropdown, which sets <em>where and how</em>
         the data is saved. Choose <strong>Prototype</strong>.
       </p>
 
@@ -99,10 +97,9 @@
       </div>
 
       <p>
-        <strong>Prototype</strong> is the zero-configuration option: it just works, on
-        desktop, mobile and WebGL, with nothing to set up. It is the recommended way to
-        start. When you later want a specific manager (a real save file, Player
-        Prefs, the cloud), you swap this dropdown without touching your code. See
+        <strong>Prototype</strong> needs no configuration and works on desktop, mobile and
+        WebGL. Moving to another manager later (a real save file, Player Prefs, the cloud) is
+        a change of dropdown, with no code to touch. See
         <a href="Local%20Saving.html">Local Saving</a> for the full list.
       </p>
     </section>
@@ -114,7 +111,7 @@
         <div class="step-num">4</div>
         <h3 id="press-play">Press Play</h3>
       </div>
-      <p>That is everything. To see it work:</p>
+      <p>To see it work:</p>
       <ol>
         <li>Enter Play mode.</li>
         <li>Change <code>gold</code> at runtime, from your code, or by editing the asset in the inspector while playing.</li>
@@ -122,10 +119,9 @@
         <li>Enter Play mode again, and <code>gold</code> is loaded back to the value you left it at.</li>
       </ol>
       <p>
-        No call to <code>Save</code> or <code>Load</code> anywhere. By default the
-        manager loads on launch and saves when the game stops, so the round trip is
-        automatic. You <em>can</em> also drive it yourself when you need to (see
-        <a href="Core%20Concepts.html">Core Concepts</a>).
+        There is no call to <code>Save</code> or <code>Load</code> anywhere: the manager
+        loads on launch and saves when the game stops. Both can also be called manually
+        (see <a href="Core%20Concepts.html">Core Concepts</a>).
       </p>
     </section>
 
@@ -134,10 +130,9 @@
     <section id="save-location">
       <h2>Wiping your test data</h2>
       <p>
-        Prototype is deliberately hands-off: it manages the save for you, so you never deal with files
-        or paths. The one thing worth knowing while iterating is how to clear it, to retest the
-        first-launch experience. Open <strong>Tools &gt; Persistent Asset &gt; Actions &gt; Delete Local
-        Data</strong> and pick the Prototype manager (or <strong>All</strong>).
+        To retest the first-launch experience, open <strong>Tools &gt; Persistent Asset &gt; Actions
+        &gt; Delete Local Data</strong> and pick the Prototype manager (or <strong>All</strong>).
+        Prototype handles its own file, so there is no path to find.
       </p>
     </section>
 
@@ -145,33 +140,33 @@
     <!-- ══════════════════════════════════════ what happened ════ -->
     <section id="what-happened">
       <h2>What just happened?</h2>
-      <p>Three pieces did the work, and you only had to set up the first two:</p>
+      <p>Three pieces did the work:</p>
       <ul>
-        <li><strong>Your data</strong>: the <code>PlayerData</code> object you wrote.</li>
-        <li><strong>A manager</strong>: Prototype, the one you picked in the dropdown. It saves and restores the object's fields.</li>
-        <li><strong>The operations</strong>: a load when the game starts and a save when it stops, both run for you.</li>
+        <li><strong>Your data</strong>: the <code>PlayerData</code> object.</li>
+        <li><strong>A manager</strong>: Prototype, picked in the dropdown. It saves and restores the object's fields.</li>
+        <li><strong>The operations</strong>: a load when the game starts, a save when it stops, both automatic.</li>
       </ul>
       <div class="note">
-        After you stop playing, the asset shows your <strong>authored defaults</strong> again: the
-        save is untouched and loads on the next launch
-        (<a href="Core%20Concepts.html#editor">Core Concepts</a> explains why).
+        After play mode, the asset shows your <strong>authored defaults</strong> again. The save is
+        untouched and loads on the next launch
+        (see <a href="Core%20Concepts.html#editor">Core Concepts</a>).
       </div>
       <div class="reassure">
-        That is the whole basic workflow. Slots, encryption, cloud sync, persisting values without
-        code, and plenty more are there when your game needs them.
+        That is the basic workflow. Save slots, encryption, cloud saves and no-code variables are
+        there when your game needs them.
       </div>
     </section>
 
 
     <!-- ══════════════════════════════════════ pager ════ -->
     <div class="pager">
-      <a class="prev" href="What%20is%20a%20ScriptableObject.html">
+      <a class="prev" href="Installation.html">
         <div class="dir">Back</div>
-        <div class="pg-title">What is a ScriptableObject?</div>
-      </a>
-      <a class="next" href="Installation.html">
-        <div class="dir">Next</div>
         <div class="pg-title">Installation &amp; Demo</div>
+      </a>
+      <a class="next" href="Core%20Concepts.html">
+        <div class="dir">Next</div>
+        <div class="pg-title">Core Concepts</div>
       </a>
     </div>
 

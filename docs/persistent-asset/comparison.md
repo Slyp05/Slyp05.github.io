@@ -93,11 +93,11 @@ See how [Persistent Asset](/persistent-asset/) holds up against the other save s
 | Compress saves to shrink file size | ✅ gzip (Fast or Optimal) | ✅ gzip | ❌ Not built in |
 | Skips saving when nothing changed | ✅ Optional dirty-check | ⚠️ Manual / cache | ⚠️ Manual |
 | **What you can save** | | | |
-| Deep object graphs & polymorphism out of the box | ⏳ `[SerializeReference]` now, full serializers coming | ✅ Reflection serializer | ✅ Json.NET-based |
+| Deep object graphs & polymorphism out of the box | ✅ Newtonsoft or Odin serializer | ✅ Reflection serializer | ✅ Json.NET-based |
 | Save any object from anywhere in code | ➖ By design: one clear asset | ✅ Save anything, anywhere | ✅ Save anything, anywhere |
 | Reach saved data anywhere, no string keys | ✅ Type-safe `Find<T>()` | ⚠️ Via string keys | ⚠️ Via string keys |
 | Save entire scenes & GameObjects | ➖ By design: we save data | ✅ Snapshots scene objects | ✅ Unity objects & components |
-| Save references between objects | ⏳ Asset refs planned | ✅ Unity & shared refs | ✅ Resolvers + shared refs |
+| Save references between objects | ✅ Asset refs built in; shared refs per serializer | ✅ Unity & shared refs | ✅ Resolvers + shared refs |
 | Save individual values / keys | ✅ Via Persistent Variables bag | ✅ Per-key partial saves | ✅ Per-key |
 | **Editor & debugging tools** | | | |
 | Live save status right in the Inspector | ✅ Load state & last result | ❌ No live panel | ❌ None |
@@ -117,8 +117,8 @@ See how [Persistent Asset](/persistent-asset/) holds up against the other save s
 | Teach it your own custom data types | ✅ Custom codecs | ✅ Custom ES3 types | ✅ Custom converters |
 | React to saves & loads with events / hooks | ✅ Global events | ⚠️ Limited | ✅ Auto Save events |
 | Add advanced behaviour with one small interface | ✅ Opt-in interfaces | ❌ No equivalent | ⚠️ Extensible APIs |
-| Free official serializer add-ons | ⏳ Newtonsoft / Odin (coming) | ⚠️ Community | ❌ Json.NET only |
-| Third-party integrations (Steam, PlayFab, Firebase…) | ⏳ On the roadmap | ⚠️ Some / community | ✅ Firebase, PlayFab |
+| Alternative serializers (Newtonsoft / Odin) | ✅ Both built in | ⚠️ Community | ❌ Json.NET only |
+| Third-party integrations (Steam, PlayFab, Firebase…) | ⏳ Planned | ⚠️ Some / community | ✅ Firebase, PlayFab |
 | Visual scripting (PlayMaker) | ❌ Under consideration | ✅ PlayMaker actions | ⚠️ PlayMaker add-on; Bolt legacy |
 | Spreadsheet / CSV export | ❌ Not our focus | ✅ Built in | ❌ Not offered |
 | **Compatibility & ownership** | | | |
@@ -131,5 +131,5 @@ See how [Persistent Asset](/persistent-asset/) holds up against the other save s
 | Years of proven track record | ❌ New release | ✅ Long-established | ✅ Established |
 | Actively developed (new features) | ✅ Active | ✅ Frequent updates | ❌ No release since Dec 2024 |
 | Big community, tutorials & integrations | ❌ New | ✅ Large ecosystem | ⚠️ Smaller |
-| Tested | ✅ 1,600+ automated tests (EditMode & PlayMode) | ✅ Field-proven over years | ⚠️ Platform-tested |
+| Tested | ✅ 1,700+ automated tests (EditMode & PlayMode) | ✅ Field-proven over years | ⚠️ Platform-tested |
 | Thorough documentation | ✅ Full docs | ✅ Full docs | ✅ Docs site |

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Persistent Asset - Serializers</title>
+  <link rel="stylesheet" href="../shared/styles.css" />
+</head>
+<body>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Persistent Asset</div><a href="../User%20Manual.html">Home</a></nav></noscript>
+
+  <main>
+    <div class="page-header">
+      <h1>Serializers</h1>
+      <div class="sub">Choosing how your data is written.</div>
+    </div>
+
+    <p class="lead">
+      The manager decides <em>where</em> your data is saved; the serializer decides <em>how</em> it is
+      written. It is a dropdown right under the manager, and it can be changed at any time.
+    </p>
+
+
+    <!-- ══════════════════════════════════════ choosing ════ -->
+    <section id="choosing">
+      <h2>Which one to use</h2>
+      <p>
+        Unity JSON is the default, and it covers typical data. The other two exist for what Unity's
+        own serialization cannot describe: a <code>Dictionary</code>, an interface or abstract field,
+        or a plain C# class hierarchy.
+      </p>
+      <div class="table-scroll">
+        <table class="cmp">
+          <tr><th>Serializer</th><th>Writes</th><th>Needs</th><th>Best for</th></tr>
+          <tr>
+            <td><a href="#unity">Unity JSON</a></td>
+            <td>Exactly what Unity serializes: public fields and <code>[SerializeField]</code> ones.</td>
+            <td>Nothing, it is built in.</td>
+            <td>Almost every game: what you see in the inspector is what gets saved.</td>
+          </tr>
+          <tr>
+            <td><a href="#newtonsoft">Newtonsoft JSON</a></td>
+            <td>That, plus dictionaries, properties, nullables and (optionally) polymorphic types.</td>
+            <td>The Newtonsoft Json package.</td>
+            <td>Data shaped like real C# rather than like Unity: dictionaries and object graphs, while staying readable JSON.</td>
+          </tr>
+          <tr>
+            <td><a href="#odin">Odin</a></td>
+            <td>That, plus objects referenced from several places kept as one object.</td>
+            <td>Odin Inspector, or the free Odin Serializer.</td>
+            <td>Projects already using Odin, and data that is a graph rather than a tree.</td>
+          </tr>
+        </table>
+      </div>
+      <p>
+        All three save a reference to a project asset the same way, through
+        <a href="Guides.html#assetrefs">asset references</a>.
+      </p>
+      <div class="note">
+        A serializer whose dependency is not installed does not appear in the dropdown at all.
+      </div>
+    </section>
+
+
+    <!-- ══════════════════════════════════════ unity ════ -->
+    <section id="unity">
+      <h2>Unity JSON</h2>
+      <p>
+        The default. It serializes your fields exactly the way Unity already does, with the same rules
+        as the inspector and prefabs, and needs no setup.
+      </p>
+      <ul>
+        <li><strong>Pretty Print</strong>: readable, indented JSON, so a save can be opened and read while building the game.</li>
+        <li><strong>One Line</strong>: the same JSON without the whitespace.</li>
+        <li><strong>Obfuscated</strong>: one line, base64 encoded, so a player poking at the file sees nothing readable. This is obfuscation, not encryption: use the manager's <a href="Guides.html#security">security options</a> for that.</li>
+      </ul>
+      <p>
+        Its limits are Unity's limits: no dictionaries, no properties, no <code>null</code> for a
+        serializable class, and an interface or abstract field only through
+        <code>[SerializeReference]</code>.
+      </p>
+    </section>
+
+
+    <!-- ══════════════════════════════════════ newtonsoft ════ -->
+    <section id="newtonsoft">
+      <h2>Newtonsoft JSON</h2>
+      <p>
+        Appears once the <strong>Newtonsoft Json</strong> package is in the project. Install it from
+        the Package Manager (Add package by name, <code>com.unity.nuget.newtonsoft-json</code>); the
+        serializer shows up in the dropdown as soon as it finishes importing, with nothing else to
+        configure.
+      </p>
+      <p>
+        It writes <strong>everything Unity would have written, plus everything Newtonsoft would have
+        written</strong>. Switching an object from Unity JSON to Newtonsoft therefore never drops a
+        field that used to be saved, and adds the members Unity cannot express.
+      </p>
+      <ul>
+        <li><strong>Dictionaries, nullables, plain C# objects</strong> and anything else Newtonsoft handles, with no attributes needed.</li>
+        <li><strong>Properties</strong> are saved too, under their own name (a <code>[field: SerializeField]</code> auto property is written as <code>Gold</code> here, where Unity writes <code>&lt;Gold&gt;k__BackingField</code>).</li>
+        <li><strong>Opt in or out</strong> per member with Newtonsoft's own <code>[JsonProperty]</code> and <code>[JsonIgnore]</code>, on top of <code>[SerializeField]</code> and <code>[NonSerialized]</code>.</li>
+        <li><strong>Shared references</strong>, when turned on, keeps an object referenced from several places as one object instead of writing a copy at each place. It also lets data refer back to itself without losing the reference.</li>
+        <li><strong>Polymorphic types</strong>, when turned on, writes the concrete type of values held in interface, abstract or base class fields, so they load back as the right subclass.</li>
+      </ul>
+      <div class="note">
+        Polymorphic types come with two constraints: the type name becomes part of the save format, so
+        renaming or moving a class breaks existing saves, and a save file a player edited can then
+        name any type in the game. The <a href="Guides.html#security">security options</a> cover the
+        second one.
+      </div>
+      <p>
+        One thing it does not carry over: Unity calls <code>ISerializationCallbackReceiver</code> on
+        your nested types, and Newtonsoft does not. If a nested type relies on those callbacks to
+        flatten itself, move that work to the persistent object's own
+        <a href="Guides.html#interfaces"><code>ISerializationCallbacks</code></a>.
+      </p>
+    </section>
+
+
+    <!-- ══════════════════════════════════════ odin ════ -->
+    <section id="odin">
+      <h2>Odin</h2>
+      <p>
+        Appears once Odin is in the project, in either of its two shapes: the serializer bundled with
+        <strong>Odin Inspector</strong>, or the free standalone <strong>Odin Serializer</strong>.
+        Either one works, with nothing to set up.
+      </p>
+      <p>
+        It covers the same ground as Newtonsoft, and adds Odin's own strengths: shared references and
+        polymorphic types are on by default, and it handles types that neither Unity nor a JSON
+        serializer would write.
+      </p>
+      <ul>
+        <li><strong>Json</strong>: readable output, and the only format that can feed <a href="Guides.html#versioning">save upgrades</a> their old values.</li>
+        <li><strong>Binary</strong>: smaller and faster, stored base64 encoded, unreadable to players. Save upgrades cannot read old values from it, and the editor tells you so if you configure an object that needs them.</li>
+      </ul>
+      <div class="note">
+        Odin needs its AOT support generated before an IL2CPP build (from its own tools menu),
+        otherwise types that only ever appear in save data can be stripped from the player and the
+        load fails there while working in the editor.
+      </div>
+      <p>
+        If the standalone Odin Serializer is in your project as source files with your own assembly
+        definition, the package will say so in the console: it can only reach it as a plugin (its own
+        <code>.dll</code> under <code>Assets/Plugins</code>), or if you add that assembly to the
+        references of <code>PersistentAsset.BuiltIns.Odin.asmdef</code>.
+      </p>
+    </section>
+
+
+    <!-- ══════════════════════════════════════ switching ════ -->
+    <section id="switching">
+      <h2>Changing serializer later</h2>
+      <p>
+        Each serializer writes a different format, so a save written by one cannot be read by another.
+        The package treats that like any other save-breaking change: when you switch the serializer of
+        an object that already shipped, it offers to keep the old setup as an
+        <a href="Guides.html#migration">import source</a>, so existing players' saves are read once in
+        the old format and written back in the new one.
+      </p>
+      <p>
+        While the game is unreleased, deleting the test saves (Tools &gt; Persistent Asset &gt; Actions
+        &gt; Delete Local Data) is all it takes.
+      </p>
+    </section>
+
+
+    <!-- ══════════════════════════════════════ custom ════ -->
+    <section id="custom">
+      <h2>Your own</h2>
+      <p>
+        Inherit <code>Serializer</code> and your class appears in the dropdown next to the built-in
+        ones. See
+        <a href="Extending.html#serializer">Extending</a>.
+      </p>
+    </section>
+
+
+    <div class="pager">
+      <a class="prev" href="Cloud%20and%20Remote.html">
+        <div class="dir">Back</div>
+        <div class="pg-title">Cloud &amp; Remote</div>
+      </a>
+      <a class="next" href="Quick%20Help.html">
+        <div class="dir">Next</div>
+        <div class="pg-title">Quick Help</div>
+      </a>
+    </div>
+
+  </main>
+</div>
+</body>
+</html>

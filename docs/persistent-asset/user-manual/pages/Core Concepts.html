@@ -93,8 +93,8 @@
       </div>
 
       <div class="reassure">
-        With the defaults, all of this runs on its own: you read and write your fields, and the
-        loads and saves happen for you. Manual control is there when your game calls for it.
+        With the defaults, this runs on its own: you read and write your fields, and the loads and
+        saves happen for you. Manual control is available at any point.
       </div>
     </section>
 
@@ -103,9 +103,9 @@
     <section id="object">
       <h2>The persistent object</h2>
       <p>
-        Your data is a class inheriting <code>PersistentScriptableObject</code>, and its serialized
-        fields are your data. You read and write them through the object at runtime, exactly like a
-        normal ScriptableObject; those same fields are what gets saved and loaded.
+        Your data is a class inheriting <code>PersistentScriptableObject</code>. You read and write
+        its serialized fields at runtime exactly like a normal ScriptableObject, and those same
+        fields are what gets saved and loaded.
       </p>
       <pre><code>[CreateAssetMenu(menuName = <span class="st">"Player Data"</span>)]
 <span class="kw">public class</span> <span class="ty">PlayerData</span> : <span class="ty">PersistentScriptableObject</span>
@@ -115,20 +115,18 @@
 }</code></pre>
       <p>
         Whatever the fields hold <strong>outside play mode</strong> is the object's <strong>default
-        values</strong>: the state a brand-new player starts with, and what the data falls back to
-        when there is no save.
+        values</strong>: what a new player starts with, and what the data falls back to when there is
+        no save.
       </p>
       <p>
-        A persistent object is a single shared asset, so everything that references it reads and
-        writes the same live data. When you want more (multiple save slots, save versioning,
-        reacting to load and save) you opt in through one of the small
-        <a href="Guides.html">optional interfaces</a>.
+        A persistent object is a single shared asset: everything referencing it reads and writes the
+        same live data. Multiple save slots, save versioning and reacting to load and save are opt-in,
+        through the <a href="Guides.html">optional interfaces</a>.
       </p>
       <div class="note">
         A persistent object follows Unity's normal ScriptableObject lifetime: Unity loads and unloads
-        it based on what references it, just like any other asset. Persistent Asset does not keep it
-        alive or change that flow; it simply hooks into those load and unload moments to restore and
-        save the data.
+        it based on what references it. Persistent Asset does not keep it alive, it hooks into those
+        load and unload moments to restore and save the data.
       </div>
     </section>
 
@@ -139,9 +137,9 @@
       <p>
         At the top of every persistent object's inspector is a <strong>Persistence Manager</strong>
         dropdown. The manager decides <em>where</em> and <em>how</em> the data is stored: a local file,
-        Player Prefs, memory, a server. Pick one, or pick <strong>None</strong> to opt the object out
-        of persistence entirely. The manager you pick is created automatically as a sub-asset of the
-        persistent object, you never make or wire it yourself.
+        Player Prefs, memory, a server. Pick one, or pick <strong>None</strong> to turn persistence off
+        for that object. The manager is created automatically as a sub-asset of the persistent object;
+        there is nothing to wire.
       </p>
 
       <div class="img-block">
@@ -155,15 +153,15 @@
       </div>
 
       <p>
-        Because the manager is data on the asset and not in your scripts, you can switch managers at
-        any time without changing a line of code. Its inspector has three sections:
+        The manager is data on the asset, not in your scripts, so it can be switched at any time with
+        no code change. Its inspector has three sections:
       </p>
       <ul>
         <li><strong>Parameters</strong>: the manager's settings, the serializer, whether it loads and saves automatically, how often, timeouts, and manager-specific options.</li>
         <li><strong>Actions</strong>: buttons to Load, Save or Clear by hand while you play.</li>
         <li><strong>Status</strong>: the object's live state (ready or not, the last operation's result), and a running log of every load, save and clear as it happens.</li>
       </ul>
-      <p>See <a href="Local%20Saving.html">Local Saving</a> for the managers you can choose.</p>
+      <p>See <a href="Local%20Saving.html">Local Saving</a> for the available managers.</p>
 
       <div class="img-block">
         <img src="../img/manager_logs.png" alt="Manager logs in the inspector"
@@ -181,19 +179,24 @@
     <section id="serializer">
       <h2>The serializer</h2>
       <p>
-        Storage works in text, so the manager runs the object through a <strong>serializer</strong>
-        to turn it into a string on save, and back into the object on load. The serializer is a field
-        on the manager, so you choose it in the same inspector.
+        Storage works in text. The manager runs the object through a <strong>serializer</strong> to
+        turn it into a string on save, and back into the object on load. The serializer is a field on
+        the manager, chosen in the same inspector.
       </p>
       <p>
-        By default that is Unity JSON, which serializes your fields exactly the way Unity already
-        does (the same rules as the inspector and prefabs), so it just works for typical data with no
-        setup. The save it produces is plain, readable JSON when no compression or encryption is
-        applied.
+        The default is Unity JSON, which serializes your fields the way Unity already does, with the
+        same rules as the inspector and prefabs. It produces plain, readable JSON when no compression
+        or encryption is applied.
       </p>
       <p>
-        You rarely need to think about it, but it is a real extension point: swap in your own format
-        by writing a <code>Serializer</code> (see <a href="Extending.html#serializer">Extending</a>).
+        Two more ship with the package for data Unity's own serialization cannot describe, such as a
+        dictionary or an interface field: <strong>Newtonsoft JSON</strong> and <strong>Odin</strong>,
+        each appearing in the dropdown once its library is in the project. See
+        <a href="Serializers.html">Serializers</a>.
+      </p>
+      <p>
+        A format of your own is added by writing a <code>Serializer</code> (see
+        <a href="Extending.html#serializer">Extending</a>).
       </p>
     </section>
 
@@ -202,54 +205,50 @@
     <section id="operations">
       <h2>Operations: load, save, clear</h2>
       <p>
-        Three operations move data between the object and its storage. Most of the time you call
-        none of them, because the manager runs them for you. A manager is <strong>in scope</strong>
-        while its object is loaded and in use by the running game, and out of scope while nothing
-        uses the object. By default:
+        Three operations move data between the object and its storage, and the manager runs them for
+        you. A manager is <strong>in scope</strong> while its object is loaded and in use by the
+        running game, and out of scope while nothing uses the object. By default:
       </p>
       <ul>
         <li>It <strong>loads</strong> when it enters scope, at launch or whenever Unity loads the object, and retries automatically if that load fails.</li>
         <li>It <strong>saves</strong> at safe points: when the object is unloaded, when the application loses focus or is paused, and on a regular timer.</li>
       </ul>
       <p>
-        That is why the basic setup needs no save code. Every part of this can be tuned or turned
-        off per manager, in its inspector (<code>AutoLoad</code>, <code>AutoSave</code> and their
-        delay settings).
+        Each of these can be tuned or turned off per manager, in its inspector
+        (<code>AutoLoad</code>, <code>AutoSave</code> and their delay settings).
       </p>
       <h3 id="load">Load</h3>
       <p>
-        Reads the stored data back into the object. It happens automatically when the object enters
-        scope; call it yourself for a "load game" or "continue" flow.
+        Reads the stored data back into the object. Automatic when the object enters scope, and
+        callable for a "load game" or "continue" flow.
       </p>
 
       <h3 id="save">Save</h3>
       <p>
-        Writes the object's current data to storage. It happens automatically at the safe points
-        above; call it yourself at your own checkpoints.
+        Writes the object's current data to storage. Automatic at the safe points above, and
+        callable at your own checkpoints.
       </p>
       <div class="note">
-        A manager will not save until it has first loaded, or confirmed there is nothing to load.
-        This is what stops a freshly launched game from overwriting an existing save with default
-        values before it has read that save. Until the first load settles, both automatic and manual
-        saves are held; if a load fails (the storage was temporarily unavailable), saving stays held
-        so a retry can still recover the real data. Whether saving is currently held or allowed is
-        reflected by <code>IsReady</code> (see <a href="#ready">when the data is ready</a>).
+        A manager does not save until it has loaded, or confirmed there is nothing to load. This
+        stops a freshly launched game from overwriting an existing save with default values.
+        Automatic and manual saves are both held until the first load settles, and stay held if that
+        load failed, so a retry can still recover the real data. <code>IsReady</code> reflects
+        whether saving is currently allowed (see <a href="#ready">when the data is ready</a>).
       </div>
 
       <h3 id="clear">Clear</h3>
       <p>
-        The destructive one: it deletes the saved data, resets the object to its defaults, and pauses
-        saving until the next load, so the just-cleared state is never written back. To reset the
-        object in memory without deleting the save, use <code>ResetToDefaults()</code> instead
+        Deletes the saved data, resets the object to its defaults, and pauses saving until the next
+        load, so the cleared state is never written back. To reset the object in memory without
+        deleting the save, use <code>ResetToDefaults()</code>
         (see <a href="Guides.html#reset">Resetting &amp; Restoring</a>).
       </p>
       <h3 id="driving-it-yourself">Driving it yourself</h3>
       <p>
-        When you call an operation yourself, each of Load, Save and Clear comes in five shapes so
-        it fits any calling style (shown here with Save):
+        Load, Save and Clear each come in five shapes, one per calling style (shown here with Save):
       </p>
       <ul>
-        <li><strong>Fire and forget</strong>: <code>Save()</code>. The default "don't think about it" call, kick it off and move on. It also drops straight onto a UI event, with no wrapper script.</li>
+        <li><strong>Fire and forget</strong>: <code>Save()</code>. Starts the operation and returns immediately. Wires directly onto a UI event, with no wrapper script.</li>
         <li><strong>Callback</strong>: <code>Save(result =&gt; ...)</code>. Runs your callback once the operation finishes, handing it the result.</li>
         <li><strong>Synchronous</strong>: <code>SaveSync()</code>. Forces the operation to run inline and returns its final result. Not every manager can work inline (a server cannot); one that cannot reports it in the result rather than blocking the game.</li>
         <li><strong>Async</strong>: <code>await SaveAsync()</code>. Await the result inside an <code>async</code> method.</li>
@@ -272,20 +271,19 @@ pm.Save(result =&gt; ShowSavedTick());         <span class="cm">// callback when
       <h2>Results</h2>
       <p>
         Every operation reports back a <code>Result</code> (<code>LoadResult</code>,
-        <code>SaveResult</code> or <code>ClearResult</code>). The simplest way to read it is its
-        flags:
+        <code>SaveResult</code> or <code>ClearResult</code>), read through its flags:
       </p>
       <ul>
         <li><code>IsSuccess</code>: it worked.</li>
-        <li><code>IsFailure</code>: something genuinely went wrong (the storage was temporarily unavailable, or code threw). A retry might help.</li>
-        <li><code>IsInvalid</code> (load only): there was no usable save to read, missing or corrupt. This is the normal first run, not an error: the object keeps its current values and saving is allowed.</li>
+        <li><code>IsFailure</code>: something went wrong (the storage was temporarily unavailable, or code threw). A retry might help.</li>
+        <li><code>IsInvalid</code> (load only): there was no usable save to read, missing or corrupt. This is normal on a first run: the object keeps its current values and saving is allowed.</li>
         <li><code>IsIgnored</code>: the operation decided not to run and changed nothing. <code>Message</code> says why (nothing loaded yet, no slot selected, and so on).</li>
         <li><code>IsCancelled</code>: it started but was abandoned (timed out, superseded, or the manager left scope).</li>
         <li><code>IsBusy</code>: a special <code>IsIgnored</code> case, where a synchronous call was declined because asynchronous work was still running. Retry once it is done, or use the async path.</li>
       </ul>
       <p>
-        A result tells you how that one <em>operation</em> ended. To know whether the object is
-        currently holding its real data, read <code>IsReady</code>, covered next.
+        A result covers one <em>operation</em>. Whether the object currently holds its real data is
+        <code>IsReady</code>, below.
       </p>
     </section>
 
@@ -294,50 +292,45 @@ pm.Save(result =&gt; ShowSavedTick());         <span class="cm">// callback when
     <section id="ready">
       <h2>When the data is ready</h2>
       <p>
-        Once a manager has loaded, its object holds real data and is safe to read and modify. That
-        moment is exposed as <code>IsReady</code>, but how much you need to care depends on your
-        persistence manager:
+        Once a manager has loaded, its object holds real data and is safe to read and modify.
+        <code>IsReady</code> exposes that state. How much it matters depends on the manager:
       </p>
       <ul>
         <li>
-          <strong>Never think about it</strong>: Player Prefs and Session (Memory) load instantly
-          and cannot fail, so the data is ready before your game code ever sees the object (for
-          Player Prefs, as long as its Auto Load stays on, the default). Skip the checks entirely.
+          <strong>No check needed</strong>: Player Prefs and Session (Memory) load instantly and
+          cannot fail, so the data is ready before your game code sees the object (for Player Prefs,
+          as long as its Auto Load stays on, the default).
         </li>
         <li>
           <strong>Ready in practice</strong>: Prototype and Local File also load synchronously as
-          the object comes into scope, so the data is normally just as ready, only without the hard
-          guarantee: a file read can fail in rare cases (a locked file, an unset runtime secret; see
+          the object comes into scope, without the hard guarantee: a file read can fail in rare cases
+          (a locked file, an unset runtime secret; see
           <a href="Local%20Saving.html#file">Local File</a>).
         </li>
         <li>
-          <strong>Always gate</strong>: a remote manager (a server, Cloud Save) loads
-          asynchronously and can wait on authentication or connectivity, so readiness is a real state
-          your game must handle. See <a href="Cloud%20and%20Remote.html">Cloud &amp; Remote</a>.
+          <strong>Always gate</strong>: a remote manager (a server, Cloud Save) loads asynchronously
+          and can wait on authentication or connectivity, so readiness is a real state to handle. See
+          <a href="Cloud%20and%20Remote.html">Cloud &amp; Remote</a>.
         </li>
       </ul>
       <p>
-        Touching the object before it is ready is never dangerous: it simply still holds its default
-        values, and saving stays blocked until the real data lands, so an early read can never
-        corrupt or overwrite a save. The only stake is your game acting on defaults as if they were
-        the player's data.
+        Reading the object before it is ready is safe: it holds its default values, and saving stays
+        blocked until the real data lands, so an early read cannot corrupt or overwrite a save. The
+        risk is only that the game treats those defaults as the player's data.
       </p>
       <p>
-        Gate in one place, at the front door, not with checks sprinkled through the code: in your
-        boot flow or loading screen, await <code>WhenReady</code> (with <code>await</code> or
-        <code>yield return</code>), then proceed only if <code>IsReady</code> is <code>true</code>.
-        The rest of the game needs no checks. Changing the active
-        <a href="Guides.html#slots">slot</a> starts a fresh load, so gate a slot change the same
-        way.
+        One gate in the boot flow or loading screen covers this: await <code>WhenReady</code> (with
+        <code>await</code> or <code>yield return</code>), then proceed if <code>IsReady</code> is
+        <code>true</code>. The rest of the game needs no checks. Changing the active
+        <a href="Guides.html#slots">slot</a> starts a fresh load, and gates the same way.
       </p>
       <pre><code><span class="kw">await</span> playerData.PersistenceManager.WhenReady;
 <span class="kw">if</span> (playerData.PersistenceManager.IsReady)
     StartGame(playerData);</code></pre>
       <p>
-        <code>IsReady</code> itself is the underlying state, to check at any moment, and it doubles
-        as the save permission: saves are refused while it is <code>false</code>. It is
-        <code>true</code> once the object holds its data, and <code>false</code> before the first
-        load completes, while a
+        <code>IsReady</code> can be checked at any moment, and it doubles as the save permission:
+        saves are refused while it is <code>false</code>. It is <code>true</code> once the object
+        holds its data, and <code>false</code> before the first load completes, while a
         <a href="Guides.html#slots">slot</a> change reloads, after a clear until the next load, and
         after a load that <em>failed</em>, so a save never overwrites data a retry might still
         recover.
@@ -406,16 +399,14 @@ pm.Save(result =&gt; ShowSavedTick());         <span class="cm">// callback when
         play session.
       </p>
       <p>
-        This is deliberate. A ScriptableObject normally keeps runtime edits written into the asset in
-        the editor (a well-known Unity quirk that does not happen in a build). Persistent Asset undoes
-        that for you, so the defaults you set on the asset stay exactly as authored and version
-        control does not fill with play-session noise. The save itself still exists on disk and still
-        loads on the next launch, in the editor and in a build alike.
+        In the editor, Unity normally writes runtime edits back into a ScriptableObject asset (this
+        does not happen in a build). Persistent Asset undoes that, so your authored defaults stay as
+        authored and version control stays free of play-session noise. The save itself is untouched
+        and loads on the next launch, in the editor and in a build alike.
       </p>
       <div class="note">
-        So in the editor: press Play, change values, stop, and the <em>asset</em> shows your authored
-        defaults again, while the <em>save</em> persists. Press Play again and the save loads back.
-        That is the system working as intended, not a lost save.
+        Press Play, change values, stop: the <em>asset</em> shows your authored defaults again, while
+        the <em>save</em> persists. Press Play again and the save loads back.
       </div>
     </section>
 
@@ -425,9 +416,9 @@ pm.Save(result =&gt; ShowSavedTick());         <span class="cm">// callback when
       <h2>Acting on everything at once</h2>
       <p>
         Most code talks to one object's manager through
-        <code>yourObject.PersistenceManager</code>. When you want to act on every active manager
-        together (a global save on quit, a "new game" wipe), the static <code>Persistence</code> class
-        mirrors the same operations across all of them:
+        <code>yourObject.PersistenceManager</code>. To act on every active manager at once (a global
+        save on quit, a "new game" wipe), the static <code>Persistence</code> class mirrors the same
+        operations across all of them:
       </p>
       <pre><code><span class="cm">// Save every active manager at once</span>
 Persistence.SaveAll();
@@ -439,9 +430,8 @@ Persistence.SaveAll();
         <code>ManagerAdded</code>) for project-wide reactions like a "saving..." indicator.
       </p>
       <p>
-        And for the objects you marked <a href="Guides.html#globals">always-global</a> (a settings
-        singleton, a slot registry), the static <code>GlobalPersistedData</code> class reaches them
-        from anywhere by type, with no serialized reference, through
+        Objects marked <a href="Guides.html#globals">always-global</a> (a settings singleton, a slot
+        registry) are reachable by type from anywhere, with no serialized reference, through
         <code>GlobalPersistedData.Find&lt;GameSettings&gt;()</code>.
       </p>
     </section>
@@ -451,10 +441,8 @@ Persistence.SaveAll();
     <section id="choosing">
       <h2>The built-in managers</h2>
       <p>
-        Those are the parts. The last choice is which manager does the saving, picked from the
-        dropdown at the top of the object. Start on <strong>Prototype</strong> and move when a
-        concrete need appears; because the choice is data on the asset, switching later is a dropdown
-        change, not a refactor. The local managers are covered in
+        The manager is picked from the dropdown at the top of the object, and switching later is a
+        dropdown change rather than a refactor. The local managers are covered in
         <a href="Local%20Saving.html">Local Saving</a>, the two remote ones in
         <a href="Cloud%20and%20Remote.html">Cloud &amp; Remote</a>.
       </p>
@@ -469,7 +457,7 @@ Persistence.SaveAll();
           <tr>
             <td><a href="Local%20Saving.html#file">Local File</a></td>
             <td>A file you configure: name, compression, encryption, backups.</td>
-            <td>The usual choice for a shipped game: every option is there when a need appears.</td>
+            <td>A shipped game, with every file option available.</td>
           </tr>
           <tr>
             <td><a href="Local%20Saving.html#playerprefs">Player Prefs</a></td>
@@ -479,7 +467,7 @@ Persistence.SaveAll();
           <tr>
             <td><a href="Local%20Saving.html#session">Session (Memory)</a></td>
             <td>Memory only; everything is gone when the game closes.</td>
-            <td>State you want within a play session but never across them.</td>
+            <td>State that lives within a play session but never across them.</td>
           </tr>
           <tr>
             <td><a href="Cloud%20and%20Remote.html#http">Server (HTTP)</a></td>
@@ -507,9 +495,9 @@ Persistence.SaveAll();
 
 
     <div class="pager">
-      <a class="prev" href="Installation.html">
+      <a class="prev" href="Getting%20Started.html">
         <div class="dir">Back</div>
-        <div class="pg-title">Installation &amp; Demo</div>
+        <div class="pg-title">Getting Started</div>
       </a>
       <a class="next" href="Local%20Saving.html">
         <div class="dir">Next</div>

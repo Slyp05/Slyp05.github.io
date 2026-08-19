@@ -15,8 +15,10 @@
     <a href="../Public%20API.html">Overview</a>
     <a class="nav-band" href="API%20-%20Core.html">Core</a>
     <div class="nav-band active">Built-Ins</div>
-    <div class="nav-group">Serializer</div>
+    <div class="nav-group">Serializers</div>
     <a href="#UnityJsonSerializer"><span class="badge badge-class">class</span>UnityJsonSerializer</a>
+    <a href="#NewtonsoftJsonSerializer"><span class="badge badge-class">class</span>NewtonsoftJsonSerializer</a>
+    <a href="#OdinDataSerializer"><span class="badge badge-class">class</span>OdinDataSerializer</a>
     <div class="nav-group">Built-In Managers</div>
     <a href="#PrototypePersistenceManager"><span class="badge badge-pm">PM</span>Prototype</a>
     <a href="#FilePersistenceManager"><span class="badge badge-pm">PM</span>Local File</a>
@@ -50,6 +52,8 @@
     <a href="#TaskUtility"><span class="badge badge-static">static</span>TaskUtility</a>
     <a href="#SlotFormatUtility"><span class="badge badge-static">static</span>SlotFormatUtility</a>
     <a href="#WebGLFileSync"><span class="badge badge-static">static</span>WebGLFileSync</a>
+    <a href="#SaveNodeJson"><span class="badge badge-static">static</span>SaveNodeJson</a>
+    <a href="#FieldSnapshot"><span class="badge badge-static">static</span>FieldSnapshot</a>
     <a href="#UtilityEnums"><span class="badge badge-enum">enum</span>ThreadType / SaveLocation</a>
 
     <a class="nav-band" href="API%20-%20No-Code.html">No-Code</a>
@@ -59,7 +63,7 @@
   <main>
     <div class="page-header">
       <h1>Public API</h1>
-      <div class="sub">Persistent Asset v1.0.0 &nbsp;&middot;&nbsp; namespaces <code>PersistentAsset(.BuiltIns/.NoCode)</code> and the editor mirrors <code>PersistentAsset.Editor(.BuiltIns/.NoCode)</code></div>
+      <div class="sub">Persistent Asset v1.1.0 &nbsp;&middot;&nbsp; namespaces <code>PersistentAsset(.BuiltIns/.NoCode)</code> and the editor mirrors <code>PersistentAsset.Editor(.BuiltIns/.NoCode)</code></div>
     </div>
 
     <p class="lead">Reference for every public type and member in the Built-Ins area. <span class="ex">Red text</span> flags the exceptions a member can throw. See the <a href="../Public%20API.html">API overview</a> for the other areas.</p>
@@ -73,6 +77,24 @@
       <p class="type-desc">"Unity JSON", the default serializer: serializes fields by Unity's own rules into readable JSON, and supports save versioning. Its inspector <code>Format</code> option is <code>PrettyPrint</code>, <code>OneLine</code>, or <code>Obfuscated</code> (compact base64 so players cannot casually read or edit it, obfuscation, not encryption).</p>
       <div class="member-group"><table class="mt">
         <tr><td><span class="t">enum</span> <span class="mn">Format</span></td><td>PrettyPrint, OneLine, Obfuscated.</td></tr>
+      </table></div>
+    </div>
+
+    <div class="type-section" id="NewtonsoftJsonSerializer">
+      <div class="type-header"><h2>NewtonsoftJsonSerializer</h2><span class="badge badge-class">class</span></div>
+      <p class="type-desc">"Newtonsoft JSON". Serializes the union of what Unity serializes and what Newtonsoft serializes (dictionaries, properties, nullables, plain C# objects), and supports save versioning. Present only when the <code>com.unity.nuget.newtonsoft-json</code> package is installed. See <a href="Serializers.html#newtonsoft">Serializers</a>.</p>
+      <div class="member-group"><table class="mt">
+        <tr><td><span class="t">enum</span> <span class="mn">Format</span></td><td>PrettyPrint, OneLine, Obfuscated.</td></tr>
+        <tr><td>Inspector: <span class="mn">Shared References</span></td><td>Keeps an object referenced from several places as one object (and lets data refer back to itself), adding <code>$id</code> / <code>$ref</code> members.</td></tr>
+        <tr><td>Inspector: <span class="mn">Polymorphic Types</span></td><td>Writes the concrete type of values in interface, abstract or base class fields. The type name becomes part of the save format, and a modified save can then name any type in your game.</td></tr>
+      </table></div>
+    </div>
+
+    <div class="type-section" id="OdinDataSerializer">
+      <div class="type-header"><h2>OdinDataSerializer</h2><span class="badge badge-class">class</span></div>
+      <p class="type-desc">"Odin". Serializes through Odin Serializer, with shared references and polymorphic types handled by Odin itself. Present only when Odin is in the project, either the serializer bundled with Odin Inspector or the free standalone Odin Serializer, which the package detects on its own. See <a href="Serializers.html#odin">Serializers</a>.</p>
+      <div class="member-group"><table class="mt">
+        <tr><td><span class="t">enum</span> <span class="mn">Format</span></td><td>Json (readable, and the only one save upgrades can read old values from), Binary (smaller and faster, base64 encoded).</td></tr>
       </table></div>
     </div>
 
@@ -313,6 +335,23 @@
       </table></div>
     </div>
 
+    <div class="type-section" id="SaveNodeJson">
+      <div class="type-header"><h2>SaveNodeJson</h2><span class="badge badge-static">static</span><span class="warn">extending</span></div>
+      <p class="type-desc">Reads JSON text into a <code>SaveNode</code> tree, to implement <code>Serializer.ParseToNode</code> in a JSON serializer (what lets save upgrades and field resets recover old values).</p>
+      <div class="member-group"><table class="mt">
+        <tr><td><span class="t">SaveNode</span> <span class="mn">Parse</span>(<span class="t">string</span> json)</td><td>Parse JSON text into a tree, or <code>null</code> when it cannot be read (malformed, truncated, or nested past a safe depth). <span class="ex">Never throws.</span></td></tr>
+      </table></div>
+    </div>
+
+    <div class="type-section" id="FieldSnapshot">
+      <div class="type-header"><h2>FieldSnapshot</h2><span class="badge badge-static">static</span><span class="warn">extending</span></div>
+      <p class="type-desc">Copies every data field of an object and puts it back. Capture before deserializing into a target and restore if that fails, so a failed load leaves the target exactly as it was, as <code>Serializer.DeserializeFromString</code> requires. The copy is shallow.</p>
+      <div class="member-group"><table class="mt">
+        <tr><td><span class="t">object[]</span> <span class="mn">Capture</span>(<span class="t">Object</span> target)</td><td>Capture the current value of every data field of the target. <span class="ex">Never throws.</span></td></tr>
+        <tr><td><span class="kw">void</span> <span class="mn">Restore</span>(<span class="t">Object</span> target, <span class="t">object[]</span> values)</td><td>Put back the values a <code>Capture</code> of the same object returned. <span class="ex">Never throws.</span></td></tr>
+      </table></div>
+    </div>
+
     <div class="type-section" id="UtilityEnums">
       <div class="type-header"><h2>ThreadType / SaveLocation</h2><span class="badge badge-enum">enum</span></div>
       <div class="member-group">
@@ -330,7 +369,7 @@
     </div>
 
 
-    <div class="doc-footer">Persistent Asset v1.0.0 &nbsp;&middot;&nbsp; For full signatures and remarks, see the XML doc comments in the source.</div>
+    <div class="doc-footer">Persistent Asset v1.1.0 &nbsp;&middot;&nbsp; For full signatures and remarks, see the XML doc comments in the source.</div>
 
   </main>
 </div>

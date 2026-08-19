@@ -29,19 +29,18 @@
     <section id="async">
       <h2>Remote means asynchronous</h2>
       <p>
-        A remote load has to reach a server, so it cannot be synchronous: remote managers load
-        asynchronously. Use <code>LoadAsync()</code> / <code>await WhenReady</code> rather than
-        <code>LoadSync()</code> (which reports it cannot run synchronously). With the offline cache
-        on, a <em>save</em> can complete synchronously (it lands in the cache and pushes in the
-        background), but a load still goes to the server.
+        A remote load reaches a server, so it cannot run synchronously. Use
+        <code>LoadAsync()</code> / <code>await WhenReady</code> rather than <code>LoadSync()</code>
+        (which reports that it cannot run synchronously). With the offline cache on, a <em>save</em>
+        can complete synchronously (it lands in the cache and pushes in the background), but a load
+        still goes to the server.
       </p>
       <p>
-        Unlike the local managers, where the data is ready before your code runs, readiness is a
-        real state here: gate once on <code>await WhenReady</code> in your boot flow (the general
-        contract is in <a href="Core%20Concepts.html#ready">Core Concepts</a>). The remote-specific
-        effect: until the player is authenticated or the server is reachable, the automatic load
-        keeps retrying and <code>IsReady</code> stays <code>false</code>, so a save never clobbers
-        data a retry could still fetch.
+        Readiness is a real state here, unlike with the local managers: gate once on
+        <code>await WhenReady</code> in your boot flow (see
+        <a href="Core%20Concepts.html#ready">Core Concepts</a>). Until the player is authenticated
+        and the server is reachable, the automatic load keeps retrying and <code>IsReady</code> stays
+        <code>false</code>, so a save never clobbers data a retry could still fetch.
       </p>
     </section>
 
@@ -55,20 +54,21 @@
       <ul>
         <li><strong>No Cache</strong>: every load and save reaches the server; a load fails while it is unreachable.</li>
         <li><strong>Server + Cache</strong>: the cache keeps the game playable offline, but a load still goes to the server whenever it is reachable (falling back to the cache only when it is not), so it picks up saves made on other devices; a conflict between the two is settled by the most recent save (this relies on device clocks).</li>
-        <li><strong>Local Cache (Server Backup)</strong>: the cache is the source of truth and the local save always wins; the server is a write-only backup, read only when nothing is cached, such as after a reinstall. This gives you a cloud backup and offline play rather than live cross-device sync.</li>
+        <li><strong>Local Cache (Server Backup)</strong>: the cache is the source of truth and the local save always wins; the server is a write-only backup, read only when nothing is cached, such as after a reinstall. That is a cloud backup and offline play rather than live cross-device sync.</li>
       </ul>
       <p>
-        With a cache on, a save always lands locally first and succeeds even with no connection,
-        then a background push loop reconciles it with the server whenever the server is reachable.
-        Data a previous session could not push starts uploading as soon as the manager is in scope;
-        marking the target <a href="Guides.html#globals"><code>IAlwaysGlobal</code></a> guarantees that starts at game launch.
+        With a cache on, a save lands locally first and succeeds even with no connection, then a
+        background push loop reconciles it with the server when the server is reachable. Data a
+        previous session could not push starts uploading as soon as the manager is in scope; marking
+        the target <a href="Guides.html#globals"><code>IAlwaysGlobal</code></a> makes that happen at
+        game launch.
       </p>
       <p>
         When nothing is cached and the server cannot be reached, <strong>Offline Cold Start</strong>
         decides what a load does:
       </p>
       <ul>
-        <li><strong>Wait For Server</strong> (recommended): keep retrying until reachable, so a reinstalled device restores its backup instead of starting fresh over it (a brand-new offline player cannot start until reachable).</li>
+        <li><strong>Wait For Server</strong> (the default): keep retrying until reachable, so a reinstalled device restores its backup instead of starting fresh over it. A brand-new offline player cannot start until the server is reachable.</li>
         <li><strong>Start Fresh</strong>: start on default data so a new player can play offline, at the cost of that protection.</li>
       </ul>
 
@@ -124,9 +124,9 @@
     <section id="status">
       <h2>A "saving / saved" indicator</h2>
       <p>
-        With a cache on, <code>Status</code> tells you whether everything has reached the server
-        (<code>UpToDate</code>) or local changes are still waiting (<code>PendingChanges</code>),
-        and <code>StatusChanged</code> fires when it flips, perfect for a cloud icon:
+        With a cache on, <code>Status</code> reports whether everything has reached the server
+        (<code>UpToDate</code>) or local changes are still waiting (<code>PendingChanges</code>).
+        <code>StatusChanged</code> fires when it changes:
       </p>
       <pre><code>remoteManager.StatusChanged += status =&gt;
     cloudIcon.SetActive(status == <span class="ty">RemoteStatus</span>.PendingChanges);</code></pre>
@@ -220,14 +220,13 @@ HttpPersistenceManager.ConfigureRequest = request =&gt;
     <section id="custom">
       <h2>Custom managers</h2>
       <p>
-        Talking to a different remote (another REST contract, a third-party service, PlayFab, a custom
-        socket protocol) is just a <a href="Extending.html#manager">custom persistence manager</a>:
-        override the async read, write and clear methods, the same as any other manager. If you also
-        want an offline cache, a background push loop and conflict handling, the
-        <code>RemotePersistenceManager</code> base class hands you all of that for three primitives
-        (<code>FetchRemote</code>, <code>StoreRemote</code>, <code>DeleteRemote</code>). It is an
-        optional convenience, not the required path: a simple always-online service is often cleaner as
-        a plain manager. See <a href="Extending.html#remote">Extending</a>.
+        Another remote (a different REST contract, a third-party service, PlayFab, a custom socket
+        protocol) is a <a href="Extending.html#manager">custom persistence manager</a>: override the
+        async read, write and clear methods, as with any manager. For an offline cache, a background
+        push loop and conflict handling, inherit <code>RemotePersistenceManager</code> instead and
+        implement three primitives (<code>FetchRemote</code>, <code>StoreRemote</code>,
+        <code>DeleteRemote</code>). An always-online service does not need it. See
+        <a href="Extending.html#remote">Extending</a>.
       </p>
     </section>
 
@@ -237,9 +236,9 @@ HttpPersistenceManager.ConfigureRequest = request =&gt;
         <div class="dir">Back</div>
         <div class="pg-title">Local Saving</div>
       </a>
-      <a class="next" href="Quick%20Help.html">
+      <a class="next" href="Serializers.html">
         <div class="dir">Next</div>
-        <div class="pg-title">Quick Help</div>
+        <div class="pg-title">Serializers</div>
       </a>
     </div>
 

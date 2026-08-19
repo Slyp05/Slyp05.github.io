@@ -32,6 +32,7 @@
     <a href="#SerializedObjectExtensions"><span class="badge badge-static">static</span>SerializedObjectExtensions</a>
     <a href="#VariableWidget"><span class="badge badge-class">class</span>VariableWidget&lt;T&gt;</a>
     <a href="#TypeDisplay"><span class="badge badge-struct">struct</span>TypeDisplay</a>
+    <a href="#AssetRegistration"><span class="badge badge-static">static</span>AssetRegistration</a>
 
     <div class="nav-group">Attributes</div>
     <a href="#EditorAttributes"><span class="badge badge-class">attr</span>ClearLocalData</a>
@@ -40,7 +41,7 @@
   <main>
     <div class="page-header">
       <h1>Public API</h1>
-      <div class="sub">Persistent Asset v1.0.0 &nbsp;&middot;&nbsp; namespaces <code>PersistentAsset(.BuiltIns/.NoCode)</code> and the editor mirrors <code>PersistentAsset.Editor(.BuiltIns/.NoCode)</code></div>
+      <div class="sub">Persistent Asset v1.1.0 &nbsp;&middot;&nbsp; namespaces <code>PersistentAsset(.BuiltIns/.NoCode)</code> and the editor mirrors <code>PersistentAsset.Editor(.BuiltIns/.NoCode)</code></div>
     </div>
 
     <p class="lead">Reference for every public type and member in the Editor Extension area. <span class="ex">Red text</span> flags the exceptions a member can throw. See the <a href="../index.html">API overview</a> for the other areas.</p>
@@ -183,6 +184,18 @@
       </table></div>
     </div>
 
+    <div class="type-section" id="AssetRegistration">
+      <div class="type-header"><h2>AssetRegistration</h2><span class="badge badge-static">static</span><span class="ns">PersistentAsset.Editor</span></div>
+      <p class="type-desc">The editor side of <code>AssetRegistry</code>: it decides which assets save data may point at, and keeps the table the runtime reads in sync with the project. Use it to register assets from your own editor tooling. See <a href="Guides.html#assetrefs">saving asset references</a>.</p>
+      <div class="member-group"><table class="mt">
+        <tr><td><span class="t">string</span> <span class="mn">Register</span>(<span class="t">Object</span> asset)</td><td>Registers an asset and returns its id (null when it cannot be registered, such as a scene object). Idempotent.</td></tr>
+        <tr><td><span class="kw">void</span> <span class="mn">Unregister</span>(<span class="t">string</span> id)</td><td>Unregisters an id. Saved references to it stop resolving.</td></tr>
+        <tr><td><span class="t">string</span> <span class="mn">ComputeId</span>(<span class="t">Object</span> asset)</td><td>The id an asset would be registered under (its GUID, plus the local file id for a sub-asset), without registering it.</td></tr>
+        <tr><td><span class="t">Object</span> <span class="mn">Resolve</span>(<span class="t">string</span> id)</td><td>The asset an id points at, for display: the registry answers first, then the project, so an asset that lost its registration still shows.</td></tr>
+        <tr><td><span class="t">bool</span> <span class="mn">IsRegistered</span>(<span class="t">Object</span> asset) / <span class="kw">void</span> <span class="mn">Refresh</span>()</td><td>Whether an asset can be saved, and a full pass over the registered folders and the deleted assets (runs by itself after an import and at the start of a build).</td></tr>
+      </table></div>
+    </div>
+
     <!-- ═══════════════════════════════════════ Attributes ═══ -->
     <div class="type-section" id="EditorAttributes">
       <div class="type-header"><h2>Attributes</h2><span class="badge badge-class">attr</span><span class="warn">extending</span><span class="ns">PersistentAsset.Editor</span></div>
@@ -191,7 +204,7 @@
       </table></div>
     </div>
 
-    <div class="doc-footer">Persistent Asset v1.0.0 &nbsp;&middot;&nbsp; For full signatures and remarks, see the XML doc comments in the source.</div>
+    <div class="doc-footer">Persistent Asset v1.1.0 &nbsp;&middot;&nbsp; For full signatures and remarks, see the XML doc comments in the source.</div>
 
   </main>
 </div>

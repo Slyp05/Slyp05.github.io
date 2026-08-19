@@ -50,6 +50,9 @@
     <a href="#Serializer"><span class="badge badge-class">class</span>Serializer</a>
     <a href="#SaveNode"><span class="badge badge-class">class</span>SaveNode</a>
 
+    <div class="nav-group">Asset References</div>
+    <a href="#AssetRegistry"><span class="badge badge-static">static</span>AssetRegistry</a>
+
     <div class="nav-group">Attributes</div>
     <a href="#Attributes"><span class="badge badge-class">attr</span>Attributes</a>
 
@@ -65,7 +68,7 @@
   <main>
     <div class="page-header">
       <h1>Public API</h1>
-      <div class="sub">Persistent Asset v1.0.0 &nbsp;&middot;&nbsp; namespaces <code>PersistentAsset(.BuiltIns/.NoCode)</code> and the editor mirrors <code>PersistentAsset.Editor(.BuiltIns/.NoCode)</code></div>
+      <div class="sub">Persistent Asset v1.1.0 &nbsp;&middot;&nbsp; namespaces <code>PersistentAsset(.BuiltIns/.NoCode)</code> and the editor mirrors <code>PersistentAsset.Editor(.BuiltIns/.NoCode)</code></div>
     </div>
 
     <p class="lead">Reference for every public type and member in the Core area. <span class="ex">Red text</span> flags the exceptions a member can throw. See the <a href="../index.html">API overview</a> for the other areas.</p>
@@ -411,6 +414,19 @@
     </div>
 
 
+    <!-- ═══════════════════════════════════════ Asset References ═══ -->
+    <div class="type-section" id="AssetRegistry">
+      <div class="type-header"><h2>AssetRegistry</h2><span class="badge badge-static">static</span></div>
+      <p class="type-desc">The project-wide table of assets save data may point at, and the lookup turning a stored id back into its asset. It is what lets a reference to a project asset survive a save. Filled in the editor (see <code>AssetRegistration</code> in the Editor Extension area); a registered asset is included in the build and loaded at startup. Reach for it when writing your own <code>Serializer</code>, which has to save a reference as its id.</p>
+      <div class="member-group"><table class="mt">
+        <tr><td><span class="t">bool</span> <span class="mn">TryResolve</span>(<span class="t">string</span> id, <span class="kw">out</span> <span class="t">Object</span> asset)</td><td>Resolves a stored id, false when empty or no longer registered.</td></tr>
+        <tr><td><span class="t">T</span> <span class="mn">Resolve</span>&lt;<span class="t">T</span>&gt;(<span class="t">string</span> id)</td><td>The same, typed, returning null instead of throwing.</td></tr>
+        <tr><td><span class="t">string</span> <span class="mn">IdOf</span>(<span class="t">Object</span> asset)</td><td>The id an asset is registered under, or null. Never derives one from the project on the fly, so an unregistered asset fails the same way in the editor and in a build.</td></tr>
+        <tr><td><span class="t">bool</span> <span class="mn">IsRegistered</span>(<span class="t">Object</span> asset) / <span class="t">int</span> <span class="mn">Count</span> { get; }</td><td>Whether an asset can be saved, and how many are registered.</td></tr>
+      </table></div>
+    </div>
+
+
     <!-- ═══════════════════════════════════════ Attributes ═══ -->
     <div class="type-section" id="Attributes">
       <div class="type-header"><h2>Attributes</h2><span class="badge badge-class">attr</span></div>
@@ -419,7 +435,7 @@
         <tr><td><span class="mn">[InspectorDisplay(<span class="t">string</span> name, <span class="t">string</span> description = null)]</span><br/><span class="t">string</span> <span class="mn">Name</span> / <span class="mn">Description</span> { get; }, <span class="t">int</span> <span class="mn">Order</span> { get; set; }, <span class="t">string</span> <span class="mn">Category</span> { get; set; }</td><td>Display name, description, ordering and submenu for a manager, serializer or tooling method in the inspector / its menu. <span class="ex">The constructor throws ArgumentException when name is null or whitespace.</span></td></tr>
         <tr><td><span class="mn">[Breaking(<span class="t">string</span> warning = null)]</span><br/><span class="t">string</span> <span class="mn">Warning</span> { get; }</td><td>Mark a manager field whose change would orphan existing saves, so the inspector warns and locks it.</td></tr>
         <tr><td><span class="mn">[PersistenceManagerInfo]</span><br/><span class="t">StorageKind</span> <span class="mn">StorageKind</span> { get; set; }</td><td>Declare type-level facts of a manager class (inherited by subclasses). <code>StorageKind</code>: <code>Durable</code> (real player saves, the default without the attribute), <code>Transient</code> (nothing recoverable: never lockable, no import copy kept of it), or <code>Test</code> (a fake manager: assigning it always keeps an import copy of the replaced setup, restorable in one click, and it never ships: a non-development build fails while one exists, a development build warns).</td></tr>
-        <tr><td><span class="mn">[RequiredSerializer(<span class="t">Type</span> serializerType)]</span><br/><span class="t">Type</span> <span class="mn">SerializerType</span> { get; }</td><td>Lock a persistent object to a specific serializer (redeclarable on a subclass).</td></tr>
+        <tr><td><span class="mn">[RequiredSerializer(<span class="t">Type</span> serializerType)]</span><br/><span class="t">Type</span> <span class="mn">SerializerType</span> { get; }</td><td>Lock a persistent object to a specific serializer (inherited by subclasses).</td></tr>
       </table></div>
     </div>
 
@@ -447,7 +463,7 @@
       </table></div>
     </div>
 
-    <div class="doc-footer">Persistent Asset v1.0.0 &nbsp;&middot;&nbsp; For full signatures and remarks, see the XML doc comments in the source.</div>
+    <div class="doc-footer">Persistent Asset v1.1.0 &nbsp;&middot;&nbsp; For full signatures and remarks, see the XML doc comments in the source.</div>
 
   </main>
 </div>

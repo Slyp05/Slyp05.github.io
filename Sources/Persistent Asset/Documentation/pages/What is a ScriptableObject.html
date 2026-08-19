@@ -25,14 +25,12 @@
       <h2>The short version</h2>
       <p>
         A <strong>ScriptableObject</strong> is a Unity object that holds data and lives as
-        an <strong>asset file in your project</strong>, instead of being attached to a
-        GameObject in a scene. Think of it as a container for data that you can create,
-        name, and edit in the inspector like any other asset.
+        an <strong>asset file in your project</strong>, rather than on a GameObject in a
+        scene. You create, name and edit it in the inspector like any other asset.
       </p>
       <p>
-        It is perfect for things like player stats, game settings, an inventory
-        definition, or a difficulty curve: data you want to author in the editor and read
-        from anywhere in your game.
+        It suits player stats, game settings, an inventory definition or a difficulty
+        curve: data authored in the editor and read from anywhere in your game.
       </p>
     </section>
 
@@ -41,18 +39,16 @@
     <section id="vs-mono">
       <h2>vs. MonoBehaviour</h2>
       <p>
-        If you have written Unity scripts before, you know <code>MonoBehaviour</code>: the
-        script you attach to a GameObject. A <code>ScriptableObject</code> is its sibling
-        for pure data.
+        A <code>MonoBehaviour</code> is a script attached to a GameObject. A
+        <code>ScriptableObject</code> is its counterpart for pure data.
       </p>
       <ul>
         <li><strong>MonoBehaviour</strong> lives on a GameObject, inside a scene or prefab. It has <code>Update</code>, <code>Start</code>, a transform, and so on.</li>
         <li><strong>ScriptableObject</strong> lives as a standalone <code>.asset</code> file in your Project window. No GameObject, no scene, no per-frame loop. Just fields.</li>
       </ul>
       <p>
-        Because a ScriptableObject is a single shared asset, every script that references
-        it sees the same data. Change it in one place and everyone reading it sees the
-        change, with no copies to keep in sync.
+        A ScriptableObject is a single shared asset: every script referencing it reads the
+        same data, with no copies to keep in sync.
       </p>
     </section>
 
@@ -60,7 +56,7 @@
     <!-- ══════════════════════════════════════ making one ════ -->
     <section id="making-one">
       <h2>Making one</h2>
-      <p>Three small steps, all standard Unity:</p>
+      <p>Three steps, all standard Unity:</p>
       <ol>
         <li>Write a class that inherits <code>ScriptableObject</code>.</li>
         <li>Add <code>[CreateAssetMenu]</code> so it shows up in the <strong>Create</strong> menu.</li>
@@ -75,30 +71,28 @@
     <span class="kw">public int</span> level = <span class="nu">1</span>;
 }</code></pre>
       <p>
-        That is a plain ScriptableObject. You will notice it looks almost identical to the
-        Persistent Asset example: the only difference is which class you inherit.
+        That is a plain ScriptableObject. The Persistent Asset example is identical, apart
+        from the base class it inherits.
       </p>
     </section>
 
 
     <!-- ══════════════════════════════════════ the catch ════ -->
     <section id="the-catch">
-      <h2>The catch (and where Persistent Asset comes in)</h2>
+      <h2>The catch</h2>
       <p>
-        ScriptableObjects are great for <em>authoring</em> data, but they were never meant
-        to <em>save</em> it. In a built game, any change made while playing lives in memory
-        only and is gone the moment the game closes. Your authored values load fresh every
-        launch; the player's progress does not stick.
+        A ScriptableObject <em>authors</em> data, but it does not <em>save</em> it. In a built
+        game, a change made while playing lives in memory only and is gone when the game
+        closes: the authored values load fresh on every launch.
       </p>
       <div class="note">
-        In the editor it looks like changes persist, because Unity writes runtime edits
-        back into the asset on disk. That is an editor-only quirk, and it does not happen
-        in a real build. It is a classic source of confusion.
+        In the editor, changes can look like they persist, because Unity writes runtime
+        edits back into the asset on disk. That does not happen in a build.
       </div>
       <p>
-        That missing piece, saving and restoring the data between sessions, is exactly
-        what Persistent Asset adds. You inherit <code>PersistentScriptableObject</code>
-        instead of <code>ScriptableObject</code>, and the saving happens for you.
+        Persistent Asset adds the missing piece: inherit
+        <code>PersistentScriptableObject</code> instead of <code>ScriptableObject</code>,
+        and the data is saved and restored between sessions.
       </p>
     </section>
 
@@ -109,9 +103,9 @@
         <div class="dir">Back</div>
         <div class="pg-title">Home</div>
       </a>
-      <a class="next" href="Getting%20Started.html">
+      <a class="next" href="Installation.html">
         <div class="dir">Next</div>
-        <div class="pg-title">Getting Started</div>
+        <div class="pg-title">Installation &amp; Demo</div>
       </a>
     </div>
 

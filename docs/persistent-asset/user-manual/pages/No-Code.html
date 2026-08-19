@@ -20,9 +20,9 @@
     </div>
 
     <p class="lead">
-      The No-Code modules let you store values and react to them entirely in the editor, with assets,
-      components and UnityEvents. (Programmers can reach everything from code too; that is the
-      <a href="#developers">last section</a>.)
+      The No-Code modules store values and react to them entirely in the editor, with assets,
+      components and UnityEvents. Everything here is also reachable from code, in
+      <a href="#developers">For developers</a>.
     </p>
 
 
@@ -30,20 +30,21 @@
     <section id="variables">
       <h2>Persistent Variables</h2>
       <p>
-        <code>PersistentVariables</code> is a ready-made asset that holds a named set of values you
-        author in the inspector. It is a persistent object like any other, so it gets a Persistence
-        Manager dropdown and saves the same way, with no scripting on your part.
+        <code>PersistentVariables</code> is a ready-made asset holding a named set of values, authored
+        in the inspector. It is a persistent object like any other: it gets a Persistence Manager
+        dropdown and saves the same way.
       </p>
       <p>
         Create one via <strong>Create &gt; Persistent Asset &gt; Persistent Variables</strong>, assign
         a Persistence Manager, then add variables. Each has a name, a type and a default value.
-        Over 40 types are supported out of the box:
+        Over 40 types are supported:
       </p>
       <ul>
         <li><strong>Primitives</strong>: <code>bool</code>, <code>string</code>, <code>char</code>, and every number type (<code>int</code>, <code>long</code>, <code>float</code>, <code>double</code>, <code>byte</code>, <code>sbyte</code>, <code>short</code>, <code>ushort</code>, <code>uint</code>, <code>ulong</code>, <code>decimal</code>).</li>
         <li><strong>Any enum</strong> (no setup needed).</li>
         <li><strong>Unity types</strong>: <code>Vector2/3/4</code> and <code>Vector2Int/3Int</code>, <code>Quaternion</code>, <code>Color</code>, <code>Color32</code>, <code>Gradient</code>, <code>Rect</code>, <code>RectInt</code>, <code>RectOffset</code>, <code>Bounds</code>, <code>BoundsInt</code>, <code>Pose</code>, <code>Plane</code>, <code>Matrix4x4</code>, <code>LayerMask</code>, <code>RenderingLayerMask</code>, <code>RangeInt</code>, <code>Resolution</code>, <code>Hash128</code>, <code>Keyframe</code>, <code>AnimationCurve</code>.</li>
         <li><strong>System types</strong>: <code>DateTime</code>, <code>DateTimeOffset</code>, <code>TimeSpan</code>, <code>Guid</code>, <code>Version</code>, <code>Uri</code>.</li>
+        <li><strong>Any project asset</strong> (no setup needed): pick Asset in the type menu, then the kind of asset it holds, and the variable takes an object field like any inspector reference. See <a href="#assetvariables">asset variables</a> below.</li>
         <li><strong>Lists and maps</strong> of any of the above.</li>
       </ul>
 
@@ -62,10 +63,20 @@
         and existing saves still load into it.
       </div>
       <div class="note">
-        Handy for programmers too: a <code>PersistentVariables</code> asset is a ready-made
-        <strong>dynamic data bag</strong>, a named, typed, observable set of values that saves itself,
-        with no data class to write. Reach it from code through a <code>VariableRef</code> (see
-        <a href="#developers">For developers</a>).
+        For programmers, a <code>PersistentVariables</code> asset is a <strong>dynamic data bag</strong>:
+        a named, typed, observable set of values that saves itself, with no data class to write. Reach
+        it from code through a <code>VariableRef</code> (see <a href="#developers">For developers</a>).
+      </div>
+
+      <h3 id="assetvariables">Variables holding an asset</h3>
+      <p>
+        A variable can hold a project asset: the selected character, the equipped weapon, the chosen
+        music theme. Pick <strong>Asset</strong> in the type menu, choose which kind of asset it
+        accepts, and drag one into the field. It is saved like any other value.
+      </p>
+      <div class="note">
+        Assets your game picks at runtime, rather than in the inspector, need one extra step: see
+        <a href="Guides.html#registering">saving asset references</a>.
       </div>
     </section>
 
@@ -75,8 +86,8 @@
       <h2>The components</h2>
       <p>Three components connect a variable to your scene, each configured in the inspector:</p>
       <ul>
-        <li><strong>Variable Binder</strong>: keeps a variable and a target in sync, one-way or both ways as you choose, so a change on one side updates the other (a UI slider and a "volume" variable, for example).</li>
-        <li><strong>Variable Listener</strong>: raises a UnityEvent whenever the variable changes, so you can trigger anything from the inspector when it does.</li>
+        <li><strong>Variable Binder</strong>: keeps a variable and a target in sync, one-way or both ways, so a change on one side updates the other (a UI slider and a "volume" variable, for example).</li>
+        <li><strong>Variable Listener</strong>: raises a UnityEvent whenever the variable changes.</li>
         <li><strong>Variable Setter</strong>: changes a variable from a UnityEvent (a button click). It can <strong>Set</strong>, <strong>Toggle</strong>, <strong>Increment</strong>, <strong>Add</strong> or <strong>Reset</strong> the value.</li>
       </ul>
 
@@ -91,15 +102,15 @@
       </div>
 
       <p>
-        A typical flow: a Setter on a button increments a "coins" variable, a Listener updates a label
-        when it changes, and the whole thing persists because the <code>PersistentVariables</code>
-        asset has a manager. No script anywhere.
+        A typical setup: a Setter on a button increments a "coins" variable, a Listener updates a label
+        when it changes, and it all persists because the <code>PersistentVariables</code> asset has a
+        manager.
       </p>
 
       <div class="note">
-        When a Binder drives a <strong>text label</strong>, give it a <strong>Format</strong> string to
-        turn the value into readable text: a composite like <code>"Score: {0}"</code> or a numeric
-        specifier like <code>"N0"</code>. Formatting a value into text is one-way (variable to label).
+        A Binder driving a <strong>text label</strong> takes a <strong>Format</strong> string to turn
+        the value into readable text: a composite like <code>"Score: {0}"</code> or a numeric specifier
+        like <code>"N0"</code>. Formatting a value into text is one-way (variable to label).
       </div>
     </section>
 
@@ -108,16 +119,16 @@
     <section id="dragdrop">
       <h2>Connecting variables (drag and drop)</h2>
       <p>
-        There are two ways to point a component at a variable, both drag-and-drop friendly. To drag
-        one, grab it by its <strong>hand</strong>, the drag handle at the left of the variable's row in
-        the Persistent Variables inspector.
+        There are two ways to point a component at a variable. To drag a variable, grab it by its
+        <strong>hand</strong>, the drag handle at the left of its row in the Persistent Variables
+        inspector.
       </p>
 
       <h3 id="onto-a-component-field">Onto a component field</h3>
       <p>
         Every component has a variable field. Fill it by <strong>dragging a variable</strong> from the
         Persistent Variables asset onto the field, or by <strong>assigning the asset and picking the
-        variable</strong> from the dropdown next to it. Either way takes seconds and needs no code.
+        variable</strong> from the dropdown next to it.
       </p>
 
       <div class="img-block">
@@ -132,10 +143,9 @@
 
       <h3 id="onto-a-gameobject">Onto a GameObject</h3>
       <p>
-        Even quicker: <strong>drag a variable straight onto a GameObject</strong> (in the Hierarchy or
-        the Scene). Persistent Asset asks what to create, a Binder, a Listener or a Setter, then
-        prompts for whatever that component needs (a binder's target property, for instance) and adds
-        it already wired, so a single drag can connect a variable to a slider or a label end to end.
+        <strong>Drag a variable straight onto a GameObject</strong>, in the Hierarchy or the Scene. A
+        menu asks what to create (a Binder, a Listener or a Setter), prompts for whatever that
+        component needs (a binder's target property, for instance), and adds it already wired.
       </p>
 
       <div class="img-block">
@@ -154,17 +164,16 @@
     <section id="wiring">
       <h2>Saving and loading from the inspector</h2>
       <p>
-        Persistence is automatic, so usually you wire nothing. When you do want an explicit save, load
-        or clear from a button, the manager offers <strong>Save</strong>, <strong>Load</strong> and
-        <strong>Clear</strong> actions you can pick straight from a button's event list, no script
-        needed. These zero-argument actions are fire-and-forget, so they work even for an
-        asynchronous manager (a server or Cloud Save).
+        Persistence is automatic, so there is usually nothing to wire. For an explicit save, load or
+        clear from a button, the manager exposes <strong>Save</strong>, <strong>Load</strong> and
+        <strong>Clear</strong> actions, picked straight from a button's event list. These zero-argument
+        actions are fire-and-forget, so they also work with an asynchronous manager (a server or Cloud
+        Save).
       </p>
       <div class="note">
         Anything slot-related still needs a small script today: switching the active
         <a href="Guides.html#slots">slot</a>, building a save-select menu (a slot registry), and the
-        <code>Slots</code> copy / rename / delete operations are all code-only. Inspector-driven,
-        no-code slots are on the <a href="Roadmap.html">Roadmap</a>.
+        <code>Slots</code> copy / rename / delete operations are all code-only.
       </div>
 
       <div class="img-block">
@@ -191,9 +200,8 @@
         Requires the Unity <strong>Input System</strong> package in your project.
       </div>
       <p>
-        Wiring a "press a key to rebind" screen needs a few lines of glue (capturing the new binding
-        and applying the saved one on startup); that small API is in
-        <a href="#developers">For developers</a>.
+        A "press a key to rebind" screen needs a few lines of glue: capturing the new binding, and
+        applying the saved one on startup. That API is in <a href="#developers">For developers</a>.
       </p>
     </section>
 
@@ -220,8 +228,7 @@
     <section id="developers">
       <h2>For developers</h2>
       <p>
-        Everything above is reachable from code too, for when you want to mix scripting with the
-        no-code setup.
+        Everything above is reachable from code, to mix scripting with the no-code setup.
       </p>
 
       <h3 id="reading-and-writing-variables">Reading and writing variables</h3>
@@ -229,8 +236,8 @@
         Reference a variable with a non-generic <code>VariableRef</code> field when the type is not
         known ahead of time, or a typed <code>VariableValueRef&lt;T&gt;</code>,
         <code>VariableListRef&lt;T&gt;</code> or <code>VariableMapRef&lt;TKey, TValue&gt;</code> when it
-        is. Either is assigned in the inspector the same way as a component (drag or dropdown), then you
-        read and write its live value in code. Collection variables surface as
+        is. Either is assigned in the inspector the same way as a component (drag or dropdown), and its
+        live value is read and written in code. Collection variables surface as
         <code>ObservableList&lt;T&gt;</code> and <code>ObservableDictionary&lt;TKey, TValue&gt;</code>,
         which raise change events.
       </p>
@@ -254,9 +261,9 @@
       <p>
         A <code>VariableBinder</code> can route through a <code>ValueConverter</code> to adapt the
         variable's type to the bound member's type (an <code>int</code> variable driving a
-        <code>string</code> label, say). Built-in converters cover the common cases; add your own by
-        subclassing <code>ValueConverter&lt;TFrom, TTo&gt;</code> (it is discovered automatically),
-        and register one each way for a two-way binding:
+        <code>string</code> label, for example). Built-in converters cover the common cases. Add your
+        own by subclassing <code>ValueConverter&lt;TFrom, TTo&gt;</code>, which is discovered
+        automatically; a two-way binding needs one converter each way:
       </p>
       <pre><code><span class="kw">public class</span> <span class="ty">IntToString</span> : <span class="ty">ValueConverter</span>&lt;<span class="kw">int</span>, <span class="kw">string</span>&gt;
 {
@@ -279,21 +286,21 @@ variables.ApplyLocale(<span class="st">"Language"</span>);                      
 variables.SelectLocale(<span class="st">"Language"</span>, <span class="kw">new</span>(<span class="st">"fr"</span>));               <span class="cm">// pick one from a dropdown</span></code></pre>
 
       <div class="note">
-        Two caveats for these helpers. Call <code>ApplyLocale</code> / <code>SelectLocale</code> only
-        after Unity Localization has finished initializing
+        Two constraints on these helpers. <code>ApplyLocale</code> and <code>SelectLocale</code> only
+        work once Unity Localization has finished initializing
         (<code>await LocalizationSettings.InitializationOperation</code>); before that they do nothing
-        and return <code>false</code>. And <code>RebindAndStore</code> returns a
-        <code>RebindingOperation</code> you should cancel in <code>OnDisable</code> /
-        <code>OnDestroy</code>, so its completion callback never runs on a destroyed object.
+        and return <code>false</code>. <code>RebindAndStore</code> returns a
+        <code>RebindingOperation</code>: cancel it in <code>OnDisable</code> / <code>OnDestroy</code>
+        so its completion callback never runs on a destroyed object.
       </div>
 
       <h3 id="custom-types-and-converters">Custom types and converters</h3>
       <p>
-        You can add your own persistable variable types (a <code>VariableTypeCodec&lt;T&gt;</code> with
-        <code>[VariableType(typeof(T), "id")]</code>), your own
-        <a href="Extending.html#converters">type conversions</a> (a <code>ValueConverter</code>), and
-        your own <a href="Extending.html#widgets">inspector widgets</a>, exactly how Input Binding and
-        Locale Identifier are built. See <a href="Extending.html#codecs">Extending</a>.
+        Your own persistable variable types (a <code>VariableTypeCodec&lt;T&gt;</code> with
+        <code>[VariableType(typeof(T), "id")]</code>),
+        <a href="Extending.html#converters">type conversions</a> (a <code>ValueConverter</code>) and
+        <a href="Extending.html#widgets">inspector widgets</a> plug in the same way Input Binding and
+        Locale Identifier do. See <a href="Extending.html#codecs">Extending</a>.
       </p>
       <pre><code><span class="cm">// Make a custom type persistable: write it to a string and read it back</span>
 [<span class="ty">VariableType</span>(<span class="kw">typeof</span>(<span class="ty">Guid</span>), <span class="st">"guid"</span>)]

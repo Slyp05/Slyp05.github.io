@@ -20,8 +20,7 @@
     <div class="hero">
       <h1>User Manual</h1>
       <p class="tagline">
-        A save system for Unity that persists your ScriptableObject data between
-        play sessions. Inherit one class and your fields start saving themselves.
+        A save system for Unity. Declare your game data once, and it saves and loads itself.
       </p>
     </div>
 
@@ -30,8 +29,9 @@
     <section id="the-idea">
       <h2>The whole idea</h2>
       <p>
-        Make a class that inherits <code>PersistentScriptableObject</code>. Every
-        serialized field on it now survives between play sessions, automatically.
+        Your save data lives in an asset. Make a class that inherits
+        <code>PersistentScriptableObject</code>, and every serialized field on it
+        survives between play sessions, automatically.
       </p>
 
       <pre><code><span class="kw">using</span> PersistentAsset;
@@ -51,33 +51,29 @@
       </p>
 
       <div class="note">
-        Never used a ScriptableObject? Here is a
-        <a href="pages/What%20is%20a%20ScriptableObject.html">two-minute primer</a> before you start.
+        Persistent Asset stores your data in ScriptableObjects. Never used one? Here is a
+        <a href="pages/What%20is%20a%20ScriptableObject.html">two-minute primer</a>.
       </div>
 
       <div class="reassure">
-        The example above already covers most projects. Slots, encryption, cloud saves and
-        designer-friendly variables are optional, layered on top as a game needs them.
+        The example above covers most projects. Save slots, encryption, cloud saves, save versioning
+        and no-code variables layer on top, as a game needs them.
       </div>
     </section>
 
 
     <!-- ════════════════════════════════════════════ Why ════ -->
     <section id="why">
-      <h2>Why persist a ScriptableObject?</h2>
+      <h2>No parallel data model</h2>
       <p>
-        Your game data already wants to live in ScriptableObjects: decoupled from any scene, shared
-        across the whole project, and editable by designers right in the inspector. That makes a
-        ScriptableObject the natural single source of truth for player data, a profile, settings,
-        progression, an inventory.
+        A traditional save system asks for a second set of data structures: save classes next to your
+        game data, code to copy fields into them to write, code to copy them back to read, and both
+        models kept in sync release after release.
       </p>
       <p>
-        A traditional save system breaks that clean design: you build a separate set of save
-        structures, copy fields into them to write, copy them back to read, and keep the two models in
-        sync release after release. Persistent Asset removes that whole layer. Your ScriptableObject
-        <em>is</em> the save, so the data you already designed persists in place, with no parallel data
-        model, no mapping code, and nothing to drift out of date. Design your data once, and it saves
-        itself.
+        Here your data <em>is</em> the save. The asset holding a profile, settings, progression or an
+        inventory is the same object your game reads at runtime and your designers edit in the
+        inspector, so there is no mapping layer and nothing to drift out of date.
       </p>
     </section>
 
@@ -88,16 +84,16 @@
 
       <div class="cards">
 
-        <a class="card" href="pages/Getting%20Started.html">
-          <span class="num">Start here</span>
-          <h3>Getting Started <span class="tag tag-mustread">Must read</span></h3>
-          <p>Save your first value in about five minutes. The happy path, nothing else.</p>
-        </a>
-
         <a class="card" href="pages/Installation.html">
           <span class="num">Setup</span>
           <h3>Installation &amp; Demo</h3>
           <p>Requirements, platforms, optional modules, and the sample game to run.</p>
+        </a>
+
+        <a class="card" href="pages/Getting%20Started.html">
+          <span class="num">Start here</span>
+          <h3>Getting Started <span class="tag tag-mustread">Must read</span></h3>
+          <p>Save your first value in about five minutes. The happy path, nothing else.</p>
         </a>
 
         <a class="card" href="pages/Core%20Concepts.html">
@@ -116,6 +112,12 @@
           <span class="num">Across devices</span>
           <h3>Cloud &amp; Remote <span class="tag tag-advanced">Advanced</span></h3>
           <p>Unity Gaming Services Cloud Save, or your own server over HTTP.</p>
+        </a>
+
+        <a class="card" href="pages/Serializers.html">
+          <span class="num">The format</span>
+          <h3>Serializers</h3>
+          <p>Unity JSON, Newtonsoft JSON and Odin: what each one writes, and switching later.</p>
         </a>
 
         <a class="card" href="pages/Quick%20Help.html">
@@ -154,12 +156,6 @@
           <p>Crash safety, atomic writes, async conflicts, security: the implementation answers.</p>
         </a>
 
-        <a class="card" href="pages/Roadmap.html">
-          <span class="num">What's next</span>
-          <h3>Roadmap</h3>
-          <p>Planned and future features on the way for Persistent Asset.</p>
-        </a>
-
       </div>
     </section>
 
@@ -172,19 +168,19 @@
         <li>Contact: <a href="mailto:justetools@gmail.com">justetools@gmail.com</a></li>
         <li>License: <a href="https://unity.com/legal/as-terms">Unity Asset Store EULA</a></li>
       </ul>
-      <p>If Persistent Asset helps your project, a review on the Asset Store goes a long way. Thank you!</p>
+      <p>Reviews on the Asset Store are always appreciated.</p>
     </section>
 
 
     <!-- ══════════════════════════════════════ pager ════ -->
     <div class="pager">
-      <a class="next" href="pages/Getting%20Started.html">
+      <a class="next" href="pages/Installation.html">
         <div class="dir">Next</div>
-        <div class="pg-title">Getting Started</div>
+        <div class="pg-title">Installation &amp; Demo</div>
       </a>
     </div>
 
-    <div class="doc-footer">Persistent Asset v1.0.0 &nbsp;·&nbsp; namespace <code>PersistentAsset</code></div>
+    <div class="doc-footer">Persistent Asset v1.1.0 &nbsp;·&nbsp; namespace <code>PersistentAsset</code></div>
 
   </main>
 </div>

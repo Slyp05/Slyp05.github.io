@@ -19,6 +19,13 @@
       ["making-one", "Making one"],
       ["the-catch", "The catch"]
     ] },
+    { file: "pages/Installation.html", title: "Installation & Demo", sections: [
+      ["requirements", "Requirements"],
+      ["platforms", "Platform support"],
+      ["install", "Installing"],
+      ["dependencies", "Optional modules"],
+      ["demo", "The demo"]
+    ] },
     { file: "pages/Getting Started.html", title: "Getting Started", sections: [
       ["step-class", "1. Make a data class"],
       ["step-asset", "2. Create the asset"],
@@ -26,13 +33,6 @@
       ["step-play", "4. Press Play"],
       ["save-location", "Wiping test data"],
       ["what-happened", "What just happened?"]
-    ] },
-    { file: "pages/Installation.html", title: "Installation & Demo", sections: [
-      ["requirements", "Requirements"],
-      ["platforms", "Platform support"],
-      ["install", "Installing"],
-      ["dependencies", "Optional modules"],
-      ["demo", "The demo"]
     ] },
     { file: "pages/Core Concepts.html", title: "Core Concepts", sections: [
       ["parts", "The parts"],
@@ -63,12 +63,21 @@
       ["cloudsave", "Cloud Save (UGS)"],
       ["custom", "Custom managers"]
     ] },
+    { file: "pages/Serializers.html", title: "Serializers", sections: [
+      ["choosing", "Which one to use"],
+      ["unity", "Unity JSON"],
+      ["newtonsoft", "Newtonsoft JSON"],
+      ["odin", "Odin"],
+      ["switching", "Changing serializer later"],
+      ["custom", "Your own"]
+    ] },
     { file: "pages/Quick Help.html", title: "Quick Help", sections: [
       ["surprises", "Common surprises"],
       ["digging", "Digging deeper"]
     ] },
     { file: "pages/Guides.html", title: "Guides", sections: [
       ["slots", "Multiple save slots"],
+      ["assetrefs", "Saving asset references"],
       ["reacting", "Reacting to load & save"],
       ["drain", "Saving on quit"],
       ["reset", "Resetting & Restoring"],
@@ -83,6 +92,7 @@
     ] },
     { file: "pages/No-Code.html", title: "No-Code", sections: [
       ["variables", "Persistent Variables"],
+      ["assetvariables", "Variables holding an asset"],
       ["components", "The components"],
       ["dragdrop", "Connecting variables"],
       ["wiring", "Saving from the inspector"],
@@ -92,6 +102,7 @@
     ] },
     { file: "pages/Settings.html", title: "Settings", sections: [
       ["general", "General"],
+      ["assetreferences", "Asset References"],
       ["singleton", "Singleton"],
       ["security", "Security"],
       ["remote", "Remote"],
@@ -117,12 +128,6 @@
       ["portability", "Identity & portability"],
       ["performance", "Performance"],
       ["testing", "Testing & quality"]
-    ] },
-    { file: "pages/Roadmap.html", title: "Roadmap", sections: [
-      ["planned", "Planned for the package"],
-      ["free", "Free add-on packages"],
-      ["considered", "Considered packages"],
-      ["feedback", "Your feedback"]
     ] }
   ];
 

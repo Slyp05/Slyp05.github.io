@@ -15,12 +15,12 @@
   <main>
     <div class="page-header">
       <h1>Extending <span class="tag tag-advanced">Advanced</span></h1>
-      <div class="sub">Every building block the package ships is a base class you can subclass.</div>
+      <div class="sub">Custom managers, serializers, settings sections and variable types.</div>
     </div>
 
     <p class="lead">
-      Write your own manager, serializer, settings section or variable type, and it plugs into the
-      same inspector dropdowns, settings and tooling as the built-ins.
+      A custom manager, serializer, settings section or variable type plugs into the same inspector
+      dropdowns, settings and tooling as the built-ins.
     </p>
 
 
@@ -28,10 +28,10 @@
     <section id="manager">
       <h2>A custom persistence manager</h2>
       <p>
-        Subclass <code>PersistenceManager</code> and implement the read, write and clear behavior. For
-        a synchronous-only manager, that is three methods. You return a payload string from a read and hand
-        back a payload string on a write; the manager serializes and deserializes the target for you,
-        so you never touch <code>Target</code> directly.
+        Subclass <code>PersistenceManager</code> and implement the read, write and clear behavior:
+        three methods for a synchronous-only manager. A read returns a payload string and a write
+        receives one; the manager serializes and deserializes the target itself, so
+        <code>Target</code> is never touched directly.
       </p>
       <pre><code><span class="kw">using</span> PersistentAsset;
 
@@ -63,17 +63,16 @@
 }</code></pre>
 
       <h3 id="the-result-contract">The result contract</h3>
-      <p>Returning the right result is what keeps saves safe. The rules:</p>
+      <p>Returning the right result is what keeps saves safe:</p>
       <ul>
-        <li><code>LoadResult.Success(payload)</code>: you read usable data.</li>
+        <li><code>LoadResult.Success(payload)</code>: usable data was read.</li>
         <li><code>LoadResult.Invalid()</code>: there is no usable data (missing or unreadable) and a retry will not help. The target keeps its values and saving is allowed, so the next save overwrites it. This is the normal first run.</li>
         <li><code>LoadResult.Failure()</code>: the save location is <em>temporarily</em> unavailable (a locked file, a server down). The target is left not ready so a save cannot overwrite data a retry could still recover.</li>
       </ul>
       <div class="note">
-        Invalid versus Failure is the single most important decision in a manager. Use Invalid for
-        "nothing there", Failure for "could not reach it right now". Getting it wrong either strands a
-        first-run player (Failure on a clean miss) or risks overwriting a recoverable save (Invalid on
-        a transient error).
+        Invalid means "nothing there", Failure means "could not reach it right now". Getting it wrong
+        either strands a first-run player (Failure on a clean miss) or risks overwriting a recoverable
+        save (Invalid on a transient error).
       </div>
       <h3 id="going-asynchronous">Going asynchronous</h3>
       <p>
@@ -89,12 +88,12 @@
       <p>
         The base settings (<code>AutoLoad</code>, <code>AutoSave</code>, <code>AutoLoadRetryDelay</code>,
         <code>RegularSaveDelay</code>, <code>LoadTimeout</code>, <code>SaveTimeout</code>,
-        <code>ClearTimeout</code>, the execution modes) are virtual properties with no backing field, so
-        you have two ways to set one:
+        <code>ClearTimeout</code>, the execution modes) are virtual properties with no backing field.
+        There are two ways to set one:
       </p>
       <ul>
-        <li><strong>Expose it in the inspector</strong>, when it is a choice you want to expose: override with a <code>[field: SerializeField]</code> auto-property.</li>
-        <li><strong>Fix it in code</strong>, when the value is a fact of your manager, not a user choice: override with a plain getter and no serialization. It then shows no inspector field.</li>
+        <li><strong>Expose it in the inspector</strong>, when it is a user choice: override with a <code>[field: SerializeField]</code> auto-property.</li>
+        <li><strong>Fix it in code</strong>, when the value is a fact of the manager: override with a plain getter and no serialization. It then shows no inspector field.</li>
       </ul>
       <pre><code><span class="cm">// Exposed in the inspector</span>
 [field: SerializeField]
@@ -102,18 +101,18 @@
 
 <span class="cm">// Fixed in code: no field, no serialization, just a fact of this manager</span>
 <span class="kw">public override</span> <span class="ty">ExecutionMode</span> WriteExecutionMode =&gt; <span class="ty">ExecutionMode</span>.AsyncOnly;</code></pre>
-      <p>Other hooks worth knowing:</p>
+      <p>The other hooks:</p>
       <ul>
-        <li><code>StorageLocation(slot)</code>: report a stable path or key (backs <code>GetStorageLocation()</code>). Two managers must only report the same string when they genuinely share that storage, so shape yours so no other storage can produce it; the editor reports managers resolving to one same location as a conflict (see <a href="Technical%20QA.html#portability">Technical Q&amp;A</a>).</li>
+        <li><code>StorageLocation(slot)</code>: report a stable path or key (backs <code>GetStorageLocation()</code>). Two managers must report the same string only when they genuinely share that storage, so shape yours so no other storage can produce it. The editor reports managers resolving to the same location as a conflict (see <a href="Technical%20QA.html#portability">Technical Q&amp;A</a>).</li>
         <li><code>OnEnteringScope</code> / <code>OnLeavingScope</code>: per-session setup and teardown.</li>
-        <li><code>Constraint</code>: pin a setting your manager cannot function without, so a target's policy cannot override it. For example, an in-memory manager that is pointless unless it loads and saves automatically can fix both on; a write-only manager might fix <code>AutoLoad</code> off.</li>
-        <li><code>[PersistenceManagerInfo(StorageKind = ...)]</code> on the class: declare what your manager's storage holds, a fact of the type rather than a setting. <code>Durable</code> (real player saves; the default without the attribute), <code>Transient</code> for a manager that keeps nothing recoverable (no import copy of it, never lockable), or <code>Test</code> for a fake manager that must never ship (see below). The attribute is inherited by subclasses.</li>
+        <li><code>Constraint</code>: pin a setting the manager cannot function without, so a target's policy cannot override it. An in-memory manager can fix auto load and auto save on; a write-only manager can fix <code>AutoLoad</code> off.</li>
+        <li><code>[PersistenceManagerInfo(StorageKind = ...)]</code> on the class: declare what the manager's storage holds. <code>Durable</code> (real player saves, the default without the attribute), <code>Transient</code> for a manager that keeps nothing recoverable (no import copy of it, never lockable), or <code>Test</code> for a fake manager that must never ship (see below). The attribute is inherited by subclasses.</li>
         <li><code>SelfBoundsAsyncOperations</code>: return <code>true</code> only when every async path is guaranteed to return on its own, so the core stops bounding it with the Load / Save / Clear timeouts. A self-bounding manager that hangs is never stopped by the core, so leave it <code>false</code> unless you enforce your own deadlines.</li>
         <li><code>Log(text, level)</code>: write to the manager's inspector log (see <a href="Guides.html#debug">Debugging</a>; stripped from non-development builds).</li>
       </ul>
       <p>
-        Mark your manager's save-breaking fields with <code>[Breaking(...)]</code> so the inspector can
-        warn and lock them after release, the same protection the built-ins use.
+        Mark the manager's save-breaking fields with <code>[Breaking(...)]</code> so the inspector can
+        warn about and lock them after release, the same protection the built-ins use.
       </p>
 
       <h3 id="writing-a-test-manager">Writing a test manager</h3>
@@ -130,9 +129,9 @@
 
       <h3 id="a-delete-local-data-cleaner">A "delete local data" cleaner</h3>
       <p>
-        If your manager writes local data, expose a cleaner so it appears in
-        <strong>Tools &gt; Persistent Asset &gt; Actions &gt; Delete Local Data</strong>. Mark a parameterless static
-        editor method with <code>[ClearLocalData(typeof(...))]</code>:
+        A manager that writes local data can expose a cleaner, so it appears in
+        <strong>Tools &gt; Persistent Asset &gt; Actions &gt; Delete Local Data</strong>. Mark a
+        parameterless static editor method with <code>[ClearLocalData(typeof(...))]</code>:
       </p>
       <pre><code><span class="kw">using</span> PersistentAsset.Editor;
 
@@ -163,16 +162,14 @@
     }
 }</code></pre>
       <p>
-        For finer control, or to build the inspector without inheriting
-        <code>PersistenceManagerEditor</code> at all, <code>PersistenceManagerEditorGUI</code> exposes
-        the individual GUI pieces the base inspector is made of, so you can compose your own and still
-        match the built-in look.
+        To build the inspector without inheriting <code>PersistenceManagerEditor</code>,
+        <code>PersistenceManagerEditorGUI</code> exposes the individual GUI pieces the base inspector
+        is made of, so a custom one still matches the built-in look.
       </p>
 
       <h3 id="reusable-building-blocks">Reusable building blocks</h3>
       <p>
-        You do not have to reimplement everything for a local manager, several public helpers in
-        <code>PersistentAsset.BuiltIns</code> are there to reuse:
+        A local manager can reuse several public helpers from <code>PersistentAsset.BuiltIns</code>:
       </p>
       <ul>
         <li><code>SaveFileUtility</code>: read, write (atomically) and delete save files, with the package's header handling.</li>
@@ -181,6 +178,8 @@
         <li><code>SlotFormatUtility</code>: turn a slot into a filesystem-safe segment and resolve the <code>&lt;slot&gt;</code> placeholder.</li>
         <li><code>TaskUtility</code>: hop between the main and background threads for async work.</li>
         <li><code>WebGLFileSync</code>: flush writes to the browser's IndexedDB on WebGL.</li>
+        <li><code>SaveNodeJson</code>: parse JSON text into a <code>SaveNode</code> tree, to implement <code>ParseToNode</code> in a JSON serializer.</li>
+        <li><code>FieldSnapshot</code>: copy a target's fields and put them back, so a failed deserialize leaves it unchanged.</li>
       </ul>
       <div class="note">
         These helpers live in the <code>PersistentAsset.BuiltIns.Shared</code> assembly, which is
@@ -221,6 +220,12 @@
         <code>IFieldResettable</code>, also override <code>ParseToNode</code> (parse your format into a
         neutral <code>SaveNode</code> tree) and set <code>SupportsNode</code> to <code>true</code>.
       </p>
+      <div class="note">
+        A field pointing at a project asset needs handling: a reference means nothing outside the
+        running session, so write <code>AssetRegistry.IdOf(asset)</code> instead of the reference, and
+        read it back with <code>AssetRegistry.TryResolve</code>. See
+        <a href="Guides.html#assetrefs">saving asset references</a>.
+      </div>
 
       <h3 id="a-custom-serializer-drawer">A custom serializer drawer</h3>
       <p>
@@ -248,12 +253,11 @@
     <section id="remote">
       <h2>A custom remote manager</h2>
       <p>
-        Saving off the device (a server, a third-party service, a cloud SDK) can be done with a plain
-        custom manager by overriding the async read, write and clear methods above.
-        But when you also want an <strong>offline cache</strong>, a background push loop and conflict
-        handling, <code>RemotePersistenceManager</code> gives you all of that for the cost of three
-        primitives. It is a built-in (not part of Core) precisely because it is only worth it for that
-        scenario; a simple always-online manager does not need it.
+        Saving off the device (a server, a third-party service, a cloud SDK) works with a plain custom
+        manager, by overriding the async read, write and clear methods above. For an <strong>offline
+        cache</strong>, a background push loop and conflict handling,
+        <code>RemotePersistenceManager</code> provides all of it in exchange for three primitives. An
+        always-online manager does not need it.
       </p>
       <p>
         Each primitive returns an <code>Answer</code> describing how the remote responded:
@@ -277,7 +281,7 @@
     <span class="kw">protected override async</span> <span class="ty">Task</span>&lt;(<span class="ty">Answer</span> answer, <span class="kw">string</span> message)&gt;
         DeleteRemote(<span class="kw">string</span> slot, <span class="ty">CancellationToken</span> cancellationToken) { <span class="cm">/* ... */</span> }
 }</code></pre>
-      <p>Map your manager's responses honestly, the cache logic reasons about them:</p>
+      <p>The cache logic reasons about these answers, so map the remote's responses exactly:</p>
       <ul>
         <li><code>Success</code>: the operation landed (a fetch must return the body, byte for byte).</li>
         <li><code>NoSave</code>: reachable, but nothing saved at this address.</li>
@@ -286,9 +290,9 @@
         <li><code>Unreachable</code>: the manager could not be contacted at all.</li>
       </ul>
       <p>
-        Use <code>SetupError</code> for a permanent build-time fault (no URL configured), expose
-        <code>CacheMode</code> and <code>OfflineColdStart</code> to make the offline cache opt-in,
-        and override <code>LocalCacheFolder</code> to name your cache. To wipe that cache from
+        <code>SetupError</code> reports a permanent build-time fault (no URL configured), exposing
+        <code>CacheMode</code> and <code>OfflineColdStart</code> makes the offline cache opt-in, and
+        <code>LocalCacheFolder</code> names the cache. To wipe that cache from
         <strong>Delete Local Data</strong>, call the helper <code>RemotePersistenceManager.ClearLocalCache(name, folder)</code>
         from a <code>[ClearLocalData]</code> method.
       </p>
@@ -312,17 +316,16 @@
     <span class="kw">public string</span> endpoint = <span class="st">"https://..."</span>;
     <span class="kw">public bool</span> verboseLogging;
 }</code></pre>
-      <p>Read it anywhere through <code>Settings.Get&lt;T&gt;()</code>, which always returns the same instance and is build-injected so it works in a player too:</p>
+      <p>Read it anywhere through <code>Settings.Get&lt;T&gt;()</code>, which always returns the same instance and is build-injected, so it works in a player too:</p>
       <pre><code><span class="kw">string</span> endpoint = <span class="ty">Settings</span>.Get&lt;<span class="ty">MyStudioSettings</span>&gt;().endpoint;</code></pre>
       <p>
-        The settings window saves itself, but if you change a setting from code, call
-        <code>Settings.Save()</code> to persist it. It is a no-op outside the editor (the call is
-        stripped from a build), so it is always safe to call.
+        The settings window saves itself. A setting changed from code is persisted with
+        <code>Settings.Save()</code>, which is stripped from a build and so is always safe to call.
       </p>
       <h3 id="a-custom-settings-drawer">A custom settings drawer</h3>
       <p>
-        By default a section's fields are drawn flat, one under another, with no foldout. To lay them
-        out yourself, inherit <code>SettingsEntryDrawer</code>, decorate it with
+        By default a section's fields are drawn flat, one under another, with no foldout. For a custom
+        layout, inherit <code>SettingsEntryDrawer</code>, decorate it with
         <code>[CustomPropertyDrawer(typeof(MyStudioSettings))]</code>, and override
         <code>DrawFields</code> (and <code>FieldsHeight</code> when it needs more than the default
         height):
@@ -346,9 +349,9 @@
     <section id="display">
       <h2>The InspectorDisplay attribute</h2>
       <p>
-        <code>[InspectorDisplay]</code> is <em>optional</em> everywhere. Without it, a type
-        appears under its plain C# name; add it to give a friendlier name, a description (shown as a
-        tooltip), an ordering and a category. It can decorate any of the types you extend here:
+        <code>[InspectorDisplay]</code> is <em>optional</em> everywhere. Without it, a type appears
+        under its plain C# name; with it, it gets a friendlier name, a description (shown as a
+        tooltip), an ordering and a category. It decorates any of the types on this page:
       </p>
       <ul>
         <li>a <strong>persistence manager</strong>: its entry in the manager dropdown;</li>
@@ -367,7 +370,7 @@
     <section id="codecs">
       <h2>Custom variable types (No-Code)</h2>
       <p>
-        To make one of your own types usable as a <a href="No-Code.html">No-Code variable</a>, write a
+        To make a type of your own usable as a <a href="No-Code.html">No-Code variable</a>, write a
         <code>VariableTypeCodec&lt;T&gt;</code> that turns the value into the flat string a
         <code>PersistentVariables</code> asset saves, and back, then register it with
         <code>[VariableType]</code>:
@@ -398,20 +401,18 @@
     }
 }</code></pre>
       <p>
-        The type then appears in the variable type dropdown, with a default value field. This is exactly
-        how every built-in variable type is built, the simple values, Input Binding and Locale Identifier
-        alike.
+        The type then appears in the variable type dropdown, with a default value field. Every built-in
+        variable type is built this way, the simple values, Input Binding and Locale Identifier alike.
       </p>
       <p>
-        The sample shows the two habits every codec must copy: format and parse with
-        <code>CultureInfo.InvariantCulture</code> (the string lands in save files, which must read the same on every
-        machine locale, and a comma decimal separator would even collide with the component separator here), and
-        never throw on corrupt input, degrade to the default value instead.
+        Two rules every codec follows, both shown above. Format and parse with
+        <code>CultureInfo.InvariantCulture</code>, since the string lands in save files that must read
+        the same under every machine locale (a comma decimal separator would also collide with the
+        component separator here). And never throw on corrupt input: degrade to the default value.
       </p>
       <p>
-        Two constraints: enums need no codec (they are handled generically, so do not write one), and a
-        codec must target a single value type, collections are not registrable (use a list or map variable
-        of your type instead).
+        Two constraints: enums are handled generically and need no codec, and a codec targets a single
+        value type, so collections are not registrable (use a list or map variable of your type).
       </p>
     </section>
 
@@ -422,8 +423,8 @@
       <p>
         A <a href="No-Code.html">Variable Binder</a> uses a <code>ValueConverter</code> to drive a
         member whose type differs from the variable's (an <code>int</code> variable onto a
-        <code>string</code> label, say). Add your own by subclassing
-        <code>ValueConverter&lt;TFrom, TTo&gt;</code>; it is discovered automatically:
+        <code>string</code> label, for example). Add your own by subclassing
+        <code>ValueConverter&lt;TFrom, TTo&gt;</code>, which is discovered automatically:
       </p>
       <pre><code><span class="kw">using</span> PersistentAsset.NoCode;
 
@@ -433,8 +434,8 @@
     <span class="kw">protected override string</span> Convert(<span class="kw">int</span> value) =&gt; value.ToString();
 }</code></pre>
       <p>
-        Each converter goes one way. For a two-way binding, also declare the reverse
-        (<code>string</code> to <code>int</code>). Your converters join the built-in ones.
+        Each converter goes one way, so a two-way binding also needs the reverse (<code>string</code>
+        to <code>int</code>). Custom converters sit alongside the built-in ones.
       </p>
     </section>
 
@@ -446,7 +447,7 @@
         A widget controls how a variable type is edited in the inspector (its drawer). Subclass
         <code>VariableWidget&lt;T&gt;</code> and pair it with a codec by id (matching the
         <code>[VariableType]</code> id) through <code>[VariableWidget]</code>. The codec round trip is
-        handled for you, so you just draw the typed value:
+        handled by the base class, so the widget draws the typed value:
       </p>
       <pre><code><span class="kw">using</span> PersistentAsset.Editor.NoCode;
 <span class="kw">using</span> UnityEditor;
@@ -459,7 +460,7 @@
         =&gt; EditorGUI.ColorField(rect, label, value);
 }</code></pre>
       <p>
-        Override <code>GetHeight</code> too when your editor needs more than one line.
+        Override <code>GetHeight</code> too when the editor needs more than one line.
       </p>
     </section>
 

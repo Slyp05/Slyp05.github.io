@@ -42,10 +42,9 @@
         </table>
       </div>
       <div class="note">
-        WebGL runs single-threaded, and a mobile app can be suspended at any moment, so true background
-        asynchronous saving is constrained on these platforms. Persistent Asset accounts for this: the
-        automatic safe-point saves run synchronously, and remote managers can use a local cache, so in
-        practice the async limits there rarely cost you a save.
+        WebGL runs single-threaded, and a mobile app can be suspended at any moment, so background
+        asynchronous saving is constrained on these platforms. The automatic safe-point saves run
+        synchronously there, and remote managers can use a local cache.
       </div>
     </section>
 
@@ -55,8 +54,8 @@
       <h2>Installing</h2>
       <ol>
         <li>Import <strong>Persistent Asset</strong> from the Asset Store (<strong>Window &gt; Package Manager &gt; My Assets</strong>, or the Asset Store page's "Import").</li>
-        <li>Nothing more to set up: you can create your first persistent object right away, as in <a href="Getting%20Started.html">Getting Started</a>.</li>
-        <li>If you want a networked or No-Code module, install its package (next section); the module then compiles automatically, with no define to set.</li>
+        <li>Nothing more to set up: the first persistent object can be created right away, as in <a href="Getting%20Started.html">Getting Started</a>.</li>
+        <li>For a networked or No-Code module, install its dependency (next section); the module then compiles automatically, with no define to set.</li>
       </ol>
       <p>
         Everything lives under one <code>Assets/Persistent Asset</code> folder.
@@ -68,8 +67,8 @@
     <section id="dependencies">
       <h2>Optional modules</h2>
       <p>
-        Each module below is inert until you add its Unity package via the Package Manager. Once the
-        package is present, the module compiles in on its own (no scripting define, no setup).
+        Each module below stays inert until its dependency is in the project. Once it is, the module
+        compiles in on its own (no scripting define, no setup).
       </p>
 
       <div class="member-group">
@@ -86,12 +85,20 @@
             <td><strong>No-Code Localization</strong><br/>persistable selected locale</td>
             <td>Requires <code>com.unity.localization</code> (the Localization package). See <a href="No-Code.html#localization">No-Code</a>.</td>
           </tr>
+          <tr>
+            <td><strong>Newtonsoft serializer</strong><br/>the Newtonsoft JSON serializer</td>
+            <td>Requires <code>com.unity.nuget.newtonsoft-json</code> (Newtonsoft Json). See <a href="Serializers.html#newtonsoft">Serializers</a>.</td>
+          </tr>
+          <tr>
+            <td><strong>Odin serializer</strong><br/>the Odin serializer</td>
+            <td>Requires Odin, either the one bundled with Odin Inspector or the free standalone Odin Serializer. See <a href="Serializers.html#odin">Serializers</a>.</td>
+          </tr>
         </table>
       </div>
 
       <div class="note">
         The Server (HTTP) manager and the rest of the No-Code module (Persistent Variables, the
-        components) need none of these, they are part of the base package.
+        components) need none of these: they are part of the base package.
       </div>
     </section>
 
@@ -101,14 +108,13 @@
       <h2>The demo</h2>
       <p>
         The package ships a complete, playable sample: a main menu, profile (save-slot) selection, a
-        level select, and a gameplay scene, all persisting through Persistent Asset. It is the fastest
-        way to see the package work end to end.
+        level select and a gameplay scene, all persisting through Persistent Asset.
       </p>
       <p>
         Open <strong>[PA 0] Demo_MainMenu</strong> (under <code>Persistent Asset/Demo/Scenes</code>) and
-        press Play. From there the demo flows through the other scenes on its own. Make some progress,
-        stop, press Play again, and your profile, options and progress are restored. As you play, the
-        on-screen <strong>In Game Logs Viewer</strong> shows each load and save as it happens (see
+        press Play. The demo flows through the other scenes on its own. Make some progress, stop,
+        press Play again, and the profile, options and progress are restored. The on-screen
+        <strong>In Game Logs Viewer</strong> shows each load and save as it happens (see
         <a href="Guides.html#debug">Debugging</a>).
       </p>
 
@@ -131,38 +137,35 @@
       </ul>
       <p>
         The demo's achievements persist through the <a href="Cloud%20and%20Remote.html#http">Server
-        (HTTP)</a> manager talking to a bundled <strong>mock server</strong>: a real local HTTP
-        backend running in every scene, so you see an actual remote save flow with no external
-        server to set up. An on-screen overlay lets you
-        <strong>start and stop it and reset its data</strong>, so you can watch the offline
-        cache and reconnection behave (it deliberately starts offline). A mock HTTP server cannot run in
-        a <strong>WebGL</strong> build, so there the demo backs the achievements with a local
-        <a href="Local%20Saving.html">Prototype</a> manager instead, a small example of
-        choosing a persistence backend per platform.
+        (HTTP)</a> manager, talking to a bundled <strong>mock server</strong>: a real local HTTP
+        backend running in every scene, so the remote save flow runs with no external server to set up.
+        An on-screen overlay <strong>starts and stops it and resets its data</strong>, which exercises
+        the offline cache and reconnection (it starts offline). A mock HTTP server cannot run in a
+        <strong>WebGL</strong> build, so there the demo backs the achievements with a local
+        <a href="Local%20Saving.html">Prototype</a> manager instead, an example of choosing a
+        persistence backend per platform.
       </p>
       <p>
-        The demo's scripts (under <code>Demo/Scripts</code>) are a useful reference for wiring the
-        package into a real project. It is self-contained under <code>Assets/Persistent Asset/Demo</code>:
-        nothing else depends on it.
+        The demo's scripts (under <code>Demo/Scripts</code>) are a reference for wiring the package
+        into a real project. Everything is self-contained under
+        <code>Assets/Persistent Asset/Demo</code>, and nothing else depends on it.
       </p>
       <p>
         <strong>Delete the Demo folder before shipping your own game.</strong> The demo's achievement
-        assets are global save assets, so a build made with the folder still present ships them too
-        (they stay dormant outside the demo's own scenes, but they are dead weight in your build, and
-        keeping demo content out of a released game is basic hygiene). Deleting the folder is one
-        keystroke and nothing else depends on it; do it as soon as you are done exploring the demo.
+        assets are global save assets, so a build made with the folder still present ships them too.
+        Nothing else depends on the folder, so it can be deleted at any time.
       </p>
     </section>
 
 
     <div class="pager">
-      <a class="prev" href="Getting%20Started.html">
+      <a class="prev" href="What%20is%20a%20ScriptableObject.html">
         <div class="dir">Back</div>
-        <div class="pg-title">Getting Started</div>
+        <div class="pg-title">What is a ScriptableObject?</div>
       </a>
-      <a class="next" href="Core%20Concepts.html">
+      <a class="next" href="Getting%20Started.html">
         <div class="dir">Next</div>
-        <div class="pg-title">Core Concepts</div>
+        <div class="pg-title">Getting Started</div>
       </a>
     </div>
 

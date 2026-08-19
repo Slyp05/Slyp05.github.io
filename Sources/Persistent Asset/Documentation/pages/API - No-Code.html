@@ -33,7 +33,7 @@
   <main>
     <div class="page-header">
       <h1>Public API</h1>
-      <div class="sub">Persistent Asset v1.0.0 &nbsp;&middot;&nbsp; namespaces <code>PersistentAsset(.BuiltIns/.NoCode)</code> and the editor mirrors <code>PersistentAsset.Editor(.BuiltIns/.NoCode)</code></div>
+      <div class="sub">Persistent Asset v1.1.0 &nbsp;&middot;&nbsp; namespaces <code>PersistentAsset(.BuiltIns/.NoCode)</code> and the editor mirrors <code>PersistentAsset.Editor(.BuiltIns/.NoCode)</code></div>
     </div>
 
     <p class="lead">Reference for every public type and member in the No-Code area. <span class="ex">Red text</span> flags the exceptions a member can throw. See the <a href="../Public%20API.html">API overview</a> for the other areas.</p>
@@ -182,7 +182,8 @@
           <tr><td><span class="mn">VariableTypeCodec&lt;T&gt;</span> (abstract) &middot; <span class="kw">protected abstract string</span> <span class="mn">Write</span>(<span class="t">T</span>) / <span class="kw">protected abstract T</span> <span class="mn">Read</span>(<span class="t">string</span>)</td><td>The typed codec to implement (an empty string passed to <code>Read</code> means the default); pair with <code>[VariableType(type, id)]</code>.</td></tr>
           <tr><td><span class="mn">VariableTypes</span> (static) &middot; <span class="kw">void</span> <span class="mn">Register</span>(<span class="t">Type</span>, <span class="t">string</span> id, <span class="t">VariableTypeCodec</span>)</td><td>The registry of supported variable types. <code>[VariableType]</code> codecs are discovered automatically; <code>Register</code> adds (or replaces) one manually. <span class="ex">Throws ArgumentNullException / ArgumentException on a null or empty argument, NotSupportedException for a collection type (register the element type instead).</span></td></tr>
           <tr><td><span class="t">bool</span> <span class="mn">TryGetCodec</span>(<span class="t">Type</span>, out <span class="t">VariableTypeCodec</span>) / <span class="mn">TryGetCodec</span>(<span class="t">string</span> id, out <span class="t">VariableTypeCodec</span>) / <span class="mn">TryGetId</span>(<span class="t">Type</span>, out <span class="t">string</span>) / <span class="mn">TryGetType</span>(<span class="t">string</span> id, out <span class="t">Type</span>)</td><td>Look up between the registered types, their stable save ids and their codecs.</td></tr>
-          <tr><td><span class="t">IEnumerable&lt;KeyValuePair&lt;string, Type&gt;&gt;</span> <span class="mn">All</span> { get; } / <span class="t">string</span> <span class="mn">EnumId</span>(<span class="t">Type</span> enumType)</td><td>Every registered id and type (unregistered enums excluded); the on-demand id an unregistered enum's values are stored under (that id embeds the enum's full type name, so register an explicit codec for an enum you may later rename).</td></tr>
+          <tr><td><span class="t">IEnumerable&lt;KeyValuePair&lt;string, Type&gt;&gt;</span> <span class="mn">All</span> { get; } / <span class="t">string</span> <span class="mn">EnumId</span>(<span class="t">Type</span> enumType)</td><td>Every registered id and type (unregistered enums and asset types excluded); the on-demand id an unregistered enum's values are stored under (that id embeds the enum's full type name, so register an explicit codec for an enum you may later rename).</td></tr>
+          <tr><td><span class="t">string</span> <span class="mn">AssetId</span>(<span class="t">Type</span> assetType)</td><td>The on-demand id of an asset type, the token references to its assets are stored under. The value saved is the asset's id from the <a href="API%20-%20Core.html#AssetRegistry"><code>AssetRegistry</code></a>, so only registered assets can be saved. As with an enum, the id embeds the type's full name, so the asset type of a shipped variable should be considered fixed.</td></tr>
         </table>
       </div>
       <div class="member-group">
@@ -221,7 +222,7 @@
       </table></div>
     </div>
 
-    <div class="doc-footer">Persistent Asset v1.0.0 &nbsp;&middot;&nbsp; For full signatures and remarks, see the XML doc comments in the source.</div>
+    <div class="doc-footer">Persistent Asset v1.1.0 &nbsp;&middot;&nbsp; For full signatures and remarks, see the XML doc comments in the source.</div>
 
   </main>
 </div>

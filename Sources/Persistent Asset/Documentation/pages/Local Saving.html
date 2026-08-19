@@ -19,9 +19,9 @@
     </div>
 
     <p class="lead">
-      A persistence manager is what saves and loads a persistent object. You pick one from the
-      dropdown at the top of the object's inspector, and can switch at any time without touching
-      code. The package ships several local ones, plus two that save to a server or the cloud (see
+      A persistence manager saves and loads a persistent object. You pick one from the dropdown at
+      the top of the object's inspector, and can switch at any time without touching code. These are
+      the local managers; two more save to a server or the cloud (see
       <a href="Cloud%20and%20Remote.html">Cloud &amp; Remote</a>).
     </p>
 
@@ -40,19 +40,19 @@
     <section id="prototype">
       <h2>Prototype</h2>
       <p>
-        The zero-configuration manager, and the recommended starting point. It is also what new
-        persistent objects are assigned by default (changeable in <a href="Settings.html#general">Settings</a>).
-        It writes one save file per object under the platform's persistent data path, on desktop,
-        mobile and WebGL, with nothing to configure. It is synchronous and dependency-free.
+        The zero-configuration manager, assigned to new persistent objects by default (changeable in
+        <a href="Settings.html#general">Settings</a>). It writes one save file per object under the
+        platform's persistent data path, on desktop, mobile and WebGL. Synchronous, with no
+        dependencies.
       </p>
       <ul>
         <li><strong>No settings</strong>: auto load, auto save and the regular save timer are all on and fixed.</li>
         <li><strong>Editor-safe</strong>: in the editor its saves live in the project's UserSettings folder, so play mode never clobbers the saves of an installed build of your game.</li>
-        <li><strong>When to move on</strong>: switch to Local File the moment you want compression, encryption, backups, a custom file name, or async saving.</li>
+        <li><strong>Its limits</strong>: compression, encryption, backups, a custom file name and async saving all need Local File.</li>
       </ul>
       <div class="note">
-        Consoles gate saving behind their platform SDK, so they are not covered by Prototype:
-        there you write a small custom manager (see <a href="Extending.html">Extending</a>).
+        Consoles gate saving behind their platform SDK, so Prototype does not cover them: there you
+        write a small custom manager (see <a href="Extending.html">Extending</a>).
       </div>
     </section>
 
@@ -61,9 +61,8 @@
     <section id="file">
       <h2>Local File</h2>
       <p>
-        The full-featured local manager: it saves to files on the player's device and exposes
-        every knob you are likely to want. It supports both synchronous and asynchronous
-        operations.
+        Saves to files on the player's device, with every option exposed. It supports both
+        synchronous and asynchronous operations.
       </p>
 
       <div class="img-block">
@@ -87,7 +86,7 @@
         <li><strong>Read / Write Execution Mode</strong>: prefer synchronous or asynchronous. Under a Prefer mode the safe-point saves (on quit, unload, focus loss) still run synchronously; set Async Only and they run asynchronously too, where a save can fail if it overruns its timeout.</li>
       </ul>
       <p>
-        Compression, encryption and the related options also have practical guidance in
+        Compression, encryption and the related options are covered in
         <a href="Guides.html#security">Securing saves</a>.
       </p>
     </section>
@@ -104,8 +103,8 @@
         can recognize and clear them.
       </p>
       <p>
-        For larger or structured saves, prefer Local File: Player Prefs is not designed for big
-        blobs and offers none of the file manager's protection or backup options.
+        Player Prefs is not designed for large blobs, and offers none of Local File's protection or
+        backup options.
       </p>
     </section>
 
@@ -119,9 +118,8 @@
         empty. Saves and loads still go through the normal API.
       </p>
       <p>
-        Use it for state you want within a play session but never across them: a mid-level
-        checkpoint to respawn from, or a run's progress in a game where quitting is meant to
-        forfeit the run.
+        It suits state that should live within a play session but never across them: a mid-level
+        checkpoint to respawn from, or a run's progress in a game where quitting forfeits the run.
       </p>
     </section>
 
@@ -130,15 +128,13 @@
     <section id="test">
       <h2>Test</h2>
       <p>
-        A fake in-memory manager to test how your game behaves when persistence misbehaves, without
-        touching a real save: force any operation to any outcome (a failed load, a cancelled save, an
-        exception) and inject delays to simulate a slow server, then watch what your title screen,
-        save indicator or error handling does. It is the easiest way to rehearse a slow or failed
-        load before going remote.
+        A fake in-memory manager for testing how a game behaves when persistence misbehaves, without
+        touching a real save. Force any operation to any outcome (a failed load, a cancelled save, an
+        exception), and inject delays to simulate a slow server.
       </p>
       <p>
-        Assigning it always keeps a read-only import copy of the setup it replaces, so its inspector
-        restores your real setup in one click once you are done.
+        Assigning it keeps a read-only import copy of the setup it replaces, restored in one click
+        from its inspector.
       </p>
     </section>
 
@@ -147,8 +143,8 @@
     <section id="none">
       <h2>None</h2>
       <p>
-        Selecting <strong>None</strong> opts the object out of persistence: it behaves like a
-        plain ScriptableObject, with no saving or loading.
+        <strong>None</strong> turns persistence off for that object: it behaves like a plain
+        ScriptableObject, with no saving or loading.
       </p>
     </section>
 
