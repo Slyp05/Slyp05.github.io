@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Persistent Asset - Public API - Editor Extension</title>
   <link rel="stylesheet" href="/assets/css/doc-styles.css" />
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
   <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </head>
 <body>
@@ -186,7 +190,7 @@
 
     <div class="type-section" id="AssetRegistration">
       <div class="type-header"><h2>AssetRegistration</h2><span class="badge badge-static">static</span><span class="ns">PersistentAsset.Editor</span></div>
-      <p class="type-desc">The editor side of <code>AssetRegistry</code>: it decides which assets save data may point at, and keeps the table the runtime reads in sync with the project. Use it to register assets from your own editor tooling. See <a href="Guides.html#assetrefs">saving asset references</a>.</p>
+      <p class="type-desc">The editor side of <code>AssetRegistry</code>: it decides which assets save data may point at, and keeps the table the runtime reads in sync with the project. Use it to register assets from your own editor tooling. See <a href="../../user-manual/pages/Guides.html#assetrefs">saving asset references</a>.</p>
       <div class="member-group"><table class="mt">
         <tr><td><span class="t">string</span> <span class="mn">Register</span>(<span class="t">Object</span> asset)</td><td>Registers an asset and returns its id (null when it cannot be registered, such as a scene object). Idempotent.</td></tr>
         <tr><td><span class="kw">void</span> <span class="mn">Unregister</span>(<span class="t">string</span> id)</td><td>Unregisters an id. Saved references to it stop resolving.</td></tr>

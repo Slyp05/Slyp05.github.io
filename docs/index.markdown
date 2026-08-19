@@ -2,7 +2,7 @@
 layout: home
 ---
 
-<img src="/assets/images/home.jpg" alt="Juste Tools" class="home-image" width="1200" height="800" decoding="async">
+<h1 class="home-title"><img src="/assets/images/home.jpg" alt="Juste Tools" class="home-image" width="1200" height="800" decoding="async"></h1>
 
 <div class="home-intro">
   <p>Juste Tools is where I make the Unity tools I always wished existed: clean APIs, solid architecture, and docs that actually help.</p>

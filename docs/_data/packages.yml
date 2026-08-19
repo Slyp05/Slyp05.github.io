@@ -24,7 +24,7 @@
   released: true
   price: "49.99"
   meta: Released August 2026
-  card: /assets/images/persistent-asset-card.png
+  card: /assets/images/persistent-asset-card.jpg
   icon: /assets/images/PA.png
   blurb: >-
     A complete save system for Unity, with no save code to write. Automatic saving,
@@ -35,7 +35,7 @@
   released: true
   price: "29.99"
   meta: Updated June 2026
-  card: /assets/images/infinite-value-card.png
+  card: /assets/images/infinite-value-card.jpg
   icon: /assets/images/IV.png
   blurb: >-
     Numbers of any size and precision in Unity. Behaves like a primitive type, works in
@@ -46,7 +46,7 @@
   released: true
   price: "0"
   meta: Updated June 2026
-  card: /assets/images/generic-arithmetic-card.png
+  card: /assets/images/generic-arithmetic-card.jpg
   icon: /assets/images/GA.png
   blurb: >-
     Arithmetic and comparison operations in generic C# classes. Works with any value type,
@@ -57,20 +57,20 @@
   released: true
   price: "0"
   meta: Updated June 2026
-  card: /assets/images/auto-singleton-card.png
+  card: /assets/images/auto-singleton-card.jpg
   icon: /assets/images/AS.png
   blurb: >-
     Add <code>[Singleton]</code> to any class and the asset handles everything: asset
     generation, cleanup, polymorphic access, and inspector integration.
 
-# Unreleased. Needs a 420x280 card image and a 160x160 icon before release;
-# the paths below don't exist yet.
+# Unreleased: hidden from the home page and the nav until `released` is true.
+# Artwork is in place, exported from Sources/Settings Kit/Media Exports/.
 - title: Settings Kit
   url: /settings-kit/
   released: false
   price: "0"
   meta: Coming soon
-  card: /assets/images/settings-kit-card.png
+  card: /assets/images/settings-kit-card.jpg
   icon: /assets/images/SK.png
   blurb: >-
     Declare Project Settings and Preferences pages in Unity from a small class, read them

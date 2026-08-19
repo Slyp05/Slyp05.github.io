@@ -3,13 +3,13 @@ layout: page
 title: Auto Singleton
 permalink: /auto-singleton/
 image: /assets/images/auto-singleton.jpg
+description: "Add the [Singleton] attribute to any class and the asset handles automatic asset generation, cleanup, polymorphic access, and inspector integration in Unity."
 software:
-  description: "Add the [Singleton] attribute to any class and the asset handles automatic asset generation, cleanup, polymorphic access, and inspector integration in Unity."
   price: "0"
   store_url: https://assetstore.unity.com/packages/tools/utilities/auto-singleton-264895
 ---
 
-<img src="/assets/images/auto-singleton.jpg" alt="Auto Singleton" class="package-image" width="1950" height="1300" decoding="async">
+<img src="/assets/images/auto-singleton.jpg" alt="Auto Singleton" class="package-image" width="1200" height="800" decoding="async">
 
 The simplest singleton tool on the Asset Store. Add the `[Singleton]` attribute to any class and the asset handles everything: automatic asset generation, cleanup, and polymorphic access at runtime.
 

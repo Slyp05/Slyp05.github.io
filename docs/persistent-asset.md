@@ -2,15 +2,15 @@
 layout: page
 title: Persistent Asset
 permalink: /persistent-asset/
-image: /assets/images/persistent-asset.png
+image: /assets/images/persistent-asset.jpg
+description: "A complete save system for Unity: automatic saving, save slots, cloud sync, AES-256 encryption, save versioning and crash-safe writes, with no save code to write."
 software:
   name: "Persistent Asset - Premium Save System"
-  description: "A complete save system for Unity: automatic saving, save slots, cloud sync, AES-256 encryption, save versioning and crash-safe writes, with no save code to write."
   price: "49.99"
   store_url: https://assetstore.unity.com/packages/slug/389310
 ---
 
-<img src="/assets/images/persistent-asset.png" alt="Persistent Asset" class="package-image" width="1950" height="1300" decoding="async">
+<img src="/assets/images/persistent-asset.jpg" alt="Persistent Asset" class="package-image" width="1200" height="800" decoding="async">
 
 **A complete save system for Unity. Declare your data once, and it saves itself.**
 

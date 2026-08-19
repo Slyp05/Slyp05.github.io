@@ -13,10 +13,14 @@
 
   Transform applied to every page:
     - stylesheet  shared/styles.css        -> /assets/css/doc-styles.css
-                  (+ the goatcounter analytics <script> the site injects)
+                  (+ the favicon <link>s and goatcounter analytics <script>
+                   the site injects, which the offline source docs must not have)
     - home links  User%20Manual.html       -> index.html   (same tree)
                   Public%20API.html         -> index.html   (same tree)
     - images      ../img/<name>            -> ../img/<name>.png
+    - cross-tree  Serializers.html         -> ../../user-manual/pages/Serializers.html
+                  links between the two trees, which the flat source writes as
+                  plain siblings, get an explicit path to the other tree.
 
   The shared JS is copied into each tree's shared/ folder:
     - nav.js           lightly adapted (home file = index.html, API detected by
@@ -43,6 +47,17 @@ if (-not (Test-Path $src)) { throw "Source docs not found: $src" }
 
 $analytics = '  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>'
 
+# These standalone doc pages are outside Jekyll, so they never get _includes/custom-head.html.
+# Inject the same favicon set here, absolute-pathed because the pages sit at several depths.
+# Deliberately NOT added to the source docs: those ship inside the Unity package and are
+# opened from disk, where a site-absolute /assets/... path would not resolve.
+$favicons = @(
+    '  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />'
+    '  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />'
+    '  <link rel="shortcut icon" href="/assets/images/favicon.ico" />'
+    '  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />'
+) -join "`n"
+
 function Read-Text([string]$p)  { return [IO.File]::ReadAllText($p) }
 function Write-Text([string]$p, [string]$t) {
     $dir = Split-Path $p -Parent
@@ -50,11 +65,42 @@ function Write-Text([string]$p, [string]$t) {
     [IO.File]::WriteAllText($p, $t, $utf8)
 }
 
-function Convert-Html([string]$text, [string]$tree) {
+# Map every source page to the tree it will land in. The flat source folder lets a
+# page link to any other as a plain sibling ("Serializers.html"); once split across
+# user-manual/ and public-api/ those sibling links are only valid within one tree,
+# so links pointing at the other tree need an explicit path.
+$pageTree = @{}
+Get-ChildItem (Join-Path $src 'pages') -Filter *.html | ForEach-Object {
+    if ($_.Name -like 'API - *') { $pageTree[$_.Name] = 'api' } else { $pageTree[$_.Name] = 'manual' }
+}
+
+# $location is 'home' (tree root: links read "pages/Name.html") or 'page' (inside
+# pages/: links read "Name.html"). Same-tree links are left exactly as authored.
+function Convert-CrossTreeLinks([string]$text, [string]$tree, [string]$location) {
+    if ($location -eq 'home') { $upTo = '../' } else { $upTo = '../../' }
+    foreach ($name in @($pageTree.Keys)) {
+        if ($pageTree[$name] -eq $tree) { continue }
+        if ($pageTree[$name] -eq 'api') { $dir = 'public-api' } else { $dir = 'user-manual' }
+        foreach ($variant in @($name, ($name -replace ' ', '%20'))) {
+            if ($location -eq 'home') { $from = 'pages/' + $variant } else { $from = $variant }
+            $to = $upTo + $dir + '/pages/' + $variant
+            # The lookbehind anchors the match to the start of the href, so a path
+            # already rewritten in an earlier pass cannot match again.
+            $text = [regex]::Replace($text, '(?<=href=")' + [regex]::Escape($from) + '(?=["#?])', $to)
+            if ($text -match '(?<=href=")' + [regex]::Escape($from) + '(?=["#?])') {
+                throw "Cross-tree link to '$name' survived rewriting in a '$tree' page; update Build-PersistentAssetDocs.ps1."
+            }
+        }
+    }
+    return $text
+}
+
+function Convert-Html([string]$text, [string]$tree, [string]$location) {
     # The manual and API homes both become index.html, but each in its OWN tree.
-    # This doc set never links across trees, so a same-tree rename is correct. Guard
-    # that assumption: a foreign-tree home link would otherwise be silently rewritten
-    # to this tree's index.html and point at the wrong page.
+    # Cross-tree links to *content* pages are handled by Convert-CrossTreeLinks below.
+    # Cross-tree links to the two *home* pages are not, so guard that case: a foreign-
+    # tree home link would otherwise be silently rewritten to this tree's index.html
+    # and point at the wrong page.
     if ($tree -eq 'manual' -and $text -match 'Public%20API\.html') {
         throw "Manual page links to the API home (Public%20API.html); cross-tree links need explicit ../public-api/ handling in Build-PersistentAssetDocs.ps1."
     }
@@ -64,12 +110,14 @@ function Convert-Html([string]$text, [string]$tree) {
     # stylesheet -> absolute shared sheet, followed by the analytics line
     $text = $text -replace `
         '<link rel="stylesheet" href="(?:\.\./)?shared/styles\.css" />', `
-        ('<link rel="stylesheet" href="/assets/css/doc-styles.css" />' + "`n" + $analytics)
+        ('<link rel="stylesheet" href="/assets/css/doc-styles.css" />' + "`n" + $favicons + "`n" + $analytics)
     # home-page renames (same-tree only, per the guard above)
     $text = $text -replace 'User%20Manual\.html', 'index.html'
     $text = $text -replace 'Public%20API\.html',  'index.html'
     # extensionless source images become .png on the site
     $text = $text -replace '(src="(?:\.\./)?img/[A-Za-z0-9_]+)"', '$1.png"'
+    # sibling links that now cross between the two trees
+    $text = Convert-CrossTreeLinks $text $tree $location
     return $text
 }
 
@@ -80,15 +128,15 @@ foreach ($d in @((Join-Path $um 'pages'), (Join-Path $um 'img'), (Join-Path $um 
 }
 
 # --- home pages ---
-Write-Text (Join-Path $um  'index.html') (Convert-Html (Read-Text (Join-Path $src 'User Manual.html')) 'manual')
-Write-Text (Join-Path $api 'index.html') (Convert-Html (Read-Text (Join-Path $src 'Public API.html')) 'api')
+Write-Text (Join-Path $um  'index.html') (Convert-Html (Read-Text (Join-Path $src 'User Manual.html')) 'manual' 'home')
+Write-Text (Join-Path $api 'index.html') (Convert-Html (Read-Text (Join-Path $src 'Public API.html')) 'api' 'home')
 
 # --- content pages: API-* go to public-api, the rest to user-manual ---
 Get-ChildItem (Join-Path $src 'pages') -Filter *.html | ForEach-Object {
     $isApi = $_.Name -like 'API - *'
     $tree  = if ($isApi) { $api } else { $um }
     $kind  = if ($isApi) { 'api' } else { 'manual' }
-    Write-Text (Join-Path $tree ('pages\' + $_.Name)) (Convert-Html (Read-Text $_.FullName) $kind)
+    Write-Text (Join-Path $tree ('pages\' + $_.Name)) (Convert-Html (Read-Text $_.FullName) $kind 'page')
 }
 
 # --- images: extensionless source files -> <name>.png ---

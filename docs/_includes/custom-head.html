@@ -12,7 +12,7 @@
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
   "name": {{ page.software.name | default: page.title | jsonify }},
-  "description": {{ page.software.description | jsonify }},
+  "description": {{ page.description | jsonify }},
   "applicationCategory": "DeveloperApplication",
   "operatingSystem": "Unity 6.0 or later",
   "image": {{ page.image | absolute_url | jsonify }},

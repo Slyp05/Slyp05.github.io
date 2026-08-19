@@ -16,7 +16,7 @@ body_class: about-page
     <p>Outside of work you'll usually find me at a <strong>game jam</strong>, behind a <strong>drum kit</strong>, or lost in a good <strong>sci-fi or horror story</strong>.<br>
     I believe good tools, like good games, come from people who genuinely care, and I try to bring that care to everything I publish here.</p>
   </div>
-  <img src="/assets/images/about-me.jpg" alt="Lucas Sarkadi" class="about-photo" width="3100" height="2878" loading="lazy" decoding="async">
+  <img src="/assets/images/about-me.jpg" alt="Lucas Sarkadi" class="about-photo" width="480" height="480" loading="lazy" decoding="async">
 </div>
 
 ## My Stance on AI {#my-stance-on-ai}

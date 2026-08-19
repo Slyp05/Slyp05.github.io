@@ -2,15 +2,15 @@
 layout: page
 title: Settings Kit
 permalink: /settings-kit/
-image: /assets/images/settings-kit.png
+image: /assets/images/settings-kit.jpg
 sitemap: false
+description: "Declare Project Settings and Preferences pages in Unity from a small class, read them anywhere including at runtime in a built player, with no editor boilerplate and nothing under Resources/."
 software:
-  description: "Declare Project Settings and Preferences pages in Unity from a small class, read them anywhere including at runtime in a built player, with no editor boilerplate and nothing under Resources/."
   price: "0"
   store_url: ""
 ---
 
-<img src="/assets/images/settings-kit.png" alt="Settings Kit" class="package-image" width="1950" height="1300" decoding="async">
+<img src="/assets/images/settings-kit.jpg" alt="Settings Kit" class="package-image" width="1200" height="800" decoding="async">
 
 Adding a settings page to a Unity project usually means editor boilerplate, a `Resources/` asset to read at runtime, and serialization wired up by hand. Settings Kit removes all of it: you write one small **page** class and one or more serializable **entry** classes, and from that alone your settings appear in the right window, are stored in the right place, ship into builds when appropriate, and are read through a tiny static API.
 

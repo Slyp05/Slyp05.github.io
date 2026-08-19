@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Persistent Asset - Public API - Built-Ins</title>
   <link rel="stylesheet" href="/assets/css/doc-styles.css" />
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
   <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </head>
 <body>
@@ -83,7 +87,7 @@
 
     <div class="type-section" id="NewtonsoftJsonSerializer">
       <div class="type-header"><h2>NewtonsoftJsonSerializer</h2><span class="badge badge-class">class</span></div>
-      <p class="type-desc">"Newtonsoft JSON". Serializes the union of what Unity serializes and what Newtonsoft serializes (dictionaries, properties, nullables, plain C# objects), and supports save versioning. Present only when the <code>com.unity.nuget.newtonsoft-json</code> package is installed. See <a href="Serializers.html#newtonsoft">Serializers</a>.</p>
+      <p class="type-desc">"Newtonsoft JSON". Serializes the union of what Unity serializes and what Newtonsoft serializes (dictionaries, properties, nullables, plain C# objects), and supports save versioning. Present only when the <code>com.unity.nuget.newtonsoft-json</code> package is installed. See <a href="../../user-manual/pages/Serializers.html#newtonsoft">Serializers</a>.</p>
       <div class="member-group"><table class="mt">
         <tr><td><span class="t">enum</span> <span class="mn">Format</span></td><td>PrettyPrint, OneLine, Obfuscated.</td></tr>
         <tr><td>Inspector: <span class="mn">Shared References</span></td><td>Keeps an object referenced from several places as one object (and lets data refer back to itself), adding <code>$id</code> / <code>$ref</code> members.</td></tr>
@@ -93,7 +97,7 @@
 
     <div class="type-section" id="OdinDataSerializer">
       <div class="type-header"><h2>OdinDataSerializer</h2><span class="badge badge-class">class</span></div>
-      <p class="type-desc">"Odin". Serializes through Odin Serializer, with shared references and polymorphic types handled by Odin itself. Present only when Odin is in the project, either the serializer bundled with Odin Inspector or the free standalone Odin Serializer, which the package detects on its own. See <a href="Serializers.html#odin">Serializers</a>.</p>
+      <p class="type-desc">"Odin". Serializes through Odin Serializer, with shared references and polymorphic types handled by Odin itself. Present only when Odin is in the project, either the serializer bundled with Odin Inspector or the free standalone Odin Serializer, which the package detects on its own. See <a href="../../user-manual/pages/Serializers.html#odin">Serializers</a>.</p>
       <div class="member-group"><table class="mt">
         <tr><td><span class="t">enum</span> <span class="mn">Format</span></td><td>Json (readable, and the only one save upgrades can read old values from), Binary (smaller and faster, base64 encoded).</td></tr>
       </table></div>

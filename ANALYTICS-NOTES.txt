@@ -8,9 +8,18 @@ Dashboard: https://justetools.goatcounter.com
 
 Tracking snippet lives in:
   - docs/_includes/custom-head.html      (covers all Jekyll pages)
-  - docs/*/documentation/index.html      (3 standalone doc pages)
-  - docs/*/public-api/index.html         (3 standalone API pages)
-If you add new standalone HTML pages, paste the snippet into their <head> too.
+  - Tools/Build-PersistentAssetDocs.ps1  (injected into the 19 generated
+                                          Persistent Asset doc pages)
+  - the 8 hand-maintained standalone pages, edited directly:
+      docs/{auto-singleton,generic-arithmetic,infinite-value,settings-kit}/
+        documentation/index.html and public-api/index.html
+That is 27 standalone pages in total, all currently covered.
+
+The same two places also carry the favicon <link>s. Note these are deliberately
+absent from Sources/: those doc files ship inside the Unity package and are opened
+from disk, where a site-absolute /assets/... path would not resolve.
+
+If you add new standalone HTML pages, paste both blocks into their <head> too.
 
 Good to know:
   - No cookies, no consent banner needed (EU/France friendly).

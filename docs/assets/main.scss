@@ -17,6 +17,14 @@ $content-width: 880px;
   border-top-color: #d4d4d4;
 }
 
+// Wraps the home hero logo so the page has an <h1>; the image's alt text supplies
+// the heading. Carries no styling of its own so the layout is unchanged.
+.home-title {
+  margin: 0;
+  padding: 0;
+  line-height: 0;
+}
+
 .home-image {
   display: block;
   width: 300px;

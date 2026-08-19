@@ -8,9 +8,15 @@ style. Pages without `body_class` render exactly as before.
 {%- endcomment -%}
 <article class="post{% if page.body_class %} {{ page.body_class }}{% endif %}">
 
+  {%- comment -%}
+    `hide_title: true` omits this heading entirely, for pages that supply their own
+    <h1> in the content and would otherwise render two.
+  {%- endcomment -%}
+  {%- unless page.hide_title %}
   <header class="post-header">
     <h1 class="post-title">{{ page.title | escape }}</h1>
   </header>
+  {% endunless -%}
 
   <div class="post-content">
     {{ content }}
