@@ -32,6 +32,28 @@
 </script>
 {%- endif -%}
 
+{%- if page.url == '/' -%}
+<!-- Legacy anchors: the "About Me" and "My Stance on AI" sections moved to /about/.
+     A URL fragment never reaches the server, so no server-side redirect can catch these.
+     Forwarding happens here, in <head>, before the home page paints. -->
+<script>
+(function () {
+  var moved = {
+    "about-me": "about-me",
+    "about": "about-me",
+    "my-stance-on-ai": "my-stance-on-ai",
+    "stance-on-ai": "my-stance-on-ai",
+    "my-stance-about-ai": "my-stance-on-ai",
+    "my-stance": "my-stance-on-ai",
+    "stance": "my-stance-on-ai",
+    "ai": "my-stance-on-ai"
+  };
+  var target = moved[decodeURIComponent(location.hash.slice(1)).toLowerCase()];
+  if (target) location.replace("/about/#" + target);
+})();
+</script>
+{%- endif -%}
+
 <!-- Analytics: GoatCounter (no cookies, ignores localhost automatically) -->
 <script data-goatcounter="https://justetools.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>

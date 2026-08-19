@@ -1,0 +1,78 @@
+# Single source of truth for the package list.
+#
+# Drives the home page grid (index.markdown) and the "Assets" nav dropdown
+# (_includes/header.html). Adding a package means adding one entry here.
+#
+# Fields:
+#   title     Display name. Must match the `title:` in the package's own .md page.
+#   url       Must match the `permalink:` in the package's own .md page.
+#   price     String. "0" means free; anything else renders as a $ badge.
+#   meta      Small grey line next to the badge, e.g. "Updated June 2026".
+#   blurb     One or two sentences for the home card. Inline HTML is allowed.
+#   card      420x280 landscape image, shown on wide screens.
+#   icon      160x160 square icon, shown when cards stack on narrow screens.
+#   released  false hides the package from both the home page and the nav.
+#
+# Order within each price group is the order listed here.
+#
+# Releasing a package: flip `released` to true, then remove its `sitemap: false`
+# front matter and its entry under `defaults:` in _config.yml. Those two are
+# Jekyll config and can't be driven from this file.
+
+- title: Persistent Asset
+  url: /persistent-asset/
+  released: true
+  price: "49.99"
+  meta: Released August 2026
+  card: /assets/images/persistent-asset-card.png
+  icon: /assets/images/PA.png
+  blurb: >-
+    A complete save system for Unity, with no save code to write. Automatic saving,
+    save slots, cloud sync, AES-256 encryption and crash-safe writes, all from the inspector.
+
+- title: Infinite Value
+  url: /infinite-value/
+  released: true
+  price: "29.99"
+  meta: Updated June 2026
+  card: /assets/images/infinite-value-card.png
+  icon: /assets/images/IV.png
+  blurb: >-
+    Numbers of any size and precision in Unity. Behaves like a primitive type, works in
+    real-time, and is fully configurable. Perfect for incremental games, RPGs, and monetary systems.
+
+- title: Generic Arithmetic
+  url: /generic-arithmetic/
+  released: true
+  price: "0"
+  meta: Updated June 2026
+  card: /assets/images/generic-arithmetic-card.png
+  icon: /assets/images/GA.png
+  blurb: >-
+    Arithmetic and comparison operations in generic C# classes. Works with any value type,
+    no setup required; supports source generation for AOT-safe custom types.
+
+- title: Auto Singleton
+  url: /auto-singleton/
+  released: true
+  price: "0"
+  meta: Updated June 2026
+  card: /assets/images/auto-singleton-card.png
+  icon: /assets/images/AS.png
+  blurb: >-
+    Add <code>[Singleton]</code> to any class and the asset handles everything: asset
+    generation, cleanup, polymorphic access, and inspector integration.
+
+# Unreleased. Needs a 420x280 card image and a 160x160 icon before release;
+# the paths below don't exist yet.
+- title: Settings Kit
+  url: /settings-kit/
+  released: false
+  price: "0"
+  meta: Coming soon
+  card: /assets/images/settings-kit-card.png
+  icon: /assets/images/SK.png
+  blurb: >-
+    Declare Project Settings and Preferences pages in Unity from a small class, read them
+    anywhere including at runtime in a built player, with no editor boilerplate and nothing
+    under Resources/.

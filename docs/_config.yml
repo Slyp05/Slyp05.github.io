@@ -47,11 +47,10 @@ plugins:
   - jekyll-seo-tag
   - jekyll-sitemap
 
+# Standalone pages in the nav bar. Packages are NOT listed here: the "Assets"
+# dropdown is generated from _data/packages.yml by _includes/header.html.
 header_pages:
-  - persistent-asset.md
-  - infinite-value.md
-  - generic-arithmetic.md
-  - auto-singleton.md
+  - about.md
 
 # Exclude from processing.
 # The following items will not be processed, by default.
