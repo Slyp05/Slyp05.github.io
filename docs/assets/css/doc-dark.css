@@ -1,0 +1,365 @@
+/*
+  Dark mode for the standalone documentation pages.
+
+  Loaded AFTER doc-styles.css, which is a byte-for-byte copy of
+  Sources/Persistent Asset/Documentation/shared/styles.css and must stay that way:
+  that same file ships inside the Unity package and is opened from disk, where a
+  site-absolute path or a web-only feature has no business being. So every
+  web-only concern lives here instead, exactly like the favicons and analytics.
+
+  Same approach as main.scss: each colour becomes a token whose LIGHT value is
+  the one doc-styles.css already produced, so light mode is unchanged and only
+  the dark values differ. Dark is declared twice, under prefers-color-scheme (the
+  default for a first-time visitor) and under [data-theme="dark"] (an explicit
+  choice from the toggle, which must win in both directions).
+
+  Palette: neutral greys. The sidebar, search box and copy buttons are already
+  dark in light mode (Catppuccin, from doc-styles.css) and are re-pointed at
+  tokens here so they go grey alongside the content instead of staying blue-black.
+  <pre> blocks keep their own syntax colours in both themes.
+*/
+
+:root {
+  --d-bg:            #f7f7f7;
+  --d-text:          #1a1a1a;
+  --d-heading:       #1e1e2e;
+  --d-h3:            #3a3a5c;
+  --d-h4:            #555555;
+  --d-body:          #444444;
+  --d-muted:         #888888;
+  --d-dim:           #999999;
+  --d-tagline:       #5a5a7a;
+  --d-link:          #5a8dee;
+  --d-rule:          #e0e0e0;
+  --d-rule-soft:     #e8e8e8;
+  --d-rule-faint:    #f0f0f0;
+  --d-card-bg:       #ffffff;
+  --d-card-border:   #e3e3ec;
+  --d-code-bg:       #ebebf0;
+  --d-code-fg:       #5a3e99;
+  --d-row-hover:     #f0f4ff;
+  --d-img-border:    #dddddd;
+  --d-ph-bg:         #ebebf0;
+  --d-ph-border:     #c0c0d0;
+
+  --d-t:             #1d4ed8;
+  --d-kw:            #7c3aed;
+  --d-mn:            #1a1a1a;
+  --d-ex:            #dc2626;
+
+  --d-warn-bg:       #fef2f2;
+  --d-warn-border:   #fca5a5;
+  --d-warn-fg:       #b91c1c;
+  --d-note-bg:       #fffbeb;
+  --d-note-border:   #f59e0b;
+  --d-note-fg:       #78350f;
+  --d-reassure-bg:     #eef2ff;
+  --d-reassure-border: #c7d2fe;
+  --d-reassure-fg:     #3730a3;
+  --d-reassure-strong: #312e81;
+
+  --d-badge-struct-bg:    #dbeafe;  --d-badge-struct-fg:    #1d4ed8;
+  --d-badge-interface-bg: #fce7f3;  --d-badge-interface-fg: #9d174d;
+  --d-badge-class-bg:     #dcfce7;  --d-badge-class-fg:     #15803d;
+  --d-badge-static-bg:    #fef3c7;  --d-badge-static-fg:    #92400e;
+  --d-badge-so-bg:        #ede9fe;  --d-badge-so-fg:        #6d28d9;
+  --d-badge-mb-bg:        #ffedd5;  --d-badge-mb-fg:        #c2410c;
+  --d-badge-enum-bg:      #ccfbf1;  --d-badge-enum-fg:      #0f766e;
+  --d-badge-pm-bg:        #e0e7ff;  --d-badge-pm-fg:        #4338ca;
+
+  --d-nav-bg:        #1e1e2e;
+  --d-nav-fg:        #cdd6f4;
+  --d-nav-dim:       #a6adc8;
+  --d-nav-accent:    #89b4fa;
+  --d-nav-rule:      #313244;
+  --d-nav-faint:     #6c7086;
+  --d-surface:       #313244;
+  --d-pre-bg:        #1e1e2e;
+  --d-pre-fg:        #cdd6f4;
+  --d-band-a:        #1e1e2e;
+  --d-band-b:        #2c2c47;
+
+  /* consumed by the floating toggle that theme.js injects */
+  --tt-bg:        #ffffff;
+  --tt-bg-hover:  #f4f4f4;
+  --tt-border:    #d4d4d4;
+  --tt-fg:        #333333;
+  --tt-shadow:    rgba(0, 0, 0, 0.16);
+  --tt-focus:     #5a8dee;
+}
+
+/* Content sits one step darker than the sidebar so the two stay distinguishable,
+   which in light mode is handled by the sidebar being dark against a pale page. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --d-bg:            #1c1c1c;
+    --d-text:          #e8e8e8;
+    --d-heading:       #e8e8e8;
+    --d-h3:            #c9c9c9;
+    --d-h4:            #b0b0b0;
+    --d-body:          #cfcfcf;
+    --d-muted:         #949494;
+    --d-dim:           #808080;
+    --d-tagline:       #ababab;
+    --d-link:          #79b8ff;
+    --d-rule:          #333333;
+    --d-rule-soft:     #333333;
+    --d-rule-faint:    #2a2a2a;
+    --d-card-bg:       #242424;
+    --d-card-border:   #3d3d3d;
+    --d-code-bg:       #2e2e2e;
+    --d-code-fg:       #d3b8f5;
+    --d-row-hover:     #262626;
+    --d-img-border:    #3d3d3d;
+    --d-ph-bg:         #262626;
+    --d-ph-border:     #3d3d3d;
+
+    --d-t:             #79b8ff;
+    --d-kw:            #d3b8f5;
+    --d-mn:            #e8e8e8;
+    --d-ex:            #f28b8b;
+
+    --d-warn-bg:       #332323;
+    --d-warn-border:   #5e3232;
+    --d-warn-fg:       #f0a8a8;
+    --d-note-bg:       #302a1c;
+    --d-note-border:   #b78a2b;
+    --d-note-fg:       #e0c48a;
+    --d-reassure-bg:     #262630;
+    --d-reassure-border: #3d3d4d;
+    --d-reassure-fg:     #c2c2d8;
+    --d-reassure-strong: #e8e8e8;
+
+    --d-badge-struct-bg:    #2c3038;  --d-badge-struct-fg:    #9ec5ff;
+    --d-badge-interface-bg: #352a30;  --d-badge-interface-fg: #eba8c8;
+    --d-badge-class-bg:     #2a332c;  --d-badge-class-fg:     #86d6a0;
+    --d-badge-static-bg:    #34301f;  --d-badge-static-fg:    #e8c98a;
+    --d-badge-so-bg:        #2f2a38;  --d-badge-so-fg:        #c8b0f5;
+    --d-badge-mb-bg:        #352c22;  --d-badge-mb-fg:        #eaa878;
+    --d-badge-enum-bg:      #223330;  --d-badge-enum-fg:      #82cfc2;
+    --d-badge-pm-bg:        #2b2d38;  --d-badge-pm-fg:        #aab4e0;
+
+    /* The sidebar is dark by design in light mode. In dark mode it goes neutral too,
+       otherwise its blue-black sits oddly against grey content. */
+    --d-nav-bg:        #242424;
+    --d-nav-fg:        #e8e8e8;
+    --d-nav-dim:       #ababab;
+    --d-nav-accent:    #79b8ff;
+    --d-nav-rule:      #3d3d3d;
+    --d-nav-faint:     #808080;
+    --d-surface:       #2e2e2e;
+  --d-pre-bg:        #242424;
+  --d-pre-fg:        #e8e8e8;
+  --d-band-a:        #242424;
+  --d-band-b:        #333333;
+    --d-pre-bg:        #242424;
+    --d-pre-fg:        #e8e8e8;
+    --d-band-a:        #242424;
+    --d-band-b:        #333333;
+
+    --tt-bg:        #2e2e2e;
+    --tt-bg-hover:  #3d3d3d;
+    --tt-border:    #3d3d3d;
+    --tt-fg:        #e8e8e8;
+    --tt-shadow:    rgba(0, 0, 0, 0.5);
+    --tt-focus:     #79b8ff;
+  }
+}
+
+:root[data-theme="dark"] {
+  --d-bg:            #1c1c1c;
+  --d-text:          #e8e8e8;
+  --d-heading:       #e8e8e8;
+  --d-h3:            #c9c9c9;
+  --d-h4:            #b0b0b0;
+  --d-body:          #cfcfcf;
+  --d-muted:         #949494;
+  --d-dim:           #808080;
+  --d-tagline:       #ababab;
+  --d-link:          #79b8ff;
+  --d-rule:          #333333;
+  --d-rule-soft:     #333333;
+  --d-rule-faint:    #2a2a2a;
+  --d-card-bg:       #242424;
+  --d-card-border:   #3d3d3d;
+  --d-code-bg:       #2e2e2e;
+  --d-code-fg:       #d3b8f5;
+  --d-row-hover:     #262626;
+  --d-img-border:    #3d3d3d;
+  --d-ph-bg:         #262626;
+  --d-ph-border:     #3d3d3d;
+
+  --d-t:             #79b8ff;
+  --d-kw:            #d3b8f5;
+  --d-mn:            #e8e8e8;
+  --d-ex:            #f28b8b;
+
+  --d-warn-bg:       #332323;
+  --d-warn-border:   #5e3232;
+  --d-warn-fg:       #f0a8a8;
+  --d-note-bg:       #302a1c;
+  --d-note-border:   #b78a2b;
+  --d-note-fg:       #e0c48a;
+  --d-reassure-bg:     #262630;
+  --d-reassure-border: #3d3d4d;
+  --d-reassure-fg:     #c2c2d8;
+  --d-reassure-strong: #e8e8e8;
+
+  --d-badge-struct-bg:    #2c3038;  --d-badge-struct-fg:    #9ec5ff;
+  --d-badge-interface-bg: #352a30;  --d-badge-interface-fg: #eba8c8;
+  --d-badge-class-bg:     #2a332c;  --d-badge-class-fg:     #86d6a0;
+  --d-badge-static-bg:    #34301f;  --d-badge-static-fg:    #e8c98a;
+  --d-badge-so-bg:        #2f2a38;  --d-badge-so-fg:        #c8b0f5;
+  --d-badge-mb-bg:        #352c22;  --d-badge-mb-fg:        #eaa878;
+  --d-badge-enum-bg:      #223330;  --d-badge-enum-fg:      #82cfc2;
+  --d-badge-pm-bg:        #2b2d38;  --d-badge-pm-fg:        #aab4e0;
+
+  /* The sidebar is dark by design in light mode. In dark mode it goes neutral too,
+     otherwise its blue-black sits oddly against grey content. */
+  --d-nav-bg:        #242424;
+  --d-nav-fg:        #e8e8e8;
+  --d-nav-dim:       #ababab;
+  --d-nav-accent:    #79b8ff;
+  --d-nav-rule:      #3d3d3d;
+  --d-nav-faint:     #808080;
+  --d-surface:       #2e2e2e;
+
+  --tt-bg:        #2e2e2e;
+  --tt-bg-hover:  #3d3d3d;
+  --tt-border:    #3d3d3d;
+  --tt-fg:        #e8e8e8;
+  --tt-shadow:    rgba(0, 0, 0, 0.5);
+  --tt-focus:     #79b8ff;
+}
+
+/* ---------------------------------------------------------------------------
+   Re-point doc-styles.css's content-area colours at the tokens above.
+   The sidebar, <pre>, .module-band, .step-num, .nav-search, #pa-results and
+   .copy-btn are already dark in both modes and are intentionally absent here.
+   --------------------------------------------------------------------------- */
+
+body { color: var(--d-text); background: var(--d-bg); }
+
+a { color: var(--d-link); }
+
+.page-header h1,
+h2,
+.hero h1,
+.card h3,
+.pager .pg-title { color: var(--d-heading); }
+
+h3, .formula { color: var(--d-h3); }
+h4 { color: var(--d-h4); }
+
+.page-header .version,
+.page-header .sub,
+.type-header .ns,
+.type-meta,
+.member-group-title,
+.img-caption,
+.doc-footer,
+.rt,
+table.cmp th { color: var(--d-muted); }
+
+.pager .dir { color: var(--d-dim); }
+.hero .tagline { color: var(--d-tagline); }
+
+.type-desc,
+.lead,
+table.mt td:last-child { color: var(--d-body); }
+
+.card p { color: var(--d-body); }
+
+section + section,
+.type-section + .type-section,
+.pager,
+.doc-footer,
+table.cmp th { border-top-color: var(--d-rule); }
+
+.member-group-title { border-bottom-color: var(--d-rule-soft); }
+table.cmp th { border-bottom-color: var(--d-rule); }
+table.mt td,
+table.cmp td { border-bottom-color: var(--d-rule-faint); }
+table.mt tr:hover td,
+table.cmp tr:hover td { background: var(--d-row-hover); }
+
+code { background: var(--d-code-bg); color: var(--d-code-fg); }
+
+.t  { color: var(--d-t); }
+.kw { color: var(--d-kw); }
+.mn { color: var(--d-mn); }
+.ex { color: var(--d-ex); }
+
+.card,
+.pager a,
+.guide-index a { background: var(--d-card-bg); border-color: var(--d-card-border); }
+.guide-index a { color: var(--d-h3); }
+.guide-index a:hover { color: var(--d-heading); }
+
+.img-block img { border-color: var(--d-img-border); }
+.img-placeholder {
+  background: var(--d-ph-bg);
+  border-color: var(--d-ph-border);
+  color: var(--d-muted);
+}
+
+.warn {
+  background: var(--d-warn-bg);
+  border-color: var(--d-warn-border);
+  color: var(--d-warn-fg);
+}
+.note {
+  background: var(--d-note-bg);
+  border-left-color: var(--d-note-border);
+  color: var(--d-note-fg);
+}
+.reassure {
+  background: var(--d-reassure-bg);
+  border-color: var(--d-reassure-border);
+  color: var(--d-reassure-fg);
+}
+.reassure strong { color: var(--d-reassure-strong); }
+
+.badge-struct    { background: var(--d-badge-struct-bg);    color: var(--d-badge-struct-fg); }
+.badge-interface { background: var(--d-badge-interface-bg); color: var(--d-badge-interface-fg); }
+.badge-class,
+.tag-designer    { background: var(--d-badge-class-bg);     color: var(--d-badge-class-fg); }
+.badge-static,
+.tag-advanced    { background: var(--d-badge-static-bg);    color: var(--d-badge-static-fg); }
+.badge-so,
+.badge-editor    { background: var(--d-badge-so-bg);        color: var(--d-badge-so-fg); }
+.badge-mb        { background: var(--d-badge-mb-bg);        color: var(--d-badge-mb-fg); }
+.badge-enum      { background: var(--d-badge-enum-bg);      color: var(--d-badge-enum-fg); }
+.badge-pm,
+.tag-optional    { background: var(--d-badge-pm-bg);        color: var(--d-badge-pm-fg); }
+
+/* Screenshots and inline SVG diagrams are drawn dark-on-light, so their white
+   plate stays white in dark mode: inverting it would erase the strokes. */
+
+/* Sidebar and the other already-dark surfaces, now driven from tokens so they can
+   follow the theme instead of staying blue-black against grey content. */
+nav { background: var(--d-nav-bg); color: var(--d-nav-fg); }
+nav a, nav .nav-band { color: var(--d-nav-fg); }
+nav a.indent, nav a.nav-back { color: var(--d-nav-dim); }
+nav .nav-title, nav a:hover, nav a.active, nav a.nav-ext,
+nav a.nav-band:hover, nav .nav-band.active { color: var(--d-nav-accent); }
+nav .nav-sep, nav .nav-group { color: var(--d-nav-faint); }
+nav .nav-sep, nav a.nav-back, nav .nav-band { border-color: var(--d-nav-rule); }
+.nav-search input { background: var(--d-surface); border-color: var(--d-nav-rule); color: var(--d-nav-fg); }
+.nav-search input:focus { border-color: var(--d-nav-accent); }
+.nav-search input::placeholder { color: var(--d-nav-faint); }
+.copy-btn { background: var(--d-surface); border-color: var(--d-nav-rule); color: var(--d-nav-dim); }
+.copy-btn:hover { color: var(--d-nav-fg); border-color: var(--d-nav-accent); }
+#pa-results .sr:hover { background: var(--d-surface); }
+#pa-results .sr .sr-head { color: var(--d-nav-fg); }
+#pa-results .sr .sr-page, #pa-results .sr-none { color: var(--d-nav-faint); }
+#pa-results .sr-group { color: var(--d-nav-accent); border-top-color: var(--d-nav-rule); }
+.summary-index a { background: var(--d-nav-bg); border-color: var(--d-nav-rule); color: var(--d-nav-fg); }
+.summary-index a:hover { border-color: var(--d-nav-accent); color: var(--d-nav-accent); }
+.step-num { background: var(--d-nav-bg); color: var(--d-nav-accent); }
+
+/* Code blocks and module bands keep their own dark plate in light mode; in dark
+   mode it goes neutral so it does not read blue against the grey page. The syntax
+   colours inside <pre> are left alone: they carry meaning. */
+pre { background: var(--d-pre-bg); color: var(--d-pre-fg); }
+.module-band { background: linear-gradient(135deg, var(--d-band-a), var(--d-band-b)); }

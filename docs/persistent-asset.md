@@ -2,7 +2,7 @@
 layout: page
 title: Persistent Asset
 permalink: /persistent-asset/
-image: /assets/images/persistent-asset.jpg
+image: /assets/images/persistent-asset-social.jpg
 description: "A complete save system for Unity: automatic saving, save slots, cloud sync, AES-256 encryption, save versioning and crash-safe writes, with no save code to write."
 software:
   name: "Persistent Asset - Premium Save System"

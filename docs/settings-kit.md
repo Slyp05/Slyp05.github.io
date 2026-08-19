@@ -2,7 +2,7 @@
 layout: page
 title: Settings Kit
 permalink: /settings-kit/
-image: /assets/images/settings-kit.jpg
+image: /assets/images/settings-kit-social.jpg
 sitemap: false
 description: "Declare Project Settings and Preferences pages in Unity from a small class, read them anywhere including at runtime in a built player, with no editor boilerplate and nothing under Resources/."
 software:

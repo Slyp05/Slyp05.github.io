@@ -2,7 +2,7 @@
 layout: page
 title: Infinite Value
 permalink: /infinite-value/
-image: /assets/images/infinite-value.jpg
+image: /assets/images/infinite-value-social.jpg
 description: "Arbitrary-precision number type for Unity that behaves like a primitive, works in real-time, and is fully configurable. Perfect for incremental games, RPGs, and monetary systems."
 software:
   price: "29.99"

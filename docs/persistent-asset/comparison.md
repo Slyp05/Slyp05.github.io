@@ -2,6 +2,7 @@
 layout: page
 title: How Persistent Asset Compares
 permalink: /persistent-asset/comparison/
+image: /assets/images/persistent-asset-social.jpg
 ---
 
 See how [Persistent Asset](/persistent-asset/) holds up against the other save solutions on the store.
@@ -19,7 +20,7 @@ See how [Persistent Asset](/persistent-asset/) holds up against the other save s
 .page-content th, .page-content td {
   padding: 7px 11px;
   vertical-align: middle;
-  border-bottom: 1px solid #ebebf1;
+  border-bottom: 1px solid var(--cmp-row-border);
   overflow-wrap: anywhere;
 }
 /* let long inline-code tokens wrap instead of overflowing into the next cell */
@@ -32,28 +33,28 @@ See how [Persistent Asset](/persistent-asset/) holds up against the other save s
 .page-content thead th {
   position: sticky;
   top: 0;
-  background: #1e1e2e;
-  color: #fff;
+  background: var(--cmp-head-bg);
+  color: var(--cmp-head-fg);
   font-weight: 600;
 }
-.page-content thead th:nth-child(2) { background: #312e81; }
+.page-content thead th:nth-child(2) { background: var(--cmp-head-feat); }
 
 /* zebra striping for easier row tracking (skips the featured column) */
-.page-content tbody tr:nth-child(even) td:not(:nth-child(2)) { background: #f7f8fc; }
+.page-content tbody tr:nth-child(even) td:not(:nth-child(2)) { background: var(--cmp-zebra); }
 
 /* feature the Persistent Asset column */
-.page-content tbody td:nth-child(2) { background: #eef1fd; font-weight: 600; }
+.page-content tbody td:nth-child(2) { background: var(--cmp-feat-bg); font-weight: 600; }
 
 /* section-label rows (bold text in the first cell, the rest empty) become bands */
 .page-content tbody tr:has(td:first-child strong) td {
-  background: #e6e9f7;
-  border-bottom: 1px solid #cdd3ee;
+  background: var(--cmp-band-bg);
+  border-bottom: 1px solid var(--cmp-band-border);
 }
 .page-content tbody tr:has(td:first-child strong) td:first-child {
   text-transform: uppercase;
   letter-spacing: .05em;
   font-size: 11.5px;
-  color: #312e81;
+  color: var(--cmp-band-fg);
 }
 </style>
 

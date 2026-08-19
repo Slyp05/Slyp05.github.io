@@ -9,6 +9,152 @@ $content-width: 880px;
 
 @import "minima";
 
+// ---------------------------------------------------------------------------
+// Theme tokens
+//
+// The light values below are exactly the colours the site already used, so light
+// mode is unchanged. Dark values are declared twice on purpose:
+//
+//   @media (prefers-color-scheme: dark) + :root:not([data-theme="light"])
+//        -> a first-time visitor gets whatever their OS asks for
+//   :root[data-theme="dark"]
+//        -> an explicit choice from the toggle wins, in either direction
+//
+// The dark palette is Catppuccin Mocha, the same one doc-styles.css already uses
+// for the documentation sidebar, so both halves of the site agree.
+// ---------------------------------------------------------------------------
+
+:root {
+  --bg:              #fdfdfd;
+  --bg-elevated:     #ffffff;   // cards, dropdown, patch notes
+  --bg-subtle:       #f4f4f4;   // hover fills
+  --bg-subtle-alt:   #f6f6f6;
+  --text:            #111111;
+  --text-body:       #444444;
+  --text-muted:      #555555;
+  --text-secondary:  #666666;
+  --text-faint:      #888888;
+  --text-fainter:    #999999;
+  --text-grey:       #828282;   // minima's own grey
+  --heading-strong:  #1e1e2e;   // 404 numerals
+  --border:          #d4d4d4;
+  --border-soft:     #e8e8e8;   // minima's lighter rules
+  --border-softer:   #e4e4e4;
+  --th-border:       #dedede;
+  --th-border-bottom:#c9c9c9;
+  --header-bar:      #424242;   // minima's 5px bar above the header
+  --rule-strong:     #424242;   // site title, mobile menu icon
+  --link:            #2a7ae2;
+  --link-visited:    #1756a9;
+  --link-hover:      #111111;
+  --code-bg:         #eeeeff;
+  --table-stripe:    #f7f7f7;
+  --table-head:      #f0f0f0;
+  --table-text:      #3f3f3f;
+  --badge-paid-bg:   #eef4ff;
+  --badge-paid-fg:   #1a56db;
+  --badge-free-bg:   #edfaf1;
+  --badge-free-fg:   #057a55;
+  --btn-bg:          #222222;
+  --btn-fg:          #93c5fd;
+  --btn-bg-hover:    #444444;
+  --btn-fg-hover:    #bfdbfe;
+  --btn-feat-bg:     #312e81;
+  --btn-feat-hover:  #3f3aa0;
+  --btn-feat-fg:     #ffffff;
+  --shadow:          rgba(0, 0, 0, 0.09);
+  --photo-border:    #d4d4d4;
+  // comparison table (page-local CSS in persistent-asset/comparison.md)
+  --cmp-row-border:  #ebebf1;
+  --cmp-head-bg:     #1e1e2e;
+  --cmp-head-fg:     #ffffff;
+  --cmp-head-feat:   #312e81;
+  --cmp-zebra:       #f7f8fc;
+  --cmp-feat-bg:     #eef1fd;
+  --cmp-band-bg:     #e6e9f7;
+  --cmp-band-border: #cdd3ee;
+  --cmp-band-fg:     #312e81;
+
+  // consumed by the floating toggle that theme.js injects
+  --tt-bg:           #ffffff;
+  --tt-bg-hover:     #f4f4f4;
+  --tt-border:       #d4d4d4;
+  --tt-fg:           #333333;
+  --tt-shadow:       rgba(0, 0, 0, 0.16);
+  --tt-focus:        #2a7ae2;
+}
+
+@mixin dark-tokens {
+  --bg:              #1c1c1c;
+  --bg-elevated:     #242424;
+  --bg-subtle:       #2e2e2e;
+  --bg-subtle-alt:   #282828;
+  --text:            #e8e8e8;
+  --text-body:       #cfcfcf;
+  --text-muted:      #c4c4c4;
+  --text-secondary:  #ababab;
+  --text-faint:      #949494;
+  --text-fainter:    #808080;
+  --text-grey:       #949494;
+  --heading-strong:  #e8e8e8;
+  --border:          #3d3d3d;
+  --border-soft:     #333333;
+  --border-softer:   #333333;
+  --th-border:       #3d3d3d;
+  --th-border-bottom:#4a4a4a;
+  // The bar reads as a deliberate stripe once it is not near-black on white, so
+  // it steps aside in dark mode and lets the header sit flush with the page.
+  --header-bar:      transparent;
+  --rule-strong:     #e8e8e8;
+  --link:            #79b8ff;
+  --link-visited:    #6ba3e8;
+  --link-hover:      #ffffff;
+  --code-bg:         #2e2e2e;
+  --table-stripe:    #242424;
+  --table-head:      #2e2e2e;
+  --table-text:      #cfcfcf;
+  --badge-paid-bg:   #2c3038;
+  --badge-paid-fg:   #9ec5ff;
+  --badge-free-bg:   #2a332c;
+  --badge-free-fg:   #86d6a0;
+  --btn-bg:          #2e2e2e;
+  --btn-fg:          #9ecbff;
+  --btn-bg-hover:    #3d3d3d;
+  --btn-fg-hover:    #c6e0ff;
+  // A lighter grey reads as "raised" or "disabled", not "primary". Keep an actual
+  // accent, matching --cmp-head-feat so the button agrees with the featured column
+  // of the comparison table it leads to.
+  --btn-feat-bg:     #3a4060;
+  --btn-feat-hover:  #464e73;
+  --btn-feat-fg:     #ffffff;
+  --shadow:          rgba(0, 0, 0, 0.5);
+  --photo-border:    #3d3d3d;
+  --cmp-row-border:  #333333;
+  --cmp-head-bg:     #242424;
+  --cmp-head-fg:     #e8e8e8;
+  --cmp-head-feat:   #3a4060;
+  --cmp-zebra:       #212121;
+  --cmp-feat-bg:     #2a2e3a;
+  --cmp-band-bg:     #2b2b33;
+  --cmp-band-border: #3d3d4a;
+  --cmp-band-fg:     #aab4e0;
+
+  --tt-bg:           #2e2e2e;
+  --tt-bg-hover:     #3d3d3d;
+  --tt-border:       #3d3d3d;
+  --tt-fg:           #e8e8e8;
+  --tt-shadow:       rgba(0, 0, 0, 0.5);
+  --tt-focus:        #79b8ff;
+}
+
+// OS preference, unless the visitor explicitly asked for light
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { @include dark-tokens; }
+}
+// explicit choice from the toggle
+:root[data-theme="dark"] { @include dark-tokens; }
+
+
 .site-header {
   border-bottom-color: #d4d4d4;
 }
@@ -514,3 +660,108 @@ $content-width: 880px;
     &:hover { background: none; }
   }
 }
+
+// ---------------------------------------------------------------------------
+// Re-point every hardcoded colour at a token.
+//
+// Additive on purpose: minima's own rules stay untouched and these simply win on
+// source order. Because each light token holds the exact colour that rule already
+// produced, light mode renders identically; only the dark values differ.
+// ---------------------------------------------------------------------------
+
+body { color: var(--text); background-color: var(--bg); }
+
+a { color: var(--link); }
+a:visited { color: var(--link-visited); }
+a:hover { color: var(--link-hover); }
+
+blockquote { color: var(--text-grey); border-left-color: var(--border-soft); }
+
+pre, code { border-color: var(--border-soft); background-color: var(--code-bg); }
+
+.svg-icon { fill: var(--text-grey); }
+
+table { color: var(--table-text); border-color: var(--border-soft); }
+table tr:nth-child(even) { background-color: var(--table-stripe); }
+table th {
+  background-color: var(--table-head);
+  border-color: var(--th-border);
+  border-bottom-color: var(--th-border-bottom);
+}
+table td { border-color: var(--border-soft); }
+
+.site-header { border-top-color: var(--header-bar); border-bottom-color: var(--border); }
+.site-title, .site-title:visited { color: var(--rule-strong); }
+.site-nav .page-link { color: var(--text); }
+.site-nav .menu-icon > svg { fill: var(--rule-strong); }
+
+@include media-query($on-palm) {
+  .site-nav { background-color: var(--bg); border-color: var(--border); }
+}
+
+.site-footer { border-top-color: var(--border); }
+.footer-col-wrapper { color: var(--text-grey); }
+.post-meta { color: var(--text-grey); }
+
+.site-tagline { color: var(--text-secondary); }
+
+.home h2,
+.about-page h2 { color: var(--text-faint); border-bottom-color: var(--border); }
+
+// Re-assert after the rule above: package card titles are h2s living inside
+// .home, but they are titles, not section headings. This block sits at the end
+// of the file, so without this it would out-order the original rule and grey
+// them out in BOTH themes.
+.package-card-content h2,
+.package-card-content h2 a { color: inherit; }
+
+.home-intro { color: var(--text-muted); }
+.about-text { color: var(--text-body); }
+.about-section .about-photo { border-color: var(--photo-border); }
+
+.package-card { border-color: var(--border); }
+.package-card-content p { color: var(--text-body); }
+.card-updated { color: var(--text-faint); }
+
+.badge-paid { background: var(--badge-paid-bg); color: var(--badge-paid-fg); }
+.badge-free { background: var(--badge-free-bg); color: var(--badge-free-fg); }
+
+.asset-store-btn {
+  background: var(--btn-bg);
+  color: var(--btn-fg) !important;
+
+  &:hover { background: var(--btn-bg-hover); color: var(--btn-fg-hover) !important; }
+}
+.asset-store-btn--featured {
+  background: var(--btn-feat-bg);
+  color: var(--btn-feat-fg) !important;
+
+  &:hover { background: var(--btn-feat-hover); color: var(--btn-feat-fg) !important; }
+}
+
+.support-note { color: var(--text-secondary); }
+
+.patch-note {
+  border-color: var(--border);
+  background: var(--bg-elevated);
+
+  summary::before { border-right-color: var(--text-fainter); border-bottom-color: var(--text-fainter); }
+  summary:hover { background: var(--bg-subtle-alt); }
+  &[open] summary { border-bottom-color: var(--border-softer); }
+  .patch-date { color: var(--text-faint); }
+}
+
+.notfound {
+  .notfound-code, .notfound-title { color: var(--heading-strong); }
+  .notfound-text { color: var(--text-secondary); }
+}
+
+.nav-dropdown-toggle { color: var(--text); }
+.nav-dropdown-menu {
+  background-color: var(--bg-elevated);
+  border-color: var(--border);
+  box-shadow: 0 4px 14px var(--shadow);
+}
+.nav-group-label { color: var(--text-fainter); }
+.nav-dropdown-link { color: var(--text); }
+.nav-dropdown-link:hover { background: var(--bg-subtle); }

@@ -54,6 +54,20 @@
 </script>
 {%- endif -%}
 
+<!-- Social card dimensions. jekyll-seo-tag emits og:image but not its size; giving
+     platforms the dimensions lets them lay the card out before the image finishes
+     downloading. Safe as constants because every og:image on the site is 1200x630
+     (see the `image:` front matter and the site-wide default in _config.yml). -->
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="{{ page.title | default: site.title | escape }}">
+<meta name="twitter:image:alt" content="{{ page.title | default: site.title | escape }}">
+
+<!-- Theme: apply a stored choice before first paint, so there is no flash of the
+     wrong colours. With nothing stored the CSS falls back to prefers-color-scheme. -->
+<script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+<script src="{{ '/assets/js/theme.js' | relative_url }}" defer></script>
+
 <!-- Analytics: GoatCounter (no cookies, ignores localhost automatically) -->
 <script data-goatcounter="https://justetools.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>

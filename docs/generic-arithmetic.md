@@ -2,7 +2,7 @@
 layout: page
 title: Generic Arithmetic
 permalink: /generic-arithmetic/
-image: /assets/images/generic-arithmetic.jpg
+image: /assets/images/generic-arithmetic-social.jpg
 description: "Arithmetic and comparison operations in generic C# classes for Unity. Works with any value type, with a Roslyn source generator for AOT-safe custom types."
 software:
   price: "0"

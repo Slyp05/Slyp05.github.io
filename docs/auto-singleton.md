@@ -2,7 +2,7 @@
 layout: page
 title: Auto Singleton
 permalink: /auto-singleton/
-image: /assets/images/auto-singleton.jpg
+image: /assets/images/auto-singleton-social.jpg
 description: "Add the [Singleton] attribute to any class and the asset handles automatic asset generation, cleanup, polymorphic access, and inspector integration in Unity."
 software:
   price: "0"

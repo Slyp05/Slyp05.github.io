@@ -51,6 +51,15 @@ $analytics = '  <script data-goatcounter="https://justetools.goatcounter.com/cou
 # Inject the same favicon set here, absolute-pathed because the pages sit at several depths.
 # Deliberately NOT added to the source docs: those ship inside the Unity package and are
 # opened from disk, where a site-absolute /assets/... path would not resolve.
+# Dark mode is web-only for the same reason as the favicons: the source docs ship
+# inside the Unity package and are opened from disk, where /assets/... resolves to
+# nothing. doc-dark.css must load AFTER doc-styles.css to win on source order.
+$theme = @(
+    '  <link rel="stylesheet" href="/assets/css/doc-dark.css" />'
+    '  <script>(function(){try{var t=localStorage.getItem(''theme'');if(t===''dark''||t===''light''){document.documentElement.setAttribute(''data-theme'',t);}}catch(e){}})();</script>'
+    '  <script src="/assets/js/theme.js" defer></script>'
+) -join "`n"
+
 $favicons = @(
     '  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />'
     '  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />'
@@ -110,7 +119,7 @@ function Convert-Html([string]$text, [string]$tree, [string]$location) {
     # stylesheet -> absolute shared sheet, followed by the analytics line
     $text = $text -replace `
         '<link rel="stylesheet" href="(?:\.\./)?shared/styles\.css" />', `
-        ('<link rel="stylesheet" href="/assets/css/doc-styles.css" />' + "`n" + $favicons + "`n" + $analytics)
+        ('<link rel="stylesheet" href="/assets/css/doc-styles.css" />' + "`n" + $theme + "`n" + $favicons + "`n" + $analytics)
     # home-page renames (same-tree only, per the guard above)
     $text = $text -replace 'User%20Manual\.html', 'index.html'
     $text = $text -replace 'Public%20API\.html',  'index.html'
