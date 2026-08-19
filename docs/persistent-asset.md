@@ -14,7 +14,9 @@ software:
 
 **A complete save system for Unity. Declare your data once, and it saves itself.**
 
-Write your game data in code, or author it in the inspector with no scripting at all. Either way it persists between sessions, loaded on launch and saved at safe points, with no save files to manage and no serialization to wire up. Save, load and clear stay available whenever you want the control, from a call in your code or straight from a button.
+Write your game data in code, or author it in the inspector with no scripting at all.  
+Either way it persists between sessions, loaded on launch and saved at safe points, with no save files to manage and no serialization to wire up.  
+Save, load and clear stay available whenever you want the control, from a call in your code or straight from a button.
 
 ## It evolves with your game
 
@@ -56,7 +58,7 @@ Questions, issues or feature requests? Email [justetools@gmail.com](mailto:juste
 
 Unity 6.0 or later (tested up to 6.6)
 
-Desktop, mobile and WebGL are supported out of the box. Consoles gate saving behind their platform SDK, so there you write a short script calling it and the save system uses it like any other storage.
+Desktop, mobile and WebGL are supported out of the box. Consoles gate saving behind their platform SDK, so there you write a short script calling it and Persistent Asset integrates it like any other storage.
 
 ## Learn More
 
