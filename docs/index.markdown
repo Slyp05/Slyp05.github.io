@@ -56,7 +56,7 @@ layout: home
 ## Support
 
 <div class="about-text about-text--tight">
-  <p>Reviews on the Asset Store help a lot: critical ones tell me what to fix, and they are how most people find the tools.</p>
+  <p>Reviews on the Asset Store help a lot: positive ones are how most people find the tools, and critical ones tell me what to fix.</p>
   <p>You can also donate on Ko-fi.</p>
 </div>
 
