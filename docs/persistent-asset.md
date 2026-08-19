@@ -4,70 +4,59 @@ title: Persistent Asset
 permalink: /persistent-asset/
 image: /assets/images/persistent-asset.png
 software:
-  description: "A ScriptableObject-based save system for Unity: the asset you read at runtime is the one that saves and loads itself. Automatic, no-code-friendly, cloud-ready, and extensible."
+  name: "Persistent Asset - Premium Save System"
+  description: "A complete save system for Unity: automatic saving, save slots, cloud sync, AES-256 encryption, save versioning and crash-safe writes, with no save code to write."
   price: "49.99"
-  store_url: https://assetstore.unity.com/packages/tools/utilities/persistent-asset-runtime-scriptableobject-saves-389310
+  store_url: https://assetstore.unity.com/packages/slug/389310
 ---
 
 <img src="/assets/images/persistent-asset.png" alt="Persistent Asset" class="package-image" width="1950" height="1300" decoding="async">
 
-Most save systems mean data classes to maintain, save files to keep in sync, and serialization to wire up by hand. Persistent Asset removes all of it: the ScriptableObject you already read and write at runtime is the one that saves and loads itself.  
-No save code, no boilerplate, no rewrites as your project grows.  
-It is automatic and no-code-friendly to start, and becomes cloud-ready and extensible as you scale.
+**A complete save system for Unity. Declare your data once, and it saves itself.**
 
-New to ScriptableObjects? [Start here](https://justetools.net/persistent-asset/user-manual/pages/What%20is%20a%20ScriptableObject.html).
+Write your game data in code, or author it in the inspector with no scripting at all. Either way it persists between sessions, loaded on launch and saved at safe points, with no save files to manage and no serialization to wire up. Save, load and clear stay available whenever you want the control, from a call in your code or straight from a button.
 
-## It grows with your project
+## It evolves with your game
 
-- **Prototyping:** inherit `PersistentScriptableObject` and you're done; it saves to disk on its own, with no configuration.
-- **Designers:** no coding needed. Author variables, bind them to UI, and save settings from the Inspector, with live tools to watch it work while you play.
-- **Mid-size projects:** you won't outgrow it. Real save files, slots, and cloud sync layer onto the same objects, a dropdown away or a one-line change, never a rewrite.
-- **Large projects:** extension points throughout. Swap the storage, serializer, or save format; add your own data types and save policies; and hook into events and interfaces.
-- **Live games:** ship updates without breaking existing player saves; built-in versioning upgrades old saves to your new format the moment they load.
+- **Prototype**: saving and loading are automatic, nothing to set up or configure, it just works.
+- **Ship**: save slots, screenshot thumbnails, rolling autosaves, cloud sync and encryption, without changing what you already built.
+- **Live**: old saves upgrade to your new format on load, so an update never invalidates a player's progress.
 
-## Built to be trusted
+## It adapts to you
 
-A save system that loses progress is worthless, so reliability is the core design goal.
+- **Entirely from the inspector**: author saved values, wire them to the UI and react to them, with no scripting.
+- **Or from code**: call save, load and clear in whatever style your code uses, on one object or on all of them at once.
+- **Save anywhere**: local files, Player Prefs, memory, your own HTTP server or Unity Cloud Save, switched from a dropdown, with offline saves pushed once the connection returns.
+- **Serializes the way you already do**: Unity JSON out of the box, plus Newtonsoft and Odin when either is in your project, for dictionaries, interfaces, polymorphism and object graphs. References to your own assets save with any of them.
+- **Extend everything**: every built-in piece can be replaced by your own.
 
-- **Atomic file writes with an automatic backup copy**: a crash or power loss leaves the last good save intact, never a corrupt one.
-- **Player progress is never wiped by accident**: an existing save can never be replaced with a blank or freshly reset one.
-- **1,700+ automated tests**: an extensive EditMode and PlayMode suite covers operations, serialization, slots, and security end to end.
+## It does what others do not
 
-## What's Included
+- **Waits for saves on quit**: a shutdown drain holds the exit until in-flight saves land.
+- **Locks saves down**: AES-256 encryption, tamper detection, and locks tying a save to a machine, a file path or a secret only your server knows.
+- **Refuses to wipe progress**: an existing save is never overwritten with default values, and a failed load holds saving until a retry recovers the data.
+- **Protects shipped saves**: lock your save configuration once players have it, and any change that would orphan their saves offers to migrate them instead.
+- **Simulates disaster**: force slow, failed or cancelled operations and check your game handles them.
+- **Keeps your data visible**: it lives in a ScriptableObject asset, so you can read and edit it in the inspector, even while the game runs.
+- **Shows its work live**: every load and save, with its result, in the inspector or in an overlay on the device.
 
-*Save anything, your way*
+## It is built to professional standards
 
-- **Save and load automatically**: objects load on launch, save at safe points and on a timer, and retry failed loads, with no save code; switch any of it off when you want manual control.
-- **Call the save API however you code**: fire-and-forget, callback, synchronous, `async`/`await`, or coroutine, on one object or all at once.
-- **Reach for more when you need it**: save slots with metadata, global events, typed results, and opt-in advanced interfaces.
-- **Move saves anywhere without a rewrite**: swap storage from a dropdown: Local File, Player Prefs, Session, self-hosted HTTP server, or Unity Cloud Save; once loaded, the online backends keep working through connection drops and sync in the background when the connection returns.
-- **Save what Unity's serialization cannot**: pick the serializer from a dropdown, Unity JSON, Newtonsoft JSON or Odin, and dictionaries, properties, interfaces and shared object graphs save too.
-- **Point at your project assets**: a field holding a ScriptableObject or a prefab (the equipped weapon, the unlocked levels) saves and resolves back on load, with nothing to wire.
-- **Let designers ship without code**: persistent variables in 40+ built-in types and any project asset, observable values, and UI binder components, plus optional Input System and Localization bindings.
+- **Cannot corrupt a save**: atomic writes and an automatic backup copy survive a crash or a power loss.
+- **Saves without a hitch**: heavy work happens in the background, and saves can be skipped entirely when nothing changed.
+- **Fits a studio workflow**: play sessions never dirty your assets, the whole save configuration lives in one committed file, and a broken or test-only setup fails the build instead of reaching players.
+- **Tested end to end**: 1,700+ automated tests, every release verified on Unity 6.0 through 6.6, and the full C# source in your project.
+- **Documented in depth**: a full user manual and a searchable API reference, in the package and online.
 
-*Protect player progress*
+## Support
 
-- **Save when the player leaves**: autosave when a mobile app loses focus or is paused; on quit, your game waits for in-flight saves to finish.
-- **Keep saves safe from cheaters**: AES-256 encryption, tamper-detection, and device locks.
-- **Never strand a shipped save**: lock your save setup once it ships, and any change that would orphan existing saves prompts you to migrate them instead of silently wiping them.
-- **Upgrade saves across updates**: old saves migrate to your new format on load, so an update never invalidates existing progress.
-- **Reset and roll back**: reset your data to defaults, or snapshot and restore it in memory.
-
-*Built for production*
-
-- **Ship on desktop, mobile, and WebGL**: Mono and IL2CPP/AOT ready, with WebGL writes flushed to the browser's IndexedDB; consoles are supported through a small custom backend.
-- **Save with no frame stutter**: off-thread background saving, gzip compression, and optional dirty-checking that skips no-op saves.
-- **Debug and stress-test your save handling**: live status and logs in the inspector or an on-device overlay, a one-click local-save wipe, and an integration-test mode that forces slow or failed operations so you can prove your game survives them.
-- **Keep version control clean**: runtime play never dirties your authored assets, and your project settings live in one committed file so the whole team builds with the same configuration, encryption key included.
-
-*Yours to own*
-
-- **Own and edit everything**: full C# source, no mandatory dependencies, and human-readable JSON saves when unencrypted.
-- **Get handy extras**: save-screenshot capture for slot thumbnails, a persistent-singleton helper, and a playable demo game.
+Questions, issues or feature requests? Email [justetools@gmail.com](mailto:justetools@gmail.com).
 
 ## Requirements
 
 Unity 6.0 or later (tested up to 6.6)
+
+Desktop, mobile and WebGL are supported out of the box. Consoles gate saving behind their platform SDK, so there you write a short script calling it and the save system uses it like any other storage.
 
 ## Learn More
 
@@ -77,7 +66,7 @@ Unity 6.0 or later (tested up to 6.6)
 
 ## Get It
 
-<a href="https://assetstore.unity.com/packages/tools/utilities/persistent-asset-runtime-scriptableobject-saves-389310" class="asset-store-btn">View on Unity Asset Store ($49.99)</a>
+<a href="https://assetstore.unity.com/packages/slug/389310" class="asset-store-btn">View on Unity Asset Store ($49.99)</a>
 <a href="https://justetools.itch.io/persistent-asset" class="asset-store-btn" target="_blank" rel="noopener">Play Demo</a>
 
 ## Patch Notes

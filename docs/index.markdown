@@ -22,7 +22,7 @@ layout: home
         <span class="badge badge-paid">$49.99</span>
         <span class="card-updated">Released August 2026</span>
       </div>
-      <p>A ScriptableObject-based save system: the asset you read at runtime is the one that saves and loads itself. Automatic, no-code-friendly, cloud-ready, and extensible.</p>
+      <p>A complete save system for Unity, with no save code to write. Automatic saving, save slots, cloud sync, AES-256 encryption and crash-safe writes, all from the inspector.</p>
       <a href="/persistent-asset/" class="card-link">Learn more →</a>
     </div>
   </div>

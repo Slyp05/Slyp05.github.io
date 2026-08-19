@@ -57,25 +57,25 @@ See how [Persistent Asset](/persistent-asset/) holds up against the other save s
 }
 </style>
 
-**Legend:** ✅ yes · ⚠️ partly / manual or unclear · ➖ deliberately not · ❌ no · ⏳ coming
+**Legend:** ✅ yes · ⚠️ partly / manual or unclear · ➖ deliberately not · ❌ no · ⏳ coming soon
 
 |  | Persistent Asset | Easy Save 3 | Bayat Save System |
 |---|---|---|---|
 | **Setup & workflow** | | | |
 | Saves & loads automatically, no code | ✅ Runs on its own | ⚠️ Auto Save component | ⚠️ Auto Save component |
 | Set up entirely in the Inspector | ✅ No C# needed | ⚠️ Mostly code | ⚠️ Mostly code |
-| Drop Save / Load onto a button | ✅ Ready for UnityEvents | ⚠️ Small script | ❌ Needs scripting |
+| Drop Save / Load onto a button | ✅ Ready for UnityEvents | ⚠️ Small script | ⚠️ Small script |
 | Save or wipe everything in one call | ✅ One call, every object | ⚠️ Auto Save / DeleteFile | ⚠️ Auto Save Manager |
-| Change where saves go without rewriting code | ✅ Dropdown on the asset | ⚠️ Default in Settings window | ❌ Set in code |
+| Change where saves go without rewriting code | ✅ Dropdown on the asset | ⚠️ Default in Settings window | ⚠️ Set in code |
 | **Where it saves** | | | |
 | Local files & PlayerPrefs | ✅ Built in | ✅ Built in | ✅ Built in |
 | Multiple save slots | ✅ Built in | ✅ Multiple files | ✅ Catalog API |
 | Screenshot thumbnails for save slots | ✅ Built-in per-slot capture | ⚠️ Save a Texture2D yourself | ⚠️ Save images yourself |
 | Cloud saves across devices, built-in | ✅ Unity Cloud Save | ✅ ES3Cloud (self-host) | ⚠️ Firebase / PlayFab add-ons |
-| Keeps working offline, syncs later | ✅ Auto-uploads later | ⚠️ Saves locally, manual ES3Cloud.Sync | ⚠️ Manual |
+| Keeps working offline, syncs later | ✅ Offline cache, auto-upload | ⚠️ Saves locally, manual ES3Cloud.Sync | ⚠️ Manual |
 | Database storage (SQL / NoSQL) | ➖ By design: your backend | ✅ MySQL (SQL) via ES3Cloud | ⚠️ Firebase add-on (NoSQL) |
 | PC, mobile & WebGL | ✅ Fully supported | ✅ Fully supported | ✅ Fully supported |
-| Consoles | ⚠️ Custom code, integrated | ❌ Fully custom, no integration | ❌ Fully custom, no integration |
+| Consoles | ⚠️ Short script, then automatic | ⚠️ Write your own file handling | ⚠️ Write your own provider |
 | **Reliability & data safety** | | | |
 | Saves can't corrupt on crash or power loss | ✅ Atomic write-then-swap | ⚠️ Atomic move, manual recovery | ⚠️ Backup-based |
 | Automatic backup copy | ✅ Automatic fallback | ⚠️ Manual backup/restore | ⚠️ Manual backup API |
@@ -93,7 +93,7 @@ See how [Persistent Asset](/persistent-asset/) holds up against the other save s
 | Compress saves to shrink file size | ✅ gzip (Fast or Optimal) | ✅ gzip | ❌ Not built in |
 | Skips saving when nothing changed | ✅ Optional dirty-check | ⚠️ Manual / cache | ⚠️ Manual |
 | **What you can save** | | | |
-| Deep object graphs & polymorphism out of the box | ✅ Newtonsoft or Odin serializer | ✅ Reflection serializer | ✅ Json.NET-based |
+| Deep object graphs & polymorphism | ✅ Newtonsoft or Odin serializer | ✅ Reflection serializer | ✅ Json.NET-based |
 | Save any object from anywhere in code | ➖ By design: one clear asset | ✅ Save anything, anywhere | ✅ Save anything, anywhere |
 | Reach saved data anywhere, no string keys | ✅ Type-safe `Find<T>()` | ⚠️ Via string keys | ⚠️ Via string keys |
 | Save entire scenes & GameObjects | ➖ By design: we save data | ✅ Snapshots scene objects | ✅ Unity objects & components |
@@ -117,8 +117,8 @@ See how [Persistent Asset](/persistent-asset/) holds up against the other save s
 | Teach it your own custom data types | ✅ Custom codecs | ✅ Custom ES3 types | ✅ Custom converters |
 | React to saves & loads with events / hooks | ✅ Global events | ⚠️ Limited | ✅ Auto Save events |
 | Add advanced behaviour with one small interface | ✅ Opt-in interfaces | ❌ No equivalent | ⚠️ Extensible APIs |
-| Alternative serializers (Newtonsoft / Odin) | ✅ Both built in | ⚠️ Community | ❌ Json.NET only |
-| Third-party integrations (Steam, PlayFab, Firebase…) | ⏳ Planned | ⚠️ Some / community | ✅ Firebase, PlayFab |
+| Alternative serializers (Newtonsoft / Odin) | ✅ Both integrated, no setup | ⚠️ Community | ❌ Json.NET only |
+| Third-party integrations (Steam, PlayFab, Firebase…) | ⏳ Coming soon | ⚠️ Some / community | ✅ Firebase, PlayFab |
 | Visual scripting (PlayMaker) | ❌ Under consideration | ✅ PlayMaker actions | ⚠️ PlayMaker add-on; Bolt legacy |
 | Spreadsheet / CSV export | ❌ Not our focus | ✅ Built in | ❌ Not offered |
 | **Compatibility & ownership** | | | |
