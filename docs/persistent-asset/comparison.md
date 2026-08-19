@@ -66,14 +66,15 @@ See how [Persistent Asset](/persistent-asset/) holds up against the other save s
 | Saves & loads automatically, no code | ✅ Runs on its own | ⚠️ Auto Save component | ⚠️ Auto Save component |
 | Set up entirely in the Inspector | ✅ No C# needed | ⚠️ Mostly code | ⚠️ Mostly code |
 | Drop Save / Load onto a button | ✅ Ready for UnityEvents | ⚠️ Small script | ⚠️ Small script |
-| Save or wipe everything in one call | ✅ One call, every object | ⚠️ Auto Save / DeleteFile | ⚠️ Auto Save Manager |
+| One call covers every saved object | ✅ Save, load or clear them all | ⚠️ Only registered objects | ⚠️ Via Auto Save Manager |
 | Change where saves go without rewriting code | ✅ Dropdown on the asset | ⚠️ Default in Settings window | ⚠️ Set in code |
 | **Where it saves** | | | |
 | Local files & PlayerPrefs | ✅ Built in | ✅ Built in | ✅ Built in |
 | Multiple save slots | ✅ Built in | ✅ Multiple files | ✅ Catalog API |
 | Screenshot thumbnails for save slots | ✅ Built-in per-slot capture | ⚠️ Save a Texture2D yourself | ⚠️ Save images yourself |
-| Cloud saves across devices, built-in | ✅ Unity Cloud Save | ✅ ES3Cloud (self-host) | ⚠️ Firebase / PlayFab add-ons |
+| Cloud saves across devices, built-in | ✅ Unity Cloud Save | ✅ ES3Cloud (self-host) | ✅ Firebase, PlayFab, Steam… |
 | Keeps working offline, syncs later | ✅ Offline cache, auto-upload | ⚠️ Saves locally, manual ES3Cloud.Sync | ⚠️ Manual |
+| Save to your own backend | ✅ Three simple HTTP routes | ✅ Needs ES3.php + MySQL | ❌ No HTTP storage |
 | Database storage (SQL / NoSQL) | ➖ By design: your backend | ✅ MySQL (SQL) via ES3Cloud | ⚠️ Firebase add-on (NoSQL) |
 | PC, mobile & WebGL | ✅ Fully supported | ✅ Fully supported | ✅ Fully supported |
 | Consoles | ⚠️ Short script, then automatic | ⚠️ Write your own file handling | ⚠️ Write your own provider |
@@ -83,22 +84,24 @@ See how [Persistent Asset](/persistent-asset/) holds up against the other save s
 | Never overwrites good progress with defaults | ✅ Won't wipe a real save | ⚠️ Up to your code | ⚠️ Up to your code |
 | Knows when async/cloud data is ready to use | ✅ Built-in ready signal | ⚠️ You track it | ⚠️ You track it |
 | Upgrades old saves after a game update | ✅ Versioning built in | ⚠️ Migrate yourself | ⚠️ Migrate yourself |
-| Change save format or location without losing player saves | ✅ Auto-migrates old saves | ⚠️ Up to your code | ⚠️ Up to your code |
+| Change format or location, keep old saves | ✅ Auto-migrates old saves | ⚠️ Up to your code | ⚠️ Up to your code |
 | Reset to defaults or restore a checkpoint | ✅ Built-in reset & checkpoints | ⚠️ Manual | ⚠️ Manual |
+| Broken or test-only setup fails the build | ✅ Build stops before shipping | ❌ Not offered | ❌ Not offered |
 | Finishes saving before the game closes | ✅ Waits for in-flight saves | ➖ Synchronous, no wait needed | ⚠️ No async drain |
 | **Security** | | | |
 | Save encryption | ✅ AES-256 | ✅ AES-128 | ✅ AES-128 |
-| Tamper-proofing & anti-cheat | ✅ Edit-detection + device locks | ⚠️ Encryption only | ⚠️ Encryption only |
+| Detects saves edited by the player | ✅ Permanent tamper mark | ❌ Not offered | ❌ Not offered |
+| Tie a save to a device, path or secret | ✅ Machine, path & secret locks | ❌ Not offered | ❌ Not offered |
 | **Performance** | | | |
 | Smooth saving, no frame stutter | ✅ Heavy work in the background | ⚠️ Mostly main thread | ⚠️ Async API only |
 | Compress saves to shrink file size | ✅ gzip (Fast or Optimal) | ✅ gzip | ❌ Not built in |
 | Skips saving when nothing changed | ✅ Optional dirty-check | ⚠️ Manual / cache | ⚠️ Manual |
 | **What you can save** | | | |
 | Deep object graphs & polymorphism | ✅ Newtonsoft or Odin serializer | ✅ Reflection serializer | ✅ Json.NET-based |
-| Save any object from anywhere in code | ➖ By design: one clear asset | ✅ Save anything, anywhere | ✅ Save anything, anywhere |
+| Save any object from anywhere in code | ➖ By design: data is declared first | ✅ Save anything, anywhere | ✅ Save anything, anywhere |
 | Reach saved data anywhere, no string keys | ✅ Type-safe `Find<T>()` | ⚠️ Via string keys | ⚠️ Via string keys |
-| Save entire scenes & GameObjects | ➖ By design: we save data | ✅ Snapshots scene objects | ✅ Unity objects & components |
-| Save references between objects | ✅ Asset refs built in; shared refs per serializer | ✅ Unity & shared refs | ✅ Resolvers + shared refs |
+| Save entire scenes & GameObjects | ➖ By design: data, not scenes | ✅ Snapshots scene objects | ✅ Unity objects & components |
+| Save references between objects | ✅ Asset refs; shared per serializer | ✅ Unity & shared refs | ✅ Resolvers + shared refs |
 | Save individual values / keys | ✅ Via Persistent Variables bag | ✅ Per-key partial saves | ✅ Per-key |
 | **Editor & debugging tools** | | | |
 | Live save status right in the Inspector | ✅ Load state & last result | ❌ No live panel | ❌ None |
@@ -113,14 +116,14 @@ See how [Persistent Asset](/persistent-asset/) holds up against the other save s
 | Bind values to UI without code | ✅ Binder components | ➖ Code-first by design | ➖ Code-first by design |
 | Values notify your UI when they change | ✅ Observable values | ➖ Code-first by design | ➖ Code-first by design |
 | **Extending & integrations** | | | |
-| Add your own save destination | ✅ Custom manager (+ cloud base) | ⚠️ Manual, no provider API | ✅ Modular Storage API |
+| Add your own save destination | ✅ Custom manager or cloud base | ⚠️ Manual, no provider API | ✅ Modular Storage API |
 | Swap in your own save format / serializer | ✅ Serializer is a slot | ⚠️ No serializer slot | ✅ Modular Serialization API |
 | Teach it your own custom data types | ✅ Custom codecs | ✅ Custom ES3 types | ✅ Custom converters |
 | React to saves & loads with events / hooks | ✅ Global events | ⚠️ Limited | ✅ Auto Save events |
 | Add advanced behaviour with one small interface | ✅ Opt-in interfaces | ❌ No equivalent | ⚠️ Extensible APIs |
 | Alternative serializers (Newtonsoft / Odin) | ✅ Both integrated, no setup | ⚠️ Community | ❌ Json.NET only |
-| Third-party integrations (Steam, PlayFab, Firebase…) | ⏳ Coming soon | ⚠️ Some / community | ✅ Firebase, PlayFab |
-| Visual scripting (PlayMaker) | ❌ Under consideration | ✅ PlayMaker actions | ⚠️ PlayMaker add-on; Bolt legacy |
+| Third-party integrations (Steam, PlayFab, Firebase…) | ⏳ Coming soon | ⚠️ Some / community | ✅ Steam, PlayFab, Firebase, Xbox+ |
+| Visual scripting (PlayMaker) | ❌ Under consideration | ✅ PlayMaker, Bolt, UVS | ✅ PlayMaker & Bolt |
 | Spreadsheet / CSV export | ❌ Not our focus | ✅ Built in | ❌ Not offered |
 | **Compatibility & ownership** | | | |
 | Full C# source included | ✅ Editable source | ✅ Editable source | ✅ Editable source |
@@ -132,5 +135,5 @@ See how [Persistent Asset](/persistent-asset/) holds up against the other save s
 | Years of proven track record | ❌ New release | ✅ Long-established | ✅ Established |
 | Actively developed (new features) | ✅ Active | ✅ Frequent updates | ❌ No release since Dec 2024 |
 | Big community, tutorials & integrations | ❌ New | ✅ Large ecosystem | ⚠️ Smaller |
-| Tested | ✅ 1,700+ automated tests (EditMode & PlayMode) | ✅ Field-proven over years | ⚠️ Platform-tested |
-| Thorough documentation | ✅ Full docs | ✅ Full docs | ✅ Docs site |
+| Tested | ✅ 1,700+ automated tests | ✅ Field-proven over years | ⚠️ Platform-tested |
+| Thorough documentation | ✅ Full docs | ✅ Full docs | ⚠️ Docs site offline |
