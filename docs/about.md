@@ -5,6 +5,10 @@ permalink: /about/
 body_class: about-page
 ---
 
+## On the Asset Store {#on-the-asset-store}
+
+<a href="https://assetstore.unity.com/publishers/52427" class="asset-store-btn">View my publisher page</a>
+
 ## About Me {#about-me}
 
 <div class="about-section">

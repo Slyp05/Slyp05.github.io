@@ -214,6 +214,13 @@ $content-width: 880px;
   }
 }
 
+// For an .about-text block that sits directly above a button: drop the block's
+// bottom margin so the button follows its paragraph closely. The button keeps its
+// own 0.5rem top margin as breathing room.
+.about-text--tight {
+  margin-bottom: 0;
+}
+
 .about-section {
   display: flex;
   gap: 2rem;

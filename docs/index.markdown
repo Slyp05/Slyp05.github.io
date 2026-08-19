@@ -55,16 +55,13 @@ layout: home
 
 ## Support
 
-<div class="about-text">
-  <p>If one of my tools helped you out, a coffee is a kind way to say thanks. No pressure at all, but it really means a lot. 🙂</p>
+<div class="about-text about-text--tight">
+  <p>Reviews on the Asset Store help a lot: critical ones tell me what to fix, and they are how most people find the tools.</p>
+  <p>You can also donate on Ko-fi.</p>
 </div>
 
-<a href="https://ko-fi.com/justetools" class="asset-store-btn" target="_blank" rel="noopener">Support me on Ko-fi ☕</a>
-
-<div class="about-text">
-  <p><br>Leaving a review on the Asset Store helps too, even a critical one: it tells me what to improve and helps others find the tools. 🙂</p>
-</div>
+<a href="https://ko-fi.com/justetools" class="asset-store-btn" target="_blank" rel="noopener">Buy me a coffee ☕</a>
 
 ## Contact
 
-Questions or issues? Reach me at [justetools@gmail.com](mailto:justetools@gmail.com), or follow my work on the [Unity Asset Store](https://assetstore.unity.com/publishers/52427).
+Questions or issues? Reach me at [justetools@gmail.com](mailto:justetools@gmail.com). I reply within one business day.
