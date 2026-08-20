@@ -22,7 +22,7 @@ body_class: about-page
     <p>I'm Lucas Sarkadi, a <strong>Unity developer</strong> based in France.<br>
     I started coding as a kid, long before I knew it could be a career. That took me through an engineering school and a game development program, then into the industry, where I spent years <strong>building in-house tools and SDKs</strong> at <strong>Voodoo</strong> and <strong>Homa</strong>, two of the biggest names in casual gaming.</p>
     <p>What stuck was <strong>making tools</strong>. Solving a problem once, properly, so nobody has to fight it again. That's what Juste Tools is.</p>
-    <p>Outside of work I'm usually at a <strong>game jam</strong>, behind a <strong>drum kit</strong>, or reading <strong>sci-fi or horror</strong>.</p>
+    <p>Outside of work I'm usually at a <strong>game jam</strong>, behind a <strong>drum kit</strong>, or watching <strong>sci-fi and horror</strong>.</p>
   </div>
   <img src="/assets/images/about-me.jpg" alt="Lucas Sarkadi" class="about-photo" width="480" height="480" loading="lazy" decoding="async">
 </div>
