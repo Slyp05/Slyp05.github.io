@@ -89,7 +89,15 @@
 }
 
 /* Content sits one step darker than the sidebar so the two stay distinguishable,
-   which in light mode is handled by the sidebar being dark against a pale page. */
+   which in light mode is handled by the sidebar being dark against a pale page.
+
+   The next two blocks MUST declare the same tokens with the same values. Plain
+   CSS has no mixin to share them with (main.scss does, which is why it cannot
+   drift), so they are maintained by hand: edit one, edit the other. Only the
+   media block applies when the OS is dark; only the attribute block applies when
+   the visitor toggles dark on a light OS. A token present in just one of them
+   keeps its LIGHT value down the other path, which is how --d-pre-bg and
+   --d-band-a/b once left code blocks and module bands blue-black on grey. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --d-bg:            #1c1c1c;
@@ -219,6 +227,10 @@
   --d-nav-rule:      #3d3d3d;
   --d-nav-faint:     #808080;
   --d-surface:       #2e2e2e;
+  --d-pre-bg:        #242424;
+  --d-pre-fg:        #e8e8e8;
+  --d-band-a:        #242424;
+  --d-band-b:        #333333;
 
   --tt-bg:        #2e2e2e;
   --tt-bg-hover:  #3d3d3d;

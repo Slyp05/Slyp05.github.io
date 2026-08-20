@@ -10,7 +10,13 @@
      name + offers.price + (aggregateRating or review); these pages carry no
      rating, so they were never eligible for it and the price was doing nothing.
      Leaving it out also means no figure here can go stale when Unity runs a
-     sale or localises the price. The store stays the source of truth. -->
+     sale or localises the price. The store stays the source of truth.
+
+     `software.store_url` is emitted as `sameAs`, the schema.org property for a
+     reference page that unambiguously identifies the same item: it ties this
+     page to the Asset Store listing without asserting anything about price.
+     Omitted when the field is empty, which is how an unreleased package with no
+     listing yet (Settings Kit) still gets a valid block. -->
 {%- if page.software -%}
 <script type="application/ld+json">
 {
@@ -25,7 +31,8 @@
     "@type": "Person",
     "name": "Lucas Sarkadi"
   },
-  "url": {{ page.url | absolute_url | jsonify }}
+  "url": {{ page.url | absolute_url | jsonify }}{% assign store_url = page.software.store_url | default: "" %}{% if store_url != "" %},
+  "sameAs": {{ store_url | jsonify }}{% endif %}
 }
 </script>
 {%- endif -%}

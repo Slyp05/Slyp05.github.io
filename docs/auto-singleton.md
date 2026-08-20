@@ -1,4 +1,4 @@
-﻿---
+---
 layout: page
 title: Auto Singleton
 permalink: /auto-singleton/
