@@ -39,7 +39,7 @@
   <main>
     <div class="page-header">
       <h1>Public API</h1>
-      <div class="sub">Infinite Value v2.0 &nbsp;·&nbsp; namespace <code>InfiniteValue</code></div>
+      <div class="sub">Infinite Value v2.2 &nbsp;·&nbsp; namespace <code>InfiniteValue</code></div>
     </div>
 
 
@@ -229,6 +229,14 @@
             <td>Format using a specific formatter (null falls back to the Configuration default).</td>
           </tr>
           <tr>
+            <td><span class="t">void</span> <span class="mn">Format</span>(<span class="t">IInfValFormatter</span> formatter, <span class="t">List&lt;string&gt;</span> parts, <span class="t">int</span> partCount = 0)</td>
+            <td>Fill parts with the pieces of the formatted value (null formatter falls back to the Configuration default). Throws ArgumentNullException if parts is null.</td>
+          </tr>
+          <tr>
+            <td><span class="t">void</span> <span class="mn">Format</span>(<span class="t">List&lt;string&gt;</span> parts, <span class="t">int</span> partCount = 0)</td>
+            <td>Same, using the Configuration default formatter.</td>
+          </tr>
+          <tr>
             <td><span class="t">string</span> <span class="mn">ToString</span>()</td>
             <td>Format using the Configuration default formatter. Falls back to <code>ToDebugString()</code> if no default is configured.</td>
           </tr>
@@ -346,6 +354,10 @@
             <td>Convert an InfVal to its string representation.</td>
           </tr>
           <tr>
+            <td><span class="t">void</span> <span class="mn">Format</span>(<span class="kw">in</span> <span class="t">InfVal</span> value, <span class="t">List&lt;string&gt;</span> parts, <span class="t">int</span> partCount = 0)</td>
+            <td>Fill parts with the pieces of the formatted value: the number first, then a unit, or an exponent marker and its digits. Concatenating them gives what Format returns. <code>partCount</code> of 0 or less asks for the natural split, a positive value for exactly that many pieces, up to <code>InfValFormatHelper.maxPartCount</code> (16). Has a default implementation putting the whole output in a single part, so implementing it is optional.</td>
+          </tr>
+          <tr>
             <td><span class="t">bool</span> <span class="mn">TryParse</span>(<span class="t">string</span> text, <span class="kw">out</span> <span class="t">InfVal</span> result)</td>
             <td>Try to convert a string to an InfVal. Return false (and set result to default) if the string is not a valid complete number.</td>
           </tr>
@@ -396,14 +408,16 @@
         <table class="mt">
           <tr><td><span class="t">int</span> <span class="mn">groupSize</span></td><td>Number of digits per unit level and group separator step. Default: 3 (k/M/G style). Use 4 for East Asian style (万/億/兆).</td></tr>
           <tr><td><span class="t">string[]</span> <span class="mn">unitsList</span></td><td>Suffix list applied at each power step (default: k, M, G, T, P, E, Z, Y).</td></tr>
-          <tr><td><span class="t">int</span> <span class="mn">maxDisplayedDigits</span></td><td>Maximum digits to show. 0 = unlimited. Default: 8.</td></tr>
+          <tr><td><span class="t">int</span> <span class="mn">maxDisplayedDigits</span></td><td>Maximum digits to show, leading zeros of values below 1 included. The last displayed digit is rounded half away from zero. 0 = unlimited. Default: 8.</td></tr>
           <tr><td><span class="t">string</span> <span class="mn">decimalSeparator</span></td><td>Decimal point character(s). Default: ".".</td></tr>
           <tr><td><span class="t">string</span> <span class="mn">groupSeparator</span></td><td>Thousands separator character(s). Default: ",".</td></tr>
           <tr><td><span class="t">string</span> <span class="mn">exponentMarker</span></td><td>Marker for scientific notation. Default: "e".</td></tr>
           <tr><td><span class="t">bool</span> <span class="mn">addGroupSeparatorsBeforeDecimalPoint</span></td><td>Add thousands separators in the integer part. Default: true.</td></tr>
           <tr><td><span class="t">bool</span> <span class="mn">addGroupSeparatorsAfterDecimalPoint</span></td><td>Add thousands separators in the fractional part. Default: false.</td></tr>
           <tr><td><span class="t">bool</span> <span class="mn">forceAbbreviation</span></td><td>Always use a unit suffix or scientific notation. Default: false.</td></tr>
-          <tr><td><span class="t">bool</span> <span class="mn">keepTrailingZeros</span></td><td>Pad decimals with zeros up to maxDisplayedDigits. Default: false.</td></tr>
+          <tr><td><span class="t">bool</span> <span class="mn">limitDisplayedDecimals</span></td><td>Turn on the maxDisplayedDecimals limit. Default: false.</td></tr>
+          <tr><td><span class="t">int</span> <span class="mn">maxDisplayedDecimals</span></td><td>Maximum decimals to display, in the decimal part of the number or of the abbreviated mantissa, applied when limitDisplayedDecimals is true. Values needing more are rounded to fit, and values below 1 stay in fixed point instead of switching to a unit or scientific notation, as long as they fit in maxDisplayedDigits. 0 rounds to whole numbers. Default: 2.</td></tr>
+          <tr><td><span class="t">bool</span> <span class="mn">keepTrailingZeros</span></td><td>Keep the trailing zeros of the decimal part, padding it up to maxDisplayedDecimals when that limit is set. Default: false.</td></tr>
         </table>
       </div>
     </div>
@@ -451,6 +465,8 @@
           <tr><td><span class="t">string</span> <span class="mn">groupSeparator</span></td><td>Default: ",".</td></tr>
           <tr><td><span class="t">bool</span> <span class="mn">addGroupSeparatorsBeforeDecimalPoint</span></td><td>Default: false.</td></tr>
           <tr><td><span class="t">bool</span> <span class="mn">addGroupSeparatorsAfterDecimalPoint</span></td><td>Default: false.</td></tr>
+          <tr><td><span class="t">bool</span> <span class="mn">limitDisplayedDecimals</span></td><td>Turn on the maxDisplayedDecimals limit. Default: false.</td></tr>
+          <tr><td><span class="t">int</span> <span class="mn">maxDisplayedDecimals</span></td><td>Maximum decimals to display, in the decimal part of the number or of the abbreviated mantissa, applied when limitDisplayedDecimals is true. Values needing more are rounded to fit, and values below 1 stay in fixed point instead of switching to a unit or scientific notation, as long as they fit in maxDisplayedDigits. 0 rounds to whole numbers. Default: 2.</td></tr>
           <tr><td><span class="t">bool</span> <span class="mn">keepTrailingZeros</span></td><td>Default: false.</td></tr>
         </table>
       </div>
@@ -477,6 +493,8 @@
           <tr><td><span class="t">int</span> <span class="mn">maxDisplayedDigits</span></td><td>Default: 8.</td></tr>
           <tr><td><span class="t">bool</span> <span class="mn">addGroupSeparatorsBeforeDecimalPoint</span></td><td>Default: true.</td></tr>
           <tr><td><span class="t">bool</span> <span class="mn">addGroupSeparatorsAfterDecimalPoint</span></td><td>Default: false.</td></tr>
+          <tr><td><span class="t">bool</span> <span class="mn">limitDisplayedDecimals</span></td><td>Turn on the maxDisplayedDecimals limit. Default: false.</td></tr>
+          <tr><td><span class="t">int</span> <span class="mn">maxDisplayedDecimals</span></td><td>Maximum decimals to display, in the decimal part of the number or of the abbreviated mantissa, applied when limitDisplayedDecimals is true. Values needing more are rounded to fit, and values below 1 stay in fixed point instead of switching to a unit or scientific notation, as long as they fit in maxDisplayedDigits. 0 rounds to whole numbers. Default: 2.</td></tr>
           <tr><td><span class="t">bool</span> <span class="mn">keepTrailingZeros</span></td><td>Default: false.</td></tr>
         </table>
       </div>
@@ -501,14 +519,22 @@
             <td><span class="t">string[]</span> <span class="mn">defaultExponentMarkers</span></td>
             <td>Standard exponent markers accepted during parsing: <code>{ "e", "E" }</code>.</td>
           </tr>
+          <tr>
+            <td><span class="t">const int</span> <span class="mn">maxPartCount</span></td>
+            <td>Highest part count the <code>Format</code> overloads filling a <code>List&lt;string&gt;</code> accept: <code>16</code>.</td>
+          </tr>
         </table>
       </div>
       <div class="member-group">
         <div class="member-group-title">Static Methods: Formatting</div>
         <table class="mt">
           <tr>
-            <td><span class="t">string</span> <span class="mn">Format</span>(<span class="kw">in</span> <span class="t">InfVal</span> value, <span class="t">int</span> maxDisplayedDigits, <span class="t">string[]</span> unitsList, <span class="t">string</span> decimalPoint, <span class="t">string</span> groupSeparator, <span class="t">string</span> exponentMarker, <span class="t">bool</span> addGroupSepBefore, <span class="t">bool</span> addGroupSepAfter, <span class="t">bool</span> forceAbbreviation, <span class="t">bool</span> keepTrailingZeros, <span class="t">int</span> unitStep = 3)</td>
+            <td><span class="t">string</span> <span class="mn">Format</span>(<span class="kw">in</span> <span class="t">InfVal</span> value, <span class="t">int</span> maxDisplayedDigits, <span class="t">string[]</span> unitsList, <span class="t">string</span> decimalPoint, <span class="t">string</span> groupSeparator, <span class="t">string</span> exponentMarker, <span class="t">bool</span> addGroupSepBefore, <span class="t">bool</span> addGroupSepAfter, <span class="t">bool</span> forceAbbreviation, <span class="t">bool</span> keepTrailingZeros, <span class="t">int</span> unitStep = 3, <span class="t">int</span> maxDisplayedDecimals = -1)</td>
             <td>Convert an InfVal to a string with full control. <code>unitStep</code>: 3 for k/M/G (default), 4 for East Asian 万/億.</td>
+          </tr>
+          <tr>
+            <td><span class="t">void</span> <span class="mn">Format</span>(<span class="kw">in</span> <span class="t">InfVal</span> value, <span class="t">int</span> maxDisplayedDigits, <span class="t">string[]</span> unitsList, <span class="t">string</span> decimalPoint, <span class="t">string</span> groupSeparator, <span class="t">string</span> exponentMarker, <span class="t">bool</span> addGroupSepBefore, <span class="t">bool</span> addGroupSepAfter, <span class="t">bool</span> forceAbbreviation, <span class="t">bool</span> keepTrailingZeros, <span class="t">List&lt;string&gt;</span> parts, <span class="t">int</span> partCount = 0, <span class="t">int</span> unitStep = 3, <span class="t">int</span> maxDisplayedDecimals = -1)</td>
+            <td>Same, filling parts with the pieces instead of returning one string. Throws ArgumentNullException if parts is null.</td>
           </tr>
         </table>
       </div>
@@ -694,6 +720,7 @@
           <tr><td><span class="t">InfVal</span> <span class="mn">Floor</span>(<span class="kw">in</span> <span class="t">InfVal</span> value)</td><td>Largest integer &le; value.</td></tr>
           <tr><td><span class="t">InfVal</span> <span class="mn">Ceil</span>(<span class="kw">in</span> <span class="t">InfVal</span> value)</td><td>Smallest integer &ge; value.</td></tr>
           <tr><td><span class="t">InfVal</span> <span class="mn">Round</span>(<span class="kw">in</span> <span class="t">InfVal</span> value)</td><td>Round to the nearest integer.</td></tr>
+          <tr><td><span class="t">InfVal</span> <span class="mn">Round</span>(<span class="kw">in</span> <span class="t">InfVal</span> value, <span class="t">int</span> decimals)</td><td>Round to a number of digits after the decimal point. A negative <code>decimals</code> rounds to tens, hundreds, and so on. Result has the same exponent as the input.</td></tr>
           <tr><td><span class="t">InfVal</span> <span class="mn">Truncate</span>(<span class="kw">in</span> <span class="t">InfVal</span> value)</td><td>Integer part (truncates toward zero). Result has the same exponent as the input.</td></tr>
           <tr><td><span class="t">InfVal</span> <span class="mn">DecimalPart</span>(<span class="kw">in</span> <span class="t">InfVal</span> value)</td><td>Fractional part.</td></tr>
           <tr><td><span class="t">InfVal</span> <span class="mn">Max</span>(<span class="kw">in</span> <span class="t">InfVal</span> a, <span class="kw">in</span> <span class="t">InfVal</span> b)</td><td>Larger of two values.</td></tr>

@@ -30,6 +30,7 @@
     <a href="#formatters">Formatters</a>
     <a href="#formatter-asset" class="indent">FormatterAsset</a>
     <a href="#builtin"         class="indent">Built-in Formatters</a>
+    <a href="#parts"           class="indent">Formatting into Parts</a>
     <a href="#custom"          class="indent">Custom Formatters</a>
     <a href="#configuration">Configuration</a>
     <a href="#input-field">Input Field</a>
@@ -43,7 +44,7 @@
   <main>
     <div class="page-header">
       <h1>Documentation</h1>
-      <div class="version">Infinite Value v2.0</div>
+      <div class="version">Infinite Value v2.2</div>
     </div>
 
 
@@ -253,13 +254,23 @@ iv = <span class="kw">new</span> <span class="ty">InfVal</span>(0).ToPrecision(2
       <ul>
         <li><code>groupSize</code>: Digits per unit level and group separator step. Default: 3 (k/M/G style). Use 4 for East Asian style (万/億/兆).</li>
         <li><code>unitsList</code>: Suffix list applied at each power step (default: k, M, G, T, P, E, Z, Y).</li>
-        <li><code>maxDisplayedDigits</code>: Maximum digits in the output (0 means unlimited).</li>
+        <li><code>maxDisplayedDigits</code>: Maximum digits in the output, leading zeros of values below 1 included (0 means unlimited). The last displayed digit is rounded half away from zero.</li>
         <li><code>decimalSeparator</code> / <code>groupSeparator</code>: Decimal point and thousands separator characters.</li>
         <li><code>exponentMarker</code>: Marker for scientific notation (e.g. <code>"e"</code>).</li>
         <li><code>addGroupSeparatorsBeforeDecimalPoint</code> / <code>addGroupSeparatorsAfterDecimalPoint</code>: Toggle thousands separators on each side of the decimal point.</li>
         <li><code>forceAbbreviation</code>: Always use a unit suffix or scientific notation, even for small values.</li>
-        <li><code>keepTrailingZeros</code>: Pad decimals with zeros up to <code>maxDisplayedDigits</code>.</li>
+        <li><code>limitDisplayedDecimals</code>: Turn on the <code>maxDisplayedDecimals</code> limit. Off by default, leaving the number of decimals unbounded.</li>
+        <li><code>maxDisplayedDecimals</code>: Maximum decimals to display, in the decimal part of the number or of the abbreviated mantissa. The number is rounded to this many decimals before a layout is picked, so a value smaller than the limit shows as zero rather than switching to scientific notation. Values below 1 stay in fixed point as long as they fit in <code>maxDisplayedDigits</code>. <code>0</code> rounds to whole numbers.</li>
+        <li><code>keepTrailingZeros</code>: Keep the trailing zeros of the decimal part, padding it up to <code>maxDisplayedDecimals</code> when that limit is set.</li>
       </ul>
+
+      <p>
+        Setting <code>maxDisplayedDigits</code> to 3, <code>maxDisplayedDecimals</code> to 2 and turning on
+        <code>limitDisplayedDecimals</code> and <code>keepTrailingZeros</code> gives a constant width in the
+        small range and unit suffixes in the large one: <code>0.00</code>,
+        <code>0.02</code>, <code>0.10</code>, <code>1.50</code>, <code>12.3</code>,
+        <code>999</code>, <code>10.1k</code>, <code>1.23M</code>.
+      </p>
 
       <h4>ScientificFormatter</h4>
       <p>Always formats as scientific notation (e.g. <code>1.23e+6</code>). No unit suffixes or group separators.</p>
@@ -275,7 +286,7 @@ iv = <span class="kw">new</span> <span class="ty">InfVal</span>(0).ToPrecision(2
       </p>
       <ul>
         <li><code>alphabet</code>: Source string for generating suffixes (default: a–z).</li>
-        <li><code>maxDisplayedDigits</code>, <code>decimalSeparator</code>, <code>groupSeparator</code>, <code>keepTrailingZeros</code></li>
+        <li><code>maxDisplayedDigits</code>, <code>limitDisplayedDecimals</code>, <code>maxDisplayedDecimals</code>, <code>decimalSeparator</code>, <code>groupSeparator</code>, <code>keepTrailingZeros</code></li>
       </ul>
 
       <h4>CultureFormatter</h4>
@@ -287,8 +298,31 @@ iv = <span class="kw">new</span> <span class="ty">InfVal</span>(0).ToPrecision(2
       </p>
       <ul>
         <li><code>culture</code>: The culture to use (serializable via the <code>Culture</code> class).</li>
-        <li><code>maxDisplayedDigits</code>, <code>addGroupSeparatorsBeforeDecimalPoint</code>, <code>addGroupSeparatorsAfterDecimalPoint</code>, <code>keepTrailingZeros</code></li>
+        <li><code>maxDisplayedDigits</code>, <code>limitDisplayedDecimals</code>, <code>maxDisplayedDecimals</code>, <code>addGroupSeparatorsBeforeDecimalPoint</code>, <code>addGroupSeparatorsAfterDecimalPoint</code>, <code>keepTrailingZeros</code></li>
       </ul>
+
+      <h3 id="parts">Formatting into Parts</h3>
+      <p>
+        <code>Format</code> can hand the pieces of a value back separately instead of as one string, for
+        laying the number and its unit out on their own.
+      </p>
+<pre><code>List&lt;string&gt; parts = new List&lt;string&gt;();
+
+value.Format(parts, 2);
+numberLabel.text = parts[0];             // "10.1"
+unitLabel.text   = parts[1] + "Wh";      // "kWh"</code></pre>
+      <p>
+        The first part is always the number; how the rest is grouped is up to the formatter. The built-in
+        formatters give <code>["10.1", "k"]</code> for a unit, <code>["1.23", "e", "-6"]</code> for scientific
+        notation and <code>["999"]</code> for a plain value. Concatenating the parts always gives exactly what
+        <code>Format</code> returns.
+      </p>
+      <p>
+        <code>partCount</code> of 0 or less asks for the formatter's natural split. A positive value asks for
+        exactly that many parts, up to <code>InfValFormatHelper.maxPartCount</code> (16), merging the tail or padding with empty strings, so a layout with a fixed number
+        of fields never has to check <code>Count</code>. The list is cleared and refilled, so the same one can be
+        reused across calls instead of allocating a new one.
+      </p>
 
       <h3 id="custom">Custom Formatters</h3>
       <p>

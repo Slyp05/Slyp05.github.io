@@ -51,6 +51,28 @@ Unity 6.0 or later (tested up to 6.5)
 ## Patch Notes
 
 <details class="patch-note" open>
+<summary><strong>v2.2.0</strong> <span class="patch-date">August 29, 2026</span></summary>
+<div class="patch-note-body" markdown="1">
+
+New Features:
+- **Decimal limit**: formatters can now cap the decimals they display, with `limitDisplayedDecimals` and `maxDisplayedDecimals`. Off by default. Combined with `maxDisplayedDigits` and `keepTrailingZeros` it gives a constant width in the small range and unit suffixes in the large one: `0.00`, `0.02`, `0.10`, `1.50`, `12.3`, `999`, `10.1k`, `1.23M`.
+- **Formatting into parts**: `Format` can fill a `List<string>` with the pieces of a value instead of returning one string, for laying the number and its unit out separately: `["10.1", "k"]`, `["1.23", "e", "-6"]`, `["999"]`. Available on `InfVal` and on any `IInfValFormatter`.
+- **`MathInfVal.Round(value, decimals)`**: round to a chosen number of digits after the decimal point.
+- Inspector: `maxDisplayedDecimals` only appears once `limitDisplayedDecimals` is ticked, and `maxDisplayedDigits` shows `(unlimited)` when set to 0.
+
+Breaking Changes:
+- The last displayed digit is now rounded instead of truncated, matching how `float`, `double`, and `decimal` format themselves. Stored values are untouched, but a display can now read slightly above the stored value, so compare stored values rather than their displayed form.
+- A formatter with a decimal limit set is lossy by design. Leave the limit off on formatters bound to an `InfValInputField`, whose text round trips through it.
+
+Bug Fixes:
+- `keepTrailingZeros` no longer pushes small values into scientific notation (`0.100` was shown as `1.00e-1`).
+- A formatter with `maxDisplayedDigits` left unlimited now uses its unit suffixes instead of falling back to scientific notation: `10000` with `forceAbbreviation` gives `10k`, not `1e+4`.
+- Group separators in the fractional part are placed correctly when the decimal separator and the group separator have different lengths.
+
+</div>
+</details>
+
+<details class="patch-note">
 <summary><strong>v2.1.0</strong> <span class="patch-date">June 21, 2026</span></summary>
 <div class="patch-note-body" markdown="1">
 
