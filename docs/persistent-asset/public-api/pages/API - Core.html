@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Namespace PersistentAsset, assembly PersistentAsset.Core. Explained in How saving works." />
   <title>Persistent Asset - Public API - Core</title>
   <link rel="stylesheet" href="/assets/css/doc-styles.css" />
   <link rel="stylesheet" href="/assets/css/doc-dark.css" />
@@ -15,82 +16,115 @@
   <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </head>
 <body>
+<a class="skip-link" href="#content">Skip to content</a>
 <div id="layout">
 
   <script src="../shared/nav.js"></script>
   <nav>
-    <div class="nav-title">Public API</div>
     <a href="../index.html">Overview</a>
-    <div class="nav-band active">Core</div>
-    <div class="nav-group">Core Types</div>
-    <a href="#PersistentScriptableObject"><span class="badge badge-so">SO</span>PersistentScriptableObject</a>
-    <a href="#PersistenceManager"><span class="badge badge-pm">PM</span>PersistenceManager</a>
-    <a href="#Persistence"><span class="badge badge-static">static</span>Persistence</a>
-    <a href="#Slots"><span class="badge badge-static">static</span>Slots</a>
-    <a href="#GlobalPersistedData"><span class="badge badge-static">static</span>GlobalPersistedData</a>
-    <a href="#Settings"><span class="badge badge-static">static</span>Settings</a>
-    <a href="#SettingsEntry"><span class="badge badge-class">class</span>SettingsEntry</a>
-
-    <div class="nav-group">Operations &amp; Results</div>
-    <a href="#Result"><span class="badge badge-class">class</span>Result</a>
-    <a href="#LoadResult"><span class="badge badge-class">sealed</span>LoadResult</a>
-    <a href="#SaveResult"><span class="badge badge-class">sealed</span>SaveResult</a>
-    <a href="#ClearResult"><span class="badge badge-class">sealed</span>ClearResult</a>
-    <a href="#ResultType"><span class="badge badge-enum">enum</span>ResultType</a>
-    <a href="#ExecutionMode"><span class="badge badge-enum">enum</span>ExecutionMode</a>
-    <a href="#PersistenceSource"><span class="badge badge-enum">enum</span>PersistenceSource</a>
-    <a href="#PersistenceOperation"><span class="badge badge-class">sealed</span>PersistenceOperation&lt;T&gt;</a>
-
-    <div class="nav-group">Optional Interfaces</div>
-    <a href="#IMultiSlot"><span class="badge badge-interface">iface</span>IMultiSlot</a>
-    <a href="#IUpgradable"><span class="badge badge-interface">iface</span>IUpgradable</a>
-    <a href="#IFieldResettable"><span class="badge badge-interface">iface</span>IFieldResettable</a>
-    <a href="#IScopeCallbacks"><span class="badge badge-interface">iface</span>IScopeCallbacks</a>
-    <a href="#ISerializationCallbacks"><span class="badge badge-interface">iface</span>ISerializationCallbacks</a>
-    <a href="#IDirtyTracked"><span class="badge badge-interface">iface</span>IDirtyTracked</a>
-    <a href="#IDynamicInitialize"><span class="badge badge-interface">iface</span>IDynamicInitialize</a>
-    <a href="#IPersistencePolicy"><span class="badge badge-interface">iface</span>IPersistencePolicy</a>
-    <a href="#PersistencePolicy"><span class="badge badge-struct">struct</span>PersistencePolicy</a>
-    <a href="#IAlwaysGlobal"><span class="badge badge-interface">iface</span>IAlwaysGlobal</a>
-
+    <a class="nav-band active" href="API%20-%20Core.html" aria-current="page">Core</a>
+    <div class="nav-group">Core types</div>
+    <div class="nav-group-body">
+      <a href="#PersistentScriptableObject"><span class="badge badge-so">SO</span>PersistentScriptableObject</a>
+      <a href="#PersistenceManager"><span class="badge badge-pm">PM</span>PersistenceManager</a>
+      <a href="#Persistence"><span class="badge badge-static">static</span>Persistence</a>
+      <a href="#SaveData"><span class="badge badge-static">static</span>SaveData<span class="badge badge-new">2.0</span></a>
+      <a href="#GlobalPersistedData"><span class="badge badge-static">static</span>GlobalPersistedData</a>
+    </div>
+    <div class="nav-group">Operations &amp; results</div>
+    <div class="nav-group-body">
+      <a href="#Result"><span class="badge badge-class">abstract</span>Result</a>
+      <a href="#LoadResult"><span class="badge badge-class">sealed</span>LoadResult</a>
+      <a href="#SaveResult"><span class="badge badge-class">sealed</span>SaveResult</a>
+      <a href="#ClearResult"><span class="badge badge-class">sealed</span>ClearResult</a>
+      <a href="#ResultType"><span class="badge badge-enum">enum</span>ResultType</a>
+      <a href="#ExecutionMode"><span class="badge badge-enum">enum</span>ExecutionMode</a>
+      <a href="#PersistenceSource"><span class="badge badge-enum">enum</span>PersistenceSource</a>
+      <a href="#PersistenceOperation"><span class="badge badge-class">sealed</span>PersistenceOperation&lt;TResult&gt;</a>
+    </div>
+    <div class="nav-group">Readiness</div>
+    <div class="nav-group-body">
+      <a href="#Readiness"><span class="badge badge-struct">struct</span>Readiness<span class="badge badge-new">2.0</span></a>
+      <a href="#NotReadyReason"><span class="badge badge-enum">enum</span>NotReadyReason<span class="badge badge-new">2.0</span></a>
+      <a href="#DataOrigin"><span class="badge badge-enum">enum</span>DataOrigin<span class="badge badge-new">2.0</span></a>
+    </div>
+    <div class="nav-group">Optional interfaces</div>
+    <div class="nav-group-body">
+      <a href="#IUpgradable"><span class="badge badge-interface">iface</span>IUpgradable</a>
+      <a href="#IMergeable"><span class="badge badge-interface">iface</span>IMergeable<span class="badge badge-new">2.0</span></a>
+      <a href="#IFieldResettable"><span class="badge badge-interface">iface</span>IFieldResettable</a>
+      <a href="#IScopeCallbacks"><span class="badge badge-interface">iface</span>IScopeCallbacks</a>
+      <a href="#ISerializationCallbacks"><span class="badge badge-interface">iface</span>ISerializationCallbacks</a>
+      <a href="#IDirtyTracked"><span class="badge badge-interface">iface</span>IDirtyTracked</a>
+      <a href="#IDynamicInitialize"><span class="badge badge-interface">iface</span>IDynamicInitialize</a>
+      <a href="#IPersistencePolicy"><span class="badge badge-interface">iface</span>IPersistencePolicy</a>
+      <a href="#PersistencePolicy"><span class="badge badge-struct">struct</span>PersistencePolicy</a>
+    </div>
+    <div class="nav-group">Save slots</div>
+    <div class="nav-group-body">
+      <a href="#Slots"><span class="badge badge-static">static</span>Slots</a>
+      <a href="#PersistentSlotRegistry"><span class="badge badge-class">abstract</span>PersistentSlotRegistry&lt;TTarget, TInfo&gt;</a>
+      <a href="#SlotEntry"><span class="badge badge-struct">struct</span>SlotEntry&lt;TInfo&gt;</a>
+      <a href="#ISlotListing"><span class="badge badge-interface">iface</span>ISlotListing<span class="badge badge-new">2.0</span></a>
+      <a href="#SaveScreenshot"><span class="badge badge-struct">struct</span>SaveScreenshot</a>
+      <a href="#ScreenshotFormat"><span class="badge badge-enum">enum</span>ScreenshotFormat</a>
+    </div>
+    <div class="nav-group">Conflicts</div>
+    <div class="nav-group-body">
+      <a href="#Conflicts"><span class="badge badge-static">static</span>Conflicts<span class="badge badge-new">2.0</span></a>
+      <a href="#ConflictInfo"><span class="badge badge-class">sealed</span>ConflictInfo<span class="badge badge-new">2.0</span></a>
+      <a href="#ConflictResolution"><span class="badge badge-enum">enum</span>ConflictResolution<span class="badge badge-new">2.0</span></a>
+    </div>
+    <div class="nav-group">Player UI</div>
+    <div class="nav-group-body">
+      <a href="#PersistenceConflictPrompt"><span class="badge badge-mb">MB</span>PersistenceConflictPrompt<span class="badge badge-new">2.0</span></a>
+      <a href="#PersistenceDrainDisplay"><span class="badge badge-mb">MB</span>PersistenceDrainDisplay<span class="badge badge-new">2.0</span></a>
+    </div>
     <div class="nav-group">Serialization</div>
-    <a href="#Serializer"><span class="badge badge-class">class</span>Serializer</a>
-    <a href="#SaveNode"><span class="badge badge-class">class</span>SaveNode</a>
-
-    <div class="nav-group">Asset References</div>
-    <a href="#AssetRegistry"><span class="badge badge-static">static</span>AssetRegistry</a>
-
-    <div class="nav-group">Attributes</div>
-    <a href="#Attributes"><span class="badge badge-class">attr</span>Attributes</a>
-
+    <div class="nav-group-body">
+      <a href="#Serializer"><span class="badge badge-class">abstract</span>Serializer</a>
+      <a href="#SaveNode"><span class="badge badge-class">abstract</span>SaveNode</a>
+    </div>
+    <div class="nav-group">Asset references</div>
+    <div class="nav-group-body">
+      <a href="#AssetRegistry"><span class="badge badge-static">static</span>AssetRegistry</a>
+    </div>
     <div class="nav-group">Debugging</div>
-    <a href="#LogLevel"><span class="badge badge-enum">enum</span>LogLevel</a>
-    <a href="#InGameLogsViewer"><span class="badge badge-mb">MB</span>InGameLogsViewer</a>
-    <a href="#PersistentAssetConsole"><span class="badge badge-static">static</span>PersistentAssetConsole</a>
+    <div class="nav-group-body">
+      <a href="#LogLevel"><span class="badge badge-enum">enum</span>LogLevel</a>
+      <a href="#PersistenceDebugOverlay"><span class="badge badge-mb">MB</span>PersistenceDebugOverlay<span class="badge badge-new">2.0</span></a>
+      <a href="#DebugOverlayCorner"><span class="badge badge-enum">enum</span>DebugOverlayCorner<span class="badge badge-new">2.0</span></a>
+      <a href="#PersistentAssetConsole"><span class="badge badge-static">static</span>PersistentAssetConsole</a>
+    </div>
+    <div class="nav-group">Attributes</div>
+    <div class="nav-group-body">
+      <a href="#Attributes"><span class="badge badge-class">attr</span>Attributes</a>
+    </div>
     <a class="nav-band" href="API%20-%20Built-Ins.html">Built-Ins</a>
     <a class="nav-band" href="API%20-%20No-Code.html">No-Code</a>
+    <a class="nav-band" href="API%20-%20Scene%20Objects.html">Scene Objects</a>
+    <a class="nav-band" href="API%20-%20Prefs.html">Prefs</a>
     <a class="nav-band" href="API%20-%20Editor%20Extension.html">Editor Extension</a>
   </nav>
 
-  <main>
+  <main id="content">
     <div class="page-header">
-      <h1>Public API</h1>
-      <div class="sub">Persistent Asset v1.1.0 &nbsp;&middot;&nbsp; namespaces <code>PersistentAsset(.BuiltIns/.NoCode)</code> and the editor mirrors <code>PersistentAsset.Editor(.BuiltIns/.NoCode)</code></div>
+      <h1>Public API <span class="tag">Core</span></h1>
+      <div class="sub">Namespace <code>PersistentAsset</code>, assembly <code>PersistentAsset.Core</code>. Explained in <a href="../../user-manual/pages/How%20saving%20works.html">How saving works</a>.</div>
     </div>
 
-    <p class="lead">Reference for every public type and member in the Core area. <span class="ex">Red text</span> flags the exceptions a member can throw. See the <a href="../index.html">API overview</a> for the other areas.</p>
-
-    <div class="module-band band-first"><span class="band-name">Core</span><span class="band-desc">The foundation: persistent objects, managers and the save API.</span></div>
-
+    <div class="module-band band-first"><span class="band-name">Core</span><span class="band-desc">The foundation: persistent assets, managers and the save API.</span></div>
 
     <!-- ═══════════════════════════════════════ PersistentScriptableObject ═══ -->
+    <h2 class="api-group">Core types</h2>
+
     <div class="type-section" id="PersistentScriptableObject">
-      <div class="type-header"><h2>PersistentScriptableObject</h2><span class="badge badge-so">SO</span><span class="badge badge-class">abstract</span></div>
-      <p class="type-desc">Base class for your data. Inherit it and its serialized fields persist between sessions.</p>
+      <div class="type-header"><h3>PersistentScriptableObject</h3><span class="badge badge-so">SO</span><span class="badge badge-class">abstract</span></div>
+      <p class="type-desc">Base class for your data. Inherit it and its serialized fields persist between sessions. Explained in <a href="../../user-manual/pages/How%20saving%20works.html">How saving works</a>.</p>
       <div class="member-group">
         <div class="member-group-title">Properties</div>
         <table class="mt">
-          <tr><td><span class="t">PersistenceManager</span> <span class="mn">PersistenceManager</span> { get; }</td><td>The manager in charge of this object's persistent data.</td></tr>
+          <tr><th scope="row"><span class="t">PersistenceManager</span> <span class="mn">PersistenceManager</span> { get; }</th><td>The manager in charge of this object's persistent data, or <code>null</code> when none is assigned, in which case the object does not persist.</td></tr>
         </table>
       </div>
     </div>
@@ -98,20 +132,24 @@
 
     <!-- ═══════════════════════════════════════ PersistenceManager ═══ -->
     <div class="type-section" id="PersistenceManager">
-      <div class="type-header"><h2>PersistenceManager</h2><span class="badge badge-pm">PM</span><span class="badge badge-class">abstract</span><span class="warn">extending</span></div>
-      <p class="type-desc">Saves and loads a persistent object. The built-in managers derive from it; so does any custom one.</p>
+      <div class="type-header"><h3>PersistenceManager</h3><span class="badge badge-pm">PM</span><span class="badge badge-class">abstract</span><span class="warn">extending</span></div>
+      <p class="type-desc">Saves and loads a persistent asset. The built-in managers derive from it; so does any custom one. Worked example: <a href="../../user-manual/pages/Extend%20the%20package.html#manager">A custom persistence manager</a>.</p>
 
       <div class="member-group">
         <div class="member-group-title">State &amp; identity</div>
         <table class="mt">
-          <tr><td><span class="t">bool</span> <span class="mn">IsReady</span> { get; }</td><td>Whether the target holds its data and is safe to read and save. The one rule.</td></tr>
-          <tr><td><span class="t">Awaitable</span> <span class="mn">WhenReady</span> { get; }</td><td>Await (or yield) until everything that decides readiness has settled (the automatic load and its imports, a queued load or <code>Slots.LoadFrom</code>, an in-flight or queued clear, and any follow-up issued while waiting), then read <code>IsReady</code>.</td></tr>
-          <tr><td><span class="t">Object</span> <span class="mn">Target</span> { get; }</td><td>The persistent object this manager saves and loads.</td></tr>
-          <tr><td><span class="t">string</span> <span class="mn">UniqueID</span> { get; }</td><td>Identifier unique to this manager.</td></tr>
-          <tr><td><span class="t">Serializer</span> <span class="mn">Serializer</span> { get; protected set; }</td><td>The serialization system in use.</td></tr>
-          <tr><td><span class="t">string</span> <span class="mn">Slot</span> { get; set; }</td><td>Current slot (multi-slot targets). Setting it switches slot as a scope transition. <span class="ex">The setter throws InvalidOperationException in the editor only when set outside play mode.</span></td></tr>
-          <tr><td><span class="t">bool</span> <span class="mn">UseSlot</span> { get; }</td><td>Whether the target is <code>IMultiSlot</code>.</td></tr>
-          <tr><td><span class="t">string</span> <span class="mn">GetStorageLocation</span>() / <span class="mn">GetStorageLocation</span>(<span class="t">string</span> slot)</td><td>Where this manager stores its data (the current slot, or a given one), or null (a normal answer for remote managers).</td></tr>
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">IsReady</span> { get; }</th><td>Whether the target holds its data and is safe to read and save. The one rule.</td></tr>
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">IsBusy</span> { get; }</th><td>Whether an operation is running right now, for a loading indicator. Not a data-safety signal; branch on <code>IsReady</code> for that.</td></tr>
+          <tr><th scope="row"><span class="t">Readiness</span> <span class="mn">Readiness</span> { get; }</th><td>A snapshot of <code>IsReady</code> with why it is not ready and where the data came from. For interface and diagnostics only.</td></tr>
+          <tr><th scope="row"><span class="kw">event</span> <span class="t">Action</span>&lt;<span class="t">Readiness</span>&gt; <span class="mn">OnReadinessChanged</span></th><td>Raised on every readiness transition, including the ones no other event reports (a clear, a slot change, leaving scope).</td></tr>
+          <tr><th scope="row"><span class="t">Awaitable</span> <span class="mn">WhenReady</span> { get; }</th><td>Await (or yield) until everything that decides readiness has settled (the automatic load and its imports, a queued load or <code>Slots.LoadFrom</code>, an in-flight or queued clear, and any follow-up issued while waiting), then read <code>IsReady</code>.</td></tr>
+          <tr><th scope="row"><span class="t">Object</span> <span class="mn">Target</span> { get; }</th><td>The persistent asset this manager saves and loads.</td></tr>
+          <tr><th scope="row"><span class="t">string</span> <span class="mn">UniqueID</span> { get; }</th><td>Identifier unique to this manager.</td></tr>
+          <tr><th scope="row"><span class="t">Serializer</span> <span class="mn">Serializer</span> { get; protected internal set; }</th><td>The serialization system in use.</td></tr>
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">PayloadIsBinary</span> { get; }</th><td>Whether the payloads this manager reads and writes are binary rather than text. A storage that can only hold text base64 encodes them when it is true.</td></tr>
+          <tr><th scope="row"><span class="t">string</span> <span class="mn">Slot</span> { get; set; }</th><td>Current slot (multi-slot targets). Setting it switches slot as a scope transition. <span class="ex">The setter throws InvalidOperationException in the editor only when set outside play mode.</span></td></tr>
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">UseSlot</span> { get; }</th><td>Whether this saves to and loads from multiple slots: the manager's Use Slot toggle, or what the target's <a href="#IPersistencePolicy"><code>IPersistencePolicy</code></a> forces.</td></tr>
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">AlwaysGlobal</span> { get; }</th><td>Whether the target stays in scope all session and is registered in <a href="#GlobalPersistedData"><code>GlobalPersistedData</code></a>: the manager's Always Global toggle, or what the target's <code>IPersistencePolicy</code> forces.</td></tr>
         </table>
       </div>
 
@@ -119,68 +157,73 @@
         <div class="member-group-title">Load / Save / Clear operations</div>
         <div class="note"><span class="ex">Every method below throws InvalidOperationException in the editor only when called outside play mode (never at runtime).</span></div>
         <table class="mt">
-          <tr><td><span class="t">LoadResult</span> <span class="mn">LoadSync</span>()</td><td>Force synchronous; the result is final on return.</td></tr>
-          <tr><td><span class="kw">void</span> <span class="mn">Load</span>()</td><td>Fire and forget; wireable to a UnityEvent.</td></tr>
-          <tr><td><span class="kw">void</span> <span class="mn">Load</span>(<span class="t">Action</span>&lt;<span class="t">LoadResult</span>&gt; onComplete)</td><td>Default; sync when it can, else async, then callback.</td></tr>
-          <tr><td><span class="t">Task</span>&lt;<span class="t">LoadResult</span>&gt; <span class="mn">LoadAsync</span>(<span class="t">ExecutionMode</span>? executionModeOverride = null)</td><td>Async; await the result.</td></tr>
-          <tr><td><span class="t">PersistenceOperation</span>&lt;<span class="t">LoadResult</span>&gt; <span class="mn">LoadRoutine</span>()</td><td>Coroutine; yield return it, then read <code>Result</code>.</td></tr>
-          <tr><td><span class="t">SaveResult</span> <span class="mn">SaveSync</span>()</td><td>Force synchronous save.</td></tr>
-          <tr><td><span class="kw">void</span> <span class="mn">Save</span>()</td><td>Fire and forget save (wireable to a UnityEvent).</td></tr>
-          <tr><td><span class="kw">void</span> <span class="mn">Save</span>(<span class="t">Action</span>&lt;<span class="t">SaveResult</span>&gt; onComplete)</td><td>Default save, then callback.</td></tr>
-          <tr><td><span class="t">Task</span>&lt;<span class="t">SaveResult</span>&gt; <span class="mn">SaveAsync</span>(<span class="t">ExecutionMode</span>? executionModeOverride = null)</td><td>Async save; await the result.</td></tr>
-          <tr><td><span class="t">PersistenceOperation</span>&lt;<span class="t">SaveResult</span>&gt; <span class="mn">SaveRoutine</span>()</td><td>Coroutine save.</td></tr>
-          <tr><td><span class="t">ClearResult</span> <span class="mn">ClearSync</span>()</td><td>Force synchronous clear: deletes the slot's save, resets the target to defaults, pauses saving until the next load.</td></tr>
-          <tr><td><span class="kw">void</span> <span class="mn">Clear</span>()</td><td>Fire and forget clear (wireable to a UnityEvent).</td></tr>
-          <tr><td><span class="kw">void</span> <span class="mn">Clear</span>(<span class="t">Action</span>&lt;<span class="t">ClearResult</span>&gt; onComplete)</td><td>Default clear, then callback.</td></tr>
-          <tr><td><span class="t">Task</span>&lt;<span class="t">ClearResult</span>&gt; <span class="mn">ClearAsync</span>(<span class="t">ExecutionMode</span>? executionModeOverride = null)</td><td>Async clear; await the result.</td></tr>
-          <tr><td><span class="t">PersistenceOperation</span>&lt;<span class="t">ClearResult</span>&gt; <span class="mn">ClearRoutine</span>()</td><td>Coroutine clear.</td></tr>
+          <tr><th scope="row"><span class="t">LoadResult</span> <span class="mn">LoadSync</span>()</th><td>Force synchronous; the result is final on return.</td></tr>
+          <tr><th scope="row"><span class="kw">void</span> <span class="mn">Load</span>()</th><td>Fire and forget; wireable to a UnityEvent.</td></tr>
+          <tr><th scope="row"><span class="kw">void</span> <span class="mn">Load</span>(<span class="t">Action</span>&lt;<span class="t">LoadResult</span>&gt; onComplete)</th><td>Default; sync when it can, else async, then callback.</td></tr>
+          <tr><th scope="row"><span class="t">Task</span>&lt;<span class="t">LoadResult</span>&gt; <span class="mn">LoadAsync</span>(<span class="t">ExecutionMode</span>? executionModeOverride = null)</th><td>Async; await the result.</td></tr>
+          <tr><th scope="row"><span class="t">PersistenceOperation</span>&lt;<span class="t">LoadResult</span>&gt; <span class="mn">LoadRoutine</span>()</th><td>Coroutine; yield return it, then read <a href="#Result"><code>Result</code></a>.</td></tr>
+          <tr><th scope="row"><span class="t">SaveResult</span> <span class="mn">SaveSync</span>()</th><td>Force synchronous save.</td></tr>
+          <tr><th scope="row"><span class="kw">void</span> <span class="mn">Save</span>()</th><td>Fire and forget save (wireable to a UnityEvent).</td></tr>
+          <tr><th scope="row"><span class="kw">void</span> <span class="mn">Save</span>(<span class="t">Action</span>&lt;<span class="t">SaveResult</span>&gt; onComplete)</th><td>Default save, then callback.</td></tr>
+          <tr><th scope="row"><span class="t">Task</span>&lt;<span class="t">SaveResult</span>&gt; <span class="mn">SaveAsync</span>(<span class="t">ExecutionMode</span>? executionModeOverride = null)</th><td>Async save; await the result.</td></tr>
+          <tr><th scope="row"><span class="t">PersistenceOperation</span>&lt;<span class="t">SaveResult</span>&gt; <span class="mn">SaveRoutine</span>()</th><td>Coroutine save.</td></tr>
+          <tr><th scope="row"><span class="t">ClearResult</span> <span class="mn">ClearSync</span>()</th><td>Force synchronous clear: deletes the slot's save, resets the target to defaults, pauses saving until the next load or slot change.</td></tr>
+          <tr><th scope="row"><span class="kw">void</span> <span class="mn">Clear</span>()</th><td>Fire and forget clear (wireable to a UnityEvent).</td></tr>
+          <tr><th scope="row"><span class="kw">void</span> <span class="mn">Clear</span>(<span class="t">Action</span>&lt;<span class="t">ClearResult</span>&gt; onComplete)</th><td>Default clear, then callback.</td></tr>
+          <tr><th scope="row"><span class="t">Task</span>&lt;<span class="t">ClearResult</span>&gt; <span class="mn">ClearAsync</span>(<span class="t">ExecutionMode</span>? executionModeOverride = null)</th><td>Async clear; await the result.</td></tr>
+          <tr><th scope="row"><span class="t">PersistenceOperation</span>&lt;<span class="t">ClearResult</span>&gt; <span class="mn">ClearRoutine</span>()</th><td>Coroutine clear.</td></tr>
         </table>
       </div>
 
       <div class="member-group">
         <div class="member-group-title">Other operations</div>
-        <div class="note"><span class="ex">All three throw InvalidOperationException in the editor only when called outside play mode (never at runtime).</span></div>
         <table class="mt">
-          <tr><td><span class="kw">void</span> <span class="mn">ResetToDefaults</span>()</td><td>Reset the target's fields to pre-play values, in memory only (the save is untouched).</td></tr>
-          <tr><td><span class="t">string</span> <span class="mn">Snapshot</span>()</td><td>Capture the target's current values into a string for a checkpoint. Returns <code>null</code> when there is no serializer or the encode fails.</td></tr>
-          <tr><td><span class="t">bool</span> <span class="mn">Restore</span>(<span class="t">string</span> snapshot)</td><td>Restore from a <code>Snapshot</code> string, in memory only. Returns <code>false</code> when the string is <code>null</code>, could not be decoded, or persistence is disabled.</td></tr>
+          <tr><th scope="row"><span class="kw">void</span> <span class="mn">ResetToDefaults</span>()</th><td>Reset the target's fields to pre-play values, in memory only (the save is untouched). <span class="ex">Throws InvalidOperationException in the editor only when called outside play mode (never at runtime).</span></td></tr>
         </table>
       </div>
 
       <div class="member-group">
         <div class="member-group-title">Events</div>
         <table class="mt">
-          <tr><td><span class="mn">OnBeforeLoad</span> / <span class="mn">OnAfterLoad</span></td><td>Around each load that runs (with source, and result on After).</td></tr>
-          <tr><td><span class="mn">OnBeforeSave</span> / <span class="mn">OnAfterSave</span></td><td>Around each save that runs.</td></tr>
-          <tr><td><span class="mn">OnBeforeClear</span> / <span class="mn">OnAfterClear</span></td><td>Around each clear that runs.</td></tr>
-          <tr><td><span class="mn">BlockLoad</span> / <span class="mn">BlockSave</span> / <span class="mn">BlockClear</span></td><td>Return true from a subscriber to veto the operation.</td></tr>
+          <tr><th scope="row"><span class="kw">event</span> <span class="t">Action</span>&lt;<span class="t">PersistenceSource</span>&gt; <span class="mn">OnBeforeLoad</span> / <span class="t">Action</span>&lt;<span class="t">PersistenceSource</span>, <span class="t">LoadResult</span>&gt; <span class="mn">OnAfterLoad</span></th><td>Around each load that runs (with source, and result on After).</td></tr>
+          <tr><th scope="row"><span class="kw">event</span> <span class="t">Action</span>&lt;<span class="t">PersistenceSource</span>&gt; <span class="mn">OnBeforeSave</span> / <span class="t">Action</span>&lt;<span class="t">PersistenceSource</span>, <span class="t">SaveResult</span>&gt; <span class="mn">OnAfterSave</span></th><td>Around each save that runs.</td></tr>
+          <tr><th scope="row"><span class="kw">event</span> <span class="t">Action</span> <span class="mn">OnBeforeClear</span> / <span class="t">Action</span>&lt;<span class="t">ClearResult</span>&gt; <span class="mn">OnAfterClear</span></th><td>Around each clear that runs.</td></tr>
+          <tr><th scope="row"><span class="kw">event</span> <span class="t">Func</span>&lt;<span class="t">PersistenceSource</span>, <span class="t">bool</span>&gt; <span class="mn">BlockLoad</span> / <span class="t">Func</span>&lt;<span class="t">PersistenceSource</span>, <span class="t">bool</span>&gt; <span class="mn">BlockSave</span> / <span class="t">Func</span>&lt;<span class="t">bool</span>&gt; <span class="mn">BlockClear</span></th><td>Return true from a subscriber to veto the operation.</td></tr>
         </table>
       </div>
 
       <div class="member-group">
         <div class="member-group-title">Settings (configurable in the inspector / overridable in a subclass)</div>
         <table class="mt">
-          <tr><td><span class="t">bool</span> <span class="mn">AutoLoad</span> / <span class="mn">AutoSave</span></td><td>Whether to load on launch and save at safe points automatically.</td></tr>
-          <tr><td><span class="t">float</span> <span class="mn">RegularSaveDelay</span> / <span class="mn">AutoLoadRetryDelay</span></td><td>Timer cadences (use <code>NoRegularSave</code> / <code>NoAutoLoadRetry</code> to disable).</td></tr>
-          <tr><td><span class="t">const float</span> <span class="mn">MinimumRegularSaveDelay</span> / <span class="mn">MinimumAutoLoadRetryDelay</span> = 5 &middot; <span class="mn">NoRegularSave</span> / <span class="mn">NoAutoLoadRetry</span> = 0</td><td>A positive delay is clamped up to the minimum; the <code>No*</code> value (or lower) disables the timer.</td></tr>
-          <tr><td><span class="t">ExecutionMode</span> <span class="mn">ReadExecutionMode</span> / <span class="mn">WriteExecutionMode</span></td><td>Which sync/async paths the manager supports, and the default.</td></tr>
-          <tr><td><span class="t">float</span> <span class="mn">LoadTimeout</span> / <span class="mn">SaveTimeout</span> / <span class="mn">ClearTimeout</span></td><td>Seconds an async operation may run before cancellation.</td></tr>
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">AutoLoad</span> / <span class="mn">AutoSave</span></th><td>Whether to load on launch and save at safe points automatically.</td></tr>
+          <tr><th scope="row"><span class="t">float</span> <span class="mn">RegularSaveDelay</span> / <span class="mn">AutoLoadRetryDelay</span></th><td>Timer cadences (use <code>NoRegularSave</code> / <code>NoAutoLoadRetry</code> to disable).</td></tr>
+          <tr><th scope="row"><span class="t">const float</span> <span class="mn">MinimumRegularSaveDelay</span> / <span class="mn">MinimumAutoLoadRetryDelay</span> = 5 &middot; <span class="mn">NoRegularSave</span> / <span class="mn">NoAutoLoadRetry</span> = 0</th><td>A positive delay below the minimum is raised to it; the <code>No*</code> value (or lower) disables the timer.</td></tr>
+          <tr><th scope="row"><span class="t">ExecutionMode</span> <span class="mn">ReadExecutionMode</span> / <span class="mn">WriteExecutionMode</span></th><td>Which sync/async paths the manager supports, and the default.</td></tr>
+          <tr><th scope="row"><span class="t">float</span> <span class="mn">LoadTimeout</span> / <span class="mn">SaveTimeout</span> / <span class="mn">ClearTimeout</span></th><td>Seconds an async operation may run before cancellation.</td></tr>
         </table>
       </div>
 
       <div class="member-group">
         <div class="member-group-title">For implementers (protected)</div>
         <table class="mt">
-          <tr><td><span class="t">LoadResult</span> <span class="mn">ReadPayloadSync</span>(<span class="t">PersistenceSource</span> source, <span class="t">string</span> slot)</td><td>Read and return the stored payload (or Invalid / Failure).</td></tr>
-          <tr><td><span class="t">SaveResult</span> <span class="mn">WritePayloadSync</span>(<span class="t">PersistenceSource</span> source, <span class="t">string</span> slot, <span class="t">string</span> payload)</td><td>Persist the payload.</td></tr>
-          <tr><td><span class="t">ClearResult</span> <span class="mn">ClearPayloadSync</span>(<span class="t">PersistenceSource</span> source, <span class="t">string</span> slot)</td><td>Delete the stored data. <code>Manual</code> for a clear or slot delete the game requested, <code>Automatic</code> for the system wiping a consumed import source.</td></tr>
-          <tr><td><span class="t">LoadResult</span> <span class="mn">ReadFallbackPayloadSync</span>(<span class="t">PersistenceSource</span> source, <span class="t">string</span> slot)</td><td>The payload the read returned would not decode: return an alternate copy of the save if your storage keeps one (the default returns Invalid, meaning none).</td></tr>
-          <tr><td><span class="mn">ReadPayloadAsync</span> / <span class="mn">WritePayloadAsync</span> / <span class="mn">ClearPayloadAsync</span> / <span class="mn">ReadFallbackPayloadAsync</span></td><td>Async equivalents (with a <code>CancellationToken</code>).</td></tr>
-          <tr><td><span class="t">string</span> <span class="mn">StorageLocation</span>(<span class="t">string</span> slot)</td><td>Report a stable storage path or key.</td></tr>
-          <tr><td><span class="kw">void</span> <span class="mn">OnEnteringScope</span>() / <span class="mn">OnLeavingScope</span>()</td><td>Per-session setup and teardown.</td></tr>
-          <tr><td><span class="kw">void</span> <span class="mn">OnImportingFrom</span>(<span class="t">PersistenceManager</span> source, <span class="t">string</span> slot)</td><td>An empty load is recovering by importing this source's save: it was just decoded into the target and is about to be re-persisted here. Override to carry storage facts your manager keeps about a save across the import.</td></tr>
-          <tr><td><span class="t">PersistencePolicy</span> <span class="mn">Constraint</span> / <span class="t">bool</span> <span class="mn">SelfBoundsAsyncOperations</span></td><td>Fix auto-load/save the manager cannot work without; declare it bounds its own async timeouts.</td></tr>
-          <tr><td><span class="kw">void</span> <span class="mn">Log</span>(<span class="t">string</span> text, <span class="t">LogLevel</span> level = None)</td><td>Write to the manager's inspector log (development only).</td></tr>
+          <tr><th scope="row"><span class="t">LoadResult</span> <span class="mn">ReadPayloadSync</span>(<span class="t">PersistenceSource</span> source, <span class="t">string</span> slot)</th><td>Read and return the stored payload (or Invalid / Corrupt / Failure). <span class="ex">The base implementation throws NotSupportedException, so override the shape your storage supports.</span></td></tr>
+          <tr><th scope="row"><span class="t">SaveResult</span> <span class="mn">WritePayloadSync</span>(<span class="t">PersistenceSource</span> source, <span class="t">string</span> slot, <span class="t">byte</span>[] payload)</th><td>Persist the payload. A text serializer's payload is the UTF8 of what it wrote.</td></tr>
+          <tr><th scope="row"><span class="t">ClearResult</span> <span class="mn">ClearPayloadSync</span>(<span class="t">PersistenceSource</span> source, <span class="t">string</span> slot)</th><td>Delete the stored data. <code>Manual</code> for a clear or slot delete the game requested, <code>Automatic</code> for the system wiping a consumed import source.</td></tr>
+          <tr><th scope="row"><span class="t">LoadResult</span> <span class="mn">ReadFallbackPayloadSync</span>(<span class="t">PersistenceSource</span> source, <span class="t">string</span> slot)</th><td>The payload the read returned would not decode: return an alternate copy of the save if your storage keeps one (the default returns Invalid, meaning none).</td></tr>
+          <tr><th scope="row"><span class="mn">ReadPayloadAsync</span> / <span class="mn">WritePayloadAsync</span> / <span class="mn">ClearPayloadAsync</span> / <span class="mn">ReadFallbackPayloadAsync</span></th><td>Async equivalents (with a <code>CancellationToken</code>).</td></tr>
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">IsInspectRead</span> { get; }</th><td>Whether the read under way only inspects what storage holds and applies nothing (a save menu, an export, <code>SaveData.Stored</code>). Such a read can name any slot and no operation follows it, so record nothing for a later one while it is set. Read it before the first <code>await</code> of an async override and keep it in a local: it describes the read you started, not the one that resumes next.</td></tr>
+          <tr><th scope="row"><span class="t">string</span> <span class="mn">StorageLocation</span>(<span class="t">string</span> slot)</th><td>Report a stable storage path or key. Shape it so no other storage can produce the same string: the editor reports two managers resolving to one location as a conflict.</td></tr>
+          <tr><th scope="row"><span class="kw">void</span> <span class="mn">OnEnteringScope</span>() / <span class="mn">OnLeavingScope</span>()</th><td>Per-session setup and teardown. <code>OnEnteringScope</code> runs after the scope's first automatic load was issued, so do not prepare state that load depends on here.</td></tr>
+          <tr><th scope="row"><span class="kw">void</span> <span class="mn">OnImportingFrom</span>(<span class="t">PersistenceManager</span> source, <span class="t">string</span> slot)</th><td>An empty load is recovering by importing this source's save: it was just decoded into the target and is about to be re-persisted here. Override to carry storage facts your manager keeps about a save across the import.</td></tr>
+          <tr><th scope="row"><span class="t">PersistencePolicy</span> <span class="mn">Constraint</span> { get; }</th><td>Settings this manager's type fixes as facts of its storage: a non-null value wins over both the inspector setting and a target's <a href="#IPersistencePolicy"><code>IPersistencePolicy</code></a>, and a policy contradicting it is reported and ignored. Override it only for what the manager cannot work without; for a different default, override the setting itself.</td></tr>
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">SelfBoundsAsyncOperations</span> { get; }</th><td>True when this manager enforces the operation timeouts itself, so the core never cancels one of its asynchronous operations for running long. Only for a manager whose every asynchronous path is guaranteed to return: one that hangs is never stopped.</td></tr>
+          <tr><th scope="row"><span class="t">string</span> <span class="mn">DisabledReason</span></th><td>Why this manager cannot persist at all. <code>null</code> when it can. Read once as the target enters scope: a reason refuses every operation for the whole scope and is reported, so return one only where operating could lose or corrupt data (nothing to route to, no backend configured), never for a transient fault.</td></tr>
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">RaiseConflict</span>(<span class="t">ConflictInfo</span> conflict, <span class="t">Action</span>&lt;<span class="t">ConflictResolution</span>&gt; resolver)</th><td>Report that a load found two diverging saves of the target and cannot decide between them: raises <code>Conflicts.OnAny</code>, and <code>resolver</code> runs once the game answers through <code>Conflicts.Resolve</code>. Return the load as a failure, since the data is undecided and <code>IsReady</code> must stay false until it is settled. Returns whether anybody is listening: when nobody is, nothing is pending and you have to settle the conflict yourself rather than leave the load waiting on an answer that can never arrive.</td></tr>
+          <tr><th scope="row"><span class="t">ConflictInfo</span> <span class="mn">NewConflict</span>(<span class="t">DateTime</span> localTime, <span class="t">DateTime</span> remoteTime, <span class="t">byte</span>[] localPayload, <span class="t">byte</span>[] remotePayload)</th><td>Build the two sides of a conflict for <code>RaiseConflict</code>. Each payload is one of the diverging saves, as your read would have returned it; a side that cannot be read as data reads as <code>SaveNode.Missing</code> rather than being refused, so the times are still shown.</td></tr>
+          <tr><th scope="row"><span class="t">SaveNode</span> <span class="mn">ParsePayload</span>(<span class="t">byte</span>[] payload)</th><td>Read a payload as a neutral <a href="#SaveNode"><code>SaveNode</code></a> tree, the same way a save upgrade sees one, for previewing a save without loading it. <code>SaveNode.Missing</code> when there is no serializer or it does not support <code>Serializer.ParseToNode</code>, so never null.</td></tr>
+          <tr><th scope="row"><span class="t">Composed</span> <span class="mn">On</span>(<span class="t">PersistenceManager</span>) (static)</th><td>Another manager's protected surface, for a manager composing others (<a href="API%20-%20Built-Ins.html#PlatformPersistenceManager">Platform (Routing)</a> is one): <code>On(child).ReadPayloadSync(source, slot)</code> forwards the call, so the composite reuses that manager whole. Only drive a manager you own (see <a href="API%20-%20Editor%20Extension.html#ManagerComposition">ManagerComposition</a>).</td></tr>
+          <tr><th scope="row"><span class="t">PersistenceManager</span> <span class="mn">ComposedManager</span></th><td>The manager this one hands its storage to. <code>null</code> when it stores by itself. Name it and the load, save and clear events this manager raises reach it too, which a composed manager never gets otherwise since it runs no operation of its own. Read again per event, so it may answer differently as the composition resolves, but it must hold its answer for a whole operation.</td></tr>
+          <tr><th scope="row"><span class="kw">void</span> <span class="mn">Log</span>(<span class="t">string</span> text, <span class="t">LogLevel</span> level = None)</th><td>Write to the manager's inspector log (development only).</td></tr>
         </table>
       </div>
     </div>
@@ -188,61 +231,57 @@
 
     <!-- ═══════════════════════════════════════ Persistence ═══ -->
     <div class="type-section" id="Persistence">
-      <div class="type-header"><h2>Persistence</h2><span class="badge badge-static">static</span></div>
-      <p class="type-desc">Global entry point for state and operations shared across every manager.</p>
+      <div class="type-header"><h3>Persistence</h3><span class="badge badge-static">static</span></div>
+      <p class="type-desc">Global entry point for state and operations shared across every manager. Explained in <a href="../../user-manual/pages/How%20saving%20works.html">How saving works</a>.</p>
       <div class="member-group">
         <div class="member-group-title">State &amp; events</div>
         <table class="mt">
-          <tr><td><span class="t">Awaitable</span> <span class="mn">WhenAllReady</span> { get; }</td><td>Await (or yield) until every active manager's load has settled.</td></tr>
-          <tr><td><span class="t">IReadOnlyList</span>&lt;<span class="t">PersistenceManager</span>&gt; <span class="mn">ActiveManagers</span> { get; }</td><td>Live view of every active manager.</td></tr>
-          <tr><td><span class="t">int</span> <span class="mn">ManagerCount</span> { get; }</td><td>Count of currently active managers.</td></tr>
-          <tr><td><span class="t">bool</span> <span class="mn">IsDraining</span> { get; }</td><td>Whether a shutdown save drain is running.</td></tr>
-          <tr><td><span class="kw">void</span> <span class="mn">ForceQuitDrain</span>()</td><td>Cut a running shutdown drain short (unsaved data may be lost).</td></tr>
-          <tr><td><span class="t">event Action</span>&lt;<span class="t">PersistenceManager</span>&gt; <span class="mn">ManagerAdded</span> / <span class="mn">ManagerRemoved</span></td><td>A manager went in or out of scope.</td></tr>
-          <tr><td><span class="t">event Action</span> <span class="mn">OnShutdownDrainStarted</span> / <span class="mn">OnShutdownDrainCompleted</span></td><td>Around the shutdown save drain (play-mode exit or app quit).</td></tr>
-          <tr><td><span class="mn">OnBeforeAnyLoad</span> / <span class="mn">OnAfterAnyLoad</span></td><td>Around any manager's load: <code>(manager, source)</code>, and <code>(manager, source, LoadResult)</code> on after.</td></tr>
-          <tr><td><span class="mn">OnBeforeAnySave</span> / <span class="mn">OnAfterAnySave</span></td><td>Around any manager's save (with <code>SaveResult</code> on after).</td></tr>
-          <tr><td><span class="mn">OnBeforeAnyClear</span> / <span class="mn">OnAfterAnyClear</span></td><td>Around any manager's clear (with <code>ClearResult</code> on after).</td></tr>
+          <tr><th scope="row"><span class="t">Awaitable</span> <span class="mn">WhenAllReady</span> { get; }</th><td>Await (or yield) until every active manager's load has settled.</td></tr>
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">AreAllReady</span> { get; }</th><td>Whether every active manager is ready right now, and <code>true</code> when none is active. A snapshot, not a wait.</td></tr>
+          <tr><th scope="row"><span class="t">IReadOnlyList</span>&lt;<span class="t">PersistenceManager</span>&gt; <span class="mn">ActiveManagers</span> { get; }</th><td>Live view of every active manager, not a snapshot: copy it before iterating if a handler may scope one in or out, and null-check each element, since a manager being collected momentarily reads as <code>null</code>.</td></tr>
+          <tr><th scope="row"><span class="t">int</span> <span class="mn">ManagerCount</span> { get; }</th><td>Count of currently active managers.</td></tr>
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">IsDraining</span> { get; }</th><td>Whether a shutdown save drain is running.</td></tr>
+          <tr><th scope="row"><span class="t">string</span> <span class="mn">Distribution</span> { get; set; }</th><td>Which distribution of the game this build is ("Steam", "MSStore", "Demo"), for the setups the platform alone cannot tell apart. Nothing detects it: set it from your own build defines before anything loads or saves. Read by <a href="API%20-%20Built-Ins.html#PlatformPersistenceManager">Platform (Routing)</a>, which reports once per session when the value matches none of the distributions its routes ask for, since nothing can validate a free string.</td></tr>
+          <tr><th scope="row"><span class="kw">void</span> <span class="mn">ForceQuitDrain</span>()</th><td>Cut a running shutdown drain short (unsaved data may be lost).</td></tr>
+          <tr><th scope="row"><span class="t">event Action</span>&lt;<span class="t">PersistenceManager</span>&gt; <span class="mn">OnManagerAdded</span> / <span class="mn">OnManagerRemoved</span></th><td>A manager went in or out of scope.</td></tr>
+          <tr><th scope="row"><span class="t">event Action</span> <span class="mn">OnShutdownDrainStarted</span> / <span class="mn">OnShutdownDrainCompleted</span></th><td>Around the shutdown save drain (play-mode exit or app quit).</td></tr>
+          <tr><th scope="row"><span class="kw">event</span> <span class="t">Action</span>&lt;<span class="t">PersistenceManager</span>, <span class="t">PersistenceSource</span>&gt; <span class="mn">OnBeforeAnyLoad</span> / <span class="t">Action</span>&lt;<span class="t">PersistenceManager</span>, <span class="t">PersistenceSource</span>, <span class="t">LoadResult</span>&gt; <span class="mn">OnAfterAnyLoad</span></th><td>Around any manager's load: <code>(manager, source)</code>, and <code>(manager, source, LoadResult)</code> on after.</td></tr>
+          <tr><th scope="row"><span class="kw">event</span> <span class="t">Action</span>&lt;<span class="t">PersistenceManager</span>, <span class="t">PersistenceSource</span>&gt; <span class="mn">OnBeforeAnySave</span> / <span class="t">Action</span>&lt;<span class="t">PersistenceManager</span>, <span class="t">PersistenceSource</span>, <span class="t">SaveResult</span>&gt; <span class="mn">OnAfterAnySave</span></th><td>Around any manager's save (with <a href="#SaveResult"><code>SaveResult</code></a> on after).</td></tr>
+          <tr><th scope="row"><span class="kw">event</span> <span class="t">Action</span>&lt;<span class="t">PersistenceManager</span>&gt; <span class="mn">OnBeforeAnyClear</span> / <span class="t">Action</span>&lt;<span class="t">PersistenceManager</span>, <span class="t">ClearResult</span>&gt; <span class="mn">OnAfterAnyClear</span></th><td>Around any manager's clear (with <a href="#ClearResult"><code>ClearResult</code></a> on after).</td></tr>
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">IsAnyBusy</span> { get; }</th><td>Whether any manager is running an operation right now.</td></tr>
+          <tr><th scope="row"><span class="t">ScriptableObject</span>[] <span class="mn">GetActiveTargets</span>()</th><td>Every active manager's target, for the operations that take objects. A fresh array each call, unlike <code>ActiveManagers</code>, so it needs neither a copy nor a null check.</td></tr>
         </table>
       </div>
 
       <div class="member-group">
         <div class="member-group-title">Operations on every active manager</div>
-        <div class="note"><span class="ex">Every method below throws InvalidOperationException in the editor only when called outside play mode. ClearAll* permanently deletes player data.</span></div>
+        <div class="note"><span class="ex">Every method below throws InvalidOperationException in the editor only when called outside play mode.</span></div>
         <table class="mt">
-          <tr><td><span class="t">LoadResult[]</span> <span class="mn">LoadAllSync</span>()</td><td>Force synchronous; every result is final on return.</td></tr>
-          <tr><td><span class="kw">void</span> <span class="mn">LoadAll</span>()</td><td>Fire and forget (wireable to a UnityEvent).</td></tr>
-          <tr><td><span class="kw">void</span> <span class="mn">LoadAll</span>(<span class="t">Action</span>&lt;<span class="t">LoadResult[]</span>&gt; onComplete)</td><td>Default; callback with every result.</td></tr>
-          <tr><td><span class="t">Task</span>&lt;<span class="t">LoadResult[]</span>&gt; <span class="mn">LoadAllAsync</span>(<span class="t">ExecutionMode</span>? executionModeOverride = null)</td><td>Async; await every result.</td></tr>
-          <tr><td><span class="t">PersistenceOperation</span>&lt;<span class="t">LoadResult[]</span>&gt; <span class="mn">LoadAllRoutine</span>()</td><td>Coroutine; yield then read <code>Result</code>.</td></tr>
-          <tr><td><span class="t">SaveResult[]</span> <span class="mn">SaveAllSync</span>() / <span class="kw">void</span> <span class="mn">SaveAll</span>() / <span class="mn">SaveAll</span>(<span class="t">Action</span>&lt;<span class="t">SaveResult[]</span>&gt;)</td><td>Save every manager: sync, fire-and-forget, callback.</td></tr>
-          <tr><td><span class="t">Task</span>&lt;<span class="t">SaveResult[]</span>&gt; <span class="mn">SaveAllAsync</span>(<span class="t">ExecutionMode</span>? = null) / <span class="t">PersistenceOperation</span>&lt;<span class="t">SaveResult[]</span>&gt; <span class="mn">SaveAllRoutine</span>()</td><td>Save every manager: async, coroutine.</td></tr>
-          <tr><td><span class="t">ClearResult[]</span> <span class="mn">ClearAllSync</span>() / <span class="kw">void</span> <span class="mn">ClearAll</span>() / <span class="mn">ClearAll</span>(<span class="t">Action</span>&lt;<span class="t">ClearResult[]</span>&gt;)</td><td>Clear every manager: sync, fire-and-forget, callback.</td></tr>
-          <tr><td><span class="t">Task</span>&lt;<span class="t">ClearResult[]</span>&gt; <span class="mn">ClearAllAsync</span>(<span class="t">ExecutionMode</span>? = null) / <span class="t">PersistenceOperation</span>&lt;<span class="t">ClearResult[]</span>&gt; <span class="mn">ClearAllRoutine</span>()</td><td>Clear every manager: async, coroutine.</td></tr>
+          <tr><th scope="row"><span class="t">LoadResult[]</span> <span class="mn">LoadAllSync</span>()</th><td>Force synchronous; every result is final on return.</td></tr>
+          <tr><th scope="row"><span class="kw">void</span> <span class="mn">LoadAll</span>()</th><td>Fire and forget (wireable to a UnityEvent).</td></tr>
+          <tr><th scope="row"><span class="kw">void</span> <span class="mn">LoadAll</span>(<span class="t">Action</span>&lt;<span class="t">LoadResult[]</span>&gt; onComplete)</th><td>Default; callback with every result.</td></tr>
+          <tr><th scope="row"><span class="t">Task</span>&lt;<span class="t">LoadResult[]</span>&gt; <span class="mn">LoadAllAsync</span>(<span class="t">ExecutionMode</span>? executionModeOverride = null)</th><td>Async; await every result.</td></tr>
+          <tr><th scope="row"><span class="t">PersistenceOperation</span>&lt;<span class="t">LoadResult[]</span>&gt; <span class="mn">LoadAllRoutine</span>()</th><td>Coroutine; yield then read <a href="#Result"><code>Result</code></a>.</td></tr>
+          <tr><th scope="row"><span class="t">SaveResult[]</span> <span class="mn">SaveAllSync</span>() / <span class="kw">void</span> <span class="mn">SaveAll</span>() / <span class="mn">SaveAll</span>(<span class="t">Action</span>&lt;<span class="t">SaveResult[]</span>&gt;)</th><td>Save every manager: sync, fire-and-forget, callback.</td></tr>
+          <tr><th scope="row"><span class="t">Task</span>&lt;<span class="t">SaveResult[]</span>&gt; <span class="mn">SaveAllAsync</span>(<span class="t">ExecutionMode</span>? = null) / <span class="t">PersistenceOperation</span>&lt;<span class="t">SaveResult[]</span>&gt; <span class="mn">SaveAllRoutine</span>()</th><td>Save every manager: async, coroutine.</td></tr>
+          <tr><th scope="row"><span class="t">ClearResult[]</span> <span class="mn">ClearAllSync</span>() / <span class="kw">void</span> <span class="mn">ClearAll</span>() / <span class="mn">ClearAll</span>(<span class="t">Action</span>&lt;<span class="t">ClearResult[]</span>&gt;)</th><td>Clear every manager: sync, fire-and-forget, callback.</td></tr>
+          <tr><th scope="row"><span class="t">Task</span>&lt;<span class="t">ClearResult[]</span>&gt; <span class="mn">ClearAllAsync</span>(<span class="t">ExecutionMode</span>? = null) / <span class="t">PersistenceOperation</span>&lt;<span class="t">ClearResult[]</span>&gt; <span class="mn">ClearAllRoutine</span>()</th><td>Clear every manager: async, coroutine.</td></tr>
         </table>
       </div>
     </div>
 
 
-    <!-- ═══════════════════════════════════════ Slots ═══ -->
-    <div class="type-section" id="Slots">
-      <div class="type-header"><h2>Slots</h2><span class="badge badge-static">static</span></div>
-      <p class="type-desc">Operate on a slot's saved data (copy, rename, delete, snapshot to, load from).</p>
+    <!-- ═══════════════════════════════════════ SaveData ═══ -->
+    <div class="type-section" id="SaveData">
+      <div class="type-header"><h3>SaveData</h3><span class="badge badge-static">static</span><span class="badge badge-new">2.0</span></div>
+      <p class="type-desc">A manager's data as portable text, and where it is stored. Every method takes the manager to act on and does nothing when it is null.</p>
       <div class="member-group">
         <div class="member-group-title">Members</div>
         <table class="mt">
-          <tr><td><span class="t">string</span> <span class="mn">GlobalSlot</span> { get; set; }</td><td>Slot shared by every manager; setting it switches all of them.</td></tr>
-          <tr><td><span class="t">ClearResult[]</span> <span class="mn">DeleteSync</span>(<span class="t">string</span> slot, params <span class="t">IMultiSlot</span>[] targets) / <span class="kw">void</span> <span class="mn">Delete</span>(...) / <span class="mn">Delete</span>(<span class="t">string</span> slot, <span class="t">Action</span>&lt;<span class="t">ClearResult[]</span>&gt; onComplete, ...)</td><td>Delete a slot's storage for each target: sync, fire-and-forget, callback. Permanently deletes data, no undo.</td></tr>
-          <tr><td><span class="t">Task</span>&lt;<span class="t">ClearResult[]</span>&gt; <span class="mn">DeleteAsync</span>(...) / <span class="t">PersistenceOperation</span>&lt;<span class="t">ClearResult[]</span>&gt; <span class="mn">DeleteRoutine</span>(...)</td><td>Delete a slot's storage: async, coroutine.</td></tr>
-          <tr><td><span class="t">SaveResult[]</span> <span class="mn">CopySync</span>(<span class="t">string</span> fromSlot, <span class="t">string</span> toSlot, params <span class="t">IMultiSlot</span>[] targets) / <span class="kw">void</span> <span class="mn">Copy</span>(...) / <span class="mn">Copy</span>(<span class="t">string</span> fromSlot, <span class="t">string</span> toSlot, <span class="t">Action</span>&lt;<span class="t">SaveResult[]</span>&gt; onComplete, ...)</td><td>Copy a slot's storage onto another: sync, fire-and-forget, callback. Overwrites the destination.</td></tr>
-          <tr><td><span class="t">Task</span>&lt;<span class="t">SaveResult[]</span>&gt; <span class="mn">CopyAsync</span>(...) / <span class="t">PersistenceOperation</span>&lt;<span class="t">SaveResult[]</span>&gt; <span class="mn">CopyRoutine</span>(...)</td><td>Copy a slot's storage: async, coroutine.</td></tr>
-          <tr><td><span class="t">SaveResult[]</span> <span class="mn">RenameSync</span>(<span class="t">string</span> fromSlot, <span class="t">string</span> toSlot, params <span class="t">IMultiSlot</span>[] targets) / <span class="kw">void</span> <span class="mn">Rename</span>(...) / <span class="mn">Rename</span>(<span class="t">string</span> fromSlot, <span class="t">string</span> toSlot, <span class="t">Action</span>&lt;<span class="t">SaveResult[]</span>&gt; onComplete, ...)</td><td>Rename a slot (copy then delete): sync, fire-and-forget, callback. Moves data, no undo.</td></tr>
-          <tr><td><span class="t">Task</span>&lt;<span class="t">SaveResult[]</span>&gt; <span class="mn">RenameAsync</span>(...) / <span class="t">PersistenceOperation</span>&lt;<span class="t">SaveResult[]</span>&gt; <span class="mn">RenameRoutine</span>(...)</td><td>Rename a slot's storage: async, coroutine.</td></tr>
-          <tr><td><span class="t">SaveResult[]</span> <span class="mn">SaveToSync</span>(<span class="t">string</span> slot, params <span class="t">IMultiSlot</span>[] targets) / <span class="kw">void</span> <span class="mn">SaveTo</span>(...) / <span class="mn">SaveTo</span>(<span class="t">string</span> slot, <span class="t">Action</span>&lt;<span class="t">SaveResult[]</span>&gt; onComplete, ...)</td><td>A real save aimed at another slot: snapshot each target's live data onto that slot's storage (the current slot's save is untouched): sync, fire-and-forget, callback. Raises the save events; overwrites the destination; refused on the current slot, a not-ready target, or when saving is blocked.</td></tr>
-          <tr><td><span class="t">Task</span>&lt;<span class="t">SaveResult[]</span>&gt; <span class="mn">SaveToAsync</span>(...) / <span class="t">PersistenceOperation</span>&lt;<span class="t">SaveResult[]</span>&gt; <span class="mn">SaveToRoutine</span>(...)</td><td>Snapshot to a slot: async, coroutine.</td></tr>
-          <tr><td><span class="t">LoadResult[]</span> <span class="mn">LoadFromSync</span>(<span class="t">string</span> slot, params <span class="t">IMultiSlot</span>[] targets) / <span class="kw">void</span> <span class="mn">LoadFrom</span>(...) / <span class="mn">LoadFrom</span>(<span class="t">string</span> slot, <span class="t">Action</span>&lt;<span class="t">LoadResult[]</span>&gt; onComplete, ...)</td><td>A real load aimed at another slot: bring its saved data into the ongoing game (load events, save upgrades and readiness included); the next save persists it onto the current slot, and the source slot is never modified. Refused on the current slot or with no slot set; does nothing when the source holds no usable save.</td></tr>
-          <tr><td><span class="t">Task</span>&lt;<span class="t">LoadResult[]</span>&gt; <span class="mn">LoadFromAsync</span>(...) / <span class="t">PersistenceOperation</span>&lt;<span class="t">LoadResult[]</span>&gt; <span class="mn">LoadFromRoutine</span>(...)</td><td>Load from a slot: async, coroutine. <span class="ex">Delete / Copy / Rename / SaveTo / LoadFrom (all shapes) throw InvalidOperationException in the editor only when called outside play mode.</span></td></tr>
-          <tr><td><span class="mn">OnSlotUpdated</span> / <span class="mn">OnSlotDeleted</span> / <span class="mn">OnSlotCopied</span></td><td>Raised as slot storage changes (a <code>SaveTo</code> snapshot raises <code>OnSlotUpdated</code> with the written slot).</td></tr>
+          <tr><th scope="row"><span class="t">string</span> <span class="mn">Snapshot</span>(<span class="t">PersistenceManager</span>)</th><td>Capture the target's current values into a string for a checkpoint. Null when there is no serializer or the encode fails. <span class="ex">Throws InvalidOperationException in the editor only when called outside play mode (never at runtime).</span></td></tr>
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">Restore</span>(<span class="t">PersistenceManager</span>, <span class="t">string</span> snapshot)</th><td>Restore from a <code>Snapshot</code> string, in memory only (the save is untouched). False when the string is null, could not be fully applied (it would not decode, or its upgrade or the target's <code>OnAfterDeserialize</code> did not finish), or persistence is disabled. <span class="ex">Throws InvalidOperationException in the editor only when called outside play mode (never at runtime).</span></td></tr>
+          <tr><th scope="row"><span class="t">string</span> <span class="mn">Stored</span>(<span class="t">PersistenceManager</span>, <span class="t">string</span> slot = null) / <span class="t">Task</span>&lt;<span class="t">string</span>&gt; <span class="mn">StoredAsync</span>(...)</th><td>What <strong>storage</strong> holds, in the same portable string <code>Snapshot</code> produces and <code>Restore</code> takes, applied to nothing: <code>Snapshot</code> answers what a save would write, this answers what a load would read. Reads any slot, works outside play mode, and is a direct read rather than a queued operation. Null when nothing is stored there, the read failed, or the manager reads asynchronously only.</td></tr>
+          <tr><th scope="row"><span class="t">string</span> <span class="mn">LocationOf</span>(<span class="t">PersistenceManager</span>) / <span class="mn">LocationOf</span>(<span class="t">PersistenceManager</span>, <span class="t">string</span> slot)</th><td>Where the manager stores its data (the current slot, or a given one), or null (a normal answer for remote managers).</td></tr>
         </table>
       </div>
     </div>
@@ -250,227 +289,433 @@
 
     <!-- ═══════════════════════════════════════ GlobalPersistedData ═══ -->
     <div class="type-section" id="GlobalPersistedData">
-      <div class="type-header"><h2>GlobalPersistedData</h2><span class="badge badge-static">static</span></div>
-      <p class="type-desc">Reach a registered persistent object from anywhere, by type, with no serialized reference. An <code>IAlwaysGlobal</code> target registers itself; you can also register your own.</p>
+      <div class="type-header"><h3>GlobalPersistedData</h3><span class="badge badge-static">static</span></div>
+      <p class="type-desc">Reach a registered persistent asset from anywhere, by type, with no serialized reference. A target whose manager is Always Global registers itself; you can also register your own. Explained in <a href="../../user-manual/pages/Save%20and%20load.html">Save and load</a>.</p>
       <div class="member-group"><table class="mt">
-        <tr><td><span class="t">T</span> <span class="mn">Find</span>&lt;<span class="t">T</span>&gt;(<span class="t">Func</span>&lt;<span class="t">T</span>, <span class="t">bool</span>&gt; filter = null) where T : class</td><td>The first registered target assignable to <code>T</code> (a concrete type or interface) matching the optional filter, or <code>null</code>.</td></tr>
-        <tr><td><span class="t">IEnumerable</span>&lt;<span class="t">T</span>&gt; <span class="mn">FindAll</span>&lt;<span class="t">T</span>&gt;(<span class="t">Func</span>&lt;<span class="t">T</span>, <span class="t">bool</span>&gt; filter = null) where T : class</td><td>Every registered target assignable to <code>T</code> matching the filter, as a fresh snapshot.</td></tr>
-        <tr><td><span class="kw">void</span> <span class="mn">Add</span>(<span class="t">ScriptableObject</span> target) / <span class="mn">AddPermanent</span>(<span class="t">ScriptableObject</span> target)</td><td>Register a target manually (<code>AddPermanent</code> cannot be undone by <code>Remove</code>).</td></tr>
-        <tr><td><span class="t">bool</span> <span class="mn">Remove</span>(<span class="t">ScriptableObject</span> target)</td><td>Unregister a target added with <code>Add</code>; returns whether it was removed.</td></tr>
+        <tr><th scope="row"><span class="t">T</span> <span class="mn">Find</span>&lt;<span class="t">T</span>&gt;(<span class="t">Func</span>&lt;<span class="t">T</span>, <span class="t">bool</span>&gt; filter = null) where T : class</th><td>The first registered target assignable to <code>T</code> (a concrete type or interface) matching the optional filter, or <code>null</code>.</td></tr>
+        <tr><th scope="row"><span class="t">IEnumerable</span>&lt;<span class="t">T</span>&gt; <span class="mn">FindAll</span>&lt;<span class="t">T</span>&gt;(<span class="t">Func</span>&lt;<span class="t">T</span>, <span class="t">bool</span>&gt; filter = null) where T : class</th><td>Every registered target assignable to <code>T</code> matching the filter, as a fresh snapshot.</td></tr>
+        <tr><th scope="row"><span class="kw">void</span> <span class="mn">Add</span>(<span class="t">ScriptableObject</span> target) / <span class="mn">AddPermanent</span>(<span class="t">ScriptableObject</span> target)</th><td>A target that is not a persistent scriptable object is refused, with a warning in the console. Register a target manually (<code>AddPermanent</code> cannot be undone by <code>Remove</code>).</td></tr>
+        <tr><th scope="row"><span class="t">bool</span> <span class="mn">Remove</span>(<span class="t">ScriptableObject</span> target)</th><td>Unregister a target added with <code>Add</code>; returns whether it was removed.</td></tr>
+        <tr><th scope="row"><span class="t">int</span> <span class="mn">Count</span> { get; } / <span class="t">bool</span> <span class="mn">Contains</span>(<span class="t">ScriptableObject</span> target)</th><td>How many targets are registered, and whether a given one is. A target destroyed since it was added counts for neither, exactly as <code>Find</code> no longer returns it.</td></tr>
       </table></div>
     </div>
 
 
-    <!-- ═══════════════════════════════════════ Settings ═══ -->
-    <div class="type-section" id="Settings">
-      <div class="type-header"><h2>Settings</h2><span class="badge badge-static">static</span></div>
-      <p class="type-desc">Static access to the package settings (Project Settings &gt; Persistent Asset).</p>
-      <div class="member-group">
-        <div class="member-group-title">Members</div>
-        <table class="mt">
-          <tr><td><span class="t">bool</span> <span class="mn">Loaded</span></td><td>Whether the configured settings are available. Always true in the editor; in a player it turns true when the settings shipped with the build finish loading, before the first scene, so only code running earlier (typically the automatic load of a preloaded persistent asset) can observe false. While false, <code>Get</code> answers defaults: an operation whose outcome must match the configured values (deriving a key from the security secret) should fail retryably instead of proceeding on them.</td></tr>
-          <tr><td><span class="t">T</span> <span class="mn">Get</span>&lt;<span class="t">T</span>&gt;() where T : SettingsEntry, new()</td><td>The project's instance of a settings section (or a default). Treat the result as read-only: runtime changes to it are not persisted.</td></tr>
-          <tr><td><span class="kw">void</span> <span class="mn">Save</span>()</td><td>Persist settings changed from code (editor only; safe to call anywhere).</td></tr>
-        </table>
-      </div>
-    </div>
-
-    <div class="type-section" id="SettingsEntry">
-      <div class="type-header"><h2>SettingsEntry</h2><span class="badge badge-class">abstract</span><span class="warn">extending</span></div>
-      <p class="type-desc">Base class for a settings section. Subclass and decorate with <code>[InspectorDisplay]</code>.</p>
-    </div>
-
-
     <!-- ═══════════════════════════════════════ Results ═══ -->
+    <h2 class="api-group">Operations &amp; results</h2>
+
     <div class="type-section" id="Result">
-      <div class="type-header"><h2>Result</h2><span class="badge badge-class">abstract</span></div>
-      <p class="type-desc">Base for operation outcomes. Use the intent-named flags rather than the raw <code>Type</code>.</p>
+      <div class="type-header"><h3>Result</h3><span class="badge badge-class">abstract</span></div>
+      <p class="type-desc">Base for operation outcomes. Use the intent-named flags rather than the raw <code>Type</code>. Explained in <a href="../../user-manual/pages/How%20saving%20works.html">How saving works</a>.</p>
       <div class="member-group">
         <div class="member-group-title">Members</div>
         <table class="mt">
-          <tr><td><span class="t">ResultType</span> <span class="mn">Type</span> { get; }</td><td>The outcome category.</td></tr>
-          <tr><td><span class="t">bool</span> <span class="mn">IsSuccess</span> / <span class="mn">IsFailure</span> / <span class="mn">IsIgnored</span> / <span class="mn">IsCancelled</span> / <span class="mn">IsBusy</span></td><td>Intent-named checks on the outcome.</td></tr>
-          <tr><td><span class="t">string</span> <span class="mn">Message</span> { get; }</td><td>Optional explanation (often set on Ignored / Failure).</td></tr>
-          <tr><td><span class="t">Exception</span> <span class="mn">Exception</span> { get; }</td><td>Set when <code>Type</code> is <code>Exception</code>.</td></tr>
-          <tr><td><span class="t">double</span> <span class="mn">ElapsedMilliseconds</span> { get; }</td><td>Operation duration (NaN in non-development builds).</td></tr>
-          <tr><td><span class="t">string</span> <span class="mn">ToString</span>() / <span class="kw">void</span> <span class="mn">Deconstruct</span>(out <span class="t">ResultType</span>, out <span class="t">string</span>, out <span class="t">Exception</span>[, out <span class="t">double</span>])</td><td>Readable summary; deconstruct into its fields (with or without the elapsed time).</td></tr>
+          <tr><th scope="row"><span class="t">ResultType</span> <span class="mn">Type</span> { get; }</th><td>The outcome category.</td></tr>
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">IsSuccess</span> / <span class="mn">IsFailure</span> / <span class="mn">IsIgnored</span> / <span class="mn">IsCancelled</span> / <span class="mn">IsBusy</span></th><td>Intent-named checks on the outcome.</td></tr>
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">IsTimedOut</span> { get; }</th><td>Refines <code>IsCancelled</code>: the operation overran its <code>LoadTimeout</code>, <code>SaveTimeout</code> or <code>ClearTimeout</code> rather than being superseded or abandoned at scope exit. Storage never answered, which is what closes a panel opened on <code>OnBeforeLoad</code>.</td></tr>
+          <tr><th scope="row"><span class="t">string</span> <span class="mn">Message</span> { get; }</th><td>Optional explanation (often set on Ignored / Failure).</td></tr>
+          <tr><th scope="row"><span class="t">Exception</span> <span class="mn">Exception</span> { get; }</th><td>Set when <code>Type</code> is <code>Exception</code>.</td></tr>
+          <tr><th scope="row"><span class="t">double</span> <span class="mn">ElapsedMilliseconds</span> { get; }</th><td>Operation duration (NaN in non-development builds).</td></tr>
+          <tr><th scope="row"><span class="t">string</span> <span class="mn">ToString</span>() / <span class="kw">void</span> <span class="mn">Deconstruct</span>(out <span class="t">ResultType</span>, out <span class="t">string</span>, out <span class="t">Exception</span>[, out <span class="t">double</span>])</th><td>Readable summary; deconstruct into its fields (with or without the elapsed time).</td></tr>
         </table>
       </div>
     </div>
 
     <div class="type-section" id="LoadResult">
-      <div class="type-header"><h2>LoadResult</h2><span class="badge badge-class">sealed</span></div>
-      <p class="type-desc">A load outcome. Adds <code>IsInvalid</code> (no usable data, the normal first run). Factory methods <code>Success(string payload, string message = null)</code>, <code>Invalid(string message = null)</code>, <code>Failure(string message = null)</code> for managers.</p>
+      <div class="type-header"><h3>LoadResult</h3><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">A load outcome. Adds <code>IsInvalid</code> (no usable data, the normal first run) and <code>IsCorrupt</code>, which refines it: the save was there and could not be read, rather than the ordinary first run. Factory methods <code>Success(byte[] payload, string message = null, byte[] mergeWith = null)</code>, <code>Invalid(string message = null)</code>, <code>Corrupt(string message = null)</code>, <code>Failure(string message = null)</code> for managers. Returning the right one is what keeps saves safe: <code>Invalid</code> and <code>Corrupt</code> leave the target on its values with saving allowed, so the next save overwrites; <code>Failure</code> means the storage is <em>temporarily</em> unavailable and leaves the target not ready, so no save can overwrite what a retry could still recover. Explained in <a href="../../user-manual/pages/How%20saving%20works.html">How saving works</a>.</p>
     </div>
     <div class="type-section" id="SaveResult">
-      <div class="type-header"><h2>SaveResult</h2><span class="badge badge-class">sealed</span></div>
-      <p class="type-desc">A save outcome. Factory methods <code>Success(string message = null)</code>, <code>Failure(string message = null)</code>.</p>
+      <div class="type-header"><h3>SaveResult</h3><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">A save outcome. Factory methods <code>Success(string message = null)</code>, <code>Failure(string message = null)</code>. Explained in <a href="../../user-manual/pages/How%20saving%20works.html">How saving works</a>.</p>
     </div>
     <div class="type-section" id="ClearResult">
-      <div class="type-header"><h2>ClearResult</h2><span class="badge badge-class">sealed</span></div>
-      <p class="type-desc">A clear outcome. Factory methods <code>Success(string message = null)</code>, <code>Failure(string message = null)</code>.</p>
+      <div class="type-header"><h3>ClearResult</h3><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">A clear outcome. Factory methods <code>Success(string message = null)</code>, <code>Failure(string message = null)</code>. Explained in <a href="../../user-manual/pages/How%20saving%20works.html">How saving works</a>.</p>
     </div>
 
     <div class="type-section" id="ResultType">
-      <div class="type-header"><h2>ResultType</h2><span class="badge badge-enum">enum</span></div>
+      <div class="type-header"><h3>ResultType</h3><span class="badge badge-enum">enum</span></div>
       <div class="member-group"><table class="mt">
-        <tr><td><span class="mn">Success</span></td><td>The operation succeeded.</td></tr>
-        <tr><td><span class="mn">Failure</span></td><td>Failed; for a load, temporarily unavailable, a retry might help.</td></tr>
-        <tr><td><span class="mn">Exception</span></td><td>Code threw.</td></tr>
-        <tr><td><span class="mn">Cancelled</span></td><td>Started but abandoned (timeout, superseded, left scope).</td></tr>
-        <tr><td><span class="mn">Invalid</span></td><td>Load only: no usable data (missing or corrupt). The normal first run.</td></tr>
-        <tr><td><span class="mn">Ignored</span></td><td>Never ran (not dirty, blocked, no slot, not loaded yet, shutting down, superseded while queued, busy).</td></tr>
+        <tr><th scope="row"><span class="mn">Success</span></th><td>The operation succeeded.</td></tr>
+        <tr><th scope="row"><span class="mn">Failure</span></th><td>Failed; for a load, temporarily unavailable, a retry might help.</td></tr>
+        <tr><th scope="row"><span class="mn">Exception</span></th><td>Code threw.</td></tr>
+        <tr><th scope="row"><span class="mn">Cancelled</span></th><td>Started but abandoned (timeout, superseded, left scope).</td></tr>
+        <tr><th scope="row"><span class="mn">Invalid</span></th><td>Load only: no usable data (missing or corrupt). The normal first run.</td></tr>
+        <tr><th scope="row"><span class="mn">Ignored</span></th><td>Never ran (not dirty, blocked, no slot, not loaded yet, shutting down, superseded while queued, busy).</td></tr>
       </table></div>
     </div>
 
     <div class="type-section" id="ExecutionMode">
-      <div class="type-header"><h2>ExecutionMode</h2><span class="badge badge-enum">enum</span></div>
+      <div class="type-header"><h3>ExecutionMode</h3><span class="badge badge-enum">enum</span></div>
       <div class="member-group"><table class="mt">
-        <tr><td><span class="mn">PreferSync</span> / <span class="mn">PreferAsync</span></td><td>Supports both; defaults to the named one.</td></tr>
-        <tr><td><span class="mn">SyncOnly</span> / <span class="mn">AsyncOnly</span></td><td>Only that path; as an override, fails when unsupported.</td></tr>
+        <tr><th scope="row"><span class="mn">PreferSync</span> / <span class="mn">PreferAsync</span></th><td>Supports both; defaults to the named one.</td></tr>
+        <tr><th scope="row"><span class="mn">SyncOnly</span> / <span class="mn">AsyncOnly</span></th><td>Only that path; as an override, fails when unsupported.</td></tr>
       </table></div>
     </div>
 
     <div class="type-section" id="PersistenceSource">
-      <div class="type-header"><h2>PersistenceSource</h2><span class="badge badge-enum">enum</span></div>
+      <div class="type-header"><h3>PersistenceSource</h3><span class="badge badge-enum">enum</span></div>
+      <p class="type-desc">Why a load or save ran, carried by its events and by a manager's storage methods. <code>Manual</code>: an explicit <code>Save</code> or <code>Load</code> call. <code>Automatic</code>: the auto-load on scope-in, an auto-save safe point, or a slot change. <code>SlotCopy</code> and <code>SlotSnapshot</code>: a <a href="#Slots"><code>Slots</code></a> copy or rename, and a <code>Slots.SaveTo</code>, which only a custom manager's storage methods see. Explained in <a href="../../user-manual/pages/Save%20and%20load.html">Save and load</a>.</p>
       <div class="member-group"><table class="mt">
-        <tr><td><span class="mn">Manual</span></td><td>A load/save/clear method was called.</td></tr>
-        <tr><td><span class="mn">Automatic</span></td><td>Triggered by the system (launch, safe point, timer, import-source read or wipe).</td></tr>
-        <tr><td><span class="mn">SlotCopy</span></td><td>A <code>Slots</code> copy or rename is reading or writing a slot's storage, moving the payload verbatim.</td></tr>
-        <tr><td><span class="mn">SlotSnapshot</span></td><td>A <code>Slots.SaveTo</code> is writing the target's live data to a slot other than the current one: like a manual save, aimed elsewhere. Only seen by the read/write methods of a custom manager; the events only ever carry <code>Manual</code> or <code>Automatic</code>.</td></tr>
+        <tr><th scope="row"><span class="mn">Manual</span></th><td>A load/save/clear method was called.</td></tr>
+        <tr><th scope="row"><span class="mn">Automatic</span></th><td>Triggered by the system (launch, safe point, timer, import-source read or wipe).</td></tr>
+        <tr><th scope="row"><span class="mn">SlotCopy</span></th><td>A <a href="#Slots"><code>Slots</code></a> copy or rename is reading or writing a slot's storage, moving the payload verbatim. Only a custom manager's read and write methods see it; the events never carry it.</td></tr>
+        <tr><th scope="row"><span class="mn">SlotSnapshot</span></th><td>A <code>Slots.SaveTo</code> is writing the target's live data to a slot other than the current one: like a manual save, aimed elsewhere. Only a custom manager's read and write methods see it; the events never carry it.</td></tr>
       </table></div>
     </div>
 
     <div class="type-section" id="PersistenceOperation">
-      <div class="type-header"><h2>PersistenceOperation&lt;T&gt;</h2><span class="badge badge-class">sealed</span></div>
-      <p class="type-desc">Coroutine handle on a running operation (<code>where T : class</code>; <code>T</code> is a <code>Result</code> or <code>Result[]</code>). <code>yield return</code> it; <code>Result</code> (null while running), <code>IsDone</code>.</p>
+      <div class="type-header"><h3>PersistenceOperation&lt;TResult&gt;</h3><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">Coroutine handle on a running operation (<code>where TResult : class</code>; <code>TResult</code> is a <a href="#Result"><code>Result</code></a> or <code>Result[]</code>). <code>yield return</code> it; <code>Result</code> (null while running), <code>IsDone</code>.</p>
+    </div>
+
+
+    <!-- ═══════════════════════════════════════ Readiness ═══ -->
+    <h2 class="api-group">Readiness</h2>
+
+    <div class="type-section" id="Readiness">
+      <div class="type-header"><h3>Readiness</h3><span class="badge badge-struct">struct</span><span class="badge badge-new">2.0</span></div>
+      <p class="type-desc">A snapshot of a manager's readiness, taken when read. <code>IsReady</code> remains the only data-safety signal; <code>Reason</code> and <code>Origin</code> are for interface and diagnostics. Explained in <a href="../../user-manual/pages/How%20saving%20works.html">How saving works</a>.</p>
+      <div class="member-group"><table class="mt">
+        <tr><th scope="row"><span class="t">bool</span> <span class="mn">IsReady</span> { get; }</th><td>Whether the target holds its data and is safe to read and save.</td></tr>
+        <tr><th scope="row"><span class="t">NotReadyReason</span> <span class="mn">Reason</span> { get; }</th><td>Why it is not ready, or <code>None</code> while it is.</td></tr>
+        <tr><th scope="row"><span class="t">DataOrigin</span> <span class="mn">Origin</span> { get; }</th><td>Where the data the target holds came from.</td></tr>
+        <tr><th scope="row"><span class="kw">implicit operator</span> <span class="t">bool</span></th><td>Reads as its <code>IsReady</code>, so a readiness can be tested directly.</td></tr>
+        <tr><th scope="row"><span class="t">string</span> <span class="mn">ToString</span>()</th><td><code>Ready (Origin)</code> or <code>Not ready (Reason)</code>, for a log line.</td></tr>
+      </table></div>
+    </div>
+
+    <div class="type-section" id="NotReadyReason">
+      <div class="type-header"><h3>NotReadyReason</h3><span class="badge badge-enum">enum</span><span class="badge badge-new">2.0</span></div>
+      <div class="member-group"><table class="mt">
+        <tr><th scope="row"><span class="mn">None</span></th><td>The manager is ready.</td></tr>
+        <tr><th scope="row"><span class="mn">NotLoadedYet</span></th><td>No load has been attempted yet, or the scope just changed.</td></tr>
+        <tr><th scope="row"><span class="mn">Loading</span></th><td>A load is running right now.</td></tr>
+        <tr><th scope="row"><span class="mn">LoadFailed</span></th><td>The last load could not complete; a retry may still succeed.</td></tr>
+        <tr><th scope="row"><span class="mn">NoSlot</span></th><td>It saves per slot and no slot is selected.</td></tr>
+        <tr><th scope="row"><span class="mn">Cleared</span></th><td>The data was cleared, so saving is paused until the next load.</td></tr>
+        <tr><th scope="row"><span class="mn">ScopedOut</span></th><td>The target is not in scope.</td></tr>
+        <tr><th scope="row"><span class="mn">PersistenceDisabled</span></th><td>The manager cannot persist its target, so every operation is refused.</td></tr>
+        <tr><th scope="row"><span class="mn">AwaitingConflictResolution</span></th><td>A load found a conflict the game has to settle.</td></tr>
+      </table></div>
+    </div>
+
+    <div class="type-section" id="DataOrigin">
+      <div class="type-header"><h3>DataOrigin</h3><span class="badge badge-enum">enum</span><span class="badge badge-new">2.0</span></div>
+      <p class="type-desc">Where the data the target holds came from, which is what answers Continue versus New Game. Not <a href="#PersistenceSource"><code>PersistenceSource</code></a>, which says what triggered an operation.</p>
+      <div class="member-group"><table class="mt">
+        <tr><th scope="row"><span class="mn">NotLoaded</span></th><td>Nothing has been loaded into the target.</td></tr>
+        <tr><th scope="row"><span class="mn">StoredSave</span></th><td>A stored save was read and applied: a returning player.</td></tr>
+        <tr><th scope="row"><span class="mn">Defaults</span></th><td>Nothing usable was stored, so the target holds its defaults: a fresh start.</td></tr>
+        <tr><th scope="row"><span class="mn">Imported</span></th><td>A previous configuration's save was recovered and re-persisted.</td></tr>
+      </table></div>
     </div>
 
 
     <!-- ═══════════════════════════════════════ Optional interfaces ═══ -->
-    <div class="type-section" id="IMultiSlot">
-      <div class="type-header"><h2>IMultiSlot</h2><span class="badge badge-interface">iface</span></div>
-      <p class="type-desc">Marker: save and load under multiple named slots. No members.</p>
-    </div>
+    <h2 class="api-group">Optional interfaces</h2>
+
     <div class="type-section" id="IUpgradable">
-      <div class="type-header"><h2>IUpgradable</h2><span class="badge badge-interface">iface</span></div>
-      <p class="type-desc">Migrate old saves forward. <code>int SaveVersion</code>, <code>void Upgrade(int fromVersion, SaveNode oldData)</code>, <code>bool Downgrade(int fromVersion)</code>.</p>
+      <div class="type-header"><h3>IUpgradable</h3><span class="badge badge-interface">iface</span></div>
+      <p class="type-desc">Migrate old saves forward. <code>int SaveVersion</code>, <code>void Upgrade(int fromVersion, SaveNode oldData)</code>, <code>bool Downgrade(int fromVersion)</code>. Explained in <a href="../../user-manual/pages/Update%20a%20shipped%20save.html">Update a shipped save</a>.</p>
+    </div>
+    <div class="type-section" id="IMergeable">
+      <div class="type-header"><h3>IMergeable</h3><span class="badge badge-interface">iface</span><span class="badge badge-new">2.0</span></div>
+      <p class="type-desc">Fold two diverging saves of one object together instead of discarding one. <code>bool Merge(int fromVersion, SaveNode otherData)</code>, returning whether anything changed. Needs a serializer supporting <code>ParseToNode</code>; without one there is no other side to fold in and the manager keeps the most recent save instead. Must be commutative and idempotent, or concurrent devices never settle. The asset already holds the more recent of the two, so fold <code>otherData</code> into it; <code>otherData</code> is never null, a missing value reading as its default, and <code>fromVersion</code> is the other save's version, which only matters if your field names changed. Implementing it settles the conflict, so a <a href="API%20-%20Built-Ins.html#RemotePersistenceManager">remote manager</a>'s conflict policy is not consulted and <code>Conflicts.OnAny</code> never fires for the object. See <a href="../../user-manual/pages/Cloud%20and%20remote.html#merging">Merge two saves</a>.</p>
     </div>
     <div class="type-section" id="IFieldResettable">
-      <div class="type-header"><h2>IFieldResettable</h2><span class="badge badge-interface">iface</span></div>
-      <p class="type-desc">Reset or restore individual fields. Events <code>DefaultValuesRequested</code> and <code>CurrentValuesRequested</code> return a <code>SaveNode</code> (do not subscribe from your own code).</p>
+      <div class="type-header"><h3>IFieldResettable</h3><span class="badge badge-interface">iface</span></div>
+      <p class="type-desc">Reset or restore individual fields. Events <code>DefaultValuesRequested</code> and <code>CurrentValuesRequested</code> return a <a href="#SaveNode"><code>SaveNode</code></a> (do not subscribe from your own code).</p>
     </div>
     <div class="type-section" id="IScopeCallbacks">
-      <div class="type-header"><h2>IScopeCallbacks</h2><span class="badge badge-interface">iface</span></div>
-      <p class="type-desc"><code>OnBeforeScopeIn(string slot, bool enable)</code>, <code>OnAfterScopeOut(string slot, bool disable)</code>. The flags mark the first scope-in and final scope-out of the session.</p>
+      <div class="type-header"><h3>IScopeCallbacks</h3><span class="badge badge-interface">iface</span></div>
+      <p class="type-desc"><code>OnBeforeScopeIn(string slot, bool enable)</code>, <code>OnAfterScopeOut(string slot, bool disable)</code>. Both run on every scope change, a slot change included. <code>enable</code> is true only on the session's first scope-in and <code>disable</code> only on its last scope-out, so one-time setup and teardown go behind those two. Explained in <a href="../../user-manual/pages/Save%20and%20load.html">Save and load</a>.</p>
     </div>
     <div class="type-section" id="ISerializationCallbacks">
-      <div class="type-header"><h2>ISerializationCallbacks</h2><span class="badge badge-interface">iface</span></div>
-      <p class="type-desc">Serializer-neutral <code>OnBeforeSerialize()</code> / <code>OnAfterDeserialize()</code>.</p>
+      <div class="type-header"><h3>ISerializationCallbacks</h3><span class="badge badge-interface">iface</span></div>
+      <p class="type-desc">Runs your own code around the save itself: <code>OnBeforeSerialize()</code> just before the object is written, to flatten what the serializer cannot store (a dictionary into two lists, a cache into a field), and <code>OnAfterDeserialize()</code> right after it is read back, to rebuild and clamp it. Unity's <code>ISerializationCallbackReceiver</code> does the same for its own serializer; this one fires whichever serializer the manager uses. Explained in <a href="../../user-manual/pages/Save%20and%20load.html#reacting">React to load and save</a>.</p>
     </div>
     <div class="type-section" id="IDirtyTracked">
-      <div class="type-header"><h2>IDirtyTracked</h2><span class="badge badge-interface">iface</span></div>
-      <p class="type-desc">Skip saves while unchanged. <code>bool IsDirty { get; set; }</code> (reset to false after a successful save).</p>
+      <div class="type-header"><h3>IDirtyTracked</h3><span class="badge badge-interface">iface</span></div>
+      <p class="type-desc">Skip saves while unchanged. <code>bool IsDirty { get; set; }</code> (reset to false after a successful save). Explained in <a href="../../user-manual/pages/Save%20and%20load.html">Save and load</a>.</p>
     </div>
     <div class="type-section" id="IDynamicInitialize">
-      <div class="type-header"><h2>IDynamicInitialize</h2><span class="badge badge-interface">iface</span></div>
-      <p class="type-desc"><code>void DynamicInitialize()</code> runs once after a load found no save (never overwrites a save, never in edit mode).</p>
+      <div class="type-header"><h3>IDynamicInitialize</h3><span class="badge badge-interface">iface</span></div>
+      <p class="type-desc"><code>void DynamicInitialize()</code> runs once after a load found no save (never overwrites a save, never in edit mode). Explained in <a href="../../user-manual/pages/Save%20and%20load.html">Save and load</a>.</p>
     </div>
     <div class="type-section" id="IPersistencePolicy">
-      <div class="type-header"><h2>IPersistencePolicy</h2><span class="badge badge-interface">iface</span></div>
-      <p class="type-desc"><code>PersistencePolicy Policy { get; }</code>. The <code>PersistencePolicy</code> struct's non-null <code>AutoLoad</code> / <code>AutoSave</code> override the manager.</p>
-    </div>
-    <div class="type-section" id="IAlwaysGlobal">
-      <div class="type-header"><h2>IAlwaysGlobal</h2><span class="badge badge-interface">iface</span></div>
-      <p class="type-desc">Marker: keep the object loaded all session and reachable via <code>GlobalPersistedData</code>. No members.</p>
+      <div class="type-header"><h3>IPersistencePolicy</h3><span class="badge badge-interface">iface</span></div>
+      <p class="type-desc"><code>PersistencePolicy Policy { get; }</code>. Every non-null field of the <a href="#PersistencePolicy"><code>PersistencePolicy</code></a> struct overrides the matching manager setting. Explained in <a href="../../user-manual/pages/Save%20and%20load.html">Save and load</a>.</p>
     </div>
 
     <div class="type-section" id="PersistencePolicy">
-      <div class="type-header"><h2>PersistencePolicy</h2><span class="badge badge-struct">struct</span></div>
-      <p class="type-desc">The manager settings an <code>IPersistencePolicy</code> object can drive; a <code>null</code> field leaves the manager's own setting in charge.</p>
+      <div class="type-header"><h3>PersistencePolicy</h3><span class="badge badge-struct">struct</span></div>
+      <p class="type-desc">The manager settings an <a href="#IPersistencePolicy"><code>IPersistencePolicy</code></a> object can drive; a <code>null</code> field leaves the manager's own setting in charge. Explained in <a href="../../user-manual/pages/Save%20and%20load.html">Save and load</a>.</p>
       <div class="member-group"><table class="mt">
-        <tr><td><span class="t">bool?</span> <span class="mn">AutoLoad</span> { get; set; } / <span class="t">bool?</span> <span class="mn">AutoSave</span> { get; set; }</td><td>Non-null values override the manager's <code>AutoLoad</code> / <code>AutoSave</code>.</td></tr>
-        <tr><td><span class="t">static readonly PersistencePolicy</span> <span class="mn">Default</span></td><td>Drives nothing (every field null).</td></tr>
+        <tr><th scope="row"><span class="t">bool?</span> <span class="mn">AutoLoad</span> { get; set; } / <span class="t">bool?</span> <span class="mn">AutoSave</span> { get; set; }</th><td>Non-null values override the manager's <code>AutoLoad</code> / <code>AutoSave</code>.</td></tr>
+        <tr><th scope="row"><span class="t">bool?</span> <span class="mn">UseSlot</span> { get; set; } / <span class="t">bool?</span> <span class="mn">AlwaysGlobal</span> { get; set; }</th><td>Non-null values override the manager's Use Slot / Always Global toggles, for a type that has no choice (a slot registry cannot itself live in a slot).</td></tr>
+        <tr><th scope="row"><span class="t">static readonly PersistencePolicy</span> <span class="mn">Default</span></th><td>Drives nothing (every field null).</td></tr>
       </table></div>
     </div>
 
 
-    <!-- ═══════════════════════════════════════ Serialization ═══ -->
-    <div class="type-section" id="Serializer">
-      <div class="type-header"><h2>Serializer</h2><span class="badge badge-class">abstract</span><span class="warn">extending</span></div>
-      <p class="type-desc">Custom serialization. Must not fail on valid data.</p>
+    <!-- ═══════════════════════════════════════ Save slots ═══ -->
+    <h2 class="api-group">Save slots</h2>
+
+    <!-- ═══════════════════════════════════════ Slots ═══ -->
+    <div class="type-section" id="Slots">
+      <div class="type-header"><h3>Slots</h3><span class="badge badge-static">static</span></div>
+      <p class="type-desc">Operate on a slot's saved data (copy, rename, delete, snapshot to, load from). Every operation ignores a target whose manager does not use slots, and says so in the console. Explained in <a href="../../user-manual/pages/Slots%20and%20save%20menus.html">Slots and save menus</a>.</p>
+      <div class="member-group">
+        <div class="note"><span class="ex">Delete / Copy / Rename / SaveTo / LoadFrom (all shapes) throw InvalidOperationException in the editor only when called outside play mode.</span></div>
+        <div class="member-group-title">Members</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t">string</span> <span class="mn">GlobalSlot</span> { get; set; }</th><td>Slot shared by every manager; setting it switches all of them. A manager whose <code>UseSlot</code> is off ignores it. <span class="ex">The setter throws InvalidOperationException in the editor only when set outside play mode.</span></td></tr>
+          <tr><th scope="row"><span class="t">ClearResult[]</span> <span class="mn">DeleteSync</span>(<span class="t">string</span> slot, params <span class="t">ScriptableObject</span>[] targets) / <span class="kw">void</span> <span class="mn">Delete</span>(...) / <span class="mn">Delete</span>(<span class="t">string</span> slot, <span class="t">Action</span>&lt;<span class="t">ClearResult[]</span>&gt; onComplete, ...)</th><td>Delete a slot's storage for each target: sync, fire-and-forget, callback. Permanently deletes data, no undo. Refused on a target whose manager has that slot current: empty the current slot with <code>ClearSync</code>. Takes its turn in the manager's queue like any other operation, so it reports the manager busy while it runs; the sync shape is refused <code>Busy</code> while anything asynchronous is in flight, and any shape is refused from inside another operation's event handler.</td></tr>
+          <tr><th scope="row"><span class="t">Task</span>&lt;<span class="t">ClearResult[]</span>&gt; <span class="mn">DeleteAsync</span>(...) / <span class="t">PersistenceOperation</span>&lt;<span class="t">ClearResult[]</span>&gt; <span class="mn">DeleteRoutine</span>(...)</th><td>Delete a slot's storage: async, coroutine.</td></tr>
+          <tr><th scope="row"><span class="t">SaveResult[]</span> <span class="mn">CopySync</span>(<span class="t">string</span> fromSlot, <span class="t">string</span> toSlot, params <span class="t">ScriptableObject</span>[] targets) / <span class="kw">void</span> <span class="mn">Copy</span>(...) / <span class="mn">Copy</span>(<span class="t">string</span> fromSlot, <span class="t">string</span> toSlot, <span class="t">Action</span>&lt;<span class="t">SaveResult[]</span>&gt; onComplete, ...)</th><td>Copy a slot's storage onto another: sync, fire-and-forget, callback. Overwrites the destination, and copies the saved data, so a loaded target's unsaved changes are not included. Refused when the destination is the manager's current slot; copies nothing when the source holds no save.</td></tr>
+          <tr><th scope="row"><span class="t">Task</span>&lt;<span class="t">SaveResult[]</span>&gt; <span class="mn">CopyAsync</span>(...) / <span class="t">PersistenceOperation</span>&lt;<span class="t">SaveResult[]</span>&gt; <span class="mn">CopyRoutine</span>(...)</th><td>Copy a slot's storage: async, coroutine.</td></tr>
+          <tr><th scope="row"><span class="t">SaveResult[]</span> <span class="mn">RenameSync</span>(<span class="t">string</span> fromSlot, <span class="t">string</span> toSlot, params <span class="t">ScriptableObject</span>[] targets) / <span class="kw">void</span> <span class="mn">Rename</span>(...) / <span class="mn">Rename</span>(<span class="t">string</span> fromSlot, <span class="t">string</span> toSlot, <span class="t">Action</span>&lt;<span class="t">SaveResult[]</span>&gt; onComplete, ...)</th><td>Rename a slot (copy then delete, in that order, so a failure half-way leaves a duplicate and never a loss): sync, fire-and-forget, callback. Moves data, no undo. Refused when either slot is the manager's current one; renames nothing when the source holds no save.</td></tr>
+          <tr><th scope="row"><span class="t">Task</span>&lt;<span class="t">SaveResult[]</span>&gt; <span class="mn">RenameAsync</span>(...) / <span class="t">PersistenceOperation</span>&lt;<span class="t">SaveResult[]</span>&gt; <span class="mn">RenameRoutine</span>(...)</th><td>Rename a slot's storage: async, coroutine.</td></tr>
+          <tr><th scope="row"><span class="t">SaveResult[]</span> <span class="mn">SaveToSync</span>(<span class="t">string</span> slot, params <span class="t">ScriptableObject</span>[] targets) / <span class="kw">void</span> <span class="mn">SaveTo</span>(...) / <span class="mn">SaveTo</span>(<span class="t">string</span> slot, <span class="t">Action</span>&lt;<span class="t">SaveResult[]</span>&gt; onComplete, ...)</th><td>A real save aimed at another slot: snapshot each target's live data onto that slot's storage (the current slot's save is untouched): sync, fire-and-forget, callback. Raises the save events; overwrites the destination; refused on the current slot, a not-ready target, or when saving is blocked.</td></tr>
+          <tr><th scope="row"><span class="t">Task</span>&lt;<span class="t">SaveResult[]</span>&gt; <span class="mn">SaveToAsync</span>(...) / <span class="t">PersistenceOperation</span>&lt;<span class="t">SaveResult[]</span>&gt; <span class="mn">SaveToRoutine</span>(...)</th><td>Snapshot to a slot: async, coroutine.</td></tr>
+          <tr><th scope="row"><span class="t">LoadResult[]</span> <span class="mn">LoadFromSync</span>(<span class="t">string</span> slot, params <span class="t">ScriptableObject</span>[] targets) / <span class="kw">void</span> <span class="mn">LoadFrom</span>(...) / <span class="mn">LoadFrom</span>(<span class="t">string</span> slot, <span class="t">Action</span>&lt;<span class="t">LoadResult[]</span>&gt; onComplete, ...)</th><td>A real load aimed at another slot: bring its saved data into the ongoing game (load events, save upgrades and readiness included); the next save persists it onto the current slot, and the source slot is never modified. Refused on the current slot, with no slot set, or while the manager is protecting a loaded newer-version save (see <code>IUpgradable.Downgrade</code>); does nothing when the source holds no usable save.</td></tr>
+          <tr><th scope="row"><span class="t">Task</span>&lt;<span class="t">LoadResult[]</span>&gt; <span class="mn">LoadFromAsync</span>(...) / <span class="t">PersistenceOperation</span>&lt;<span class="t">LoadResult[]</span>&gt; <span class="mn">LoadFromRoutine</span>(...)</th><td>Load from a slot: async, coroutine.</td></tr>
+          <tr><th scope="row"><span class="kw">event</span> <span class="t">Action</span>&lt;<span class="t">PersistenceManager</span>, <span class="t">string</span>&gt; <span class="mn">OnSlotUpdated</span> / <span class="t">Action</span>&lt;<span class="t">PersistenceManager</span>, <span class="t">string</span>&gt; <span class="mn">OnSlotDeleted</span> / <span class="t">Action</span>&lt;<span class="t">PersistenceManager</span>, <span class="t">string</span>, <span class="t">string</span>&gt; <span class="mn">OnSlotCopied</span></th><td>Raised as slot storage changes (a <code>SaveTo</code> snapshot raises <code>OnSlotUpdated</code> with the written slot).</td></tr>
+        </table>
+      </div>
+    </div>
+
+
+    <div class="type-section" id="PersistentSlotRegistry">
+      <div class="type-header"><h3>PersistentSlotRegistry&lt;TTarget, TInfo&gt;</h3><span class="badge badge-so">SO</span><span class="badge badge-class">abstract</span></div>
+      <p class="type-desc">Always-global object that records one entry per save slot with a summary you define, without loading the saves. <code>TTarget</code> is constrained to <code>ScriptableObject</code>. Build a save-select menu on it.</p>
+              <div class="member-group">
+          <div class="member-group-title">Public</div>
+          <table class="mt">
+        <tr><th scope="row"><span class="t">IReadOnlyList</span>&lt;<span class="t">SlotEntry</span>&lt;<span class="t">TInfo</span>&gt;&gt; <span class="mn">Entries</span> { get; }</th><td>Every recorded slot, each with its summary, save time and optional screenshot, most recently saved first (the natural order for a load-game menu). A fresh snapshot each call: cache it if you iterate a lot.</td></tr>
+        <tr><th scope="row"><span class="t">bool</span> <span class="mn">TryGet</span>(<span class="t">string</span> slot, out <span class="t">SlotEntry</span>&lt;<span class="t">TInfo</span>&gt;) / <span class="mn">TryGetLatest</span>(...)</th><td>Look up one slot, or the most recently saved.</td></tr>
+        <tr><th scope="row"><span class="t">string</span> <span class="mn">LatestSlot</span> { get; }</th><td>Slot of the newest save (for a "Continue" button).</td></tr>
+        <tr><th scope="row"><span class="t">IReadOnlyList</span>&lt;<span class="t">string</span>&gt; <span class="mn">SavedSlots</span> { get; }</th><td>Just the slot names, most recently saved first.</td></tr>
+        <tr><th scope="row"><span class="t">string</span> <span class="mn">NextRingSlot</span>(<span class="t">string</span> prefix, <span class="t">int</span> count)</th><td>The slot a <a href="../../user-manual/pages/Slots%20and%20save%20menus.html#quicksave">quick save</a> writes next: a free one while the ring has room, then the oldest of it.</td></tr>
+        <tr><th scope="row"><span class="t">string</span> <span class="mn">NextFreeSlot</span>(<span class="t">string</span> prefix)</th><td>A slot nothing has been saved to yet, for starting a new game.</td></tr>
+        <tr><th scope="row"><span class="t">PersistencePolicy</span> <span class="mn">Policy</span> { get; }</th><td>Pins four settings: auto-load on, auto-save off, <code>UseSlot</code> off and <code>AlwaysGlobal</code> on. A registry lists the slots, so it can never live inside one, and it must be reachable and current wherever a menu asks. It saves itself on every change instead of on a timer.</td></tr>
+          </table>
+        </div>
+        <div class="member-group">
+          <div class="member-group-title">For implementers (protected)</div>
+          <table class="mt">
+        <tr><th scope="row"><span class="t">TInfo</span> <span class="mn">CaptureInfo</span>(<span class="t">TTarget</span> target) (protected abstract)</th><td>Return the per-slot summary to record on each save.</td></tr>
+        <tr><th scope="row"><span class="t">Awaitable</span>&lt;<span class="t">SaveScreenshot</span>&gt; <span class="mn">CaptureScreenshotAsync</span>(<span class="t">TTarget</span>) / <span class="t">SaveScreenshot</span> <span class="mn">CaptureScreenshot</span>(<span class="t">TTarget</span>) (protected)</th><td>Optional per-slot preview image (override one; async is recommended). See <a href="#SaveScreenshot"><code>SaveScreenshot</code></a>.</td></tr>
+        <tr><th scope="row"><span class="t">bool</span> <span class="mn">ShouldRecord</span>(<span class="t">TTarget</span>) (protected virtual)</th><td>Whether this registry lists a given object's slots. The default lists every one of the type; override it when a project holds several and each has its own registry.</td></tr>
+          </table>
+        </div>
+
+    </div>
+
+
+    <div class="type-section" id="SlotEntry">
+      <div class="type-header"><h3>SlotEntry&lt;TInfo&gt;</h3><span class="badge badge-struct">struct</span></div>
+      <p class="type-desc">Read-only record of one slot in a <a href="#PersistentSlotRegistry"><code>PersistentSlotRegistry</code></a>. Explained in <a href="../../user-manual/pages/Slots%20and%20save%20menus.html">Slots and save menus</a>.</p>
       <div class="member-group"><table class="mt">
-        <tr><td><span class="t">string</span> <span class="mn">SerializeToString</span>(<span class="t">Object</span> obj, <span class="t">string</span> backReferenceFieldName)</td><td>Object to string.</td></tr>
-        <tr><td><span class="t">bool</span> <span class="mn">DeserializeFromString</span>(<span class="t">string</span> str, <span class="t">Object</span> obj)</td><td>String into object; returns success.</td></tr>
-        <tr><td><span class="t">SaveNode</span> <span class="mn">ParseToNode</span>(<span class="t">string</span> str)</td><td>Parse to a neutral tree for upgrades (null if unsupported).</td></tr>
-        <tr><td><span class="t">bool</span> <span class="mn">SupportsNode</span> { get; }</td><td>Whether <code>ParseToNode</code> returns a usable tree.</td></tr>
+        <tr><th scope="row"><span class="t">string</span> <span class="mn">Slot</span> { get; }</th><td>The slot this entry describes.</td></tr>
+        <tr><th scope="row"><span class="t">TInfo</span> <span class="mn">Info</span> { get; }</th><td>The summary your <code>CaptureInfo</code> returned.</td></tr>
+        <tr><th scope="row"><span class="t">DateTime</span> <span class="mn">SavedUtc</span> { get; } / <span class="t">long</span> <span class="mn">SavedUtcTicks</span> { get; }</th><td>When the slot was last saved (UTC). Out-of-range ticks in a tampered or corrupt registry save are clamped into the valid DateTime range rather than throwing.</td></tr>
+        <tr><th scope="row"><span class="t">SaveScreenshot</span> <span class="mn">Screenshot</span> { get; }</th><td>The slot's preview image, empty when none was recorded.</td></tr>
+      </table></div>
+    </div>
+
+
+    <div class="type-section" id="ISlotListing">
+      <div class="type-header"><h3>ISlotListing</h3><span class="badge badge-interface">iface</span><span class="badge badge-new">2.0</span></div>
+      <p class="type-desc">Nothing to implement: <a href="#PersistentSlotRegistry">PersistentSlotRegistry</a> already does, and the no-code components use it to read any registry without knowing what it summarises (<code>SavedSlots</code>, <code>LatestSlot</code>, <code>NextRingSlot</code>, <code>NextFreeSlot</code>). Take it as a parameter type to write a menu script that works with any registry.</p>
+    </div>
+    <div class="type-section" id="SaveScreenshot">
+      <div class="type-header"><h3>SaveScreenshot</h3><span class="badge badge-struct">struct</span></div>
+      <p class="type-desc">A save-slot preview image that serializes as a string, so it rides inside a slot summary. Capture it with the static methods, then decode it on demand for a save-select menu. Its <a href="#ScreenshotFormat"><code>ScreenshotFormat</code></a> is <code>Jpg</code> (smaller, lossy, no alpha) or <code>Png</code> (lossless).</p>
+      <div class="note"><strong>Needs Unity's Image Conversion module</strong> (<code>com.unity.modules.imageconversion</code>), which every project has unless it was removed under <strong>Window &gt; Package Manager &gt; Built-in packages</strong>. Without it a capture answers an empty screenshot, a decode answers <code>null</code>, and the console says so. <code>CaptureScreen</code> also needs Screen Capture (<code>com.unity.modules.screencapture</code>); the camera and texture captures do not.</div>
+      <div class="member-group"><table class="mt">
+        <tr><th scope="row"><span class="t">static SaveScreenshot</span> <span class="mn">Capture</span>(<span class="t">Camera</span> camera, <span class="t">int</span> maxSize = 256, <span class="t">ScreenshotFormat</span> format = Jpg, <span class="t">int</span> jpgQuality = 75)</th><td>Capture a camera's view at the wanted size (also a <code>Texture</code> overload).</td></tr>
+        <tr><th scope="row"><span class="t">static Awaitable</span>&lt;<span class="t">SaveScreenshot</span>&gt; <span class="mn">CaptureAsync</span>(...)</th><td>The recommended capture: no main-thread stall on the GPU read back. <code>Camera</code> and <code>Texture</code> overloads.</td></tr>
+        <tr><th scope="row"><span class="t">static SaveScreenshot</span> <span class="mn">CaptureScreen</span>(<span class="t">int</span> maxSize = 256, <span class="t">ScreenshotFormat</span> format = Jpg, <span class="t">int</span> jpgQuality = 75) / <span class="t">static Awaitable</span>&lt;<span class="t">SaveScreenshot</span>&gt; <span class="mn">CaptureScreenAsync</span>(...)</th><td>Capture the whole screen, sync or async (async recommended).</td></tr>
+        <tr><th scope="row"><span class="t">Texture2D</span> <span class="mn">CreateTexture</span>() / <span class="t">Sprite</span> <span class="mn">CreateSprite</span>()</th><td>Decode into a new texture or sprite the caller owns and must <code>Object.Destroy</code> when done. <code>CreateSprite</code> owns both the sprite and its texture: destroy <code>sprite.texture</code> first, then the sprite.</td></tr>
+        <tr><th scope="row"><span class="t">bool</span> <span class="mn">HasValue</span> { get; }</th><td>Whether this holds an image. A slot saved without one hands back a default <code>SaveScreenshot</code>, so a row checks this before calling <code>CreateSprite</code>.</td></tr>
+        <tr><th scope="row"><span class="t">int</span> <span class="mn">Width</span> { get; } / <span class="mn">Height</span> { get; } / <span class="t">float</span> <span class="mn">Aspect</span> { get; }</th><td>The image's size, without decoding it.</td></tr>
+      </table></div>
+    </div>
+
+
+    <div class="type-section" id="ScreenshotFormat">
+      <div class="type-header"><h3>ScreenshotFormat</h3><span class="badge badge-enum">enum</span></div>
+      <div class="member-group"><table class="mt">
+        <tr><th scope="row"><span class="mn">Jpg</span> / <span class="mn">Png</span></th><td>Encoding of a <a href="#SaveScreenshot"><code>SaveScreenshot</code></a>: JPEG (smaller, lossy, no alpha) or PNG (lossless).</td></tr>
+      </table></div>
+    </div>
+
+    <!-- ═══════════════════════════════════════ Conflicts ═══ -->
+    <h2 class="api-group">Conflicts</h2>
+
+    <div class="type-section" id="Conflicts">
+      <div class="type-header"><h3>Conflicts</h3><span class="badge badge-static">static</span><span class="badge badge-new">2.0</span></div>
+      <p class="type-desc">Hear about save conflicts and answer them. A conflict is raised when a load finds that this device and another one both saved the same object since they last agreed; the load stays undecided and the target not ready until something answers. Explained in <a href="../../user-manual/pages/Cloud%20and%20remote.html#asking">Ask the player</a>.</p>
+      <div class="member-group">
+        <div class="member-group-title">Members</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="kw">event</span> <span class="t">Action</span>&lt;<span class="t">PersistenceManager</span>, <span class="t">ConflictInfo</span>&gt; <span class="mn">OnAny</span></th><td>A manager's load found a conflict, with that manager and its <a href="#ConflictInfo"><code>ConflictInfo</code></a>. Never raised for an <a href="#IMergeable"><code>IMergeable</code></a> target, and a manager set to <code>Ask</code> with nobody subscribed keeps the most recent save instead of waiting.</td></tr>
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">IsAsking</span>(<span class="t">PersistenceManager</span>)</th><td>Whether that manager is waiting for a conflict to be answered.</td></tr>
+          <tr><th scope="row"><span class="t">ConflictInfo</span> <span class="mn">Pending</span>(<span class="t">PersistenceManager</span>)</th><td>The conflict waiting on that manager, or null.</td></tr>
+          <tr><th scope="row"><span class="kw">void</span> <span class="mn">Resolve</span>(<span class="t">PersistenceManager</span>, <span class="t">ConflictResolution</span>)</th><td>Answer it, which finishes the load with the save you kept. A no-op with nothing pending, and a second answer is ignored, so two panels cannot fight.</td></tr>
+          <tr><th scope="row"><span class="kw">void</span> <span class="mn">ResolveAll</span>(<span class="t">ConflictResolution</span>)</th><td>Answer every conflict waiting right now the same way, so a game asks the player once rather than per object.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="type-section" id="ConflictInfo">
+      <div class="type-header"><h3>ConflictInfo</h3><span class="badge badge-class">sealed</span><span class="badge badge-new">2.0</span></div>
+      <p class="type-desc">The two sides of a save conflict, for showing the player what they are choosing between: <code>DateTime LocalTime</code> / <code>RemoteTime</code>, and <code>SaveNode LocalData</code> / <code>RemoteData</code> (<code>Missing</code> when the serializer has no node support, never null).</p>
+    </div>
+    <div class="type-section" id="ConflictResolution">
+      <div class="type-header"><h3>ConflictResolution</h3><span class="badge badge-enum">enum</span><span class="badge badge-new">2.0</span></div>
+      <p class="type-desc">KeepLocal, KeepRemote. The answer to <code>Conflicts.Resolve</code>.</p>
+    </div>
+    <h2 class="api-group">Player UI</h2>
+
+    <div class="type-section" id="PersistenceConflictPrompt">
+      <div class="type-header"><h3>PersistenceConflictPrompt</h3><span class="badge badge-mb">MB</span><span class="badge badge-new">2.0</span></div>
+      <p class="type-desc">Asks the player which of two saves to keep, when a load finds that this device and another one both saved the same object without seeing each other's changes. It draws both sides with their times, marks the more recent one, and answers the conflict with whichever is picked. Add it to a GameObject, or drop in the <code>Persistent Asset Conflict Prompt</code> prefab; it needs no wiring. See <a href="../../user-manual/pages/Cloud%20and%20remote.html#asking">Ask the player</a>.</p>
+      <div class="member-group"><table class="mt">
+        <tr><th scope="row"><span class="t">bool</span> <span class="mn">IsAsking</span> { get; }</th><td>Whether a conflict is waiting to be answered, so the panel is on screen. <em>Gate your own input on this: the panel draws over the game without stopping it.</em></td></tr>
+        <tr><th scope="row"><span class="kw">void</span> <span class="mn">KeepLocal</span>() / <span class="mn">KeepRemote</span>()</th><td>Answer as the panel's own buttons do. Never throws, and does nothing when no conflict is waiting.</td></tr>
+        <tr><th scope="row">Inspector: <span class="mn">Preview Fields</span></th><td>Values read from both saves and shown side by side, each a <code>PreviewField</code> naming the row and the field to read (nested with dots: <code>stats.level</code>), so the player compares "Chapter 5" against "Chapter 3" rather than two dates. Needs a serializer that supports <code>ParseToNode</code>; every row reads as <code>-</code> otherwise.</td></tr>
+        <tr><th scope="row">Inspector: <span class="mn">Answer Every Object</span></th><td>Answer every object waiting on a conflict with the one choice, rather than asking again per object. On by default.</td></tr>
+        <tr><th scope="row">Inspector: <span class="mn">Title</span> / <span class="mn">Explanation</span> / <span class="mn">Local Heading</span> / <span class="mn">Remote Heading</span> / <span class="mn">Keep Label</span> / <span class="mn">Newest Tag</span></th><td>Every word on the panel, for rewording and translating it.</td></tr>
+        <tr><th scope="row">Inspector: <span class="mn">Scale Multiplier</span></th><td>Size on top of the screen's DPI scaling.</td></tr>
+        <tr><th scope="row">Inspector: <span class="mn">Panel Color</span> / <span class="mn">Dim Color</span> / <span class="mn">Text Color</span> / <span class="mn">Highlight Color</span></th><td>The panel, the wash over the game behind it, its words, and the mark around the save the keyboard is on. Changing one while the game runs is seen on the next frame.</td></tr>
+      </table></div>
+      <div class="note"><strong>A pad cannot answer it</strong>, since IMGUI is never sent pad input: a game played on a pad uses <strong>GameObject &gt; Persistent Asset &gt; Conflict Prompt (uGUI)</strong> instead, or calls <code>KeepLocal()</code> or <code>KeepRemote()</code> from its own UI. See <a href="../../user-manual/pages/Cloud%20and%20remote.html#asking">Ask the player</a>.</div>
+      <div class="note"><strong>The panel only appears on a manager set to <code>Ask</code>.</strong> <a href="API%20-%20Built-Ins.html#RemotePersistenceManager"><code>ConflictPolicy</code></a>, a remote manager setting, defaults to <code>PreferNewest</code>: opt in by overriding it with a serialized auto-property (see <a href="../../user-manual/pages/Cloud%20and%20remote.html#asking">Ask the player</a>). One that asks with nothing in the scene to answer keeps the most recent save instead, and the policy is only consulted while <code>CacheMode</code> enables a cache.</div>
+    </div>
+
+    <div class="type-section" id="PersistenceDrainDisplay">
+      <div class="type-header"><h3>PersistenceDrainDisplay</h3><span class="badge badge-mb">MB</span><span class="badge badge-new">2.0</span></div>
+      <p class="type-desc">Tells the player why the game is not closing yet: while the <a href="../../user-manual/pages/Save%20and%20load.html#drain">shutdown drain</a> waits for a save in flight, it draws "Saving your progress" over everything. Ships in every build, unlike the debug overlay, and appears only once the wait outlasts half a second so a quick save never flickers. Add it to a GameObject, or drop in the <code>Persistent Asset Drain Display</code> prefab; it needs no wiring, it listens to the drain events.</p>
+      <div class="member-group"><table class="mt">
+        <tr><th scope="row">Inspector: <span class="mn">Message</span></th><td>What it says while it waits. Defaults to <code>WaitingText</code>.</td></tr>
+        <tr><th scope="row"><span class="kw">const string</span> <span class="mn">WaitingText</span></th><td>The default wording, "Saving your progress...", so a display of your own says what this one says.</td></tr>
+        <tr><th scope="row">Inspector: <span class="mn">Allow Force Quit</span> / <span class="mn">Force Quit Delay</span></th><td>Offer a button abandoning the wait, and how long the wait must last first. Off by default: a player must never meet a one-tap way to lose their save. The delay defaults to 10 seconds.</td></tr>
+        <tr><th scope="row">Inspector: <span class="mn">Force Quit Label</span></th><td>What that button says. Defaults to <code>ForceQuitText</code>.</td></tr>
+        <tr><th scope="row"><span class="kw">const string</span> <span class="mn">ForceQuitText</span></th><td>The default caption, "Quit anyway".</td></tr>
+        <tr><th scope="row"><span class="t">bool</span> <span class="mn">AllowForceQuit</span> { get; set; }</th><td>Whether that button is offered at all, for a game deciding while it runs.</td></tr>
+        <tr><th scope="row">Inspector: <span class="mn">Scale Multiplier</span></th><td>Size on top of the screen's DPI scaling.</td></tr>
+        <tr><th scope="row">Inspector: <span class="mn">Panel Color</span> / <span class="mn">Text Color</span> / <span class="mn">Highlight Color</span></th><td>The panel, its words, and the mark around the button when the keyboard is on it. Changing one while the game runs is seen on the next frame.</td></tr>
+      </table></div>
+      <div class="note"><strong>Development builds name what is still writing</strong>, under the message; a release build shows the message alone. The button answers the mouse, a touch and the keyboard (the first key press only marks it, so no single keystroke abandons a save in flight), but not a pad: call <code>Persistence.ForceQuitDrain()</code> from your own control for that.</div>
+    </div>
+
+    <h2 class="api-group">Serialization</h2>
+
+    <div class="type-section" id="Serializer">
+      <div class="type-header"><h3>Serializer</h3><span class="badge badge-class">abstract</span><span class="warn">extending</span></div>
+      <p class="type-desc">Custom serialization. Must not fail on valid data. Worked example: <a href="../../user-manual/pages/Extend%20the%20package.html#serializer">A custom serializer</a>.</p>
+      <div class="member-group"><table class="mt">
+        <tr><th scope="row"><span class="t">string</span> <span class="mn">SerializeToString</span>(<span class="t">object</span> obj, <span class="t">string</span> backReferenceFieldName)</th><td>Object to string.</td></tr>
+        <tr><th scope="row"><span class="t">bool</span> <span class="mn">DeserializeFromString</span>(<span class="t">string</span> str, <span class="t">object</span> obj)</th><td>String into object; returns success.</td></tr>
+        <tr><th scope="row"><span class="t">bool</span> <span class="mn">IsBinary</span> { get; }</th><td>Whether this serializer writes raw bytes; the package then calls the byte pair below instead of the string pair. Default false.</td></tr>
+        <tr><th scope="row"><span class="t">byte</span>[] <span class="mn">SerializeToBytes</span>(<span class="t">object</span> obj, <span class="t">string</span> backReferenceFieldName)</th><td>Object to bytes; only called while <code>IsBinary</code>.</td></tr>
+        <tr><th scope="row"><span class="t">bool</span> <span class="mn">DeserializeFromBytes</span>(<span class="t">byte</span>[] bytes, <span class="t">object</span> obj)</th><td>Bytes into object; returns success. Only called while <code>IsBinary</code>.</td></tr>
+        <tr><th scope="row"><span class="t">SaveNode</span> <span class="mn">ParseToNode</span>(<span class="t">string</span> str)</th><td>Parse to a neutral tree for upgrades (null if unsupported). Only called while <code>IsBinary</code> is false.</td></tr>
+        <tr><th scope="row"><span class="t">bool</span> <span class="mn">SupportsNode</span> { get; }</th><td>Whether <code>ParseToNode</code> returns a usable tree; override it to <code>true</code> when you implement <code>ParseToNode</code>. Default false.</td></tr>
       </table></div>
     </div>
 
     <div class="type-section" id="SaveNode">
-      <div class="type-header"><h2>SaveNode</h2><span class="badge badge-class">abstract</span></div>
-      <p class="type-desc">Read-only, format-neutral view of a saved payload, handed to <code>IUpgradable.Upgrade</code>.</p>
+      <div class="type-header"><h3>SaveNode</h3><span class="badge badge-class">abstract</span></div>
+      <p class="type-desc">Read-only, format-neutral view of a saved payload. It is what <a href="#IUpgradable"><code>IUpgradable.Upgrade</code></a> reads an old save from, what <a href="#IMergeable"><code>IMergeable.Merge</code></a> reads the other device's save from, what <a href="#IFieldResettable"><code>IFieldResettable</code></a>'s two events hand back, and what <a href="#Serializer"><code>Serializer.ParseToNode</code></a> produces. Explained in <a href="../../user-manual/pages/Update%20a%20shipped%20save.html">Update a shipped save</a>.</p>
       <div class="member-group"><table class="mt">
-        <tr><td><span class="mn">this</span>[<span class="t">string</span> key] / <span class="mn">this</span>[<span class="t">int</span> index]</td><td>Object member / array element (or <code>Missing</code>).</td></tr>
-        <tr><td><span class="t">bool</span> <span class="mn">Exists</span> { get; } / <span class="t">int</span> <span class="mn">Count</span> { get; }</td><td>Presence and array length.</td></tr>
-        <tr><td><span class="mn">AsInt</span> / <span class="mn">AsFloat</span> / <span class="mn">AsBool</span> / <span class="mn">AsString</span> / <span class="mn">AsEnum&lt;T&gt;</span> ...</td><td>Typed readers with a fallback.</td></tr>
-        <tr><td><span class="mn">AsVector2/3/4</span> / <span class="mn">AsVector2Int/3Int</span> / <span class="mn">AsColor</span> / <span class="mn">AsColor32</span> / <span class="mn">AsQuaternion</span> ...</td><td>Common Unity-type readers.</td></tr>
-        <tr><td><span class="mn">Missing</span> (static) &middot; <span class="t">SaveNode</span> <span class="mn">Object</span>(<span class="t">Dictionary</span>&lt;<span class="t">string</span>, <span class="t">SaveNode</span>&gt; members) / <span class="mn">Array</span>(<span class="t">List</span>&lt;<span class="t">SaveNode</span>&gt; elements) / <span class="mn">Value</span>(<span class="t">string</span> text)</td><td>Build nodes (for a custom serializer).</td></tr>
-        <tr><td><span class="t">IEnumerator&lt;SaveNode&gt;</span> <span class="mn">GetEnumerator</span>()</td><td><code>SaveNode</code> is <code>IEnumerable&lt;SaveNode&gt;</code>: <code>foreach</code> over an array node's elements.</td></tr>
+        <tr><th scope="row"><span class="mn">this</span>[<span class="t">string</span> key] / <span class="mn">this</span>[<span class="t">int</span> index]</th><td>Object member / array element (or <code>Missing</code>).</td></tr>
+        <tr><th scope="row"><span class="t">bool</span> <span class="mn">Exists</span> { get; } / <span class="t">int</span> <span class="mn">Count</span> { get; }</th><td>Presence and array length.</td></tr>
+        <tr><th scope="row"><span class="mn">AsString</span> / <span class="mn">AsBool</span> / <span class="mn">AsChar</span> / <span class="mn">AsEnum&lt;T&gt;</span></th><td>Typed readers, each taking the fallback it answers with when the value is missing or will not convert.</td></tr>
+        <tr><th scope="row"><span class="mn">AsByte</span> / <span class="mn">AsSByte</span> / <span class="mn">AsShort</span> / <span class="mn">AsUShort</span> / <span class="mn">AsInt</span> / <span class="mn">AsUInt</span> / <span class="mn">AsLong</span> / <span class="mn">AsULong</span> / <span class="mn">AsFloat</span> / <span class="mn">AsDouble</span></th><td>The number readers, the integer and floating-point readers, with the same fallback rule.</td></tr>
+        <tr><th scope="row"><span class="mn">AsVector2</span> / <span class="mn">AsVector3</span> / <span class="mn">AsVector4</span> / <span class="mn">AsVector2Int</span> / <span class="mn">AsVector3Int</span> / <span class="mn">AsQuaternion</span> / <span class="mn">AsColor</span> / <span class="mn">AsColor32</span></th><td>The Unity-type readers, read from the same member shape the serializers write.</td></tr>
+        <tr><th scope="row"><span class="mn">Missing</span> (static) &middot; <span class="t">SaveNode</span> <span class="mn">Object</span>(<span class="t">Dictionary</span>&lt;<span class="t">string</span>, <span class="t">SaveNode</span>&gt; members) / <span class="mn">Array</span>(<span class="t">List</span>&lt;<span class="t">SaveNode</span>&gt; elements) / <span class="mn">Value</span>(<span class="t">string</span> text)</th><td>Build nodes (for a custom serializer).</td></tr>
+        <tr><th scope="row"><span class="t">IEnumerator&lt;SaveNode&gt;</span> <span class="mn">GetEnumerator</span>()</th><td><code>SaveNode</code> is <code>IEnumerable&lt;SaveNode&gt;</code>: <code>foreach</code> over an array node's elements.</td></tr>
       </table></div>
     </div>
 
 
     <!-- ═══════════════════════════════════════ Asset References ═══ -->
+    <h2 class="api-group">Asset references</h2>
+
     <div class="type-section" id="AssetRegistry">
-      <div class="type-header"><h2>AssetRegistry</h2><span class="badge badge-static">static</span></div>
-      <p class="type-desc">The project-wide table of assets save data may point at, and the lookup turning a stored id back into its asset. It is what lets a reference to a project asset survive a save. Filled in the editor (see <code>AssetRegistration</code> in the Editor Extension area); a registered asset is included in the build and loaded at startup. Reach for it when writing your own <code>Serializer</code>, which has to save a reference as its id.</p>
+      <div class="type-header"><h3>AssetRegistry</h3><span class="badge badge-static">static</span></div>
+      <p class="type-desc">The project-wide table of assets save data may point at, and the lookup turning a stored id back into its asset. It is what lets a reference to a project asset survive a save. Filled in the editor (see <a href="API%20-%20Editor%20Extension.html#AssetRegistration"><code>AssetRegistration</code></a> in the Editor Extension area); a registered asset is included in the build and loaded at startup. Reach for it when writing your own <a href="#Serializer"><code>Serializer</code></a>, which has to save a reference as its id.</p>
       <div class="member-group"><table class="mt">
-        <tr><td><span class="t">bool</span> <span class="mn">TryResolve</span>(<span class="t">string</span> id, <span class="kw">out</span> <span class="t">Object</span> asset)</td><td>Resolves a stored id, false when empty or no longer registered.</td></tr>
-        <tr><td><span class="t">T</span> <span class="mn">Resolve</span>&lt;<span class="t">T</span>&gt;(<span class="t">string</span> id)</td><td>The same, typed, returning null instead of throwing.</td></tr>
-        <tr><td><span class="t">string</span> <span class="mn">IdOf</span>(<span class="t">Object</span> asset)</td><td>The id an asset is registered under, or null. Never derives one from the project on the fly, so an unregistered asset fails the same way in the editor and in a build.</td></tr>
-        <tr><td><span class="t">bool</span> <span class="mn">IsRegistered</span>(<span class="t">Object</span> asset) / <span class="t">int</span> <span class="mn">Count</span> { get; }</td><td>Whether an asset can be saved, and how many are registered.</td></tr>
-      </table></div>
-    </div>
-
-
-    <!-- ═══════════════════════════════════════ Attributes ═══ -->
-    <div class="type-section" id="Attributes">
-      <div class="type-header"><h2>Attributes</h2><span class="badge badge-class">attr</span></div>
-      <div class="member-group"><table class="mt">
-        <tr><td><span class="mn">[PersistentScriptableObject(<span class="t">string</span> persistenceManagerFieldName)]</span><br/><span class="t">string</span> <span class="mn">PersistenceManagerFieldName</span> { get; }</td><td>Make a ScriptableObject persistent without inheriting the base class, naming its serialized <code>PersistenceManager</code> field.</td></tr>
-        <tr><td><span class="mn">[InspectorDisplay(<span class="t">string</span> name, <span class="t">string</span> description = null)]</span><br/><span class="t">string</span> <span class="mn">Name</span> / <span class="mn">Description</span> { get; }, <span class="t">int</span> <span class="mn">Order</span> { get; set; }, <span class="t">string</span> <span class="mn">Category</span> { get; set; }</td><td>Display name, description, ordering and submenu for a manager, serializer or tooling method in the inspector / its menu. <span class="ex">The constructor throws ArgumentException when name is null or whitespace.</span></td></tr>
-        <tr><td><span class="mn">[Breaking(<span class="t">string</span> warning = null)]</span><br/><span class="t">string</span> <span class="mn">Warning</span> { get; }</td><td>Mark a manager field whose change would orphan existing saves, so the inspector warns and locks it.</td></tr>
-        <tr><td><span class="mn">[PersistenceManagerInfo]</span><br/><span class="t">StorageKind</span> <span class="mn">StorageKind</span> { get; set; }</td><td>Declare type-level facts of a manager class (inherited by subclasses). <code>StorageKind</code>: <code>Durable</code> (real player saves, the default without the attribute), <code>Transient</code> (nothing recoverable: never lockable, no import copy kept of it), or <code>Test</code> (a fake manager: assigning it always keeps an import copy of the replaced setup, restorable in one click, and it never ships: a non-development build fails while one exists, a development build warns).</td></tr>
-        <tr><td><span class="mn">[RequiredSerializer(<span class="t">Type</span> serializerType)]</span><br/><span class="t">Type</span> <span class="mn">SerializerType</span> { get; }</td><td>Lock a persistent object to a specific serializer (inherited by subclasses).</td></tr>
+        <tr><th scope="row"><span class="t">bool</span> <span class="mn">TryResolve</span>(<span class="t">string</span> id, <span class="kw">out</span> <span class="t">Object</span> asset)</th><td>Resolves a stored id, false when empty or no longer registered.</td></tr>
+        <tr><th scope="row"><span class="t">T</span> <span class="mn">Resolve</span>&lt;<span class="t">T</span>&gt;(<span class="t">string</span> id) where T : Object</th><td>The same, typed: <code>null</code> when the id is empty, no longer registered, or registered to an asset of another type.</td></tr>
+        <tr><th scope="row"><span class="t">bool</span> <span class="mn">TryResolve</span>&lt;<span class="t">T</span>&gt;(<span class="t">string</span> id, <span class="kw">out</span> <span class="t">T</span> asset) where T : Object</th><td>The typed pair of the two above, for a custom <code>Serializer</code> branching on whether a reference resolved.</td></tr>
+        <tr><th scope="row"><span class="t">string</span> <span class="mn">IdOf</span>(<span class="t">Object</span> asset)</th><td>The id an asset is registered under, or null. Never derives one from the project on the fly, so an unregistered asset fails the same way in the editor and in a build.</td></tr>
+        <tr><th scope="row"><span class="t">bool</span> <span class="mn">IsRegistered</span>(<span class="t">Object</span> asset) / <span class="t">int</span> <span class="mn">Count</span> { get; }</th><td>Whether an asset can be saved, and how many are registered.</td></tr>
+        <tr><th scope="row"><span class="t">string</span> <span class="mn">UnsavableMessage</span>(<span class="t">Object</span> asset, <span class="t">string</span> consequence)</th><td>The message to report when a reference cannot be saved, telling an asset nobody registered apart from an object created at runtime, which is not an asset at all and needs its own data saved instead. Use it in a custom <code>Serializer</code> so both cases read the same everywhere.</td></tr>
       </table></div>
     </div>
 
 
     <!-- ═══════════════════════════════════════ Debugging ═══ -->
+    <h2 class="api-group">Debugging</h2>
+
     <div class="type-section" id="LogLevel">
-      <div class="type-header"><h2>LogLevel</h2><span class="badge badge-enum">enum</span></div>
+      <div class="type-header"><h3>LogLevel</h3><span class="badge badge-enum">enum</span></div>
       <div class="member-group"><table class="mt">
-        <tr><td><span class="mn">None</span> / <span class="mn">Info</span> / <span class="mn">Warning</span> / <span class="mn">Error</span></td><td>Severity of a persistence log message, used with the manager's <code>Log()</code>.</td></tr>
+        <tr><th scope="row"><span class="mn">None</span> / <span class="mn">Info</span> / <span class="mn">Warning</span> / <span class="mn">Error</span></th><td>Severity of a persistence log message, used with the manager's <code>Log()</code>.</td></tr>
       </table></div>
     </div>
 
-    <div class="type-section" id="InGameLogsViewer">
-      <div class="type-header"><h2>InGameLogsViewer</h2><span class="badge badge-mb">MB</span></div>
-      <p class="type-desc">Add this component to a GameObject for an on-screen view of every active manager's logs (editor and development builds only; in a release build it self-destroys on Awake).</p>
+    <div class="type-section" id="PersistenceDebugOverlay">
+      <div class="type-header"><h3>PersistenceDebugOverlay</h3><span class="badge badge-mb">MB</span><span class="badge badge-new">2.0</span></div>
+      <p class="type-desc">An on-screen panel showing what persistence is doing in a running game: every active manager, and for the selected one its state, its logs, what its storage holds against what the object holds, and buttons forcing a load, a save or a clear. It is the inspector's information on a device. Add it to a GameObject, or drop in the <code>Persistent Asset Debug Overlay</code> prefab. Editor and development builds only: a release build removes it on <code>Awake</code> unless <strong>Keep In Release Builds</strong> is on. See <a href="../../user-manual/pages/Troubleshooting.html#in-game">Debugging</a>.</p>
+      <div class="member-group"><table class="mt">
+        <tr><th scope="row"><span class="t">bool</span> <span class="mn">IsOpen</span> { get; set; } &middot; <span class="kw">void</span> <span class="mn">Toggle</span>()</th><td>Whether the panel is showing, and the toggle to bind to your game's own debug key.</td></tr>
+        <tr><th scope="row"><span class="t">KeyCode</span> <span class="mn">ToggleKey</span> { get; set; }</th><td>The key that opens and closes it (F8 by default). Read from the GUI event stream, so it needs neither input backend.</td></tr>
+        <tr><th scope="row"><span class="t">bool</span> <span class="mn">KeepInReleaseBuilds</span> { get; }</th><td>Whether it survives a release build. It then draws no handle, leaving the toggle key and the corner gesture below as the ways in.</td></tr>
+        <tr><th scope="row">Inspector: <span class="mn">Release Unlock Corner</span> / <span class="mn">Release Unlock Taps</span></th><td>The corner to tap to open it (a <a href="#DebugOverlayCorner"><code>DebugOverlayCorner</code></a>, <code>TopLeft</code> by default) and how many taps inside it, within two seconds, open the panel. The gesture runs in every build, so it can be tried here rather than only after shipping.</td></tr>
+        <tr><th scope="row">Inspector: <span class="mn">Scale Multiplier</span> / <span class="mn">Open On Start</span></th><td>Size on top of the screen's DPI scaling, and whether it starts open.</td></tr>
+      </table></div>
+    </div>
+
+    <div class="type-section" id="DebugOverlayCorner">
+      <div class="type-header"><h3>DebugOverlayCorner</h3><span class="badge badge-enum">enum</span><span class="badge badge-new">2.0</span></div>
+      <p class="type-desc"><code>None</code>, <code>TopLeft</code>, <code>TopRight</code>, <code>BottomLeft</code>, <code>BottomRight</code>. Which corner opens a <a href="#PersistenceDebugOverlay"><code>PersistenceDebugOverlay</code></a> when tapped. <code>None</code> turns the gesture off, leaving the toggle key and your own code as the ways in.</p>
     </div>
 
     <div class="type-section" id="PersistentAssetConsole">
-      <div class="type-header"><h2>PersistentAssetConsole</h2><span class="badge badge-static">static</span><span class="warn">extending</span></div>
-      <p class="type-desc">Write to the Unity console with the standard colored "[Persistent Asset ...]" prefix. Pass the sub-module name as <code>module</code> (e.g. <code>nameof(BuiltIns)</code>), or <code>null</code> for Core.</p>
+      <div class="type-header"><h3>PersistentAssetConsole</h3><span class="badge badge-static">static</span><span class="warn">extending</span></div>
+      <p class="type-desc">For code that extends the package: writes to the Unity console with the standard colored "[Persistent Asset ...]" prefix. Pass the sub-module name as <code>module</code> (e.g. <code>nameof(BuiltIns)</code>), or <code>null</code> for Core.</p>
       <div class="member-group"><table class="mt">
-        <tr><td><span class="kw">void</span> <span class="mn">Log</span>(<span class="t">string</span> module, <span class="t">string</span> message, <span class="t">Object</span> context = null)</td><td>Informational message.</td></tr>
-        <tr><td><span class="kw">void</span> <span class="mn">LogWarning</span>(<span class="t">string</span> module, <span class="t">string</span> message, <span class="t">Object</span> context = null) / <span class="mn">LogError</span>(...)</td><td>Warning / error message.</td></tr>
-        <tr><td><span class="kw">void</span> <span class="mn">LogException</span>(<span class="t">Exception</span> exception, <span class="t">Object</span> context = null)</td><td>Log an exception (native entry, no prefix).</td></tr>
+        <tr><th scope="row"><span class="kw">void</span> <span class="mn">Log</span>(<span class="t">string</span> module, <span class="t">string</span> message, <span class="t">Object</span> context = null)</th><td>Informational message.</td></tr>
+        <tr><th scope="row"><span class="kw">void</span> <span class="mn">LogWarning</span>(<span class="t">string</span> module, <span class="t">string</span> message, <span class="t">Object</span> context = null) / <span class="mn">LogError</span>(...)</th><td>Warning / error message.</td></tr>
+        <tr><th scope="row"><span class="kw">void</span> <span class="mn">LogException</span>(<span class="t">Exception</span> exception, <span class="t">Object</span> context = null)</th><td>Log an exception (native entry, no prefix).</td></tr>
       </table></div>
     </div>
 
-    <div class="doc-footer">Persistent Asset v1.1.0 &nbsp;&middot;&nbsp; For full signatures and remarks, see the XML doc comments in the source.</div>
+    <!-- ═══════════════════════════════════════ Attributes ═══ -->
+    <h2 class="api-group">Attributes</h2>
+
+    <div class="type-section" id="Attributes">
+      <div class="type-header"><h3>Attributes</h3><span class="badge badge-class">attr</span></div>
+      <div class="member-group"><table class="mt">
+        <tr><th scope="row"><span class="mn">[PersistentScriptableObject(<span class="t">string</span> persistenceManagerFieldName)]</span><br/><span class="t">string</span> <span class="mn">PersistenceManagerFieldName</span> { get; }</th><td>Make a ScriptableObject persistent without inheriting the base class, naming its serialized <a href="#PersistenceManager"><code>PersistenceManager</code></a> field.</td></tr>
+        <tr><th scope="row"><span class="mn">[InspectorDisplay(<span class="t">string</span> name, <span class="t">string</span> description = null)]</span><br/><span class="t">string</span> <span class="mn">Name</span> / <span class="mn">Description</span> { get; }, <span class="t">int</span> <span class="mn">Order</span> { get; set; }, <span class="t">string</span> <span class="mn">Category</span> { get; set; }</th><td>Display name, description, ordering and submenu for a manager, serializer or tooling method in the inspector / its menu. <span class="ex">The constructor throws ArgumentException when name is null or whitespace.</span></td></tr>
+        <tr><th scope="row"><span class="mn">[Breaking(<span class="t">string</span> warning = null)]</span><br/><span class="t">string</span> <span class="mn">Warning</span> { get; }</th><td>Mark a manager field whose change would orphan existing saves, so the inspector warns and locks it.</td></tr>
+        <tr><th scope="row"><span class="mn">[PersistenceManagerInfo]</span><br/><span class="t">StorageKind</span> <span class="mn">StorageKind</span> { get; set; }</th><td>Declare type-level facts of a manager class (inherited by subclasses). <code>StorageKind</code>: <code>Durable</code> (real player saves, the default without the attribute), <code>Transient</code> (nothing recoverable: never lockable, no import copy kept of it), or <code>Test</code> (a fake manager: assigning it always keeps an import copy of the replaced setup, restorable in one click, and it never ships: a non-development build fails while one exists, a development build warns).</td></tr>
+        <tr><th scope="row"><span class="mn">[RequiredSerializer(<span class="t">Type</span> serializerType)]</span><br/><span class="t">Type</span> <span class="mn">SerializerType</span> { get; }</th><td>Lock a persistent asset to a specific serializer (inherited by subclasses).</td></tr>
+        <tr><th scope="row"><span class="mn">[FolderPath(<span class="t">string</span> emptyHint = null, <span class="kw">bool</span> createdOnDemand = false)]</span><br/><span class="t">string</span> <span class="mn">EmptyHint</span> { get; }, <span class="kw">bool</span> <span class="mn">CreatedOnDemand</span> { get; }</th><td>Draw a <code>string</code> field as a project folder: the path under <code>Assets</code>, typed or picked or dropped in, stored whole as <code>"Assets/..."</code>. Anything that is not a folder under <code>Assets</code> is refused. <code>emptyHint</code> is the greyed text an empty field shows ("None" without one), and <code>createdOnDemand</code> says the feature reading the setting creates the folder itself, so a path with nothing behind it is not marked with a warning. Editor only, through <a href="API%20-%20Editor%20Extension.html#PersistentAssetEditorGUI">PersistentAssetEditorGUI.FolderField</a>.</td></tr>
+      </table></div>
+    </div>
+
+
+    <!-- ═══════════════════════════════════════ Player UI ═══ -->
+    <div class="doc-footer">Persistent Asset v2.0.0 &nbsp;&middot;&nbsp; For full signatures and remarks, see the XML doc comments in the source.</div>
 
   </main>
 </div>

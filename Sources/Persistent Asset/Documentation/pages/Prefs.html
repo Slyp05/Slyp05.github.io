@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Save a single value from anywhere in your code, with one line and nothing to set up." />
+  <title>Persistent Asset - Prefs</title>
+  <link rel="stylesheet" href="../shared/styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Persistent Asset</div><a href="../User%20Manual.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Prefs</h1>
+      <div class="sub">Save a single value from anywhere in your code, with one line and nothing to set up.</div>
+
+    <div class="guide-index">
+      <a href="#api">Set and get a value</a>
+      <a href="#asset">The Prefs asset</a>
+      <a href="#choosing">Choose between Prefs and a data class</a>
+    </div>
+    </div>
+
+    <!-- ══════════════════════════════════════ api ════ -->
+    <section id="api">
+      <h2>Set and get a value</h2>
+      <p><code>Prefs</code> is a static class. Call <code>Set</code> to store a value under a key, and
+        <code>Get</code> to read it back:</p>
+      <pre><code><span class="ty">Prefs</span>.Set(<span class="st">"gold"</span>, <span class="nu">120</span>);
+<span class="ty">Prefs</span>.Set(<span class="st">"lastCheckpoint"</span>, transform.position);
+
+<span class="kw">int</span> gold = <span class="ty">Prefs</span>.Get&lt;<span class="kw">int</span>&gt;(<span class="st">"gold"</span>);
+<span class="ty">Vector3</span> spot = <span class="ty">Prefs</span>.Get(<span class="st">"lastCheckpoint"</span>, spawn.position);   <span class="cm">// the fallback stands in when missing</span></code></pre>
+      <p>A key holds what a <a href="No-Code.html#variables">Persistent Variable</a> holds. Prefs saves at the
+        usual <a href="Save%20and%20load.html#whentosave">safe points</a>.</p>
+      <div class="note"><strong>Note:</strong> <code>Set</code> and <code>Get</code> take a single value. For a
+        collection, use <code>Prefs.GetList&lt;string&gt;</code> or
+        <code>Prefs.GetMap&lt;string, int&gt;</code>, which hand back live collections. For every member, refer to
+        the <a href="API%20-%20Prefs.html#Prefs">Prefs API reference</a>.</div>
+      <div class="note"><strong>Note:</strong> With a remote manager, <code>Get</code> answers with its fallback
+        until the first load lands, and a <code>Set</code> made before then is overwritten. For more information,
+        refer to <a href="How%20saving%20works.html#ready">When the data is ready</a>.</div>
+    </section>
+
+    <!-- ══════════════════════════════════════ asset ════ -->
+    <section id="asset">
+      <h2>The Prefs asset</h2>
+      <p>Prefs keeps every key in one asset of type
+        <a href="API%20-%20Prefs.html#PersistentPrefs"><code>PersistentPrefs</code></a>. The package creates the
+        asset the first time your code touches <code>Prefs</code>, and
+        <strong>Tools &gt; Persistent Asset &gt; Prefs Asset</strong> selects it. You can move the asset anywhere,
+        because the package looks it up by type. It is an ordinary persistent asset, so it takes any manager,
+        slots and protection without a change to your code.</p>
+      <div class="img-block">
+        <img src="../img/prefs_asset_inspector" alt="The Prefs asset in the Inspector window"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">&#128247;</span>
+          <span><strong>img/prefs_asset_inspector</strong><br/>The Prefs asset with several keys in it</span>
+        </div>
+      </div>
+      <div class="note"><strong>Note:</strong> Only the Editor creates the asset, so enter Play mode once before
+        you build.</div>
+      <p>To give a key a starting value for every new game, add the key in the asset's Inspector window.
+        <code>Prefs.ResetVariable</code> puts one key back to that value. To show or change a key without writing
+        a script, drag the asset onto a <a href="No-Code.html#components">variable component</a>.</p>
+    </section>
+
+    <!-- ══════════════════════════════════════ choosing ════ -->
+    <section id="choosing">
+      <h2>Choose between Prefs and a data class</h2>
+      <p>Both save the same values, to the same places, through the same managers. They differ in how you declare
+        what you save.</p>
+      <div class="table-scroll">
+        <table class="cmp">
+          <thead><tr><th scope="col">Approach</th><th scope="col">What it gives you</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Prefs</strong></td><td>Keys created wherever the code runs, one line per value. The compiler can't check a key or a type.</td></tr>
+            <tr><td><strong>A <a href="Data%20class.html">data class</a> of your own</strong></td><td>Fields on a class you write: compile-time names and types, versioned migration, and several assets saving to separate files.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════ resources ════ -->
+    <div class="resources">
+      <h2>Additional resources</h2>
+      <ul>
+        <li><a href="API%20-%20Prefs.html#Prefs">Prefs API reference</a></li>
+        <li><a href="Data%20class.html">Data class</a></li>
+        <li><a href="No-Code.html#variables">Persistent Variables</a></li>
+      </ul>
+    </div>
+
+    <div class="pager">
+      <a class="prev" href="Data%20class.html">
+        <div class="dir">Back</div>
+        <div class="pg-title">Data class</div>
+      </a>
+      <a class="next" href="No-Code.html">
+        <div class="dir">Next</div>
+        <div class="pg-title">No-Code</div>
+      </a>
+    </div>
+
+    <div class="doc-footer">Persistent Asset v2.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

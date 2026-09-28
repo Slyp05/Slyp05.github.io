@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Use Persistent Asset to save and load your data, whether it lives in a class, in the Inspector window or in your scene, and wherever you choose to store it." />
   <title>Persistent Asset - User Manual</title>
   <link rel="stylesheet" href="/assets/css/doc-styles.css" />
   <link rel="stylesheet" href="/assets/css/doc-dark.css" />
@@ -15,6 +16,7 @@
   <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </head>
 <body>
+<a class="skip-link" href="#content">Skip to content</a>
 <div id="layout">
 
   <!-- ─── Sidebar navigation ─── -->
@@ -22,172 +24,160 @@
   <noscript><nav><div class="nav-title">Persistent Asset</div><a href="index.html">Home</a></nav></noscript>
 
   <!-- ─── Main content ─── -->
-  <main>
+  <main id="content">
 
-    <div class="hero">
+    <div class="page-header">
       <h1>User Manual</h1>
-      <p class="tagline">
-        A save system for Unity. Declare your game data once, and it saves and loads itself.
-      </p>
+      <div class="sub">Use Persistent Asset to save and load your data, whether it lives in a class, in the Inspector window or in your scene, and wherever you choose to store it.</div>
+
+    <div class="guide-index">
+      <a href="#start">Start here</a>
+      <a href="#ways">Ways to save</a>
+      <a href="#saving">Saving and loading</a>
+      <a href="#storage">Where it is stored</a>
+      <a href="#help">Help</a>
+      <a href="#advanced">Advanced</a>
+      <a href="#contact">Author and contact</a>
+    </div>
     </div>
 
-
-    <!-- ════════════════════════════════════════ The whole idea ════ -->
-    <section id="the-idea">
-      <h2>The whole idea</h2>
-      <p>
-        Your save data lives in an asset. Make a class that inherits
-        <code>PersistentScriptableObject</code>, and every serialized field on it
-        survives between play sessions, automatically.
-      </p>
-
-      <pre><code><span class="kw">using</span> PersistentAsset;
-<span class="kw">using</span> UnityEngine;
-
-[CreateAssetMenu(menuName = <span class="st">"Player Data"</span>)]
-<span class="kw">public class</span> <span class="ty">PlayerData</span> : <span class="ty">PersistentScriptableObject</span>
-{
-    <span class="kw">public int</span> gold;
-    <span class="kw">public int</span> level = <span class="nu">1</span>;
-}</code></pre>
-
-      <p>
-        That is the entire setup. Create the asset, press Play, change the values,
-        stop, press Play again, and they are still there. No save code, no file
-        paths, no boilerplate.
-      </p>
-
-      <div class="note">
-        Persistent Asset stores your data in ScriptableObjects. Never used one? Here is a
-        <a href="pages/What%20is%20a%20ScriptableObject.html">two-minute primer</a>.
-      </div>
-
-      <div class="reassure">
-        The example above covers most projects. Save slots, encryption, cloud saves, save versioning
-        and no-code variables layer on top, as a game needs them.
-      </div>
-    </section>
-
-
-    <!-- ════════════════════════════════════════════ Why ════ -->
-    <section id="why">
-      <h2>No parallel data model</h2>
-      <p>
-        A traditional save system asks for a second set of data structures: save classes next to your
-        game data, code to copy fields into them to write, code to copy them back to read, and both
-        models kept in sync release after release.
-      </p>
-      <p>
-        Here your data <em>is</em> the save. The asset holding a profile, settings, progression or an
-        inventory is the same object your game reads at runtime and your designers edit in the
-        inspector, so there is no mapping layer and nothing to drift out of date.
-      </p>
-    </section>
-
-
-    <!-- ════════════════════════════════════════════ Where to go ════ -->
-    <section id="where-to-go">
-      <h2>Where to go next</h2>
-
+    <!-- ══════════════════════════════════════ start ════ -->
+    <section id="start">
+      <h2>Start here</h2>
       <div class="cards">
-
+        <a class="card" href="../quick-usage-guide/index.html">
+          <h3>Quick Usage Guide</h3>
+          <p>See every way to save, and every place to put it, on one page.</p>
+        </a>
         <a class="card" href="pages/Installation.html">
-          <span class="num">Setup</span>
-          <h3>Installation &amp; Demo</h3>
-          <p>Requirements, platforms, optional modules, and the sample game to run.</p>
+          <h3>Installation</h3>
+          <p>Import Persistent Asset, run the demo, and find the settings and tools the package adds to your project.</p>
         </a>
-
-        <a class="card" href="pages/Getting%20Started.html">
-          <span class="num">Start here</span>
-          <h3>Getting Started <span class="tag tag-mustread">Must read</span></h3>
-          <p>Save your first value in about five minutes. The happy path, nothing else.</p>
-        </a>
-
-        <a class="card" href="pages/Core%20Concepts.html">
-          <span class="num">The mental model</span>
-          <h3>Core Concepts <span class="tag tag-mustread">Must read</span></h3>
-          <p>The parts (your data, a manager, a serializer) and how saving flows.</p>
-        </a>
-
-        <a class="card" href="pages/Local%20Saving.html">
-          <span class="num">On the device</span>
-          <h3>Local Saving</h3>
-          <p>Prototype, Player Prefs, Local File, Session, and which one to choose.</p>
-        </a>
-
-        <a class="card" href="pages/Cloud%20and%20Remote.html">
-          <span class="num">Across devices</span>
-          <h3>Cloud &amp; Remote <span class="tag tag-advanced">Advanced</span></h3>
-          <p>Unity Gaming Services Cloud Save, or your own server over HTTP.</p>
-        </a>
-
-        <a class="card" href="pages/Serializers.html">
-          <span class="num">The format</span>
-          <h3>Serializers</h3>
-          <p>Unity JSON, Newtonsoft JSON and Odin: what each one writes, and switching later.</p>
-        </a>
-
-        <a class="card" href="pages/Quick%20Help.html">
-          <span class="num">At a glance</span>
-          <h3>Quick Help</h3>
-          <p>Quick fixes for the common surprises, and where to look when something is off.</p>
-        </a>
-
-        <a class="card" href="pages/Guides.html">
-          <span class="num">How do I&hellip;?</span>
-          <h3>Guides</h3>
-          <p>Migrating saves, slots, security, versioning, singletons, debugging and more.</p>
-        </a>
-
-        <a class="card" href="pages/No-Code.html">
-          <span class="num">No scripting</span>
-          <h3>No-Code <span class="tag tag-designer">For designers</span></h3>
-          <p>Persist values, input bindings and locale from the inspector, without writing a line.</p>
-        </a>
-
-        <a class="card" href="pages/Settings.html">
-          <span class="num">Configuration</span>
-          <h3>Settings</h3>
-          <p>Everything under <strong>Project Settings &gt; Persistent Asset</strong>, in one place.</p>
-        </a>
-
-        <a class="card" href="pages/Extending.html">
-          <span class="num">Power users</span>
-          <h3>Extending <span class="tag tag-advanced">Advanced</span></h3>
-          <p>Write your own persistence manager, serializer, remote manager, codec or widget.</p>
-        </a>
-
-        <a class="card" href="pages/Technical%20QA.html">
-          <span class="num">Under the hood</span>
-          <h3>Technical Q&amp;A <span class="tag tag-advanced">Advanced</span></h3>
-          <p>Crash safety, atomic writes, async conflicts, security: the implementation answers.</p>
-        </a>
-
       </div>
     </section>
 
+    <!-- ══════════════════════════════════════ ways ════ -->
+    <section id="ways">
+      <h2>Ways to save</h2>
+      <div class="cards">
+        <a class="card" href="pages/Data%20class.html">
+          <h3>Data class</h3>
+          <p>Write a class of your own whose serialized fields are what the package saves and loads.</p>
+        </a>
+        <a class="card" href="pages/Prefs.html">
+          <h3>Prefs</h3>
+          <p>Save a single value from anywhere in your code, with one line and nothing to set up.</p>
+        </a>
+        <a class="card" href="pages/No-Code.html">
+          <h3>No-Code</h3>
+          <p>Persist values and build a save menu from the Inspector window, without writing a script.</p>
+        </a>
+        <a class="card" href="pages/Scene%20Objects.html">
+          <h3>Scene Objects</h3>
+          <p>Save what your scene holds: the state of an object, whether it still exists, and references to it.</p>
+        </a>
+        <a class="card" href="pages/What%20can%20be%20saved.html">
+          <h3>What can be saved</h3>
+          <p>Choose the serializer that decides which of your fields end up in the save.</p>
+        </a>
+      </div>
+    </section>
 
-    <!-- ══════════════════════════════════ Author &amp; Contact ════ -->
+    <!-- ══════════════════════════════════════ saving ════ -->
+    <section id="saving">
+      <h2>Saving and loading</h2>
+      <div class="cards">
+        <a class="card" href="pages/How%20saving%20works.html">
+          <h3>How saving works</h3>
+          <p>Learn what a persistent asset is, when it loads and saves, and when its data is safe to read.</p>
+        </a>
+        <a class="card" href="pages/Save%20and%20load.html">
+          <h3>Save and load</h3>
+          <p>Control when a load or a save runs, react to it from your own code, and hook into the operations around it.</p>
+        </a>
+        <a class="card" href="pages/Slots%20and%20save%20menus.html">
+          <h3>Slots and save menus</h3>
+          <p>Give a player several saves at once: slots, a quick save ring, New Game and Continue.</p>
+        </a>
+        <a class="card" href="pages/Update%20a%20shipped%20save.html">
+          <h3>Update a shipped save</h3>
+          <p>Change the shape of a save that already shipped, and erase a player's data on request.</p>
+        </a>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════ storage ════ -->
+    <section id="storage">
+      <h2>Where it is stored</h2>
+      <div class="cards">
+        <a class="card" href="pages/Save%20on%20the%20device.html">
+          <h3>Save on the device</h3>
+          <p>Store a save on the player's own machine with one of the built-in local managers.</p>
+        </a>
+        <a class="card" href="pages/Save%20per%20platform.html">
+          <h3>Save per platform</h3>
+          <p>Route one persistent asset to a different storage on each platform you ship to.</p>
+        </a>
+        <a class="card" href="pages/Cloud%20and%20remote.html">
+          <h3>Cloud &amp; remote</h3>
+          <p>Store a save off the device: on your own server, on Unity Cloud Save, or on Steam.</p>
+        </a>
+        <a class="card" href="pages/Connect%20to%20a%20backend%20service.html">
+          <h3>Connect to a backend service</h3>
+          <p>Fill in the Server (HTTP) manager for PlayFab, Firestore, Supabase and other backend services.</p>
+        </a>
+        <a class="card" href="pages/Secure%20saves.html">
+          <h3>Secure saves</h3>
+          <p>Compress, encrypt and lock a save, on a file and on a server.</p>
+        </a>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════ help ════ -->
+    <section id="help">
+      <h2>Help</h2>
+      <div class="cards">
+        <a class="card" href="pages/Troubleshooting.html">
+          <h3>Troubleshooting</h3>
+          <p>Find out why a save didn't land, what the tools report, and what a save costs at runtime.</p>
+        </a>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════ advanced ════ -->
+    <section id="advanced">
+      <h2>Advanced</h2>
+      <div class="cards">
+        <a class="card" href="pages/Extend%20the%20package.html">
+          <h3>Extend the package</h3>
+          <p>Write your own persistence manager, serializer, settings section or variable type.</p>
+        </a>
+        <a class="card" href="pages/Technical%20QA.html">
+          <h3>Technical Q&amp;A</h3>
+          <p>How the package behaves under crashes, concurrency, conflicts, faults and attacks, down to the implementation.</p>
+        </a>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════ contact ════ -->
     <section id="contact">
-      <h2>Author &amp; Contact</h2>
-      <p>Created by <strong>Juste Tools</strong>.</p>
+      <h2>Author and contact</h2>
       <ul>
         <li>Contact: <a href="mailto:justetools@gmail.com">justetools@gmail.com</a></li>
         <li>License: <a href="https://unity.com/legal/as-terms">Unity Asset Store EULA</a></li>
       </ul>
-      <p>Reviews on the Asset Store are always appreciated.</p>
+      <p>Email me with any question or bug report and I answer within one business day.</p>
     </section>
-
 
     <!-- ══════════════════════════════════════ pager ════ -->
     <div class="pager">
       <a class="next" href="pages/Installation.html">
         <div class="dir">Next</div>
-        <div class="pg-title">Installation &amp; Demo</div>
+        <div class="pg-title">Installation</div>
       </a>
     </div>
 
-    <div class="doc-footer">Persistent Asset v1.1.0 &nbsp;·&nbsp; namespace <code>PersistentAsset</code></div>
+    <div class="doc-footer">Persistent Asset v2.0.0</div>
 
   </main>
 </div>

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Store a save on the player&#x27;s own machine with one of the built-in local managers." />
+  <title>Persistent Asset - Save on the device</title>
+  <link rel="stylesheet" href="../shared/styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Persistent Asset</div><a href="../User%20Manual.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Save on the device</h1>
+      <div class="sub">Store a save on the player's own machine with one of the built-in local managers.</div>
+
+    <div class="guide-index">
+      <a href="#prototype">Prototype</a>
+      <a href="#file">Local File</a>
+      <a href="#playerprefs">Player Prefs</a>
+      <a href="#session">Session (Memory)</a>
+      <a href="#none">None</a>
+      <a href="#test">Test</a>
+      <a href="#deleting">Delete local data</a>
+    </div>
+    </div>
+
+    <!-- ══════════════════════════════════════ prototype ════ -->
+    <section id="prototype">
+      <h2>Prototype</h2>
+      <p>Prototype is the manager a new asset starts on. It has nothing to configure: it saves as soon as it is
+        assigned.</p>
+      <div class="img-block">
+        <img src="../img/prototype_manager_inspector" alt="The Prototype manager in the Inspector window"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">&#128247;</span>
+          <span><strong>img/prototype_manager_inspector</strong><br/>A persistent asset on the Prototype manager, with nothing to configure under it</span>
+        </div>
+      </div>
+      <p>In the Editor, its saves live in the project's <code>UserSettings</code> folder, so a Play mode session
+        never overwrites the saves of a build installed on the same machine.</p>
+      <p>Move to <a href="#file">Local File</a> once you need to choose the file name, the folder, compression or
+        encryption.</p>
+    </section>
+
+    <!-- ══════════════════════════════════════ file ════ -->
+    <section id="file">
+      <h2>Local File</h2>
+      <p>Local File saves to files on the player's device, under the name and in the folder you choose.</p>
+      <p>It writes each save to a temporary file and swaps it in, so a crash mid-write leaves either the complete
+        old save or the complete new one, never half of one. With <strong>Do Backup</strong> on, it also keeps a
+        permanent second copy, which it reads when the primary file won't decode.</p>
+      <div class="img-block">
+        <img src="../img/file_manager_inspector" alt="Local File manager inspector"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">&#128247;</span>
+          <span><strong>img/file_manager_inspector</strong><br/>The Local File manager: the file name and its resolved path, with Format &amp; Protection folded below</span>
+        </div>
+      </div>
+
+      <h3 id="savefolder">Own the save folder</h3>
+      <p>By default, saves go to <code>Application.persistentDataPath</code> in a build, and to the project's
+        <code>UserSettings</code> folder in the Editor.</p>
+      <p>To put them in a folder of your own instead, set <strong>Save Folder</strong> to an absolute path, which
+        is created if it isn't there. The Editor uses it as well, so Play mode and an installed build then share
+        the same files.</p>
+      <div class="note warning"><strong>Warning:</strong> Save Folder works on the desktop players and in the
+        Editor only. A build for any other target fails while it is set.</div>
+
+      <h3 id="foldertokens">Save under each player's own folder</h3>
+      <p>Start the field with a folder token, and the machine running replaces it with the folder its own user
+        has.</p>
+      <div class="table-scroll">
+        <table class="cmp">
+          <thead><tr><th scope="col">Token</th><th scope="col">Windows</th><th scope="col">macOS and Linux</th></tr></thead>
+          <tbody>
+            <tr><td><code>{Documents}</code></td><td>The user's Documents folder</td><td><code>~/Documents</code></td></tr>
+            <tr><td><code>{UserProfile}</code></td><td><code>C:&#92;Users&#92;name</code></td><td><code>~</code></td></tr>
+            <tr><td><code>{AppData}</code></td><td><code>AppData&#92;Roaming</code></td><td><code>~/.config</code></td></tr>
+            <tr><td><code>{LocalAppData}</code></td><td><code>AppData&#92;Local</code></td><td><code>~/.local/share</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Each token is whatever the operating system answers for it, so a player who moved their Documents
+        elsewhere gets the folder they moved it to.</p>
+    </section>
+
+    <!-- ══════════════════════════════════════ playerprefs ════ -->
+    <section id="playerprefs">
+      <h2>Player Prefs</h2>
+      <p>Player Prefs writes small values to Unity's <code>PlayerPrefs</code>, with none of Local File's
+        protection or backup.</p>
+      <div class="note warning"><strong>Warning:</strong> Unity's <code>PlayerPrefs</code> API reports no errors,
+        so a write that didn't survive stays silent and shows up later as a load finding no save, exactly like a
+        first run. Keep anything critical in <a href="#file">Local File</a>.</div>
+    </section>
+
+    <!-- ══════════════════════════════════════ session ════ -->
+    <section id="session">
+      <h2>Session (Memory)</h2>
+      <p>Session (Memory) keeps everything in memory, and loses it when the game closes.</p>
+    </section>
+
+    <!-- ══════════════════════════════════════ none ════ -->
+    <section id="none">
+      <h2>None</h2>
+      <p>None turns persistence off, and the asset behaves like a regular one.</p>
+    </section>
+
+    <!-- ══════════════════════════════════════ test ════ -->
+    <section id="test">
+      <h2>Test</h2>
+      <p>Test touches no real save, and forces any operation to any <strong>Outcome</strong> after a
+        <strong>Delay</strong>, so your game can be put through a failure that real storage rarely produces. For
+        more information, refer to <a href="Troubleshooting.html#testing">Simulate any save outcome</a>.</p>
+      <div class="note"><strong>Note:</strong> Assigning the Test manager keeps the setup it replaces as a
+        read-only import copy, so one click puts your real setup back.</div>
+    </section>
+
+    <!-- ══════════════════════════════════════ deleting ════ -->
+    <section id="deleting">
+      <h2>Delete local data</h2>
+      <p>To empty the package's own save folders while you develop, go to <strong>Tools &gt; Persistent Asset &gt;
+        Actions &gt; Delete Local Data&hellip;</strong>. It leaves a manager that has its own <strong>Save
+        Folder</strong> alone.</p>
+      <p>To run that deletion every time you leave Play mode, turn on <strong>Start every play session with no
+        local data</strong> in the same window. The Editor remembers the setting on this machine, rather than in
+        the project settings your team commits.</p>
+      <div class="img-block">
+        <img src="../img/delete_local_data" alt="Delete Local Data window"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">&#128247;</span>
+          <span><strong>img/delete_local_data</strong><br/>The Delete Local Data window listing each manager, with a "Delete All" button below them</span>
+        </div>
+      </div>
+      <div class="note"><strong>Note:</strong> This window is a developer tool. To erase a player's save from
+        inside your game, call <code>Clear()</code>.</div>
+    </section>
+
+    <!-- ══════════════════════════════════════ resources ════ -->
+    <div class="resources">
+      <h2>Additional resources</h2>
+      <ul>
+        <li><a href="Secure%20saves.html#security">Secure a local file</a></li>
+        <li><a href="Save%20per%20platform.html">Save per platform</a></li>
+        <li><a href="Troubleshooting.html#testing">Simulate any save outcome</a></li>
+      </ul>
+    </div>
+
+    <div class="pager">
+      <a class="prev" href="Update%20a%20shipped%20save.html">
+        <div class="dir">Back</div>
+        <div class="pg-title">Update a shipped save</div>
+      </a>
+      <a class="next" href="Save%20per%20platform.html">
+        <div class="dir">Next</div>
+        <div class="pg-title">Save per platform</div>
+      </a>
+    </div>
+
+    <div class="doc-footer">Persistent Asset v2.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

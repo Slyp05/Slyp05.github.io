@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Namespace PersistentAsset, assembly PersistentAsset.Prefs. Explained in Prefs." />
+  <title>Persistent Asset - Public API - Prefs</title>
+  <link rel="stylesheet" href="../shared/styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <nav>
+    <a href="../Public%20API.html">Overview</a>
+    <a class="nav-band" href="API%20-%20Core.html">Core</a>
+    <a class="nav-band" href="API%20-%20Built-Ins.html">Built-Ins</a>
+    <a class="nav-band" href="API%20-%20No-Code.html">No-Code</a>
+    <a class="nav-band" href="API%20-%20Scene%20Objects.html">Scene Objects</a>
+    <a class="nav-band active" href="API%20-%20Prefs.html" aria-current="page">Prefs</a>
+
+    <div class="nav-group">The pieces</div>
+    <a href="#Prefs"><span class="badge badge-static">static</span>Prefs</a>
+    <a href="#PersistentPrefs"><span class="badge badge-so">SO</span>PersistentPrefs</a>
+
+    <a class="nav-band" href="API%20-%20Editor%20Extension.html">Editor Extension</a>
+  </nav>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Public API <span class="tag">Prefs</span></h1>
+      <div class="sub">Namespace <code>PersistentAsset</code>, assembly <code>PersistentAsset.Prefs</code>. Explained in <a href="Prefs.html">Prefs</a>.</div>
+    </div>
+
+    <h2 class="api-group">The pieces</h2>
+
+    <div class="type-section" id="Prefs">
+      <div class="type-header"><h3>Prefs</h3><span class="badge badge-static">static</span></div>
+      <p class="type-desc">Named values reachable from anywhere with no reference and no setup, in the shape of <code>PlayerPrefs</code>. The values live in the single <a href="#PersistentPrefs">PersistentPrefs</a> asset, and <code>Manager</code> is the Persistence Manager that decides where they are stored, when they load and when they save. With no asset in the project, a read answers with its fallback, a write does nothing, and the console says so once. Explained in <a href="Prefs.html">Prefs</a>.</p>
+      <div class="member-group"><table class="mt">
+        <tr><th scope="row"><span class="t">PersistenceManager</span> <span class="mn">Manager</span> { get; }</th><td>The <a href="API%20-%20Core.html#PersistenceManager">PersistenceManager</a> the values are saved and loaded by: readiness, the operations and the storage settings are its own. Null when the project has no prefs asset, or its asset has no manager, which the console reports.</td></tr>
+        <tr><th scope="row"><span class="t">PersistentPrefs</span> <span class="mn">Asset</span> { get; }</th><td>The asset the values live in, for what takes the object itself: the <a href="API%20-%20Core.html#Slots">Slots</a> members, a <code>PersistentVariables</code> field on a component, and the id members. Null when the project has none. Every value on it is reachable on <code>Prefs</code> too.</td></tr>
+        <tr><th scope="row"><span class="kw">event</span> <span class="t">Action&lt;string&gt;</span> <span class="mn">OnChanged</span></th><td>Raised with the key after any change: a value set, or a mutation of a list or map.</td></tr>
+        <tr><th scope="row"><span class="kw">event</span> <span class="t">Action</span> <span class="mn">OnReloaded</span></th><td>Raised after the whole bag is reloaded or reset (a load, an import, a reset to defaults, a <code>RemoveAll</code>).</td></tr>
+        <tr><th scope="row"><span class="t">IReadOnlyList&lt;string&gt;</span> <span class="mn">Keys</span> { get; }</th><td>Every key currently defined, in definition order. A copy taken as you ask for it.</td></tr>
+        <tr><th scope="row"><span class="t">int</span> <span class="mn">Count</span> { get; }</th><td>How many keys are defined.</td></tr>
+        <tr><th scope="row"><span class="kw">void</span> <span class="mn">Set&lt;T&gt;</span>(<span class="t">string</span> key, <span class="t">T</span> value)</th><td>Write a value, creating the key when absent. Writing an equal value-type or string is a no-op. <span class="ex">Throws ArgumentException (null/empty key, or null untyped value), NotSupportedException (no registered variable type for T), InvalidOperationException (the key exists with an incompatible type or shape).</span></td></tr>
+        <tr><th scope="row"><span class="t">bool</span> <span class="mn">TrySet&lt;T&gt;</span>(<span class="t">string</span> key, <span class="t">T</span> value)</th><td>Write a value like <code>Set</code>, returning false instead of throwing when the key is empty, <code>T</code> is unregistered, or the key holds an incompatible type or shape.</td></tr>
+        <tr><th scope="row"><span class="t">T</span> <span class="mn">Get&lt;T&gt;</span>(<span class="t">string</span> key, <span class="t">T</span> fallback = <span class="kw">default</span>)</th><td>Read a value, or <code>fallback</code> when the key is missing or its stored type is not compatible with <code>T</code>.</td></tr>
+        <tr><th scope="row"><span class="t">bool</span> <span class="mn">TryGet&lt;T&gt;</span>(<span class="t">string</span> key, <span class="kw">out</span> <span class="t">T</span> value)</th><td>Read a value, returning false when the key is missing or not compatible with <code>T</code>.</td></tr>
+        <tr><th scope="row"><span class="t">bool</span> <span class="mn">Has</span>(<span class="t">string</span> key)</th><td>Whether a value is stored under that key.</td></tr>
+        <tr><th scope="row"><span class="t">Type</span> <span class="mn">TypeOf</span>(<span class="t">string</span> key)</th><td>The type stored under a key, null when it does not exist or its type is not registered.</td></tr>
+        <tr><th scope="row"><span class="t">bool</span> <span class="mn">IsList</span>(<span class="t">string</span> key) / <span class="mn">IsMap</span>(<span class="t">string</span> key)</th><td>Whether the key exists and holds a list, or a map.</td></tr>
+        <tr><th scope="row"><span class="t">string</span> <span class="mn">ValueAsText</span>(<span class="t">string</span> key)</th><td>A value as text, whatever its type: what a label shows. Empty when there is no such key. Never throws.</td></tr>
+        <tr><th scope="row"><span class="t">VariableList&lt;T&gt;</span> <span class="mn">GetList&lt;T&gt;</span>(<span class="t">string</span> key)</th><td>The live list behind a key (created empty when absent), null when the project has no prefs asset. <span class="ex">Throws ArgumentException (null/empty key), NotSupportedException (no registered type), InvalidOperationException (key exists with a different shape/type).</span></td></tr>
+        <tr><th scope="row"><span class="t">bool</span> <span class="mn">TryGetList&lt;T&gt;</span>(<span class="t">string</span> key, <span class="kw">out</span> <span class="t">VariableList&lt;T&gt;</span> list)</th><td>The list when it already exists, false when it is missing or holds another type. Unlike <code>GetList</code>, it never creates one.</td></tr>
+        <tr><th scope="row"><span class="t">VariableMap&lt;TKey, TValue&gt;</span> <span class="mn">GetMap&lt;TKey, TValue&gt;</span>(<span class="t">string</span> key)</th><td>The live map behind a key (created empty when absent), null when the project has no prefs asset. <span class="ex">Throws ArgumentException (null/empty key), NotSupportedException (no registered type), InvalidOperationException (key exists with a different shape/type).</span></td></tr>
+        <tr><th scope="row"><span class="t">bool</span> <span class="mn">TryGetMap&lt;TKey, TValue&gt;</span>(<span class="t">string</span> key, <span class="kw">out</span> <span class="t">VariableMap&lt;TKey, TValue&gt;</span> map)</th><td>The map when it already exists, false when it is missing or holds other types. Unlike <code>GetMap</code>, it never creates one.</td></tr>
+        <tr><th scope="row"><span class="kw">void</span> <span class="mn">NotifyChanged</span>(<span class="t">string</span> key)</th><td>Flag a key changed after mutating a reference-type value in place (an AnimationCurve, a Gradient), which the bag cannot detect on its own.</td></tr>
+        <tr><th scope="row"><span class="t">bool</span> <span class="mn">Remove</span>(<span class="t">string</span> key)</th><td>Remove one key, returning false when it was not there, or when the project has no prefs asset.</td></tr>
+        <tr><th scope="row"><span class="kw">void</span> <span class="mn">RemoveAll</span>()</th><td>Remove every key from the live values. A save then persists the empty state; <code>Manager.Clear()</code> is what also empties storage.</td></tr>
+        <tr><th scope="row"><span class="t">bool</span> <span class="mn">ResetVariable</span>(<span class="t">string</span> key)</th><td>Put one key back to the value authored in the asset's inspector, matched by its stable id so a rename does not affect it. A key that is not authored is removed. False when the authored baseline is not captured yet, which happens on the first load.</td></tr>
+        <tr><th scope="row"><span class="t">bool</span> <span class="mn">ResetVariable</span>(<span class="kw">params</span> <span class="t">string</span>[] keys)</th><td>Reset several keys, each like the single-key overload; false when any key given was not reset.</td></tr>
+      </table></div>
+    </div>
+
+    <div class="type-section" id="PersistentPrefs">
+      <div class="type-header"><h3>PersistentPrefs</h3><span class="badge badge-so">SO</span><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">The one <a href="API%20-%20No-Code.html#PersistentVariables">PersistentVariables</a> asset behind <a href="#Prefs">Prefs</a>. Code reaches its values through <a href="#Prefs">Prefs</a>, which carries them all; the asset itself is what you drag onto the no-code components and what holds the authored defaults. One project holds one of them, created for you in the editor and found by its type rather than by a reference. It drives its manager's Always Global on, which is what keeps it loaded and reachable. Explained in <a href="Prefs.html">Prefs</a>.</p>
+      <div class="member-group"><table class="mt">
+        <tr><th scope="row"><span class="t">PersistencePolicy</span> <span class="mn">Policy</span> { get; }</th><td>Forces Always Global on. Every other manager setting (storage, slots, auto save, protection) stays the manager's own.</td></tr>
+      </table></div>
+    </div>
+
+    <div class="doc-footer">Persistent Asset v2.0.0 &nbsp;&middot;&nbsp; For full signatures and remarks, see the XML doc comments in the source.</div>
+
+  </main>
+</div>
+</body>
+</html>

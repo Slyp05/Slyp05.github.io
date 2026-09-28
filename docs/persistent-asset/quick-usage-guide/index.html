@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="From nothing to your first save: what the package does, many ways to save something, watching the save work, and where the save can be stored." />
+  <title>Persistent Asset - Quick Usage Guide</title>
+  <link rel="stylesheet" href="/assets/css/doc-styles.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+
+  <script src="shared/nav.js"></script>
+
+  <main id="content" class="guide-standalone">
+
+    <div class="hero">
+      <h1>Quick Usage Guide</h1>
+      <p class="tagline">
+        From nothing to your first save.
+      </p>
+    </div>
+
+
+    <!-- ══════════════════════════════════════ what it does ════ -->
+    <section id="concept">
+      <h2>What it does</h2>
+      <p><strong>Persistent Asset</strong> makes your Unity assets persist across play sessions.</p>
+      <p>Change a value while the game runs. Close the game. The value is still there next time.</p>
+
+      <div class="img-block">
+        <svg class="diagram" viewBox="0 0 720 128" role="img"
+             aria-label="A loop: your asset holds the value, the package writes it to storage, and reads it back when the game starts.">
+          <defs>
+            <marker id="qg-arr" markerWidth="8" markerHeight="8" refX="6.5" refY="4" orient="auto">
+              <path d="M0,0 L8,4 L0,8 Z" fill="#9aa0b5"/>
+            </marker>
+          </defs>
+
+          <rect x="24" y="34" width="200" height="60" rx="10" fill="#ede9fe" stroke="#c4b5fd"/>
+          <text x="124" y="60" text-anchor="middle" font-size="13" font-weight="600" fill="#5b21b6">Your asset</text>
+          <text x="124" y="79" text-anchor="middle" font-size="11.5" fill="#6d28d9">the data your game uses</text>
+
+          <rect x="496" y="34" width="200" height="60" rx="10" fill="#e0e7ff" stroke="#a5b4fc"/>
+          <text x="596" y="60" text-anchor="middle" font-size="13" font-weight="600" fill="#3730a3">Storage</text>
+          <text x="596" y="79" text-anchor="middle" font-size="11.5" fill="#4338ca">disk, cloud, wherever</text>
+
+          <path d="M232 52 L488 52" stroke="#9aa0b5" stroke-width="1.5" fill="none" marker-end="url(#qg-arr)"/>
+          <text x="360" y="44" text-anchor="middle" font-size="11.5" fill="#555">saved for you</text>
+
+          <path d="M488 78 L232 78" stroke="#9aa0b5" stroke-width="1.5" fill="none" marker-end="url(#qg-arr)"/>
+          <text x="360" y="98" text-anchor="middle" font-size="11.5" fill="#555">loaded on the next launch</text>
+        </svg>
+      </div>
+
+      <p>You write no saving code. The game saves itself when it loses focus, when it is paused, when it quits,
+        and on a timer.</p>
+      <p>You can still ask for a <a href="../user-manual/pages/Save%20and%20load.html">save, a load or a clear</a> yourself:</p>
+      <div class="call-styles" role="radiogroup" aria-label="Call style">
+        <input type="radio" name="call-style" id="cs-sync" /><label for="cs-sync">Sync</label>
+        <input type="radio" name="call-style" id="cs-callback" /><label for="cs-callback">Callback</label>
+        <input type="radio" name="call-style" id="cs-forget" checked /><label for="cs-forget">Fire and forget</label>
+        <input type="radio" name="call-style" id="cs-routine" /><label for="cs-routine">Coroutine</label>
+        <input type="radio" name="call-style" id="cs-async" /><label for="cs-async">Async</label>
+        <pre class="cs-sync"><code><span class="ty">PersistenceManager</span> pm = playerData.PersistenceManager;   <span class="cm">// any persistent asset</span>
+
+<span class="ty">SaveResult</span> saved = pm.SaveSync();       <span class="cm">// the result is final when it returns</span>
+<span class="ty">LoadResult</span> loaded = pm.LoadSync();
+<span class="ty">ClearResult</span> cleared = pm.ClearSync();
+
+<span class="cm">// fails on a manager that cannot run synchronously</span></code></pre>
+        <pre class="cs-callback"><code><span class="ty">PersistenceManager</span> pm = playerData.PersistenceManager;   <span class="cm">// any persistent asset</span>
+
+pm.Save(result =&gt; <span class="ty">Debug</span>.Log(result.IsSuccess));
+pm.Load(result =&gt; <span class="ty">Debug</span>.Log(result.IsSuccess));
+pm.Clear(result =&gt; <span class="ty">Debug</span>.Log(result.IsSuccess));</code></pre>
+        <pre class="cs-forget"><code><span class="ty">PersistenceManager</span> pm = playerData.PersistenceManager;   <span class="cm">// any persistent asset</span>
+
+pm.Save();    <span class="cm">// fits straight onto a UI event</span>
+pm.Load();
+pm.Clear();</code></pre>
+        <pre class="cs-routine"><code><span class="ty">PersistenceManager</span> pm = playerData.PersistenceManager;   <span class="cm">// any persistent asset</span>
+
+<span class="ty">PersistenceOperation</span>&lt;<span class="ty">SaveResult</span>&gt; saveOperation = pm.SaveRoutine();
+<span class="kw">yield return</span> saveOperation;
+<span class="ty">Debug</span>.Log(saveOperation.Result.IsSuccess);
+
+<span class="kw">yield return</span> pm.LoadRoutine();
+<span class="kw">yield return</span> pm.ClearRoutine();</code></pre>
+        <pre class="cs-async"><code><span class="ty">PersistenceManager</span> pm = playerData.PersistenceManager;   <span class="cm">// any persistent asset</span>
+
+<span class="ty">SaveResult</span> saved = <span class="kw">await</span> pm.SaveAsync();
+<span class="ty">LoadResult</span> loaded = <span class="kw">await</span> pm.LoadAsync();
+<span class="ty">ClearResult</span> cleared = <span class="kw">await</span> pm.ClearAsync();
+
+<span class="cm">// run synchronously if the manager can, otherwise asynchronously</span>
+<span class="ty">SaveResult</span> quick = <span class="kw">await</span> pm.SaveAsync(<span class="ty">ExecutionMode</span>.PreferSync);</code></pre>
+      </div>
+      <p><a href="../user-manual/pages/Slots%20and%20save%20menus.html">Slots</a>,
+        <a href="../user-manual/pages/Update%20a%20shipped%20save.html">versioned saves</a>,
+        <a href="../user-manual/pages/Secure%20saves.html">encryption</a>, and more are there when you need them.</p>
+    </section>
+
+
+    <!-- ══════════════════════════════════════ ways ════ -->
+    <section id="ways">
+      <h2>Many ways to save something</h2>
+      <p>Stick to one of these, or mix them all in the same project. They all save the same way underneath.</p>
+
+      <details class="fold">
+        <summary>
+          <h3>An asset you write in code</h3>
+          <span class="fold-tags"><span class="fold-tag fold-tag--split"><span>Programmers</span><span class="fold-tag-hint">Recommended</span></span></span>
+          <span class="fold-sub">A class you write, with its fields saved for you.</span>
+        </summary>
+        <div class="fold-body">
+          <pre><code><span class="kw">public class</span> <span class="ty">PlayerData</span> : <span class="ty">PersistentScriptableObject</span>
+{
+    <span class="kw">public int</span> gold;
+    <span class="kw">public int</span> level = <span class="nu">1</span>;
+    <span class="kw">public</span> <span class="ty">List</span>&lt;<span class="kw">int</span>&gt; clearedLevels = <span class="kw">new</span>();
+}</code></pre>
+          <p>Create the asset with <strong>Create &gt; Persistent Asset &gt; Persistent Object&hellip;</strong>:</p>
+
+          <div class="img-block">
+            <img src="../user-manual/img/data_asset_inspector.png" alt="A PlayerData asset in the inspector, its manager dropdown above its fields"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+            <div class="img-placeholder" style="display:none">
+              <span class="icon">&#128247;</span>
+              <span><strong>img/data_asset_inspector</strong><br/>A PlayerData asset selected: the Persistence Manager dropdown at the top, gold, level and clearedLevels below it</span>
+            </div>
+          </div>
+
+          <p>Use it like any other ScriptableObject:</p>
+          <pre><code>[SerializeField] <span class="ty">PlayerData</span> playerData;
+
+<span class="kw">void</span> CollectCoin() =&gt; playerData.gold++;   <span class="cm">// an ordinary field, saved for you</span></code></pre>
+          <p class="fold-more"><a href="../user-manual/pages/Data%20class.html">Data class &rarr;</a></p>
+        </div>
+      </details>
+
+      <details class="fold">
+        <summary>
+          <h3>An asset you author with no scripting</h3>
+          <span class="fold-tags"><span class="fold-tag">Designers</span></span>
+          <span class="fold-sub">Rows in the inspector, dragged onto the objects that use them.</span>
+        </summary>
+        <div class="fold-body">
+          <p><strong>Create &gt; Persistent Asset &gt; Persistent Variables</strong>, then add a row per value.</p>
+
+          <div class="img-block">
+            <img src="../user-manual/img/nocode_variables_inspector.png" alt="Persistent Variables inspector with several authored rows"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+            <div class="img-placeholder" style="display:none">
+              <span class="icon">&#128247;</span>
+              <span><strong>img/nocode_variables_inspector</strong><br/>The Persistent Variables asset with several authored variables</span>
+            </div>
+          </div>
+
+          <p>Drag a row onto a GameObject and a menu asks what to add: a <strong>Variable Binder</strong> keeps the
+            value in sync with something in the scene, a <strong>Variable Listener</strong> reacts when it changes,
+            and a <strong>Variable Setter</strong> changes it.</p>
+
+          <div class="img-block">
+            <img src="../user-manual/img/nocode_drag_to_gameobject.png" alt="Dropping a variable on a GameObject opens the component menu"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+            <div class="img-placeholder" style="display:none">
+              <span class="icon">&#128247;</span>
+              <span><strong>img/nocode_drag_to_gameobject</strong><br/>Dropping a variable on a GameObject: the "Binder / Listener / Setter?" menu</span>
+            </div>
+          </div>
+
+          <p>Ready-made prefabs sit under <strong>GameObject &gt; Persistent Asset</strong>.</p>
+          <p class="fold-more"><a href="../user-manual/pages/No-Code.html">No-Code &rarr;</a></p>
+        </div>
+      </details>
+
+      <details class="fold">
+        <summary>
+          <h3>A GameObject and its components</h3>
+          <span class="fold-tags"><span class="fold-tag">Designers</span><span class="fold-tag">Programmers</span></span>
+          <span class="fold-sub">Choose what to keep on an object, and it comes back the way you left it.</span>
+        </summary>
+        <div class="fold-body">
+          <ol>
+            <li>Add the <strong>Persistent Scene Object</strong> component to the object you want kept.</li>
+            <li>Under <strong>Saved Components</strong>, tick the components you want saved.</li>
+          </ol>
+          <p>The persistent asset holding it all is created for you.</p>
+
+          <div class="img-block">
+            <img src="../user-manual/img/scene_object_component.png" alt="The Persistent Scene Object component with several components ticked"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+            <div class="img-placeholder" style="display:none">
+              <span class="icon">&#128247;</span>
+              <span><strong>img/scene_object_component</strong><br/>The Persistent Scene Object component, with Transform and a couple of others ticked under Saved Components</span>
+            </div>
+          </div>
+
+          <p>Unity's built-in components are supported out of the box, your own scripts are saved by their
+            fields, and objects spawned during play are covered too.</p>
+          <p class="fold-more"><a href="../user-manual/pages/Scene%20Objects.html">Scene Objects &rarr;</a></p>
+        </div>
+      </details>
+
+      <details class="fold">
+        <summary>
+          <h3>A ScriptableObject you already have</h3>
+          <span class="fold-tags"><span class="fold-tag fold-tag--split"><span>Programmers</span><span class="fold-tag-hint">Existing project</span></span></span>
+          <span class="fold-sub">Keep the class it already inherits from.</span>
+        </summary>
+        <div class="fold-body">
+          <pre><code>[PersistentScriptableObject(<span class="kw">nameof</span>(persistenceManager))]
+<span class="kw">public class</span> <span class="ty">MyData</span> : <span class="ty">SomeOtherScriptableObject</span>
+{
+    [SerializeField] <span class="ty">PersistenceManager</span> persistenceManager;
+}</code></pre>
+          <p>The attribute names the field you added. Nothing else changes.</p>
+          <p class="fold-more"><a href="../user-manual/pages/Data%20class.html">Data class &rarr;</a></p>
+        </div>
+      </details>
+
+      <details class="fold">
+        <summary>
+          <h3>Player prefs style</h3>
+          <span class="fold-tags"><span class="fold-tag fold-tag--split"><span>Programmers</span><span class="fold-tag-hint">Quick values</span></span></span>
+          <span class="fold-sub">One value under a name, from any script. Nothing to set up.</span>
+        </summary>
+        <div class="fold-body">
+          <pre><code><span class="ty">Prefs</span>.Set(<span class="st">"gold"</span>, <span class="nu">120</span>);
+<span class="ty">Prefs</span>.Set(<span class="st">"lastCheckpoint"</span>, transform.position);
+
+<span class="kw">int</span> gold = <span class="ty">Prefs</span>.Get&lt;<span class="kw">int</span>&gt;(<span class="st">"gold"</span>);
+<span class="ty">Vector3</span> spot = <span class="ty">Prefs</span>.Get(<span class="st">"lastCheckpoint"</span>, spawn.position);   <span class="cm">// fallback when missing</span></code></pre>
+          <p>The first call automatically creates a persistent asset in your project.</p>
+
+          <div class="img-block">
+            <img src="../user-manual/img/prefs_asset_inspector.png" alt="The Prefs asset in the inspector, listing the values saved so far"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+            <div class="img-placeholder" style="display:none">
+              <span class="icon">&#128247;</span>
+              <span><strong>img/prefs_asset_inspector</strong><br/>The Prefs asset the first call creates, with a few values in it</span>
+            </div>
+          </div>
+
+          <p>These values get every feature of the package.</p>
+          <p class="fold-more"><a href="../user-manual/pages/Prefs.html">Prefs &rarr;</a></p>
+        </div>
+      </details>
+
+      <details class="fold">
+        <summary>
+          <h3>Ask an AI assistant</h3>
+          <span class="fold-tags"><span class="fold-tag">AI</span></span>
+          <span class="fold-sub">Your agent learns the package from the instructions it ships with.</span>
+        </summary>
+        <div class="fold-body">
+          <p>Point your AI agent at <code>Assets/Persistent Asset/AI/Skills</code> and it knows how to use the
+            package. Agents that read skill folders find it on their own.</p>
+
+          <div class="img-block">
+            <img src="../user-manual/img/ai_skills_folder.png" alt="The AI Skills folder in the Project window, one folder per skill"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+            <div class="img-placeholder" style="display:none">
+              <span class="icon">&#128247;</span>
+              <span><strong>img/ai_skills_folder</strong><br/>Assets/Persistent Asset/AI/Skills in the Project window, the eight skill folders open</span>
+            </div>
+          </div>
+
+          <p>From there, ask for what you want in your own words. It writes the code and wires the scene.</p>
+        </div>
+      </details>
+    </section>
+
+
+    <!-- ══════════════════════════════════════ first save ════ -->
+    <section id="firstsave">
+      <h2>Watch your first save</h2>
+      <ol>
+        <li>Enter Play mode.</li>
+        <li>Change something you save with one of the ways above.</li>
+        <li>Exit Play mode.</li>
+        <li>Enter Play mode again. Your change is back.</li>
+      </ol>
+      <div class="note">The values you set in the inspector outside Play mode are what a new player starts with.
+        Playing never overwrites them.</div>
+      <p>To start again from an empty save, open <strong>Tools &gt; Persistent Asset &gt; Actions &gt; Delete Local
+        Data&hellip;</strong>.</p>
+    </section>
+
+
+    <!-- ══════════════════════════════════════ storage ════ -->
+    <section id="storage">
+      <h2>Where it gets stored</h2>
+      <p>Every persistent asset has a <strong>Persistence Manager</strong> that decides where the save goes.</p>
+      <p>You pick one from a dropdown at the top of the asset.</p>
+
+      <div class="img-block">
+        <img src="../user-manual/img/managers_dropdown_open.png" alt="The Persistence Manager dropdown open, showing every built-in manager"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">&#128247;</span>
+          <span><strong>img/managers_dropdown_open</strong><br/>The dropdown open, showing Prototype at the top level and the rest under Local, Remote and Other</span>
+        </div>
+      </div>
+
+      <p>New assets start on <strong>Prototype</strong>, which needs no setup.</p>
+
+      <p>Switching manager changes nothing in your game code.</p>
+
+      <div class="table-scroll">
+        <table class="cmp keycol oneline">
+          <tr><th scope="col">Manager</th><th scope="col">What it does</th></tr>
+          <tr>
+            <td><strong>None</strong></td>
+            <td>Saves nowhere, which turns saving off.</td>
+          </tr>
+          <tr>
+            <td><strong><a href="../user-manual/pages/Save%20on%20the%20device.html#prototype">Prototype</a></strong></td>
+            <td>Writes a file on the device, in a place picked for you, with nothing to configure.</td>
+          </tr>
+
+          <tr><th colspan="2" scope="colgroup">Local</th></tr>
+          <tr>
+            <td><strong><a href="../user-manual/pages/Save%20on%20the%20device.html#file">Local File</a></strong></td>
+            <td>Writes files you name and place yourself, with backup, compression and encryption.</td>
+          </tr>
+          <tr>
+            <td><strong><a href="../user-manual/pages/Save%20on%20the%20device.html#playerprefs">Player Prefs</a></strong></td>
+            <td>Writes to Unity's PlayerPrefs, which suits a small save that a silent loss would not hurt.</td>
+          </tr>
+
+          <tr><th colspan="2" scope="colgroup">Remote</th></tr>
+          <tr>
+            <td><strong><a href="../user-manual/pages/Cloud%20and%20remote.html#http">Server (HTTP)</a></strong></td>
+            <td>Sends the save to a backend service or your own server, to follow the player across devices.</td>
+          </tr>
+          <tr>
+            <td><strong><a href="../user-manual/pages/Cloud%20and%20remote.html#cloudsave">Cloud Save (UGS)</a></strong></td>
+            <td>Sends the save to Unity Gaming Services, to follow the player across devices with no server.</td>
+          </tr>
+          <tr>
+            <td><strong><a href="../user-manual/pages/Cloud%20and%20remote.html#steam">Steam Cloud</a></strong></td>
+            <td>Sends the save to Steam, which carries it to the player's other machines.</td>
+          </tr>
+
+          <tr><th colspan="2" scope="colgroup">Other</th></tr>
+          <tr>
+            <td><strong><a href="../user-manual/pages/Save%20per%20platform.html">Platform (Routing)</a></strong></td>
+            <td>Hands the save to a different manager on each platform.</td>
+          </tr>
+          <tr>
+            <td><strong><a href="../user-manual/pages/Save%20on%20the%20device.html#session">Session (Memory)</a></strong></td>
+            <td>Keeps the save in memory, so it lasts one play session only.</td>
+          </tr>
+          <tr>
+            <td><strong><a href="../user-manual/pages/Save%20on%20the%20device.html#test">Test</a></strong></td>
+            <td>Fakes the result you ask for, to test how your game handles a failed save.</td>
+          </tr>
+        </table>
+      </div>
+
+      <p>The remote ones can keep a copy on the device, so the game still works with no connection.</p>
+      <p><a href="../user-manual/pages/Connect%20to%20a%20backend%20service.html">Connect to a backend service</a> has recipes for
+        PlayFab, Firebase, Supabase, Nakama, LootLocker and more.</p>
+    </section>
+
+
+    <!-- ══════════════════════════════════════ learn more ════ -->
+    <section id="learnmore">
+      <h2>Learn more</h2>
+      <p>The <a href="../user-manual/index.html">User Manual</a> covers every feature in detail.</p>
+      <p>The <a href="../public-api/index.html">Public API</a> lists every type and member.</p>
+    </section>
+
+
+    <!-- ══════════════════════════════════════ support ════ -->
+    <section id="support">
+      <h2>Support</h2>
+      <p>Email me at <a href="mailto:justetools@gmail.com">justetools@gmail.com</a> with any question. I answer
+        within one business day.</p>
+      <p>If Persistent Asset saves you time, a review on the
+        <a href="https://assetstore.unity.com/packages/tools/utilities/persistent-asset-389310">Asset Store</a>
+        helps me a lot!</p>
+    </section>
+
+    <div class="doc-footer">Persistent Asset v2.0.0</div>
+
+  </main>
+</body>
+</html>

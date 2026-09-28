@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Fill in the Server (HTTP) manager for PlayFab, Firestore, Supabase and other backend services." />
+  <title>Persistent Asset - Connect to a backend service</title>
+  <link rel="stylesheet" href="/assets/css/doc-styles.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Persistent Asset</div><a href="../index.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Connect to a backend service</h1>
+      <div class="sub">Fill in the Server (HTTP) manager for PlayFab, Firestore, Supabase and other backend services.</div>
+
+    <div class="guide-index">
+      <a href="#shape">Fill in the Backend Service fields</a>
+      <a href="#playfab">PlayFab</a>
+      <a href="#firestore">Firebase Firestore</a>
+      <a href="#supabase">Supabase</a>
+      <a href="#realtimedb">Firebase Realtime Database</a>
+      <a href="#nakama">Nakama</a>
+      <a href="#lootlocker">LootLocker</a>
+      <a href="#pocketbase">PocketBase</a>
+      <a href="#appwrite">Appwrite</a>
+      <a href="#graphql">Any GraphQL endpoint</a>
+      <a href="#any">Any other REST backend</a>
+      <a href="#own">Use your own database</a>
+      <a href="#others">Other services</a>
+      <a href="#missing">What an absent save looks like</a>
+    </div>
+    </div>
+
+    <!-- ══════════════════════════════════════ shape ════ -->
+    <section id="shape">
+      <h2>Fill in the Backend Service fields</h2>
+      <p>A backend service stores your save inside an envelope of its own, and the <strong>Backend
+        Service</strong> fields of the <a href="Cloud%20and%20remote.html#http">Server (HTTP)</a> manager describe
+        that envelope. The address and body templates carry the following placeholders.</p>
+      <div class="table-scroll">
+        <table class="cmp">
+          <thead><tr><th scope="col">Placeholder</th><th scope="col">What it stands for</th></tr></thead>
+          <tbody>
+            <tr><td><code>{url}</code></td><td>The manager's own address, from <strong>Release Url</strong>.</td></tr>
+            <tr><td><code>{slot}</code></td><td>The <a href="Slots%20and%20save%20menus.html">slot</a> being read or written, which is usually the player id.</td></tr>
+            <tr><td><code>{id}</code></td><td>The persistent asset's own id, which is what tells two saves of one player apart.</td></tr>
+            <tr><td><code>{token}</code></td><td>Whatever your code put in the manager's <code>Authorization</code>, or in <code>HttpPersistenceManager.DefaultAuthorization</code>.</td></tr>
+            <tr><td><code>{payload}</code></td><td>The save itself. Bodies only.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p><strong>Response Payload Path</strong> is the dotted route to your save inside the service's answer, with
+        numbers for positions in an array. Leave the load and clear bodies empty for a REST backend, and fill them
+        in for an RPC, the way <a href="#playfab">PlayFab</a> and <a href="#nakama">Nakama</a> need.</p>
+      <p>Sign-in is your game's job. As soon as it returns, set
+        <code>HttpPersistenceManager.DefaultAuthorization</code> to the session token, which is what
+        <code>{token}</code> stands for.</p>
+      <p>What <code>{slot}</code> is free to hold depends on whether the service can name the player itself:</p>
+      <ul>
+        <li><strong>It takes the player from the token</strong>, the way <a href="#playfab">PlayFab</a> and
+          <a href="#lootlocker">LootLocker</a> do. The address names the save alone, so
+          <a href="Slots%20and%20save%20menus.html">slots</a> are yours and work as they do anywhere else.</li>
+        <li><strong>The address has to name the player</strong>, which is what the other recipes here do. Turn on
+          <strong>Use Slot</strong> and set <code>Slots.GlobalSlot</code> to the player id, so <code>{slot}</code>
+          carries it. That asset then holds one save per player.</li>
+      </ul>
+      <p>To have both on a service of the second kind, put <a href="#own">an endpoint of your own</a> in front of
+        it: it reads the player from the token, which leaves the slot to you.</p>
+      <div class="note"><strong>Note:</strong> A token for one signed-in player is safe in a build. An account key
+        or an admin key is not, and belongs behind <a href="#own">an endpoint of your own</a>.</div>
+    </section>
+
+    <!-- ══════════════════════════════════════ playfab ════ -->
+    <section id="playfab">
+      <h2>PlayFab</h2>
+      <div class="table-scroll">
+        <table class="cmp">
+          <thead><tr><th scope="col">Field</th><th scope="col">Value</th></tr></thead>
+          <tbody>
+            <tr><td>Release Url</td><td><code>https://TITLEID.playfabapi.com</code></td></tr>
+            <tr><td>Load Url Template</td><td><code>{url}/Client/GetUserData</code></td></tr>
+            <tr><td>Load Body Template</td><td><code>{"Keys":["save"]}</code></td></tr>
+            <tr><td>Save Url Template</td><td><code>{url}/Client/UpdateUserData</code></td></tr>
+            <tr><td>Save Body Template</td><td><code>{"Data":{"save":"{payload}"}}</code></td></tr>
+            <tr><td>Clear Url Template</td><td><code>{url}/Client/UpdateUserData</code></td></tr>
+            <tr><td>Clear Body Template</td><td><code>{"KeysToRemove":["save"]}</code></td></tr>
+            <tr><td>Load / Save / Clear Verb</td><td><code>Post</code></td></tr>
+            <tr><td>Response Payload Path</td><td><code>data.Data.save.Value</code></td></tr>
+            <tr><td>Extra Headers</td><td><code>X-Authorization</code> = <code>{token}</code></td></tr>
+            <tr><td>Not Found Means</td><td><code>An Error</code>: PlayFab answers a successful, empty result for a save that is not there, so a 404 is always a fault</td></tr>
+            <tr><td>Empty Answer Means</td><td><code>No Save</code>: that empty result is what a first launch looks like</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>The session ticket names the player, so the slot names the save file rather than the player. To give a
+        player several slots, vary the key and the response path together.</p>
+      <div class="note"><strong>Note:</strong> A new title doesn't create the player for you. Titles made since
+        30 June 2025 answer <code>400 PlayerCreationDisabled</code>. Create the player from your own server, or
+        untick that box under <strong>Settings &gt; API Features</strong> while you test.</div>
+    </section>
+
+    <!-- ══════════════════════════════════════ firestore ════ -->
+    <section id="firestore">
+      <h2>Firebase Firestore</h2>
+      <div class="table-scroll">
+        <table class="cmp">
+          <thead><tr><th scope="col">Field</th><th scope="col">Value</th></tr></thead>
+          <tbody>
+            <tr><td>Release Url</td><td><code>https://firestore.googleapis.com/v1/projects/PROJECT/databases/(default)/documents</code></td></tr>
+            <tr><td>Load Url Template</td><td><code>{url}/players/{slot}/saves/{id}</code></td></tr>
+            <tr><td>Save Url Template</td><td><code>{url}/players/{slot}/saves/{id}?updateMask.fieldPaths=save</code></td></tr>
+            <tr><td>Clear Url Template</td><td><code>{url}/players/{slot}/saves/{id}</code></td></tr>
+            <tr><td>Load Verb</td><td><code>Get</code></td></tr>
+            <tr><td>Save Verb</td><td><code>Patch</code></td></tr>
+            <tr><td>Clear Verb</td><td><code>Delete</code></td></tr>
+            <tr><td>Save Body Template</td><td><code>{"fields":{"save":{"stringValue":"{payload}"}}}</code></td></tr>
+            <tr><td>Response Payload Path</td><td><code>fields.save.stringValue</code></td></tr>
+            <tr><td>Extra Headers</td><td>none; the standard <code>Authorization</code> header carries <code>Bearer &lt;idToken&gt;</code></td></tr>
+            <tr><td>Not Found Means</td><td><code>No Save</code>, the default: Firestore answers 404 for a document that does not exist</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="note warning"><strong>Warning:</strong> Write a security rule that matches
+        <code>request.auth.uid</code> against the path. The test-mode ruleset makes every save public.</div>
+    </section>
+
+    <!-- ══════════════════════════════════════ supabase ════ -->
+    <section id="supabase">
+      <h2>Supabase</h2>
+      <p>Supabase serves a table through PostgREST. Create a <code>saves</code> table with an
+        <code>owner uuid</code> primary key defaulting to <code>auth.uid()</code>, a <code>save</code> text
+        column, and a row-level policy for the owner.</p>
+      <div class="table-scroll">
+        <table class="cmp">
+          <thead><tr><th scope="col">Field</th><th scope="col">Value</th></tr></thead>
+          <tbody>
+            <tr><td>Release Url</td><td><code>https://PROJECT.supabase.co/rest/v1</code></td></tr>
+            <tr><td>Load Url Template</td><td><code>{url}/saves?select=save</code>, with row-level security returning only this player's row</td></tr>
+            <tr><td>Save Url Template</td><td><code>{url}/saves?on_conflict=owner</code></td></tr>
+            <tr><td>Clear Url Template</td><td><code>{url}/saves?owner=eq.{slot}</code>, with the player id in the slot</td></tr>
+            <tr><td>Load Verb</td><td><code>Get</code></td></tr>
+            <tr><td>Save Verb</td><td><code>Post</code></td></tr>
+            <tr><td>Clear Verb</td><td><code>Delete</code></td></tr>
+            <tr><td>Save Body Template</td><td><code>{"save":"{payload}"}</code></td></tr>
+            <tr><td>Response Payload Path</td><td><code>0.save</code></td></tr>
+            <tr><td>Extra Headers</td><td><code>apikey</code> = your <strong>anon</strong> key, and <code>Prefer</code> = <code>resolution=merge-duplicates</code></td></tr>
+            <tr><td>Not Found Means</td><td><code>An Error</code>: PostgREST answers an empty array for a row that is not there, so a 404 is always a fault</td></tr>
+            <tr><td>Empty Answer Means</td><td><code>No Save</code>: that empty array is what a first launch looks like</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="note warning"><strong>Warning:</strong> Row-level security is the only thing keeping one
+        player out of another's save. Ship the anon key, never <code>service_role</code>.</div>
+    </section>
+
+    <!-- ══════════════════════════════════════ realtimedb ════ -->
+    <section id="realtimedb">
+      <h2>Firebase Realtime Database</h2>
+      <div class="table-scroll">
+        <table class="cmp">
+          <thead><tr><th scope="col">Field</th><th scope="col">Value</th></tr></thead>
+          <tbody>
+            <tr><td>Release Url</td><td><code>https://PROJECT-default-rtdb.firebaseio.com</code></td></tr>
+            <tr><td>Load / Save / Clear Url Template</td><td><code>{url}/players/{slot}/saves/{id}.json?auth={token}</code></td></tr>
+            <tr><td>Load / Save / Clear Verb</td><td><code>Get</code> / <code>Put</code> / <code>Delete</code>, the defaults</td></tr>
+            <tr><td>Save Body Template</td><td><code>{"save":"{payload}"}</code></td></tr>
+            <tr><td>Response Payload Path</td><td><code>save</code></td></tr>
+            <tr><td>Extra Headers</td><td>none; the token rides in the address</td></tr>
+            <tr><td>Empty Answer Means</td><td><code>No Save</code>: a path holding nothing answers <code>200</code> with <code>null</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="note warning"><strong>Warning:</strong> The envelope is not optional here. A raw body comes
+        back as a quoted, escaped JSON string, which no longer decodes.</div>
+    </section>
+
+    <!-- ══════════════════════════════════════ nakama ════ -->
+    <section id="nakama">
+      <h2>Nakama</h2>
+      <div class="table-scroll">
+        <table class="cmp">
+          <thead><tr><th scope="col">Field</th><th scope="col">Value</th></tr></thead>
+          <tbody>
+            <tr><td>Release Url</td><td><code>https://HOST:7350/v2</code></td></tr>
+            <tr><td>Load / Save Url Template</td><td><code>{url}/storage</code></td></tr>
+            <tr><td>Clear Url Template</td><td><code>{url}/storage/delete</code></td></tr>
+            <tr><td>Load / Save / Clear Verb</td><td><code>Post</code> / <code>Put</code> / <code>Put</code></td></tr>
+            <tr><td>Load Body Template</td><td><code>{"object_ids":[{"collection":"saves","key":"{id}","user_id":"{slot}"}]}</code></td></tr>
+            <tr><td>Save Body Template</td><td><code>{"objects":[{"collection":"saves","key":"{id}","value":"{payload}","permissionRead":1,"permissionWrite":1}]}</code></td></tr>
+            <tr><td>Clear Body Template</td><td><code>{"object_ids":[{"collection":"saves","key":"{id}"}]}</code></td></tr>
+            <tr><td>Response Payload Path</td><td><code>objects.0.value</code></td></tr>
+            <tr><td>Empty Answer Means</td><td><code>No Save</code>: a key that was never written comes back as an empty <code>objects</code> list</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════ lootlocker ════ -->
+    <section id="lootlocker">
+      <h2>LootLocker</h2>
+      <div class="table-scroll">
+        <table class="cmp">
+          <thead><tr><th scope="col">Field</th><th scope="col">Value</th></tr></thead>
+          <tbody>
+            <tr><td>Release Url</td><td><code>https://api.lootlocker.com/game/v1/player/storage</code></td></tr>
+            <tr><td>Load Url Template</td><td><code>{url}?key=save_{slot}</code></td></tr>
+            <tr><td>Save Url Template</td><td><code>{url}</code></td></tr>
+            <tr><td>Clear Url Template</td><td><code>{url}?key=save_{slot}</code></td></tr>
+            <tr><td>Load / Save / Clear Verb</td><td><code>Get</code> / <code>Post</code> / <code>Delete</code></td></tr>
+            <tr><td>Save Body Template</td><td><code>{"payload":[{"key":"save_{slot}","value":"{payload}","is_public":false,"order":1}]}</code></td></tr>
+            <tr><td>Response Payload Path</td><td><code>payload.value</code></td></tr>
+            <tr><td>Extra Headers</td><td><code>x-session-token</code> = <code>{token}</code></td></tr>
+            <tr><td>Not Found Means</td><td><code>An Error</code>: a key nobody wrote answers <code>200</code>, so a <code>404</code> is a real fault</td></tr>
+            <tr><td>Empty Answer Means</td><td><code>No Save</code>: a key nobody wrote answers <code>200</code> with <code>"payload":null</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="note warning"><strong>Warning:</strong> The save body is a list, and its rows need an
+        <code>order</code>. A flat body answers <code>200</code> and stores nothing.</div>
+      <div class="note"><strong>Note:</strong> A clear stays invisible to the next load until LootLocker's cache
+        lapses, so trust the result your <code>Clear()</code> returned over what a load reports.</div>
+    </section>
+
+    <!-- ══════════════════════════════════════ pocketbase ════ -->
+    <section id="pocketbase">
+      <h2>PocketBase</h2>
+      <div class="table-scroll">
+        <table class="cmp">
+          <thead><tr><th scope="col">Field</th><th scope="col">Value</th></tr></thead>
+          <tbody>
+            <tr><td>Release Url</td><td><code>https://HOST/api/collections/saves</code></td></tr>
+            <tr><td>Load Url Template</td><td><code>{url}/records?filter=owner="{slot}"&amp;fields=save</code></td></tr>
+            <tr><td>Clear Url Template</td><td><code>{url}/records/{slot}</code></td></tr>
+            <tr><td>Load / Clear Verb</td><td><code>Get</code> / <code>Delete</code>, the defaults</td></tr>
+            <tr><td>Response Payload Path</td><td><code>items.0.save</code></td></tr>
+            <tr><td>Empty Answer Means</td><td><code>No Save</code>: a filter matching nothing answers <code>200</code> with an empty <code>items</code> list</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="note warning"><strong>Warning:</strong> PocketBase has no upsert, so the record has to exist
+        before the first save. Either create it with the player account, after which
+        <code>PATCH {url}/records/{slot}</code> serves every save, or add a route of your own that upserts.</div>
+    </section>
+
+    <!-- ══════════════════════════════════════ appwrite ════ -->
+    <section id="appwrite">
+      <h2>Appwrite</h2>
+      <div class="table-scroll">
+        <table class="cmp">
+          <thead><tr><th scope="col">Field</th><th scope="col">Value</th></tr></thead>
+          <tbody>
+            <tr><td>Release Url</td><td><code>https://HOST/v1/tablesdb/DB/tables/TABLE</code></td></tr>
+            <tr><td>Load / Save / Clear Url Template</td><td><code>{url}/rows/{slot}</code></td></tr>
+            <tr><td>Load / Save / Clear Verb</td><td><code>Get</code> / <code>Put</code> / <code>Delete</code></td></tr>
+            <tr><td>Save Body Template</td><td><code>{"data":{"save":"{payload}"}}</code></td></tr>
+            <tr><td>Response Payload Path</td><td><code>save</code></td></tr>
+            <tr><td>Extra Headers</td><td><code>X-Appwrite-Project</code> = your project id</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════ graphql ════ -->
+    <section id="graphql">
+      <h2>Any GraphQL endpoint</h2>
+      <div class="table-scroll">
+        <table class="cmp">
+          <thead><tr><th scope="col">Field</th><th scope="col">Value</th></tr></thead>
+          <tbody>
+            <tr><td>Release Url</td><td><code>https://HOST/graphql</code></td></tr>
+            <tr><td>Load / Save / Clear Url Template</td><td><code>{url}</code></td></tr>
+            <tr><td>Load / Save / Clear Verb</td><td><code>Post</code></td></tr>
+            <tr><td>Load Body Template</td><td><code>{"query":"query($o:String!){saves(owner:$o){save}}","variables":{"o":"{slot}"}}</code></td></tr>
+            <tr><td>Save Body Template</td><td><code>{"query":"mutation($o:String!,$s:String!){insert_saves_one(owner:$o,save:$s){owner}}","variables":{"o":"{slot}","s":"{payload}"}}</code></td></tr>
+            <tr><td>Clear Body Template</td><td><code>{"query":"mutation($o:String!){delete_saves(owner:$o)}","variables":{"o":"{slot}"}}</code></td></tr>
+            <tr><td>Response Payload Path</td><td><code>data.saves.0.save</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="note warning"><strong>Warning:</strong> A GraphQL error is an HTTP <code>200</code> carrying
+        no data, which reaches the payload path as nothing. Leave <strong>Empty Answer Means</strong> on
+        <code>Corrupt</code>, so the load reports it instead of reading it as a first launch.</div>
+    </section>
+
+    <!-- ══════════════════════════════════════ any ════ -->
+    <section id="any">
+      <h2>Any other REST backend</h2>
+      <p>To fill in the fields for a service this page doesn't list, find four things in its own
+        documentation:</p>
+      <ol>
+        <li>Which endpoint reads, writes and deletes one record, and with which verb.</li>
+        <li>What a write body looks like, with the data in their example replaced by <code>{payload}</code> and
+          nothing escaped.</li>
+        <li>Where the data sits in a read answer, written with dots, and numbers for positions in an array.</li>
+        <li>How the service wants the token. A standard <code>Authorization</code> header needs nothing
+          extra.</li>
+      </ol>
+      <div class="note"><strong>Note:</strong> Every write replaces the whole record, and the manager sends no
+        ETag or If-Match header, so two devices writing at once means last one wins, unless the
+        <a href="Cloud%20and%20remote.html#cache">offline cache</a> is on.</div>
+    </section>
+
+    <!-- ══════════════════════════════════════ own ════ -->
+    <section id="own">
+      <h2>Use your own database</h2>
+      <p>Put an endpoint of your own in front of the database. The game never reaches MySQL, Postgres or
+        anything else directly: a connection string in a build is in your players' hands, and WebGL and consoles
+        can't open one at all.</p>
+      <p>Leave every Backend Service field empty, and the manager sends the payload verbatim to
+        <code>url/slot/id</code>. Your endpoint then needs the three routes
+        <a href="Cloud%20and%20remote.html#http">Server (HTTP)</a> lists, keyed by the player, the asset and the
+        slot. Verify the token on each of them, and take the player from the token, never from the request
+        body.</p>
+      <div class="note"><strong>Note:</strong> Store the payload as bytes, in a <code>LONGBLOB</code> or a
+        <code>BYTEA</code> column. With compression or encryption on it is not text, and a column that re-encodes
+        it produces corrupt saves. Bound its size, and trust nothing in it.</div>
+    </section>
+
+    <!-- ══════════════════════════════════════ others ════ -->
+    <section id="others">
+      <h2>Other services</h2>
+      <p>Xano, Directus, Strapi, Parse Server, Back4App and Convex take the
+        <a href="#appwrite">Appwrite</a> shape; Hasura, Nhost and AWS AppSync take the
+        <a href="#graphql">GraphQL</a> one. Steam and Unity Cloud Save have a manager of their own.</p>
+    </section>
+
+    <!-- ══════════════════════════════════════ missing ════ -->
+    <section id="missing">
+      <h2>What an absent save looks like</h2>
+      <p>Two settings decide how the manager reads an answer that carries no save. The first,
+        <strong>Empty Answer Means</strong>, covers an answer that parsed but holds nothing at the payload
+        path:</p>
+      <div class="table-scroll">
+        <table class="cmp">
+          <tr><th scope="col">Value</th><th scope="col">An answer holding nothing at the payload path</th></tr>
+          <tr>
+            <td><code>Corrupt</code> (default)</td>
+            <td>Reported: the load comes back <code>Corrupt</code> and <strong>On Load Failed</strong> fires. With an offline
+          cache on, the cached save is kept.</td>
+          </tr>
+          <tr>
+            <td><code>No Save</code></td>
+            <td>A first launch: the target starts on its defaults with no failure event. A mistyped payload path reads the
+          same way.</td>
+          </tr>
+        </table>
+      </div>
+      <div class="note"><strong>Note:</strong> Either way, saving stays on, and the next save writes the
+        authored values over the server's copy. Check the payload path against a real answer before you ship.</div>
+      <p>A <code>404</code> means both "the address is right and holds nothing" and "unknown route, rejected
+        token". The second setting, <strong>Not Found Means</strong>, settles which one applies:</p>
+      <div class="table-scroll">
+        <table class="cmp">
+          <thead><tr><th scope="col">Value</th><th scope="col">A 404 to a load</th></tr></thead>
+          <tbody>
+            <tr><td><code>No Save</code> (default)</td><td>There is no save. The target starts on its defaults, and an offline cache entry for that slot is dropped.</td></tr>
+            <tr><td><code>An Error</code></td><td>Something is wrong. The load fails and retries, and a cache entry is kept and stays playable.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════ resources ════ -->
+    <div class="resources">
+      <h2>Additional resources</h2>
+      <ul>
+        <li><a href="Cloud%20and%20remote.html#http">Server (HTTP)</a></li>
+        <li><a href="Secure%20saves.html#remotesecurity">Secure a remote save</a></li>
+        <li><a href="Cloud%20and%20remote.html#cache">Cache Mode and offline saves</a></li>
+      </ul>
+    </div>
+
+    <div class="pager">
+      <a class="prev" href="Cloud%20and%20remote.html">
+        <div class="dir">Back</div>
+        <div class="pg-title">Cloud &amp; remote</div>
+      </a>
+      <a class="next" href="Secure%20saves.html">
+        <div class="dir">Next</div>
+        <div class="pg-title">Secure saves</div>
+      </a>
+    </div>
+
+    <div class="doc-footer">Persistent Asset v2.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Write your own persistence manager, serializer, settings section or variable type." />
+  <title>Persistent Asset - Extend the package</title>
+  <link rel="stylesheet" href="../shared/styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Persistent Asset</div><a href="../User%20Manual.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Extend the package</h1>
+      <div class="sub">Write your own persistence manager, serializer, settings section or variable type.</div>
+
+    <div class="guide-index">
+      <a href="#manager">Create a custom persistence manager</a>
+      <a href="#serializer">Create a custom serializer</a>
+      <a href="#remote">Create a custom remote manager</a>
+      <a href="#settings">Add your own settings</a>
+      <a href="#scenecodecs">Add a component codec</a>
+      <a href="#codecs">Add your own variable types</a>
+    </div>
+    </div>
+
+    <!-- ══════════════════════════════════════ manager ════ -->
+    <section id="manager">
+      <h2>Create a custom persistence manager</h2>
+      <p>A custom manager saves to storage none of the built-in ones reach, such as a console's save container or
+        a service of your own. To write one, subclass
+        <a href="API%20-%20Core.html#PersistenceManager"><code>PersistenceManager</code></a> and implement three
+        methods:</p>
+      <pre><code><span class="kw">protected override</span> <span class="ty">LoadResult</span>  ReadPayloadSync (<span class="ty">PersistenceSource</span> source, <span class="kw">string</span> slot);
+<span class="kw">protected override</span> <span class="ty">SaveResult</span>  WritePayloadSync(<span class="ty">PersistenceSource</span> source, <span class="kw">string</span> slot, <span class="kw">byte</span>[] payload);
+<span class="kw">protected override</span> <span class="ty">ClearResult</span> ClearPayloadSync(<span class="ty">PersistenceSource</span> source, <span class="kw">string</span> slot);</code></pre>
+      <p>Each one moves a <code>byte[]</code> payload, and none of them may touch <code>Target</code>. Override
+        the async trio instead to run the work off the main thread.</p>
+      <p>The result you return decides what the package does next:</p>
+      <div class="table-scroll">
+        <table class="cmp">
+          <thead><tr><th scope="col">Result</th><th scope="col">What it means</th></tr></thead>
+          <tbody>
+            <tr><td><code>Invalid</code></td><td>There is no save, which is the normal first run. The next save overwrites.</td></tr>
+            <tr><td><code>Corrupt</code></td><td>A save is there and wouldn't decode. The next save overwrites.</td></tr>
+            <tr><td><code>Failure</code></td><td>Storage was unreachable. The target stays not ready, so nothing can overwrite it.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="note"><strong>Note:</strong> If a slot name can come from the player, escape it before you
+        use it as a file name or an address.</div>
+      <p>The base settings are virtual properties with no backing field. Override one with a
+        <code>[field: SerializeField]</code> auto-property to expose it in the Inspector window, or with a plain
+        getter to fix its value. Mark the fields that change where or how a save is written
+        <a href="API%20-%20Core.html#Attributes"><code>[Breaking(...)]</code></a>, so the Inspector window can
+        <a href="Update%20a%20shipped%20save.html#migration">lock them after release</a>.</p>
+      <p>The following members cover what a manager can add beyond those three methods.</p>
+      <div class="table-scroll">
+        <table class="cmp">
+          <thead><tr><th scope="col">To do this</th><th scope="col">Use</th></tr></thead>
+          <tbody>
+            <tr><td><strong id="display">Name it in the dropdown</strong></td><td><a href="API%20-%20Core.html#Attributes"><code>[InspectorDisplay("My Backend", "Saves to my service.", Order = 100, Category = "My Studio")]</code></a>.</td></tr>
+            <tr><td><strong id="a-custom-inspector">Draw a custom Inspector</strong></td><td>Inherit <a href="API%20-%20Editor%20Extension.html#PersistenceManagerEditor"><code>PersistenceManagerEditor</code></a> and override the Draw hook you want, calling base to keep the standard fields.</td></tr>
+            <tr><td><strong id="a-delete-local-data-cleaner">Join Delete Local Data</strong></td><td>A static editor method marked <a href="API%20-%20Editor%20Extension.html#EditorAttributes"><code>[ClearLocalData(typeof(MyManager))]</code></a> joins <a href="Save%20on%20the%20device.html#deleting">Delete Local Data</a>.</td></tr>
+            <tr><td><strong id="writing-a-test-manager">Write a test manager</strong></td><td><a href="API%20-%20Core.html#Attributes"><code>[PersistenceManagerInfo(StorageKind = StorageKind.Test)]</code></a>. It never ships: a release build fails while one exists. Storage that keeps nothing takes <code>StorageKind.Transient</code>.</td></tr>
+            <tr><td><strong id="a-manager-log">Write to its log</strong></td><td><code>Log("Retrying upload", LogLevel.Warning)</code> adds a line to the manager's log in its Inspector window and in the debug overlay, not to the console. It is thread safe, keeps the last 500 lines, and is stripped outside the Editor and development builds.</td></tr>
+            <tr><td><strong id="a-composite-manager">Forward to other managers</strong></td><td><code>On</code>, <code>ComposedManager</code> and <code>DisabledReason</code>, the way <a href="Save%20per%20platform.html">Platform (Routing)</a> does.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════ serializer ════ -->
+    <section id="serializer">
+      <h2>Create a custom serializer</h2>
+      <p>To save data in a format none of the built-in serializers write, subclass
+        <a href="API%20-%20Core.html#Serializer"><code>Serializer</code></a>, mark
+        it <code>[Serializable]</code>, and implement <code>SerializeToString</code> and
+        <code>DeserializeFromString</code>. For a binary format, override <code>IsBinary</code> and the two byte
+        methods instead. Your class then appears in the <strong>Serializer</strong> dropdown.</p>
+      <p>Two more overrides cover what the package does around a payload:</p>
+      <ul>
+        <li>For <a href="Update%20a%20shipped%20save.html#versioning">save upgrades</a>, override
+          <code>ParseToNode</code> and set <code>SupportsNode</code> to true.</li>
+        <li>For a field that holds a project asset, write
+          <a href="API%20-%20Core.html#AssetRegistry"><code>AssetRegistry.IdOf(asset)</code></a> and read it back
+          with <code>AssetRegistry.TryResolve</code>.</li>
+      </ul>
+      <p>To draw the serializer's own fields, inherit
+        <a href="API%20-%20Editor%20Extension.html#SerializerDrawer"><code id="a-custom-serializer-drawer">SerializerDrawer</code></a>.</p>
+      <div class="note warning"><strong>Warning:</strong> A serializer must never fail on valid data. Returning null
+        or throwing disables persistence for that asset.</div>
+    </section>
+
+    <!-- ══════════════════════════════════════ remote ════ -->
+    <section id="remote">
+      <h2>Create a custom remote manager</h2>
+      <p><a href="API%20-%20Built-Ins.html#RemotePersistenceManager"><code>RemotePersistenceManager</code></a>
+        adds an <a href="Cloud%20and%20remote.html#cache">offline cache</a>, a push loop and conflict handling to
+        a manager, so a remote service of your own gets all three. Implement
+        <code>FetchRemote</code>, <code>StoreRemote</code> and <code>DeleteRemote</code>, and map your service's
+        responses onto an <code>Answer</code>:</p>
+      <div class="table-scroll">
+        <table class="cmp">
+          <thead><tr><th scope="col">Answer</th><th scope="col">Map it from</th></tr></thead>
+          <tbody>
+            <tr><td><code>Success</code></td><td>The service answered, and handed back what you asked it for.</td></tr>
+            <tr><td><code>NoSave</code></td><td>The service answered, and holds nothing for this player.</td></tr>
+            <tr><td><code>Unreachable</code></td><td>The network or the service is down, and a retry can recover.</td></tr>
+            <tr><td><code>SetupError</code></td><td>A permanent fault, such as no URL, which retrying can't fix.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="note"><strong>Note:</strong> The payload arrives finished, with compression, encryption and the
+        save lock already run. Store and return those bytes verbatim.</div>
+    </section>
+
+    <!-- ══════════════════════════════════════ settings ════ -->
+    <section id="settings">
+      <h2>Add your own settings</h2>
+      <p>Subclass <a href="API%20-%20Editor%20Extension.html#SettingsEntry"><code>SettingsEntry</code></a>, and its public fields
+        become a section of <strong>Project Settings &gt; Persistent Asset</strong>.
+        <a href="API%20-%20Editor%20Extension.html#Settings"><code>Settings.Get&lt;T&gt;()</code></a> reads them back, in a player as
+        well as in the Editor. For a layout of your own, inherit
+        <a href="API%20-%20Editor%20Extension.html#SettingsEntryDrawer"><code id="a-custom-settings-drawer">SettingsEntryDrawer</code></a>.</p>
+    </section>
+
+    <!-- ══════════════════════════════════════ scenecodecs ════ -->
+    <section id="scenecodecs">
+      <h2>Add a component codec</h2>
+      <p>To save a component <a href="Scene%20Objects.html">Scene Objects</a> doesn't cover, or to replace one it
+        ships, inherit <a href="API%20-%20Scene%20Objects.html#SceneComponentCodec"><code>SceneComponentCodec</code></a>.</p>
+      <p>Restoring runs in three phases: switch off anything that would overwrite the value, write it, then
+        switch that back on.</p>
+    </section>
+
+    <!-- ══════════════════════════════════════ codecs ════ -->
+    <section id="codecs">
+      <h2>Add your own variable types</h2>
+      <p>A codec is what turns your own type into a <a href="No-Code.html">No-Code variable</a>. A converter and
+        a widget are optional on top of it.</p>
+      <div class="table-scroll">
+        <table class="cmp">
+          <thead><tr><th scope="col">Extension point</th><th scope="col">Description</th></tr></thead>
+          <tbody>
+            <tr><td><strong>A variable type</strong></td><td>A <a href="API%20-%20No-Code.html#VariableTypeCodec"><code>VariableTypeCodec&lt;T&gt;</code></a> whose <code>Write</code> and <code>Read</code> turn your type into a string and back, registered with <a href="API%20-%20No-Code.html#NoCodeAttributes"><code>[VariableType]</code></a>.</td></tr>
+            <tr><td><strong id="converters">A value converter</strong></td><td>The package finds a <a href="API%20-%20No-Code.html#ValueConverterT"><code>ValueConverter&lt;TFrom, TTo&gt;</code></a> subclass automatically, which lets a Binder drive a member of another type, one way per converter.</td></tr>
+            <tr><td><strong id="widgets">An Inspector widget</strong></td><td>A <a href="API%20-%20Editor%20Extension.html#VariableWidget"><code>VariableWidget&lt;T&gt;</code></a> paired with a codec id through <a href="API%20-%20Editor%20Extension.html#EditorAttributes"><code>[VariableWidget]</code></a> draws the value in the Inspector window.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>A codec of your own has three rules to follow. It formats and parses with
+        <code>CultureInfo.InvariantCulture</code>, it treats an empty string as the default value, and it never
+        throws on corrupt input.</p>
+      <div class="note"><strong>Note:</strong> Enums and project assets need no codec, and a codec targets one
+        value type. For a collection, use a list or a map variable instead.</div>
+    </section>
+
+    <!-- ══════════════════════════════════════ resources ════ -->
+    <div class="resources">
+      <h2>Additional resources</h2>
+      <ul>
+        <li><a href="API%20-%20Core.html#PersistenceManager">PersistenceManager API reference</a></li>
+        <li><a href="API%20-%20Editor%20Extension.html#SerializerDrawer">Editor Extension API reference</a></li>
+        <li><a href="Save%20per%20platform.html#consoles">Consoles</a></li>
+      </ul>
+    </div>
+
+    <div class="pager">
+      <a class="prev" href="Troubleshooting.html">
+        <div class="dir">Back</div>
+        <div class="pg-title">Troubleshooting</div>
+      </a>
+      <a class="next" href="Technical%20QA.html">
+        <div class="dir">Next</div>
+        <div class="pg-title">Technical Q&amp;A</div>
+      </a>
+    </div>
+
+    <div class="doc-footer">Persistent Asset v2.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

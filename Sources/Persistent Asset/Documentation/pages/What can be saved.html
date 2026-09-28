@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Choose the serializer that decides which of your fields end up in the save." />
+  <title>Persistent Asset - What can be saved</title>
+  <link rel="stylesheet" href="../shared/styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Persistent Asset</div><a href="../User%20Manual.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>What can be saved</h1>
+      <div class="sub">Choose the serializer that decides which of your fields end up in the save.</div>
+
+    <div class="guide-index">
+      <a href="#choosing">Choose a serializer</a>
+      <a href="#unity">Unity JSON</a>
+      <a href="#newtonsoft">Newtonsoft JSON</a>
+      <a href="#odin">Odin</a>
+      <a href="#memorypack">MemoryPack</a>
+      <a href="#size">Size and speed</a>
+      <a href="#switching">Change the serializer later</a>
+      <a href="#custom">Create your own serializer</a>
+    </div>
+    </div>
+
+    <!-- ══════════════════════════════════════ choosing ════ -->
+    <section id="choosing">
+      <h2>Choose a serializer</h2>
+      <p>A serializer turns your asset's data into the bytes a save holds, so it decides which members of your
+        class reach that save. Persistent Asset works with four of them, and each manager carries its own. To
+        change it, select one from the <strong>Serializer</strong> dropdown in the manager's Inspector
+        window.</p>
+      <div class="img-block">
+        <img src="../img/serializer_dropdown" alt="The Serializer dropdown open on a manager"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">&#128247;</span>
+          <span><strong>img/serializer_dropdown</strong><br/>The Serializer dropdown open in a manager&rsquo;s Inspector window, every serializer the project can reach listed</span>
+        </div>
+      </div>
+      <p>If your project already uses Newtonsoft or Odin, you can keep to that one here: it appears in the
+        dropdown as soon as its library is in the project. Otherwise, the choice follows what your class
+        holds:</p>
+      <div class="table-scroll">
+        <table class="cmp">
+          <thead><tr><th scope="col">Serializer</th><th scope="col">Choose it when</th><th scope="col">Needs</th></tr></thead>
+          <tbody>
+            <tr><td><strong><a href="#unity">Unity JSON</a></strong></td><td>Unity's own serialization reaches everything you save. This is the default.</td><td>Nothing</td></tr>
+            <tr><td><strong><a href="#newtonsoft">Newtonsoft JSON</a></strong></td><td>Your class holds dictionaries, properties, or a field whose type Unity's serialization doesn't reach.</td><td>The <code>com.unity.nuget.newtonsoft-json</code> package</td></tr>
+            <tr><td><strong><a href="#odin">Odin</a></strong></td><td>Your class holds what Unity's serialization can't, and the save should be binary rather than JSON.</td><td>Odin Inspector, or the free standalone Odin Serializer</td></tr>
+            <tr><td><strong><a href="#memorypack">MemoryPack</a></strong></td><td>The size and the speed of a save matter more than anything else.</td><td>The <code>com.cysharp.memorypack</code> package and the MemoryPack NuGet libraries</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="note"><strong>Note:</strong> Three features read an old save field by field, and need a
+        serializer that can produce those fields:
+        <a href="Update%20a%20shipped%20save.html#versioning">save upgrades</a>,
+        <a href="Cloud%20and%20remote.html#merging">merging</a> and
+        <a href="Save%20and%20load.html#reset">field resets</a>. Unity JSON, Newtonsoft with <strong>Shared
+        references</strong> off, and Odin set to <strong>Json</strong> can. MemoryPack and Odin Binary
+        can't.</div>
+      <div class="note"><strong>Note:</strong> Only Unity JSON runs Unity's own
+        <code>ISerializationCallbackReceiver</code> on your nested types. Implement
+        <a href="Save%20and%20load.html#reacting"><code>ISerializationCallbacks</code></a> on the asset instead,
+        which every serializer calls.</div>
+    </section>
+
+    <!-- ══════════════════════════════════════ unity ════ -->
+    <section id="unity">
+      <h2>Unity JSON</h2>
+      <p>Unity JSON writes the save through Unity's own serialization, so a save holds the fields Unity itself
+        serializes. It is the default, and needs nothing added to the project.</p>
+      <p>For the rules those fields follow, refer to
+        <a href="https://docs.unity3d.com/Manual/script-serialization.html">Unity's script serialization
+        documentation</a>.</p>
+    </section>
+
+    <!-- ══════════════════════════════════════ newtonsoft ════ -->
+    <section id="newtonsoft">
+      <h2>Newtonsoft JSON</h2>
+      <p>Newtonsoft JSON reaches what Unity's serialization leaves out: dictionaries, properties, nullables,
+        a field that is <code>null</code> rather than an empty instance, and a field whose type Unity refuses.
+        Switching to it never drops a field.</p>
+      <p>For what Newtonsoft supports and how to configure it, refer to the
+        <a href="https://www.newtonsoft.com/json/help/html/Introduction.htm">Json.NET documentation</a>.</p>
+      <div class="note"><strong>Note:</strong> A save Newtonsoft writes names the type of each class it holds, so
+        renaming or moving one of your classes stops existing saves loading.</div>
+    </section>
+
+    <!-- ══════════════════════════════════════ odin ════ -->
+    <section id="odin">
+      <h2>Odin</h2>
+      <p>Odin covers the same ground as Newtonsoft, and saves shared references and polymorphic types with
+        nothing to configure. Its <strong>Binary</strong> format produces a way smaller payload than its
+        <strong>Json</strong> one, and writes it far faster.</p>
+      <p>For what Odin supports, refer to the
+        <a href="https://odininspector.com/documentation">Odin documentation</a>.</p>
+      <div class="note"><strong>Note:</strong> Generate Odin's AOT support before an IL2CPP build, or the load
+        fails in the player.</div>
+      <div class="note warning"><strong>Warning:</strong> Odin constructs whatever type a save names, which a
+        save that arrived from elsewhere can turn into a way into the player's machine: what the save names is
+        what your game builds. The package refuses types that do real work when constructed, by family rather
+        than one by one, so treat that as a minimum. Protect saves that can arrive from off the device with
+        <a href="Secure%20saves.html#security">encryption or a save anchor</a>.</div>
+    </section>
+
+    <!-- ══════════════════════════════════════ memorypack ════ -->
+    <section id="memorypack">
+      <h2>MemoryPack</h2>
+      <p>MemoryPack writes the smallest and the fastest saves of the four, but it has limitations and takes
+        some setup. Your persistent classes have to derive from <code>MemoryPackScriptableObject</code> and
+        follow MemoryPack's own rules about the members it writes.</p>
+      <p>For those rules, refer to the
+        <a href="https://github.com/Cysharp/MemoryPack">MemoryPack documentation</a>.</p>
+      <div class="note warning"><strong>Warning:</strong> MemoryPack saves a narrower set of members than the
+        other serializers, and reports nothing about the ones it leaves out.</div>
+      <div class="note warning"><strong>Warning:</strong> MemoryPack writes only classes you can mark yourself,
+        so it can't write the package's own assets: <a href="No-Code.html#variables">Persistent
+        Variables</a>, <a href="Prefs.html">Prefs</a>, a
+        <a href="Slots%20and%20save%20menus.html#registry">slot registry</a> or a
+        <a href="Scene%20Objects.html">Scene State</a>.</div>
+    </section>
+
+    <!-- ══════════════════════════════════════ size ════ -->
+    <section id="size">
+      <h2>Size and speed</h2>
+      <p>The following table compares the four serializers on one save that holds 700 objects, each with a name, a
+        transform, a few values and a short list.</p>
+      <div class="table-scroll">
+        <table class="cmp">
+          <tr><th scope="col">Serializer</th><th scope="col">Size</th><th scope="col">Gzipped</th><th scope="col">Round trip</th></tr>
+          <tr><td>Unity JSON</td><td>428 KB</td><td>78 KB</td><td>8 ms</td></tr>
+          <tr><td>Newtonsoft JSON</td><td>377 KB</td><td>65 KB</td><td>35 ms</td></tr>
+          <tr><td>Odin Json</td><td>554 KB</td><td>61 KB</td><td>137 ms</td></tr>
+          <tr><td>Odin Binary</td><td>182 KB</td><td>45 KB</td><td>6 ms</td></tr>
+          <tr><td>MemoryPack</td><td>55 KB</td><td>32 KB</td><td>0.7 ms</td></tr>
+        </table>
+      </div>
+      <p>Until a save grows large, <a href="Secure%20saves.html#security">compression</a> changes its size more
+        than the choice of serializer does.</p>
+    </section>
+
+    <!-- ══════════════════════════════════════ switching ════ -->
+    <section id="switching">
+      <h2>Change the serializer later</h2>
+      <p>Changing a serializer is possible even after your game has shipped.</p>
+      <p>Each serializer writes a different format, so one serializer can't read what another wrote. When you
+        change the serializer on a locked manager, the package offers to keep the old setup as an
+        <a href="Update%20a%20shipped%20save.html#migration">import copy</a>, which reads those saves once and
+        writes them back in the new format.</p>
+    </section>
+
+    <!-- ══════════════════════════════════════ custom ════ -->
+    <section id="custom">
+      <h2>Create your own serializer</h2>
+      <p>To save data in a format the built-in serializers don't support, create a class that inherits
+        <code>Serializer</code>. Your class then appears in the <strong>Serializer</strong> dropdown alongside
+        them. For more information, refer to <a href="Extend%20the%20package.html#serializer">Create a custom
+        serializer</a>.</p>
+    </section>
+
+    <!-- ══════════════════════════════════════ resources ════ -->
+    <div class="resources">
+      <h2>Additional resources</h2>
+      <ul>
+        <li><a href="Save%20and%20load.html#assetrefs">Save asset references</a></li>
+        <li><a href="Update%20a%20shipped%20save.html#versioning">Version your data</a></li>
+        <li><a href="Secure%20saves.html">Secure saves</a></li>
+        <li><a href="Extend%20the%20package.html#serializer">Create a custom serializer</a></li>
+      </ul>
+    </div>
+
+    <div class="pager">
+      <a class="prev" href="Scene%20Objects.html">
+        <div class="dir">Back</div>
+        <div class="pg-title">Scene Objects</div>
+      </a>
+      <a class="next" href="How%20saving%20works.html">
+        <div class="dir">Next</div>
+        <div class="pg-title">How saving works</div>
+      </a>
+    </div>
+
+    <div class="doc-footer">Persistent Asset v2.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

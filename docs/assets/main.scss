@@ -585,6 +585,11 @@ $content-width: 880px;
   text-decoration: none;
   font-size: 0.95em;
 
+  // A nav item is not prose: it must not go blue once the page behind it has been
+  // read. `a:visited` outranks a lone class, so the visited state is stated here
+  // rather than left to inherit, the same way .site-title does it.
+  &:visited { color: $text-color; }
+
   &:hover {
     background: #f4f4f4;
     text-decoration: none;
@@ -735,5 +740,6 @@ table td { border-color: var(--border-soft); }
   border-color: var(--border);
   box-shadow: 0 4px 14px var(--shadow);
 }
-.nav-dropdown-link { color: var(--text); }
+.nav-dropdown-link,
+.nav-dropdown-link:visited { color: var(--text); }
 .nav-dropdown-link:hover { background: var(--bg-subtle); }

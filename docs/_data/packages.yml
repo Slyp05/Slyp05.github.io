@@ -25,12 +25,13 @@
   url: /persistent-asset/
   released: true
   free: false
-  meta: Released August 2026
+  meta: Updated September 2026
   card: /assets/images/persistent-asset-card.jpg
   icon: /assets/images/PA.png
   blurb: >-
-    A complete save system for Unity, with no save code to write. Automatic saving,
-    save slots, cloud sync, AES-256 encryption and crash-safe writes, all from the inspector.
+    A complete save system for Unity, with no save code to write. Automatic saving, scene
+    objects, save slots, cloud and Steam sync, AES-256 encryption and crash-safe writes,
+    all from the inspector.
 
 - title: Infinite Value
   url: /infinite-value/

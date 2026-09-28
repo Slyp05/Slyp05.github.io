@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Namespace PersistentAsset.Editor, with .BuiltIns, .NoCode and .SceneObjects for the module editors. Explained in Extend the package." />
   <title>Persistent Asset - Public API - Editor Extension</title>
   <link rel="stylesheet" href="/assets/css/doc-styles.css" />
   <link rel="stylesheet" href="/assets/css/doc-dark.css" />
@@ -15,203 +16,382 @@
   <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </head>
 <body>
+<a class="skip-link" href="#content">Skip to content</a>
 <div id="layout">
 
   <script src="../shared/nav.js"></script>
   <nav>
-    <div class="nav-title">Public API</div>
     <a href="../index.html">Overview</a>
     <a class="nav-band" href="API%20-%20Core.html">Core</a>
     <a class="nav-band" href="API%20-%20Built-Ins.html">Built-Ins</a>
     <a class="nav-band" href="API%20-%20No-Code.html">No-Code</a>
-    <div class="nav-band active">Editor Extension</div>
-    <div class="nav-group">Editors, Drawers &amp; GUI</div>
+    <a class="nav-band" href="API%20-%20Scene%20Objects.html">Scene Objects</a>
+    <a class="nav-band" href="API%20-%20Prefs.html">Prefs</a>
+    <a class="nav-band active" href="API%20-%20Editor%20Extension.html" aria-current="page">Editor Extension</a>
+    <div class="nav-group">Editors, drawers &amp; GUI</div>
     <a href="#PersistenceManagerEditor"><span class="badge badge-editor">Editor</span>PersistenceManagerEditor</a>
     <a href="#RemotePersistenceManagerEditor"><span class="badge badge-editor">Editor</span>RemotePersistenceManagerEditor</a>
     <a href="#SlotRegistryEditor"><span class="badge badge-editor">Editor</span>SlotRegistryEditor</a>
     <a href="#PersistentVariablesEditor"><span class="badge badge-editor">Editor</span>PersistentVariablesEditor</a>
+    <a href="#PersistentSceneStateEditor"><span class="badge badge-editor">Editor</span>PersistentSceneStateEditor<span class="badge badge-new">2.0</span></a>
     <a href="#SerializerDrawer"><span class="badge badge-editor">drawer</span>SerializerDrawer</a>
-    <a href="#SettingsEntryDrawer"><span class="badge badge-editor">drawer</span>SettingsEntryDrawer</a>
     <a href="#PersistenceManagerEditorGUI"><span class="badge badge-static">static</span>PersistenceManagerEditorGUI</a>
+    <a href="#ManagerComposition"><span class="badge badge-static">static</span>ManagerComposition<span class="badge badge-new">2.0</span></a>
     <a href="#PersistentAssetEditorGUI"><span class="badge badge-static">static</span>PersistentAssetEditorGUI</a>
     <a href="#SecurityGUI"><span class="badge badge-static">static</span>SecurityGUI</a>
     <a href="#SlotFormatGUI"><span class="badge badge-static">static</span>SlotFormatGUI</a>
     <a href="#SerializedObjectExtensions"><span class="badge badge-static">static</span>SerializedObjectExtensions</a>
-    <a href="#VariableWidget"><span class="badge badge-class">class</span>VariableWidget&lt;T&gt;</a>
+    <a href="#VariableWidget"><span class="badge badge-class">abstract</span>VariableWidget&lt;T&gt;</a>
     <a href="#TypeDisplay"><span class="badge badge-struct">struct</span>TypeDisplay</a>
     <a href="#AssetRegistration"><span class="badge badge-static">static</span>AssetRegistration</a>
+
+    <div class="nav-group">Object &amp; manager operations</div>
+    <a href="#PersistentObjects"><span class="badge badge-static">static</span>PersistentObjects<span class="badge badge-new">2.0</span></a>
+    <a href="#ManagerSetup"><span class="badge badge-static">static</span>ManagerSetup<span class="badge badge-new">2.0</span></a>
+    <a href="#GeneratedAssets"><span class="badge badge-static">static</span>GeneratedAssets<span class="badge badge-new">2.0</span></a>
+
+    <div class="nav-group">Project settings</div>
+    <a href="#SettingsEntry"><span class="badge badge-class">abstract</span>SettingsEntry</a>
+    <a href="#Settings"><span class="badge badge-static">static</span>Settings</a>
+    <a href="#SettingsEntryDrawer"><span class="badge badge-editor">drawer</span>SettingsEntryDrawer</a>
+    <a href="#SettingsTestScope"><span class="badge badge-class">sealed</span>SettingsTestScope<span class="badge badge-new">2.0</span></a>
 
     <div class="nav-group">Attributes</div>
     <a href="#EditorAttributes"><span class="badge badge-class">attr</span>ClearLocalData</a>
   </nav>
 
-  <main>
+  <main id="content">
     <div class="page-header">
-      <h1>Public API</h1>
-      <div class="sub">Persistent Asset v1.1.0 &nbsp;&middot;&nbsp; namespaces <code>PersistentAsset(.BuiltIns/.NoCode)</code> and the editor mirrors <code>PersistentAsset.Editor(.BuiltIns/.NoCode)</code></div>
+      <h1>Public API <span class="tag">Editor Extension</span></h1>
+      <div class="sub">Namespace <code>PersistentAsset.Editor</code>, with <code>.BuiltIns</code>, <code>.NoCode</code> and <code>.SceneObjects</code> for the module editors. Explained in <a href="../../user-manual/pages/Extend%20the%20package.html">Extend the package</a>.</div>
     </div>
-
-    <p class="lead">Reference for every public type and member in the Editor Extension area. <span class="ex">Red text</span> flags the exceptions a member can throw. See the <a href="../index.html">API overview</a> for the other areas.</p>
 
     <div class="module-band band-first"><span class="band-name">Editor Extension</span><span class="band-desc">Customize the package's inspectors, drawers and tooling.</span></div>
 
 
     <!-- ═══════════════════════════════════════ Editor Extension ═══ -->
+    <h2 class="api-group">Editors, drawers &amp; GUI</h2>
+
     <div class="type-section" id="PersistenceManagerEditor">
-      <div class="type-header"><h2>PersistenceManagerEditor</h2><span class="badge badge-editor">Editor</span><span class="warn">extending</span><span class="ns">PersistentAsset.Editor</span></div>
-      <p class="type-desc">Base editor giving a custom <code>PersistenceManager</code> the standard inspector (Parameters, Actions, Status). Inherit it with a <code>[CustomEditor]</code> and override a Draw* hook; call <code>base</code> to keep the standard content.</p>
-      <div class="member-group"><table class="mt">
-        <tr><td><span class="t">PersistenceManager</span> <span class="mn">PersistenceManager</span> / <span class="t">PersistenceManager[]</span> <span class="mn">PersistenceManagers</span> (protected)</td><td>The inspected manager (the first one when several are selected) and all of them, mirroring <code>target</code> / <code>targets</code>.</td></tr>
-        <tr><td><span class="kw">virtual void</span> <span class="mn">DrawParameters</span>() / <span class="mn">DrawActions</span>() / <span class="mn">DrawStatus</span>(<span class="t">PersistenceManager</span> selected) (protected)</td><td>The three sections; override to customize (call <code>base</code> to extend).</td></tr>
-        <tr><td><span class="t">bool</span> <span class="mn">ShowParameters</span> / <span class="mn">ShowActions</span> / <span class="mn">ShowStatus</span> (protected virtual)</td><td>Whether each section is shown at all.</td></tr>
-        <tr><td><span class="t">IReadOnlyCollection&lt;BuildTarget&gt;</span> <span class="mn">UnsupportedBuildTargets</span> (protected virtual)</td><td>Platforms this manager cannot persist on (shows an error box); empty by default.</td></tr>
-      </table></div>
+      <div class="type-header"><h3>PersistenceManagerEditor</h3><span class="badge badge-editor">Editor</span><span class="warn">extending</span><span class="ns">PersistentAsset.Editor</span></div>
+      <p class="type-desc">Base editor giving a custom <a href="API%20-%20Core.html#PersistenceManager"><code>PersistenceManager</code></a> the standard inspector (Problems, Serializer, Parameters, Actions, Status, Save Data). Inherit it with a <code>[CustomEditor]</code> and override a Draw* hook; call <code>base</code> to keep the standard content. Worked example: <a href="../../user-manual/pages/Extend%20the%20package.html#a-custom-inspector">A custom inspector</a>.</p>
+              <div class="member-group">
+          <div class="member-group-title">Public</div>
+          <table class="mt">
+        <tr><th scope="row"><span class="kw">void</span> <span class="mn">DrawAsChild</span>()</th><td>Draw what a composite manager's row has to show about the manager it owns: what is wrong with it, and nothing else. Give the row a button selecting that manager, so its settings are edited in its own inspector. Its settings are deliberately not drawn in the row: a section inside a row indents twice over and shares its folded state with the owner's section of the same name.</td></tr>
+          </table>
+        </div>
+        <div class="member-group">
+          <div class="member-group-title">For implementers (protected)</div>
+          <table class="mt">
+        <tr><th scope="row"><span class="kw">virtual void</span> <span class="mn">OnEnable</span>() (protected)</th><td>Creates the section foldouts. Call <code>base</code> when overriding.</td></tr>
+        <tr><th scope="row"><span class="t">PersistenceManager</span> <span class="mn">PersistenceManager</span> / <span class="t">PersistenceManager[]</span> <span class="mn">PersistenceManagers</span> (protected)</th><td>The inspected manager (the first one when several are selected) and all of them, mirroring <code>target</code> / <code>targets</code>.</td></tr>
+        <tr><th scope="row"><span class="kw">virtual void</span> <span class="mn">DrawParameters</span>() / <span class="mn">DrawActions</span>() / <span class="mn">DrawStatus</span>(<span class="t">PersistenceManager</span> selected) (protected)</th><td>Those sections; override to customize (call <code>base</code> to extend).</td></tr>
+        <tr><th scope="row"><span class="kw">virtual void</span> <span class="mn">DrawProblems</span>() (protected)</th><td>Everything wrong with this manager, as one block above the parameters. The default draws the package's own checks; override to add yours (call <code>base</code> first), reading every value it depends on before drawing a field that can change one.</td></tr>
+        <tr><th scope="row"><span class="t">bool</span> <span class="mn">ShowParameters</span> / <span class="mn">ShowActions</span> / <span class="mn">ShowStatus</span> / <span class="mn">ShowSaveData</span> (protected virtual)</th><td>Whether each section is shown at all; all four are true by default.</td></tr>
+        <tr><th scope="row"><span class="t">MessageType?</span> <span class="mn">ParametersMessage</span> (protected virtual)</th><td>The worst message the Parameters section holds, groups included, marked on its header while it is folded. The default is the worst message the base parameter groups hold, so fold it into yours with <code>PersistenceManagerEditorGUI.Worst(base.ParametersMessage, ...)</code> when overriding. Answer it whether the section is open or not: a value taken from the drawing could only ever be right when everything is already visible. Manager-level problems belong in <code>DrawProblems</code>, which is always in view.</td></tr>
+        <tr><th scope="row"><span class="kw">virtual void</span> <span class="mn">DrawSerializer</span>() / <span class="t">bool</span> <span class="mn">ShowSerializer</span> (protected)</th><td>Serializer section, a category of its own above the parameters and collapsed by default: it is the one setting most projects choose once and never revisit, and the one that decides the shape of every save. Shown by default whenever the manager has a serializer field.</td></tr>
+        <tr><th scope="row"><span class="kw">virtual void</span> <span class="mn">DrawSaveData</span>(<span class="t">PersistenceManager</span> selected) (protected)</th><td>The Save Data section: what storage holds for a slot, next to what a save would write. Override to add your own.</td></tr>
+        <tr><th scope="row"><span class="t">IReadOnlyCollection&lt;BuildTarget&gt;</span> <span class="mn">UnsupportedBuildTargets</span> (protected virtual)</th><td>Platforms this manager cannot persist on (shows an error box); empty by default.</td></tr>
+        <tr><th scope="row"><span class="t">PersistenceManager[]</span> <span class="mn">LockedTogether</span> (protected virtual)</th><td>The managers the lock row locks as one, the inspected ones by default. A composite manager's editor adds the managers it owns.</td></tr>
+          </table>
+        </div>
+
     </div>
 
     <div class="type-section" id="RemotePersistenceManagerEditor">
-      <div class="type-header"><h2>RemotePersistenceManagerEditor</h2><span class="badge badge-editor">Editor</span><span class="warn">extending</span><span class="ns">PersistentAsset.Editor.BuiltIns</span></div>
-      <p class="type-desc">Base editor for a <code>RemotePersistenceManager</code> subclass: the standard manager inspector plus the offline-cache parameters. Used automatically for any remote manager without a more specific editor.</p>
-      <div class="member-group"><table class="mt">
-        <tr><td><span class="kw">override void</span> <span class="mn">DrawParameters</span>() (protected)</td><td>Adds the cache section to the Parameters.</td></tr>
-        <tr><td><span class="kw">void</span> <span class="mn">DrawCacheParameters</span>() (protected)</td><td>Draw the Cache Mode (and Offline Cold Start) fields; place it from a <code>DrawParameters</code> override.</td></tr>
-      </table></div>
+      <div class="type-header"><h3>RemotePersistenceManagerEditor</h3><span class="badge badge-editor">Editor</span><span class="warn">extending</span><span class="ns">PersistentAsset.Editor.BuiltIns</span></div>
+      <p class="type-desc">Base editor for a <a href="API%20-%20Built-Ins.html#RemotePersistenceManager"><code>RemotePersistenceManager</code></a> subclass: the standard manager inspector plus the offline-cache, compression and security parameters. Used automatically for any remote manager without a more specific editor. Explained in <a href="../../user-manual/pages/Extend%20the%20package.html">Extend the package</a>.</p>
+              <div class="member-group">
+          <div class="member-group-title">Public</div>
+          <table class="mt">
+        <tr><th scope="row"><span class="t">string</span> <span class="mn">CacheTitle</span> / <span class="mn">FormatTitle</span> (const)</th><td>Those two group titles.</td></tr>
+          </table>
+        </div>
+        <div class="member-group">
+          <div class="member-group-title">For implementers (protected)</div>
+          <table class="mt">
+        <tr><th scope="row"><span class="kw">override void</span> <span class="mn">OnEnable</span>() (protected)</th><td>Finds the cache parameters. Call <code>base</code> when overriding.</td></tr>
+        <tr><th scope="row"><span class="kw">override void</span> <span class="mn">DrawParameters</span>() (protected)</th><td>Adds the Offline Cache and Format &amp; Protection groups to the Parameters.</td></tr>
+        <tr><th scope="row"><span class="kw">void</span> <span class="mn">DrawCacheGroup</span>() / <span class="mn">DrawFormatGroup</span>() (protected)</th><td>The two folding groups the standard remote inspector places: <code>Offline Cache</code> around the cache fields, and <code>Format &amp; Protection</code> around compression and security, under the name the file manager gives the same pair. Call these from a <code>DrawParameters</code> override; the three methods below draw the fields themselves, for an editor placing them its own way.</td></tr>
+        <tr><th scope="row"><span class="kw">void</span> <span class="mn">DrawCacheParameters</span>() (protected)</th><td>Draw the Cache Mode (and Offline Cold Start) fields; place it from a <code>DrawParameters</code> override.</td></tr>
+        <tr><th scope="row"><span class="kw">void</span> <span class="mn">DrawCompressionParameter</span>() (protected)</th><td>Draw the Compression field. It belongs right above <code>DrawSecurityParameters</code>, the order the two are applied in.</td></tr>
+        <tr><th scope="row"><span class="kw">void</span> <span class="mn">DrawSecurityParameters</span>() (protected)</th><td>Draw Encryption and Anchor Save To, then Cache Encryption and Cache Anchor Save To while the manager keeps a cache, each with its per-anchor warnings, plus the error for a setting a remote manager refuses. Does nothing when the manager exposes none of them.</td></tr>
+          </table>
+        </div>
+
     </div>
 
     <div class="type-section" id="SlotRegistryEditor">
-      <div class="type-header"><h2>SlotRegistryEditor</h2><span class="badge badge-editor">Editor</span><span class="warn">extending</span><span class="ns">PersistentAsset.Editor.BuiltIns</span></div>
-      <p class="type-desc">Base editor for <code>PersistentSlotRegistry</code> and its subclasses: draws your fields, then the read-only slot entries. Inherit with a <code>[CustomEditor]</code>.</p>
+      <div class="type-header"><h3>SlotRegistryEditor</h3><span class="badge badge-editor">Editor</span><span class="warn">extending</span><span class="ns">PersistentAsset.Editor</span></div>
+      <p class="type-desc">Base editor for <a href="API%20-%20Core.html#PersistentSlotRegistry"><code>PersistentSlotRegistry</code></a> and its subclasses: draws your fields, then the read-only slot entries. Inherit with a <code>[CustomEditor]</code>.</p>
       <div class="member-group"><table class="mt">
-        <tr><td><span class="kw">virtual void</span> <span class="mn">DrawProperties</span>() (protected)</td><td>Override <code>DrawProperties</code> to control the fields shown above the entries (call <code>base</code> to keep the default).</td></tr>
+        <tr><th scope="row"><span class="kw">virtual void</span> <span class="mn">OnEnable</span>() (protected)</th><td>Creates the section foldouts. Call <code>base</code> when overriding.</td></tr>
+        <tr><th scope="row"><span class="kw">virtual void</span> <span class="mn">DrawProperties</span>() (protected)</th><td>Override <code>DrawProperties</code> to control the fields shown above the entries (call <code>base</code> to keep the default).</td></tr>
       </table></div>
     </div>
 
     <div class="type-section" id="PersistentVariablesEditor">
-      <div class="type-header"><h2>PersistentVariablesEditor</h2><span class="badge badge-editor">Editor</span><span class="warn">extending</span><span class="ns">PersistentAsset.Editor.NoCode</span></div>
-      <p class="type-desc">Base editor for <code>PersistentVariables</code> and its subclasses: draws the non-variable fields, then the variable list. Inherit with a <code>[CustomEditor]</code>.</p>
+      <div class="type-header"><h3>PersistentVariablesEditor</h3><span class="badge badge-editor">Editor</span><span class="warn">extending</span><span class="ns">PersistentAsset.Editor.NoCode</span></div>
+      <p class="type-desc">Base editor for <a href="API%20-%20No-Code.html#PersistentVariables"><code>PersistentVariables</code></a> and its subclasses: draws the non-variable fields, then the variable list. Inherit with a <code>[CustomEditor]</code>.</p>
       <div class="member-group"><table class="mt">
-        <tr><td><span class="t">PersistentVariables</span> <span class="mn">Variables</span> (protected)</td><td>The inspected asset, mirroring <code>target</code>.</td></tr>
-        <tr><td><span class="kw">virtual void</span> <span class="mn">DrawProperties</span>() / <span class="kw">virtual</span> <span class="t">string[]</span> <span class="mn">HandledProperties</span> (protected)</td><td>Override (or extend the excluded set) to customize the fields shown above the list.</td></tr>
+        <tr><th scope="row"><span class="kw">virtual void</span> <span class="mn">OnEnable</span>() / <span class="mn">OnDisable</span>() (protected)</th><td>Reads the serialized properties, creates the foldouts and builds the variable list; the second drops the runtime subscriptions. Call <code>base</code> when overriding.</td></tr>
+        <tr><th scope="row"><span class="t">PersistentVariables</span> <span class="mn">Variables</span> (protected)</th><td>The inspected asset, mirroring <code>target</code>.</td></tr>
+        <tr><th scope="row"><span class="kw">virtual void</span> <span class="mn">DrawProperties</span>() / <span class="kw">virtual</span> <span class="t">string[]</span> <span class="mn">HandledProperties</span> (protected)</th><td>Override (or extend the excluded set) to customize the fields shown above the list.</td></tr>
+        <tr><th scope="row"><span class="kw">virtual</span> <span class="t">bool</span> <span class="mn">ShowGlobalIdentifier</span> (protected)</th><td>Whether the Global Identifier field is drawn (true by default). Return false on a subclass reached by its own type rather than by an identifier, where the field would name nothing. One already stored is drawn either way, so it can be seen and cleared.</td></tr>
+      </table></div>
+    </div>
+
+    <div class="type-section" id="PersistentSceneStateEditor">
+      <div class="type-header"><h3>PersistentSceneStateEditor</h3><span class="badge badge-editor">Editor</span><span class="warn">extending</span><span class="badge badge-new">2.0</span><span class="ns">PersistentAsset.Editor.SceneObjects</span></div>
+      <p class="type-desc">Base editor for <a href="API%20-%20Scene%20Objects.html#PersistentSceneState"><code>PersistentSceneState</code></a> and its subclasses: draws the asset's own settings, then what the state currently holds, one row per scene. Inherit with a <code>[CustomEditor]</code>.</p>
+      <div class="member-group"><table class="mt">
+        <tr><th scope="row"><span class="kw">virtual void</span> <span class="mn">OnEnable</span>() (protected)</th><td>Creates the section foldouts. Call <code>base</code> when overriding.</td></tr>
+        <tr><th scope="row"><span class="kw">virtual void</span> <span class="mn">DrawProperties</span>() (protected)</th><td>Every serialized field except the records, which are shown as the summary below instead. Override to control what appears above the summary (call <code>base</code> to keep the default).</td></tr>
       </table></div>
     </div>
 
     <div class="type-section" id="SerializerDrawer">
-      <div class="type-header"><h2>SerializerDrawer</h2><span class="badge badge-editor">drawer</span><span class="warn">extending</span><span class="ns">PersistentAsset.Editor</span></div>
-      <p class="type-desc">The <code>PropertyDrawer</code> for every <code>Serializer</code> field (a type popup, then the selected type's fields). Inherit + <code>[CustomPropertyDrawer(typeof(YourSerializer))]</code> to customize.</p>
+      <div class="type-header"><h3>SerializerDrawer</h3><span class="badge badge-editor">drawer</span><span class="warn">extending</span><span class="ns">PersistentAsset.Editor</span></div>
+      <p class="type-desc">The <code>PropertyDrawer</code> for every <a href="API%20-%20Core.html#Serializer"><code>Serializer</code></a> field (a type popup, then the selected type's fields). Inherit + <code>[CustomPropertyDrawer(typeof(YourSerializer))]</code> to customize. It already implements <code>GetPropertyHeight</code> and <code>OnGUI</code>, which draw the popup and delegate the rest to the two members below: override those, not the <code>PropertyDrawer</code> pair. Worked example: <a href="../../user-manual/pages/Extend%20the%20package.html#a-custom-serializer-drawer">A custom serializer drawer</a>.</p>
       <div class="member-group"><table class="mt">
-        <tr><td><span class="kw">virtual float</span> <span class="mn">FieldsHeight</span>(<span class="t">SerializedProperty</span>) / <span class="kw">virtual void</span> <span class="mn">DrawFields</span>(<span class="t">Rect</span>, <span class="t">SerializedProperty</span>) (protected)</td><td>Override to draw the serializer's fields below the type popup.</td></tr>
-      </table></div>
-    </div>
-
-    <div class="type-section" id="SettingsEntryDrawer">
-      <div class="type-header"><h2>SettingsEntryDrawer</h2><span class="badge badge-editor">drawer</span><span class="warn">extending</span><span class="ns">PersistentAsset.Editor</span></div>
-      <p class="type-desc">The <code>PropertyDrawer</code> for every <code>SettingsEntry</code> section (draws its fields flat). Inherit + <code>[CustomPropertyDrawer(typeof(YourSettings))]</code> to customize.</p>
-      <div class="member-group"><table class="mt">
-        <tr><td><span class="kw">virtual float</span> <span class="mn">FieldsHeight</span>(<span class="t">SerializedProperty</span>) / <span class="kw">virtual void</span> <span class="mn">DrawFields</span>(<span class="t">Rect</span>, <span class="t">SerializedProperty</span>) (protected)</td><td>Override to draw the section's content.</td></tr>
+        <tr><th scope="row"><span class="kw">virtual float</span> <span class="mn">FieldsHeight</span>(<span class="t">SerializedProperty</span>) / <span class="kw">virtual void</span> <span class="mn">DrawFields</span>(<span class="t">Rect</span>, <span class="t">SerializedProperty</span>) (protected)</th><td>Override to draw the serializer's fields below the type popup.</td></tr>
       </table></div>
     </div>
 
     <div class="type-section" id="PersistenceManagerEditorGUI">
-      <div class="type-header"><h2>PersistenceManagerEditorGUI</h2><span class="badge badge-static">static</span><span class="warn">extending</span><span class="ns">PersistentAsset.Editor</span></div>
-      <p class="type-desc">Building blocks to draw a <code>PersistenceManager</code> inspector by hand (the manager-agnostic helpers live in <code>PersistentAssetEditorGUI</code>).</p>
+      <div class="type-header"><h3>PersistenceManagerEditorGUI</h3><span class="badge badge-static">static</span><span class="warn">extending</span><span class="ns">PersistentAsset.Editor</span></div>
+      <p class="type-desc">Building blocks to draw a <a href="API%20-%20Core.html#PersistenceManager"><code>PersistenceManager</code></a> inspector by hand (the manager-agnostic helpers live in <a href="#PersistentAssetEditorGUI"><code>PersistentAssetEditorGUI</code></a>). Explained in <a href="../../user-manual/pages/Extend%20the%20package.html">Extend the package</a>.</p>
       <div class="member-group"><table class="mt">
-        <tr><td><span class="t">IReadOnlyList&lt;string&gt;</span> <span class="mn">NonParameterFields</span></td><td>Property paths that are not parameters (script, target, id, import plumbing), to exclude when drawing custom fields.</td></tr>
-        <tr><td><span class="t">IReadOnlyList&lt;string&gt;</span> <span class="mn">DrawBaseParameters</span>(<span class="t">SerializedObject</span>)</td><td>Draw the serializer + exposed base parameters; returns the paths drawn.</td></tr>
-        <tr><td><span class="kw">void</span> <span class="mn">DrawBaseProperty</span>(<span class="t">SerializedProperty</span>)</td><td>Draw one base parameter with its standard presentation.</td></tr>
-        <tr><td><span class="kw">void</span> <span class="mn">DrawProperty</span>(<span class="t">SerializedProperty</span>) / <span class="mn">DrawProperty</span>(<span class="t">SerializedProperty</span>, <span class="t">GUIContent</span>)</td><td>Draw a field, auto-locked when it is a <code>[Breaking]</code> field and the manager is locked.</td></tr>
-        <tr><td><span class="kw">void</span> <span class="mn">DrawTargetHeader</span>(<span class="t">Editor</span>) / <span class="t">bool</span> <span class="mn">DrawImportSourceInspector</span>(<span class="t">Editor</span>)</td><td>Draw the target header; draw the import-source inspector (returns whether it handled it).</td></tr>
-        <tr><td><span class="kw">void</span> <span class="mn">DrawActions</span>(<span class="t">PersistenceManager[]</span>, ref <span class="t">bool</span> newSlotEnabled, ref <span class="t">string</span> newSlot) / <span class="t">PersistenceManager</span> <span class="mn">DrawSelector</span>(<span class="t">PersistenceManager[]</span>, ref <span class="t">int</span> selectedIndex)</td><td>Draw the slot row + Load/Save/Clear buttons; draw the multi-edit selector.</td></tr>
-        <tr><td><span class="kw">void</span> <span class="mn">DrawStatus</span>(<span class="t">PersistenceManager</span>) / <span class="kw">void</span> <span class="mn">DrawLogs</span>(<span class="t">PersistenceManager</span>, ref <span class="t">float</span> scrollPosition)</td><td>Draw the status rows; draw the inspector log view.</td></tr>
-        <tr><td><span class="kw">void</span> <span class="mn">DrawLockRow</span>(<span class="t">PersistenceManager[]</span>) / <span class="t">bool</span> <span class="mn">IsLocked</span>(<span class="t">PersistenceManager</span>)</td><td>Draw the lock toolbar; query whether a manager is locked.</td></tr>
-        <tr><td><span class="kw">void</span> <span class="mn">DrawBreakingLockIcon</span>(<span class="t">Rect</span>, <span class="t">SerializedProperty</span>) / <span class="t">bool</span> <span class="mn">IsBreakingFieldLocked</span>(<span class="t">SerializedProperty</span>)</td><td>Draw / query the padlock for a <code>[Breaking]</code> field.</td></tr>
-        <tr><td><span class="t">struct</span> <span class="mn">BreakingFieldScope</span> : IDisposable &middot; <span class="mn">BreakingFieldScope</span>(params <span class="t">PersistenceManager</span>[])</td><td>A <code>using</code> block that mirrors the managers' locked state onto every field drawn inside it.</td></tr>
-        <tr><td><span class="kw">void</span> <span class="mn">DrawPersistenceDisabledError</span>(<span class="t">PersistenceManager[]</span>) / <span class="mn">DrawPolicyConstraintConflictError</span>(<span class="t">PersistenceManager[]</span>) / <span class="mn">DrawStorageLocationConflictError</span>(<span class="t">PersistenceManager[]</span>)</td><td>Error boxes for a disabled manager / a policy-versus-constraint conflict / a manager resolving to the same storage location as another one in the project.</td></tr>
-        <tr><td><span class="kw">void</span> <span class="mn">DrawTestManagerBox</span>(<span class="t">PersistenceManager[]</span>)</td><td>Warning box and exit button of a test manager (restores the kept setup it replaced, or removes it); draws nothing for any other manager.</td></tr>
+        <tr><th scope="row"><span class="t">IReadOnlyList&lt;string&gt;</span> <span class="mn">NonParameterFields</span></th><td>Property paths that are not parameters (script, target, id, import and composition plumbing), to exclude when drawing custom fields.</td></tr>
+        <tr><th scope="row"><span class="t">IReadOnlyList&lt;string&gt;</span> <span class="mn">DrawBaseParameters</span>(<span class="t">SerializedObject</span>)</th><td>Draw the exposed base parameters, folded into the <code>Slots &amp; Scope</code>, <code>Automatic Load &amp; Save</code> and <code>Execution &amp; Timeouts</code> groups; a group none of whose parameters the manager exposes is not drawn. Returns the paths drawn, the serializer's included: it is drawn by the Serializer section, and a custom editor excluding these paths must not draw it a second time.</td></tr>
+        <tr><th scope="row"><span class="t">MessageType?</span> <span class="mn">BaseParametersMessage</span>(<span class="t">SerializedObject</span>) &middot; <span class="t">MessageType?</span> <span class="mn">Worst</span>(<span class="kw">params</span> <span class="t">MessageType?</span>[])</th><td>The worst message the groups <code>DrawBaseParameters</code> draws are holding, so a section can answer for what it folds away, and the same reduction over messages of your own: <code>null</code> is nothing to say, and an error outranks a warning outranks information.</td></tr>
+        <tr><th scope="row"><span class="t">bool</span> <span class="mn">DrawChildBanner</span>(<span class="t">PersistenceManager</span>[])</th><td>The banner for managers owned by a composite one: what they are part of, and a button that selects it. Returns whether it drew, which is also whether the inspector should skip everything that needs a session.</td></tr>
+        <tr><th scope="row"><span class="t">string</span> <span class="mn">SlotsAndScopeTitle</span> / <span class="mn">AutomaticTitle</span> / <span class="mn">ExecutionTitle</span> (const)</th><td>The three group titles, so a custom editor can place its own fields in them or leave those names alone.</td></tr>
+        <tr><th scope="row"><span class="kw">void</span> <span class="mn">DrawBaseProperty</span>(<span class="t">SerializedProperty</span>)</th><td>Draw one base parameter with its standard presentation.</td></tr>
+        <tr><th scope="row"><span class="t">SerializedProperty</span> <span class="mn">SerializerParameter</span>(<span class="t">SerializedObject</span>) / <span class="kw">void</span> <span class="mn">DrawSerializerParameter</span>(<span class="t">SerializedObject</span>)</th><td>The manager's serializer field, and its standard drawing, for the Serializer section. Both answer with nothing for an owned manager, which serializes through its owner's.</td></tr>
+        <tr><th scope="row"><span class="kw">void</span> <span class="mn">DrawProperty</span>(<span class="t">SerializedProperty</span>) / <span class="mn">DrawProperty</span>(<span class="t">SerializedProperty</span>, <span class="t">GUIContent</span>)</th><td>Draw a field, auto-locked when it is a <code>[Breaking]</code> field and the manager is locked.</td></tr>
+        <tr><th scope="row"><span class="kw">void</span> <span class="mn">DrawTargetHeader</span>(<span class="t">Editor</span>)</th><td>Draw the header naming the object this manager saves.</td></tr>
+        <tr><th scope="row"><span class="t">bool</span> <span class="mn">DrawImportSourceInspector</span>(<span class="t">Editor</span>)</th><td>Draw the read-only inspector of an import source, and answer whether the manager was one, so a caller can skip its own drawing.</td></tr>
+        <tr><th scope="row"><span class="kw">void</span> <span class="mn">DrawActions</span>(<span class="t">PersistenceManager[]</span>, ref <span class="t">bool</span> newSlotEnabled, ref <span class="t">string</span> newSlot)</th><td>Draw the slot row and the Load, Save and Clear buttons.</td></tr>
+        <tr><th scope="row"><span class="t">PersistenceManager</span> <span class="mn">DrawSelector</span>(<span class="t">PersistenceManager[]</span>, ref <span class="t">int</span> selectedIndex)</th><td>Draw the selector that picks which manager the sections below act on, when several objects are inspected at once.</td></tr>
+        <tr><th scope="row"><span class="t">bool</span> <span class="mn">ActionButton</span>(<span class="t">GUIContent</span>) / <span class="t">int</span> <span class="mn">ActionButton</span>(<span class="t">GUIContent</span>, <span class="t">GUIContent</span> second)</th><td>An action of this manager's own, on a row of its own: the button takes the value column, lining up with the Load, Save and Clear rows above it. The two-argument form shares the row between two actions, the way Sync and Async do, and answers 0, 1 or -1 for which was pressed.</td></tr>
+        <tr><th scope="row"><span class="kw">void</span> <span class="mn">DrawStatus</span>(<span class="t">PersistenceManager</span>)</th><td>Draw the status rows: readiness, slot, storage location and the last operation.</td></tr>
+        <tr><th scope="row"><span class="kw">void</span> <span class="mn">DrawLogs</span>(<span class="t">PersistenceManager</span>, ref <span class="t">float</span> scrollPosition)</th><td>Draw the scrolling operation log, the editor and development-build view of what the manager did.</td></tr>
+        <tr><th scope="row"><span class="kw">void</span> <span class="mn">DrawSaveData</span>(<span class="t">PersistenceManager</span>, <span class="t">SaveDataState</span>) &middot; <span class="t">class</span> <span class="mn">SaveDataState</span></th><td>Draw what storage holds next to what the object holds, read on demand through the manager's own read. Keep one state object per editor.</td></tr>
+        <tr><th scope="row"><span class="kw">void</span> <span class="mn">DrawLockRow</span>(<span class="t">PersistenceManager[]</span>)</th><td>Draw the lock toolbar, the row that marks a manager as shipped.</td></tr>
+        <tr><th scope="row"><span class="t">bool</span> <span class="mn">IsLocked</span>(<span class="t">PersistenceManager</span>)</th><td>Whether a manager is locked, so your own fields can go read-only with the rest.</td></tr>
+        <tr><th scope="row"><span class="kw">void</span> <span class="mn">DrawBreakingLockIcon</span>(<span class="t">Rect</span>, <span class="t">SerializedProperty</span>) / <span class="t">bool</span> <span class="mn">IsBreakingFieldLocked</span>(<span class="t">SerializedProperty</span>)</th><td>Draw / query the padlock for a <code>[Breaking]</code> field.</td></tr>
+        <tr><th scope="row"><span class="t">struct</span> <span class="mn">BreakingFieldScope</span> : IDisposable &middot; <span class="mn">BreakingFieldScope</span>(params <span class="t">PersistenceManager</span>[])</th><td>A <code>using</code> block that mirrors the managers' locked state onto every field drawn inside it.</td></tr>
+        <tr><th scope="row"><span class="t">struct</span> <span class="mn">GroupScope</span> : IDisposable &middot; <span class="mn">GroupScope</span>(<span class="t">string</span> title, <span class="t">MessageType?</span> message = null, <span class="t">SerializedObject</span> = null, params <span class="t">string</span>[] paths) &middot; <span class="t">bool</span> <span class="mn">Visible</span> { get; }</th><td>A folding group of parameters, for the settings a manager works without: draw the two or three fields with no useful default above it and group the rest. Its open state is remembered per title, and a collapsed group whose values differ from a fresh manager's marks itself <em>configured</em>, which is what keeps a folded setting discoverable. Outside a manager inspector, use <a href="#PersistentAssetEditorGUI">PersistentAssetEditorGUI.GroupScope</a>, the same group without the mark.</td></tr>
+        <tr><th scope="row"><span class="kw">void</span> <span class="mn">DrawPersistenceDisabledError</span>(<span class="t">PersistenceManager[]</span>) / <span class="mn">DrawPolicyConstraintConflictError</span>(<span class="t">PersistenceManager[]</span>) / <span class="mn">DrawStorageLocationConflictError</span>(<span class="t">PersistenceManager[]</span>)</th><td>Error boxes for a disabled manager / a policy-versus-constraint conflict / a manager resolving to the same storage location as another one in the project.</td></tr>
+        <tr><th scope="row"><span class="kw">void</span> <span class="mn">DrawMissingSerializerTypeError</span>(<span class="t">PersistenceManager[]</span>)</th><td>Error box while an inspected manager stores a serializer whose type does not resolve here: its module is not compiled in the project, or the type was renamed with no <code>[MovedFrom]</code>. The serializer is named rather than shown as an empty field, and kept rather than replaced, since the saves it wrote cannot be read without it.</td></tr>
+        <tr><th scope="row"><span class="kw">void</span> <span class="mn">DrawTestManagerBox</span>(<span class="t">PersistenceManager[]</span>)</th><td>Warning box and exit button of a test manager (restores the kept setup it replaced, or removes it); draws nothing for any other manager.</td></tr>
+      </table></div>
+    </div>
+
+    <div class="type-section" id="ManagerComposition">
+      <div class="type-header"><h3>ManagerComposition</h3><span class="badge badge-static">static</span><span class="warn">extending</span><span class="badge badge-new">2.0</span><span class="ns">PersistentAsset.Editor</span></div>
+      <p class="type-desc">Authoring support for a manager made of other managers (see <a href="API%20-%20Built-Ins.html#PlatformPersistenceManager">Platform (Routing)</a>). An owned manager is a hidden sub-asset of the same object and never runs on its own: its owner drives its storage. One level deep, and an owned manager nothing references is swept away. Worked example: <a href="../../user-manual/pages/Extend%20the%20package.html#a-composite-manager">A manager whose storage is other managers</a>.</p>
+      <div class="member-group"><table class="mt">
+        <tr><th scope="row"><span class="t">bool</span> <span class="mn">IsChild</span>(<span class="t">PersistenceManager</span>) / <span class="t">PersistenceManager</span> <span class="mn">OwnerOf</span>(<span class="t">PersistenceManager</span>) / <span class="t">PersistenceManager[]</span> <span class="mn">ChildrenOf</span>(<span class="t">PersistenceManager</span>)</th><td>Whether a manager is owned, by which one, and what a manager owns.</td></tr>
+        <tr><th scope="row"><span class="kw">void</span> <span class="mn">AsOneEdit</span>(<span class="t">Action</span> edit)</th><td>Run an edit as a single undo step. Wrap every change a composite manager's editor makes in this: one of them touches its own routing, a child asset and the names carrying the order, and an undo landing between two of those leaves a part pointing at nothing, or a manager nothing references that the project then reports as leftover garbage.</td></tr>
+        <tr><th scope="row"><span class="t">PersistenceManager</span> <span class="mn">CreateChild</span>(<span class="t">Type</span>, <span class="t">PersistenceManager</span> owner)</th><td>Create an owned manager. Reference it from the owner in the same operation.</td></tr>
+        <tr><th scope="row"><span class="kw">void</span> <span class="mn">DeleteChild</span>(<span class="t">PersistenceManager</span>) / <span class="mn">AdoptChild</span>(<span class="t">PersistenceManager</span>, <span class="t">PersistenceManager</span> owner)</th><td>Delete an owned manager; make an existing manager an owned one, keeping everything it holds.</td></tr>
+        <tr><th scope="row"><span class="t">PersistenceManager</span> <span class="mn">Compose</span>(<span class="t">PersistenceManager</span>, <span class="t">Type</span> compositeType) / <span class="t">bool</span> <span class="mn">CanCompose</span>(<span class="t">PersistenceManager</span>)</th><td>Put an object's manager under a new composite one that takes its place: it keeps its identity, its configuration and the storage it already writes, so a shipped save is never stranded. Reference it from the composite in the same operation, as with <code>CreateChild</code>.</td></tr>
+        <tr><th scope="row"><span class="kw">void</span> <span class="mn">NameChild</span>(<span class="t">PersistenceManager</span>, <span class="t">string</span> prefix)</th><td>Name an owned manager "[prefix] Type", since the asset file cannot nest one manager under another.</td></tr>
+        <tr><th scope="row"><span class="t">IReadOnlyCollection&lt;BuildTarget&gt;</span> <span class="mn">UnsupportedBuildTargetsOf</span>(<span class="t">PersistenceManager</span>)</th><td>What a manager's own editor vetoes, so a composite can report a part pointed at a platform it does not support.</td></tr>
       </table></div>
     </div>
 
     <div class="type-section" id="PersistentAssetEditorGUI">
-      <div class="type-header"><h2>PersistentAssetEditorGUI</h2><span class="badge badge-static">static</span><span class="warn">extending</span><span class="ns">PersistentAsset.Editor</span></div>
-      <p class="type-desc">General editor GUI building blocks with no <code>PersistenceManager</code> dependency: titles, foldouts, hinted float fields and build-target groups.</p>
+      <div class="type-header"><h3>PersistentAssetEditorGUI</h3><span class="badge badge-static">static</span><span class="warn">extending</span><span class="ns">PersistentAsset.Editor</span></div>
+      <p class="type-desc">General editor GUI building blocks with no <a href="API%20-%20Core.html#PersistenceManager"><code>PersistenceManager</code></a> dependency: titles, foldouts and the groups that fold inside them, hinted float fields and build-target groups.</p>
       <div class="member-group"><table class="mt">
-        <tr><td><span class="kw">void</span> <span class="mn">DrawTitle</span>(<span class="t">string</span> title, <span class="t">bool</span> space = true)</td><td>Draw a bold section title.</td></tr>
-        <tr><td><span class="kw">void</span> <span class="mn">HintedFloatField</span>(<span class="t">Rect</span>, <span class="t">SerializedProperty</span>, <span class="t">Func&lt;float, string&gt;</span> hint, <span class="t">float?</span> minimum = null, <span class="t">GUIContent</span> label = null)</td><td>A float field with an in-field hint and an optional floor.</td></tr>
-        <tr><td><span class="t">AnimBool</span> <span class="mn">CreateFoldout</span>(<span class="t">Editor</span>, <span class="t">string</span> key, <span class="t">bool</span> expandedByDefault = true)</td><td>Create a persisted, animated foldout state (pair with <code>FoldoutScope</code>).</td></tr>
-        <tr><td><span class="t">struct</span> <span class="mn">FoldoutScope</span> : IDisposable &middot; <span class="mn">FoldoutScope</span>(<span class="t">AnimBool</span> foldout, <span class="t">string</span> title) &middot; <span class="t">bool</span> <span class="mn">Visible</span> { get; }</td><td>A <code>using</code>-block animated foldout header + guarded content; wrap the body in <code>if (scope.Visible)</code>.</td></tr>
-        <tr><td><span class="kw">void</span> <span class="mn">DrawUnsupportedBuildTargetError</span>(<span class="t">IReadOnlyCollection&lt;BuildTarget&gt;</span>)</td><td>Error box while the active build target is unsupported.</td></tr>
-        <tr><td><span class="t">IReadOnlyList&lt;BuildTarget&gt;</span> <span class="mn">ConsoleBuildTargets</span> / <span class="mn">MobileBuildTargets</span> / <span class="mn">WebGLBuildTargets</span></td><td>Ready-made target groups to veto from a manager.</td></tr>
+        <tr><th scope="row"><span class="kw">void</span> <span class="mn">DrawTitle</span>(<span class="t">string</span> title, <span class="t">bool</span> space = true)</th><td>Draw a bold section title.</td></tr>
+        <tr><th scope="row"><span class="kw">void</span> <span class="mn">SelectableField</span>(<span class="t">GUIContent</span> label, <span class="t">GUIContent</span> value) / <span class="mn">SelectableField</span>(<span class="t">Rect</span> rect, <span class="t">GUIContent</span> label, <span class="t">GUIContent</span> value)</th><td>Draw a read-only value that looks like a text field and can be selected and copied. Use it for a resolved preview (a save path, a server address, a storage key) rather than a disabled label, which looks editable and hands back nothing.</td></tr>
+        <tr><th scope="row"><span class="kw">void</span> <span class="mn">HintedFloatField</span>(<span class="t">Rect</span>, <span class="t">SerializedProperty</span>, <span class="t">Func&lt;float, string&gt;</span> hint, <span class="t">float?</span> minimum = null, <span class="t">GUIContent</span> label = null)</th><td>A number field (float or int) with an in-field hint and an optional floor.</td></tr>
+        <tr><th scope="row"><span class="t">AnimBool</span> <span class="mn">CreateFoldout</span>(<span class="t">Editor</span>, <span class="t">string</span> key, <span class="t">bool</span> expandedByDefault = true)</th><td>Create a persisted, animated foldout state (pair with <code>FoldoutScope</code>).</td></tr>
+        <tr><th scope="row"><span class="t">struct</span> <span class="mn">FoldoutScope</span> : IDisposable &middot; <span class="mn">FoldoutScope</span>(<span class="t">AnimBool</span> foldout, <span class="t">string</span> title, <span class="t">MessageType?</span> message = null, <span class="t">string</span> tooltip = null, <span class="t">string</span> hint = null) &middot; <span class="t">bool</span> <span class="mn">Visible</span> { get; }</th><td>A <code>using</code>-block animated foldout header + guarded content; wrap the body in <code>if (scope.Visible)</code>. Alt-clicking it carries the toggle to the groups inside it, the way alt on a built-in foldout expands a whole property. <code>tooltip</code> says what the section is, over the whole header, and <code>hint</code> is a word or a count greyed at its right.</td></tr>
+        <tr><th scope="row"><span class="t">struct</span> <span class="mn">GroupScope</span> : IDisposable &middot; <span class="mn">GroupScope</span>(<span class="t">string</span> title, <span class="t">MessageType?</span> message = null, <span class="t">bool</span> expandedByDefault = false, <span class="t">string</span> hint = null) &middot; <span class="t">bool</span> <span class="mn">Visible</span> { get; }</th><td>A <code>using</code>-block group that folds one level inside a <code>FoldoutScope</code> section: its content indents under a bold header, and its open state is remembered per title like a section's. Put the fields that work untouched in groups so the two or three a user must set stay in view. Drawn with no section around it, it takes the band and the flat content a section has instead. <code>hint</code> says what a closed group holds, greyed at the right of its header. <a href="#PersistenceManagerEditorGUI">PersistenceManagerEditorGUI.ParameterGroupScope</a> is this one plus the <em>configured</em> mark.</td></tr>
+        <tr><th scope="row"><span class="kw">void</span> <span class="mn">RepaintWhileGroupsAnimate</span>(<span class="t">Editor</span>)</th><td>Carry the tween of any group that is opening or closing. Call it at the end of an <code>OnInspectorGUI</code> that draws a <code>GroupScope</code>; without it the fade stalls wherever the last repaint left it.</td></tr>
+        <tr><th scope="row"><span class="t">bool</span> <span class="mn">AnyGroupAnimating</span> { get; }</th><td>Whether a group anywhere is opening or closing right now. An inspector that carries the tween itself, rather than calling <a href="#PersistentAssetEditorGUI">RepaintWhileGroupsAnimate</a>, reads this to decide whether it still needs to repaint.</td></tr>
+        <tr><th scope="row"><span class="t">GUIStyle</span> <span class="mn">HintStyle</span> { get; }</th><td>The style an annotation takes: the grey mini label, right aligned, that a <code>FoldoutScope</code> or <code>GroupScope</code> header hint reads in. Use it for a word at the right of a row rather than an alpha chosen per call site.</td></tr>
+        <tr><th scope="row"><span class="t">bool</span> <span class="mn">SecondaryButton</span>(<span class="t">GUIContent</span>) &middot; <span class="t">float</span> <span class="mn">SecondaryButtonWidth</span>(<span class="t">GUIContent</span>)</th><td>A mini button sized to its own label, which is what Foundations asks of a secondary action, and the width it would take for a row placing its controls by hand. Put a <code>GUILayout.FlexibleSpace</code> before it so it sits at the right of its row.</td></tr>
+        <tr><th scope="row"><span class="t">GUIStyle</span> <span class="mn">NoteStyle</span> { get; } &middot; <span class="kw">void</span> <span class="mn">DrawNote</span>(<span class="t">GUIContent</span>)</th><td>Grey annotation text, left aligned and wrapping, for a note standing where a control or a readout would be: what an empty section holds instead of empty fields. <code>DrawNote</code> reserves the height the wrapping needs, where a label field would cut it off after one line.</td></tr>
+        <tr><th scope="row"><span class="t">bool</span> <span class="mn">IsEvent</span>(<span class="t">SerializedProperty</span>) &middot; <span class="t">int</span> <span class="mn">ListenerCount</span>(<span class="t">SerializedProperty</span> unityEvent) &middot; <span class="t">string</span> <span class="mn">ListenerHint</span>(<span class="kw">int</span> count)</th><td>Whether a property is a <code>UnityEvent</code>, how many persistent listeners it carries, and that count worded for a collapsed group's hint ("None", "1 listener", "4 listeners").</td></tr>
+        <tr><th scope="row"><span class="kw">void</span> <span class="mn">FolderField</span>(<span class="t">Rect</span>, <span class="t">SerializedProperty</span> folderPath, <span class="t">GUIContent</span> label, <span class="t">string</span> emptyHint = null, <span class="kw">bool</span> createdOnDemand = false)</th><td>Draw a string property as a project folder: the path under <code>Assets</code>, typed or picked or dropped in. <code>Assets/</code> is a fixed lead-in and the value stores the whole <code>"Assets/..."</code> path; anything that is not a folder under <code>Assets</code> is refused. Clicking the icon reveals the folder in the project window. <code>emptyHint</code> is the greyed text an empty field shows ("None" without one), and a path with no folder behind it is kept and marked with a warning unless <code>createdOnDemand</code> says the setting names a folder its own feature creates. Every folder setting in the package draws through this; <a href="API%20-%20Core.html#Attributes">FolderPath</a> applies it to a field with no code.</td></tr>
+        <tr><th scope="row"><span class="kw">void</span> <span class="mn">DrawUnsupportedBuildTargetError</span>(<span class="t">IReadOnlyCollection&lt;BuildTarget&gt;</span>)</th><td>Error box while the active build target is unsupported.</td></tr>
+        <tr><th scope="row"><span class="t">IReadOnlyList&lt;BuildTarget&gt;</span> <span class="mn">ConsoleBuildTargets</span> / <span class="mn">MobileBuildTargets</span> / <span class="mn">WebGLBuildTargets</span></th><td>Ready-made target groups to veto from a manager.</td></tr>
       </table></div>
     </div>
 
     <div class="type-section" id="SecurityGUI">
-      <div class="type-header"><h2>SecurityGUI</h2><span class="badge badge-static">static</span><span class="warn">extending</span><span class="ns">PersistentAsset.Editor.BuiltIns</span></div>
-      <p class="type-desc">Shared drawing of the Encryption + Lock Save To fields for managers reusing <code>CheatProtectionUtility</code>.</p>
+      <div class="type-header"><h3>SecurityGUI</h3><span class="badge badge-static">static</span><span class="warn">extending</span><span class="ns">PersistentAsset.Editor.BuiltIns</span></div>
+      <p class="type-desc">Shared drawing of the Encryption + Anchor Save To fields for managers reusing <a href="API%20-%20Built-Ins.html#CheatProtectionUtility"><code>CheatProtectionUtility</code></a>.</p>
       <div class="member-group"><table class="mt">
-        <tr><td><span class="kw">void</span> <span class="mn">DrawFields</span>(<span class="t">SerializedProperty</span> encryptionProperty, <span class="t">SerializedProperty</span> lockSaveToProperty)</td><td>Draw Encryption and (when on) the Lock Save To field with per-lock warnings.</td></tr>
+        <tr><th scope="row"><span class="kw">void</span> <span class="mn">DrawFields</span>(<span class="t">SerializedProperty</span> encryptionProperty, <span class="t">SerializedProperty</span> anchorSaveToProperty)</th><td>Draw Encryption and (when on) the Anchor Save To field with per-lock warnings.</td></tr>
+        <tr><th scope="row"><span class="kw">void</span> <span class="mn">DrawFields</span>(&hellip;, <span class="t">SaveAnchor</span> unavailableAnchors) / <span class="mn">DrawFields</span>(&hellip;, <span class="t">SaveAnchor</span> unavailableAnchors, <span class="t">IReadOnlyList&lt;Encryption&gt;</span> unavailableEncryptions)</th><td>The same, leaving out the anchors and modes your manager cannot honour, so a setting it refuses is never offered. One already set stays listed and selected, with its error, so only a deliberate edit clears it.</td></tr>
+        <tr><th scope="row"><span class="kw">void</span> <span class="mn">DrawEncryptionField</span>(<span class="t">SerializedProperty</span>, <span class="t">IReadOnlyList&lt;Encryption&gt;</span> unavailableEncryptions)</th><td>The Encryption field on its own, for a manager exposing it without an Anchor Save To field.</td></tr>
+        <tr><th scope="row"><span class="kw">void</span> <span class="mn">DrawAnchorSaveToField</span>(<span class="t">SerializedProperty</span>, <span class="t">SaveAnchor</span> unavailableAnchors)</th><td>The Anchor Save To field on its own, for the reverse case.</td></tr>
+        <tr><th scope="row"><span class="t">MessageType?</span> <span class="mn">WorstMessage</span>(<span class="t">SerializedProperty</span> encryptionProperty, <span class="t">SerializedProperty</span> anchorSaveToProperty)</th><td>The worst message <code>DrawFields</code> draws for these values, or none. Ask it before the fields, to mark a folded group holding them.</td></tr>
       </table></div>
     </div>
 
     <div class="type-section" id="SlotFormatGUI">
-      <div class="type-header"><h2>SlotFormatGUI</h2><span class="badge badge-static">static</span><span class="warn">extending</span><span class="ns">PersistentAsset.Editor.BuiltIns</span></div>
+      <div class="type-header"><h3>SlotFormatGUI</h3><span class="badge badge-static">static</span><span class="warn">extending</span><span class="ns">PersistentAsset.Editor.BuiltIns</span></div>
       <p class="type-desc">Shared drawing for fields accepting the "&lt;slot&gt;" placeholder (the file manager's file name, the HTTP id).</p>
       <div class="member-group"><table class="mt">
-        <tr><td><span class="t">string</span> <span class="mn">MultiSlotHelpText</span>(<span class="t">string</span> usage)</td><td>The help-box text explaining the placeholder.</td></tr>
-        <tr><td><span class="kw">void</span> <span class="mn">DrawField</span>(<span class="t">SerializedProperty</span>, <span class="t">IReadOnlyList&lt;PersistenceManager&gt;</span>, <span class="t">string</span> multiSlotHelpText)</td><td>Draw the field (empty value ghosts the unique id).</td></tr>
-        <tr><td><span class="kw">void</span> <span class="mn">DrawValidationError</span>(<span class="t">string</span> reason)</td><td>Draw an invalid-name error box (<code>null</code> = valid).</td></tr>
+        <tr><th scope="row"><span class="t">string</span> <span class="mn">MultiSlotHelpText</span>(<span class="t">string</span> usage)</th><td>The help-box text explaining the placeholder.</td></tr>
+        <tr><th scope="row"><span class="kw">void</span> <span class="mn">DrawField</span>(<span class="t">SerializedProperty</span>, <span class="t">IReadOnlyList&lt;PersistenceManager&gt;</span>, <span class="t">string</span> multiSlotHelpText)</th><td>Draw the field (empty value ghosts the unique id).</td></tr>
+        <tr><th scope="row"><span class="kw">void</span> <span class="mn">DrawValidationError</span>(<span class="t">string</span> reason)</th><td>Draw an invalid-name error box (<code>null</code> = valid).</td></tr>
       </table></div>
     </div>
 
     <div class="type-section" id="SerializedObjectExtensions">
-      <div class="type-header"><h2>SerializedObjectExtensions</h2><span class="badge badge-static">static</span><span class="warn">extending</span><span class="ns">PersistentAsset.Editor.BuiltIns</span></div>
+      <div class="type-header"><h3>SerializedObjectExtensions</h3><span class="badge badge-static">static</span><span class="warn">extending</span><span class="ns">PersistentAsset.Editor.BuiltIns</span></div>
       <p class="type-desc">Find the serialized backing field of a <code>[field: SerializeField]</code> auto-property by its property name.</p>
       <div class="member-group"><table class="mt">
-        <tr><td><span class="t">SerializedProperty</span> <span class="mn">FindBackingField</span>(this <span class="t">SerializedObject</span>, <span class="t">string</span> propertyName)</td><td>The backing property on a serialized object.</td></tr>
-        <tr><td><span class="t">SerializedProperty</span> <span class="mn">FindBackingFieldRelative</span>(this <span class="t">SerializedProperty</span>, <span class="t">string</span> propertyName)</td><td>The backing property relative to a serialized property.</td></tr>
+        <tr><th scope="row"><span class="t">SerializedProperty</span> <span class="mn">FindBackingField</span>(this <span class="t">SerializedObject</span>, <span class="t">string</span> propertyName)</th><td>The backing property on a serialized object.</td></tr>
+        <tr><th scope="row"><span class="t">SerializedProperty</span> <span class="mn">FindBackingFieldRelative</span>(this <span class="t">SerializedProperty</span>, <span class="t">string</span> propertyName)</th><td>The backing property relative to a serialized property.</td></tr>
       </table></div>
     </div>
 
     <div class="type-section" id="VariableWidget">
-      <div class="type-header"><h2>VariableWidget / VariableWidget&lt;T&gt;</h2><span class="badge badge-class">abstract</span><span class="warn">extending</span><span class="ns">PersistentAsset.Editor.NoCode</span></div>
-      <p class="type-desc">Base for a custom inspector editor of a No-Code variable value. Pair it to a codec id with <code>[VariableWidget]</code>; prefer the typed <code>VariableWidget&lt;T&gt;</code>, which handles the codec round trip.</p>
-      <div class="member-group"><table class="mt">
-        <tr><td><span class="kw">abstract string</span> <span class="mn">Draw</span>(<span class="t">Rect</span>, <span class="t">GUIContent</span>, <span class="t">VariableTypeCodec</span>, <span class="t">string</span> value)</td><td>(base) Draw an editor for the stored string; return the edited string.</td></tr>
-        <tr><td><span class="kw">virtual float</span> <span class="mn">GetHeight</span>(<span class="t">GUIContent</span>, <span class="t">string</span> value)</td><td>Height needed (one line by default).</td></tr>
-        <tr><td><span class="kw">protected abstract T</span> <span class="mn">Draw</span>(<span class="t">Rect</span>, <span class="t">GUIContent</span>, <span class="t">T</span> value)</td><td>(<code>VariableWidget&lt;T&gt;</code>) Draw a typed value editor.</td></tr>
-        <tr><td><span class="mn">[VariableWidget(<span class="t">string</span> id)]</span> &middot; <span class="t">string</span> <span class="mn">Id</span></td><td>Attribute binding a widget to a codec id.</td></tr>
-      </table></div>
+      <div class="type-header"><h3>VariableWidget / VariableWidget&lt;T&gt;</h3><span class="badge badge-class">abstract</span><span class="warn">extending</span><span class="ns">PersistentAsset.Editor.NoCode</span></div>
+      <p class="type-desc">Base for a custom inspector editor of a No-Code variable value. Pair it to a codec id with <code>[VariableWidget]</code>; prefer the typed <code>VariableWidget&lt;T&gt;</code>, which handles the codec round trip. Worked example: <a href="../../user-manual/pages/Extend%20the%20package.html#widgets">Custom inspector widgets</a>.</p>
+              <div class="member-group">
+          <div class="member-group-title">Public</div>
+          <table class="mt">
+        <tr><th scope="row"><span class="kw">abstract string</span> <span class="mn">Draw</span>(<span class="t">Rect</span>, <span class="t">GUIContent</span>, <span class="t">VariableTypeCodec</span>, <span class="t">string</span> value)</th><td>(base) Draw an editor for the stored string; return the edited string.</td></tr>
+        <tr><th scope="row"><span class="kw">virtual float</span> <span class="mn">GetHeight</span>(<span class="t">GUIContent</span>, <span class="t">string</span> value)</th><td>Height needed (one line by default).</td></tr>
+        <tr><th scope="row"><span class="mn">[VariableWidget(<span class="t">string</span> id)]</span> &middot; <span class="t">string</span> <span class="mn">Id</span></th><td>Attribute binding a widget to a codec id.</td></tr>
+          </table>
+        </div>
+        <div class="member-group">
+          <div class="member-group-title">For implementers (protected)</div>
+          <table class="mt">
+        <tr><th scope="row"><span class="kw">protected abstract T</span> <span class="mn">Draw</span>(<span class="t">Rect</span>, <span class="t">GUIContent</span>, <span class="t">T</span> value)</th><td>(<code>VariableWidget&lt;T&gt;</code>) Draw a typed value editor.</td></tr>
+          </table>
+        </div>
+
     </div>
 
     <div class="type-section" id="TypeDisplay">
-      <div class="type-header"><h2>TypeDisplay</h2><span class="badge badge-struct">struct</span><span class="warn">extending</span><span class="ns">PersistentAsset.Editor</span></div>
+      <div class="type-header"><h3>TypeDisplay</h3><span class="badge badge-struct">struct</span><span class="warn">extending</span><span class="ns">PersistentAsset.Editor</span></div>
       <p class="type-desc">The inspector display info read from a type's <code>[InspectorDisplay]</code> (with sensible defaults). Shared by the type pickers to label, sort and group entries.</p>
       <div class="member-group"><table class="mt">
-        <tr><td><span class="t">string</span> <span class="mn">Name</span> / <span class="mn">Description</span> { get; }, <span class="t">int</span> <span class="mn">Order</span> { get; }, <span class="t">string</span> <span class="mn">Category</span> { get; }</td><td>The resolved display fields.</td></tr>
-        <tr><td><span class="t">GUIContent</span> <span class="mn">Content</span> { get; } / <span class="t">string</span> <span class="mn">MenuPath</span> { get; } / <span class="t">GUIContent</span> <span class="mn">MenuContent</span> { get; }</td><td>Ready-made label content, its submenu path, and the labelled menu content for a picker.</td></tr>
-        <tr><td><span class="t">static TypeDisplay</span> <span class="mn">Of</span>(<span class="t">MemberInfo</span> member, <span class="t">string</span> fallbackName = null)</td><td>Read a type's or method's display info.</td></tr>
-        <tr><td><span class="t">static IEnumerable&lt;(Type type, TypeDisplay display)&gt;</span> <span class="mn">OrderedDerivedFrom</span>(<span class="t">Type</span> baseType) / <span class="t">bool</span> <span class="mn">IsInTestAssembly</span>(<span class="t">Type</span>)</td><td>Concrete derived types ordered for a picker; whether a type is in a test assembly.</td></tr>
+        <tr><th scope="row"><span class="t">string</span> <span class="mn">Name</span> / <span class="mn">Description</span> { get; }, <span class="t">int</span> <span class="mn">Order</span> { get; }, <span class="t">string</span> <span class="mn">Category</span> { get; }</th><td>The resolved display fields.</td></tr>
+        <tr><th scope="row"><span class="t">GUIContent</span> <span class="mn">Content</span> { get; } / <span class="t">string</span> <span class="mn">MenuPath</span> { get; } / <span class="t">GUIContent</span> <span class="mn">MenuContent</span> { get; }</th><td>Ready-made label content, its submenu path, and the labelled menu content for a picker.</td></tr>
+        <tr><th scope="row"><span class="t">static TypeDisplay</span> <span class="mn">Of</span>(<span class="t">MemberInfo</span> member, <span class="t">string</span> fallbackName = null)</th><td>Read a type's or method's display info.</td></tr>
+        <tr><th scope="row"><span class="t">static IEnumerable&lt;(Type type, TypeDisplay display)&gt;</span> <span class="mn">OrderedDerivedFrom</span>(<span class="t">Type</span> baseType)</th><td>Concrete derived types ordered for a picker, with the ones declared in a test assembly left out.</td></tr>
       </table></div>
     </div>
 
     <div class="type-section" id="AssetRegistration">
-      <div class="type-header"><h2>AssetRegistration</h2><span class="badge badge-static">static</span><span class="ns">PersistentAsset.Editor</span></div>
-      <p class="type-desc">The editor side of <code>AssetRegistry</code>: it decides which assets save data may point at, and keeps the table the runtime reads in sync with the project. Use it to register assets from your own editor tooling. See <a href="../../user-manual/pages/Guides.html#assetrefs">saving asset references</a>.</p>
+      <div class="type-header"><h3>AssetRegistration</h3><span class="badge badge-static">static</span><span class="ns">PersistentAsset.Editor</span></div>
+      <p class="type-desc">The editor side of <a href="API%20-%20Core.html#AssetRegistry"><code>AssetRegistry</code></a>: it decides which assets save data may point at, and keeps the table the runtime reads in sync with the project. Use it to register assets from your own editor tooling. See <a href="../../user-manual/pages/Save%20and%20load.html#assetrefs">Save asset references</a>.</p>
       <div class="member-group"><table class="mt">
-        <tr><td><span class="t">string</span> <span class="mn">Register</span>(<span class="t">Object</span> asset)</td><td>Registers an asset and returns its id (null when it cannot be registered, such as a scene object). Idempotent.</td></tr>
-        <tr><td><span class="kw">void</span> <span class="mn">Unregister</span>(<span class="t">string</span> id)</td><td>Unregisters an id. Saved references to it stop resolving.</td></tr>
-        <tr><td><span class="t">string</span> <span class="mn">ComputeId</span>(<span class="t">Object</span> asset)</td><td>The id an asset would be registered under (its GUID, plus the local file id for a sub-asset), without registering it.</td></tr>
-        <tr><td><span class="t">Object</span> <span class="mn">Resolve</span>(<span class="t">string</span> id)</td><td>The asset an id points at, for display: the registry answers first, then the project, so an asset that lost its registration still shows.</td></tr>
-        <tr><td><span class="t">bool</span> <span class="mn">IsRegistered</span>(<span class="t">Object</span> asset) / <span class="kw">void</span> <span class="mn">Refresh</span>()</td><td>Whether an asset can be saved, and a full pass over the registered folders and the deleted assets (runs by itself after an import and at the start of a build).</td></tr>
+        <tr><th scope="row"><span class="t">string</span> <span class="mn">Register</span>(<span class="t">Object</span> asset)</th><td>Registers an asset and returns its id (null when it cannot be registered, such as a scene object). Idempotent.</td></tr>
+        <tr><th scope="row"><span class="kw">void</span> <span class="mn">Unregister</span>(<span class="t">string</span> id)</th><td>Unregisters an id. Saved references to it stop resolving.</td></tr>
+        <tr><th scope="row"><span class="t">string</span> <span class="mn">RegisterForTool</span>(<span class="t">Object</span> asset, <span class="t">string</span> owner = null)</th><td>Registers an asset your own tooling maintains, so the same tooling can take the entry back later. A manual entry is left as it is. One a registered folder or a reference produced is claimed, so the pass that recomputes those cannot take the registration away. <code>owner</code> names the tooling making the claim: pass a constant of your own, and the same one to <code>UnregisterForTool</code>, so an asset two tools need survives the first taking its claim back. Naming none claims the entry under the unnamed owner, which every call naming none shares.</td></tr>
+        <tr><th scope="row"><span class="kw">void</span> <span class="mn">UnregisterForTool</span>(<span class="t">Object</span> asset, <span class="t">string</span> owner = null)</th><td>Takes back the claim <code>RegisterForTool</code> made under the same <code>owner</code>. Includes one it claimed from a registered folder or a reference, which the next refresh re-derives. The entry goes with the last claim on it, so an asset other tooling still claims stays registered. Another tool's claim is not one of yours to remove, and an entry the user added by hand is left alone.</td></tr>
+        <tr><th scope="row"><span class="t">IDisposable</span> <span class="mn">Batch</span>()</th><td>Groups registrations so the settings file is written once at the end instead of once each. Wrap a run of them in <code>using</code>. <em>IsRegistered is not authoritative inside a batch, since the table it reads is only rebuilt when the batch closes.</em></td></tr>
+        <tr><th scope="row"><span class="t">string</span> <span class="mn">ComputeId</span>(<span class="t">Object</span> asset)</th><td>The id an asset would be registered under (its GUID, plus the local file id for a sub-asset), without registering it.</td></tr>
+        <tr><th scope="row"><span class="t">Object</span> <span class="mn">Resolve</span>(<span class="t">string</span> id)</th><td>The asset an id points at, for display: the registry answers first, then the project, so an asset that lost its registration still shows.</td></tr>
+        <tr><th scope="row"><span class="t">bool</span> <span class="mn">IsRegistered</span>(<span class="t">Object</span> asset) / <span class="kw">void</span> <span class="mn">Refresh</span>()</th><td>Whether an asset can be saved, and a full pass over the registered folders and the deleted assets (runs by itself after an import and at the start of a build, and does nothing in play mode).</td></tr>
       </table></div>
     </div>
+
+    <!-- ═══════════════════════════════════════ Object & Manager Operations ═══ -->
+    <h2 class="api-group">Object &amp; manager operations</h2>
+
+    <div class="type-section" id="PersistentObjects">
+      <div class="type-header"><h3>PersistentObjects</h3><span class="badge badge-static">static</span><span class="badge badge-new">2.0</span><span class="ns">PersistentAsset.Editor</span></div>
+      <p class="type-desc">Acting on persistent assets from an editor script of your own: whether an object is one, which manager it is assigned, creating one as an asset, and listing the project's. The manager assets themselves are <a href="#ManagerSetup">ManagerSetup</a>.</p>
+      <div class="member-group"><table class="mt">
+        <tr><th scope="row"><span class="t">bool</span> <span class="mn">IsPersistent</span>(<span class="t">Object</span> target)</th><td>Whether it is a <a href="API%20-%20Core.html#PersistentScriptableObject"><code>PersistentScriptableObject</code></a>, or any <code>ScriptableObject</code> carrying <code>[PersistentScriptableObject]</code>.</td></tr>
+        <tr><th scope="row"><span class="t">PersistenceManager</span> <span class="mn">GetManager</span>(<span class="t">Object</span> target)</th><td>The manager assigned to it, what the dropdown at the top of its inspector shows. Null when it has none or is not a persistent asset.</td></tr>
+        <tr><th scope="row"><span class="kw">void</span> <span class="mn">SetManager</span>(<span class="t">Object</span> target, <span class="t">PersistenceManager</span> manager)</th><td>Points the object at a manager and saves the asset, undoable. Refuses one that answers for another object, one that is inert (an import source, a composite's child), and <code>null</code>, since clearing the field alone does not last: the manager asset stays and the editor assigns it back. <a href="#ManagerSetup">ManagerSetup.Delete</a> is how an object ends up with none.</td></tr>
+        <tr><th scope="row"><span class="t">bool</span> <span class="mn">CanCreate</span>(<span class="t">Type</span> type)</th><td>Whether an asset of that type can be made at all: a concrete <code>ScriptableObject</code> that is not generic. Both <code>Create</code> methods answer null for a bad type and for a bad folder alike, so this is how the two are told apart.</td></tr>
+        <tr><th scope="row"><span class="t">ScriptableObject</span> <span class="mn">Create</span>(<span class="t">Type</span> type, <span class="t">string</span> folder, <span class="t">string</span> fileName)</th><td>Creates the asset in an existing <code>"Assets/..."</code> folder, with the project's default manager on it. A taken name is made unique. Null when the type is not a concrete <code>ScriptableObject</code>, the file name is not usable as one, or the folder is not one. <span class="ex">Lets out whatever writing the asset raises, and whatever the default Persistence Manager's own code raises while it is attached; the asset is on disk when the second happens, without a manager.</span></td></tr>
+        <tr><th scope="row"><span class="kw">void</span> <span class="mn">DeclareProvided</span>(<span class="t">Type</span> type)</th><td>Declare that the asset for that type is provided rather than made by hand: generated by the package, shipped with a sample, or created by your own tooling. <strong>Create &gt; Persistent Asset &gt; Persistent Object…</strong> then leaves it out, so its one asset is not offered a second time. Call it from an <code>[InitializeOnLoad]</code> static constructor, since the declaration lives for the editing session rather than on disk. It changes nothing else: <code>Create</code> still makes one when asked.</td></tr>
+        <tr><th scope="row"><span class="t">bool</span> <span class="mn">IsProvided</span>(<span class="t">Type</span> type)</th><td>Whether <code>DeclareProvided</code> was called for that type.</td></tr>
+        <tr><th scope="row"><span class="t">IEnumerable&lt;Object&gt;</span> <span class="mn">FindAll</span>()</th><td>Every persistent asset in the project, in path order, both forms covered. One whose manager is None is included. A snapshot from a project scan the package keeps until a manager asset is imported or play mode changes, so one deleted by other means can still appear until Unity destroys the instance.</td></tr>
+      </table></div>
+    </div>
+
+    <div class="type-section" id="ManagerSetup">
+      <div class="type-header"><h3>ManagerSetup</h3><span class="badge badge-static">static</span><span class="badge badge-new">2.0</span><span class="ns">PersistentAsset.Editor</span></div>
+      <p class="type-desc">Acting on Persistence Manager assets from an editor script. A manager lives as a sub-asset of the object it answers for, which these take care of. Composites are <a href="#ManagerComposition">ManagerComposition</a>.</p>
+      <div class="member-group"><table class="mt">
+        <tr><th scope="row"><span class="t">PersistenceManager</span> <span class="mn">EnsureDefault</span>(<span class="t">Object</span> target)</th><td>Gives the object the project's default manager when it has none, the way the editor does for one created by hand. Returns the manager it has afterwards, null when it is not a persistent asset or the project default is None. A manager given during play mode starts saving and loading at the next play session.</td></tr>
+        <tr><th scope="row"><span class="t">PersistenceManager</span> <span class="mn">Create</span>(<span class="t">Type</span> type, <span class="t">Object</span> target)</th><td>Creates a manager of that type and assigns it, replacing the one the object had, as one undo step. An object already using that exact type keeps the manager it has, so this is safe to run over a whole project. The replaced manager is kept as an import source when it is locked and stores its saves durably, the same signal the inspector prompts on, and deleted otherwise. <em>Replacing the manager of an object that already shipped changes where its data is read from, so an existing save is only still found through the import source, and only for as long as that source is kept.</em></td></tr>
+        <tr><th scope="row"><span class="kw">void</span> <span class="mn">Delete</span>(<span class="t">PersistenceManager</span> manager)</th><td>Deletes the manager asset, and the children it owns when it is a composite. Undoable. A composite's child is refused and reported: change what the composite holds through <a href="#ManagerComposition">ManagerComposition</a>.</td></tr>
+        <tr><th scope="row"><span class="t">IEnumerable&lt;PersistenceManager&gt;</span> <span class="mn">FindAll</span>(<span class="t">bool</span> includeImportSources = <span class="kw">false</span>)</th><td>Every manager asset in the project, import sources left out unless asked for. A snapshot from a kept project scan, like the one above.</td></tr>
+      </table></div>
+    </div>
+
+    <div class="type-section" id="GeneratedAssets">
+      <div class="type-header"><h3>GeneratedAssets</h3><span class="badge badge-static">static</span><span class="badge badge-new">2.0</span><span class="ns">PersistentAsset.Editor</span></div>
+      <p class="type-desc">The folder the package creates the assets it generates for a project in (the <a href="../../user-manual/pages/Prefs.html">Prefs</a> asset), set under Project Settings &gt; Persistent Asset &gt; General, and the one way to create an asset there.</p>
+      <div class="member-group"><table class="mt">
+        <tr><th scope="row"><span class="t">const string</span> <span class="mn">DefaultFolder</span></th><td><code>Assets/Persistent Asset Data</code>, where generated assets go while the setting is empty. Outside the package because each of these assets carries the id its saves are addressed by.</td></tr>
+        <tr><th scope="row"><span class="t">string</span> <span class="mn">Folder</span> { get; }</th><td>The configured folder as an <code>"Assets/..."</code> path, <code>Assets/Persistent Asset Data</code> when the setting is empty, or null when the setting names nothing under <code>Assets</code>. It may not exist yet.</td></tr>
+        <tr><th scope="row"><span class="t">ScriptableObject</span> <span class="mn">Create</span>(<span class="t">Type</span> type, <span class="t">string</span> fileName)</th><td><a href="#PersistentObjects">PersistentObjects.Create</a> into that folder, creating the folder (and its README) when it is missing. Never throws: a failure is reported and answered with <code>null</code>.</td></tr>
+      </table></div>
+    </div>
+
+    <!-- ═══════════════════════════════════════ Project settings ═══ -->
+    <h2 class="api-group">Project settings</h2>
+
+    <div class="type-section" id="SettingsEntry">
+      <div class="type-header"><h3>SettingsEntry</h3><span class="badge badge-class">abstract</span><span class="warn">extending</span><span class="ns">PersistentAsset</span></div>
+      <p class="type-desc">Base class for a settings section. Subclass it as <code>[Serializable]</code> with a parameterless constructor, its field initializers being the defaults, and decorate it with <code>[InspectorDisplay]</code> for the section title and ordering. Worked example: <a href="../../user-manual/pages/Extend%20the%20package.html#settings">Custom settings</a>.</p>
+    </div>
+
+    <div class="type-section" id="Settings">
+      <div class="type-header"><h3>Settings</h3><span class="badge badge-static">static</span><span class="ns">PersistentAsset</span></div>
+      <p class="type-desc">Static access to the package settings (Project Settings &gt; Persistent Asset). Explained in <a href="../../user-manual/pages/Installation.html#settings">Project settings</a>.</p>
+      <div class="member-group">
+        <div class="member-group-title">Members</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">Loaded</span> { get; }</th><td>Whether the configured settings are available. True in the editor unless the settings file exists but could not be read; in a player it turns true when the settings shipped with the build finish loading, before the first scene, so only code running earlier (typically the automatic load of a preloaded persistent asset) can observe false. While false, <code>Get</code> answers defaults: an operation whose outcome must match the configured values (deriving a key from the security secret) should fail retryably instead of proceeding on them.</td></tr>
+          <tr><th scope="row"><span class="t">T</span> <span class="mn">Get</span>&lt;<span class="t">T</span>&gt;() where T : SettingsEntry, new()</th><td>The project's instance of a settings section (or a default). Treat the result as read-only: runtime changes to it are not persisted.</td></tr>
+          <tr><th scope="row"><span class="kw">void</span> <span class="mn">Save</span>()</th><td>Persist settings changed from code. It writes nothing in a build, where the settings are read-only, and calling it there is harmless.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="type-section" id="SettingsEntryDrawer">
+      <div class="type-header"><h3>SettingsEntryDrawer</h3><span class="badge badge-editor">drawer</span><span class="warn">extending</span><span class="ns">PersistentAsset.Editor</span></div>
+      <p class="type-desc">The <code>PropertyDrawer</code> for every <a href="#SettingsEntry"><code>SettingsEntry</code></a> section (draws its fields flat). Inherit + <code>[CustomPropertyDrawer(typeof(YourSettings))]</code> to customize. It already implements <code>GetPropertyHeight</code> and <code>OnGUI</code>, which delegate to the two members below: override those, not the <code>PropertyDrawer</code> pair. Worked example: <a href="../../user-manual/pages/Extend%20the%20package.html#a-custom-settings-drawer">A custom settings drawer</a>.</p>
+      <div class="member-group"><table class="mt">
+        <tr><th scope="row"><span class="kw">virtual float</span> <span class="mn">FieldsHeight</span>(<span class="t">SerializedProperty</span>) / <span class="kw">virtual void</span> <span class="mn">DrawFields</span>(<span class="t">Rect</span>, <span class="t">SerializedProperty</span>) (protected)</th><td>Override to draw the section's content.</td></tr>
+      </table></div>
+    </div>
+
+    <div class="type-section" id="SettingsTestScope">
+      <div class="type-header"><h3>SettingsTestScope</h3><span class="badge badge-class">sealed</span><span class="badge badge-new">2.0</span><span class="ns">PersistentAsset.Editor</span></div>
+      <p class="type-desc">Sends every settings read and write to a throwaway container for the life of the scope, so an EditMode fixture of your own registers assets and locks managers without the project's settings file ever holding what it did, not even when the editor crashes part way through a run. One scope stands at a time: opening another ends the one already open, so a fixture whose teardown never ran leaves nothing for the next one to inherit.</p>
+      <div class="member-group"><table class="mt">
+        <tr><th scope="row"><span class="kw">new</span> <span class="mn">SettingsTestScope</span>()</th><td>Opens a scope whose settings start out empty. Open it in the fixture's setup, or wrap a run of tests in <code>using</code>.</td></tr>
+        <tr><th scope="row"><span class="kw">void</span> <span class="mn">Dispose</span>()</th><td>Ends the scope: everything written into it goes, and the project's own settings answer again.</td></tr>
+      </table></div>
+    </div>
+
 
     <!-- ═══════════════════════════════════════ Attributes ═══ -->
+    <h2 class="api-group">Attributes</h2>
+
     <div class="type-section" id="EditorAttributes">
-      <div class="type-header"><h2>Attributes</h2><span class="badge badge-class">attr</span><span class="warn">extending</span><span class="ns">PersistentAsset.Editor</span></div>
+      <div class="type-header"><h3>Attributes</h3><span class="badge badge-class">attr</span><span class="warn">extending</span><span class="ns">PersistentAsset.Editor</span></div>
       <div class="member-group"><table class="mt">
-        <tr><td><span class="mn">[ClearLocalData(<span class="t">Type</span> persistenceManagerType)]</span><br/><span class="t">Type</span> <span class="mn">PersistenceManagerType</span> { get; }</td><td>Mark a parameterless static method as a "clear local data" cleaner for a manager type, run from <code>Tools &gt; Persistent Asset &gt; Actions &gt; Delete Local Data</code>. <span class="ex">The constructor throws ArgumentNullException when persistenceManagerType is null.</span></td></tr>
+        <tr><th scope="row"><span class="mn">[ClearLocalData(<span class="t">Type</span> persistenceManagerType)]</span><br/><span class="t">Type</span> <span class="mn">PersistenceManagerType</span> { get; }</th><td>Mark a parameterless static method as a "clear local data" cleaner for a manager type, run from <strong>Tools &gt; Persistent Asset &gt; Actions &gt; Delete Local Data…</strong>. <span class="ex">The constructor throws ArgumentNullException when persistenceManagerType is null.</span> Worked example: <a href="../../user-manual/pages/Extend%20the%20package.html#a-delete-local-data-cleaner">A "delete local data" cleaner</a>.</td></tr>
       </table></div>
     </div>
 
-    <div class="doc-footer">Persistent Asset v1.1.0 &nbsp;&middot;&nbsp; For full signatures and remarks, see the XML doc comments in the source.</div>
+    <div class="doc-footer">Persistent Asset v2.0.0 &nbsp;&middot;&nbsp; For full signatures and remarks, see the XML doc comments in the source.</div>
 
   </main>
 </div>

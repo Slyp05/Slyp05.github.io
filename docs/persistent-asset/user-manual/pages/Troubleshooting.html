@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Find out why a save didn&#x27;t land, what the tools report, and what a save costs at runtime." />
+  <title>Persistent Asset - Troubleshooting</title>
+  <link rel="stylesheet" href="/assets/css/doc-styles.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Persistent Asset</div><a href="../index.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Troubleshooting</h1>
+      <div class="sub">Find out why a save didn't land, what the tools report, and what a save costs at runtime.</div>
+
+    <div class="guide-index">
+      <a href="#surprises">Common issues</a>
+      <a href="#recovery">When a save doesn't load</a>
+      <a href="#debug">Debugging</a>
+      <a href="#performance">Performance</a>
+      <a href="#testing">Simulate any save outcome</a>
+      <a href="#support">Support</a>
+    </div>
+    </div>
+
+    <!-- ══════════════════════════════════════ surprises ════ -->
+    <section id="surprises">
+      <h2>Common issues</h2>
+      <p>The following table lists common issues and how to resolve them.</p>
+      <div class="table-scroll">
+        <table class="cmp">
+          <thead><tr><th scope="col">Issue</th><th scope="col">Resolution</th></tr></thead>
+          <tbody>
+            <tr><td>The asset shows its authored values again after Play mode.</td><td>This is intentional, and the save is untouched. For more information, refer to <a href="How%20saving%20works.html#editor">Edit mode and Play mode</a>.</td></tr>
+            <tr><td>A field never saves.</td><td>Each serializer saves a different set of members. For more information, refer to <a href="What%20can%20be%20saved.html#choosing">Choose a serializer</a>.</td></tr>
+            <tr><td>A save is ignored.</td><td>Read the result's <code>Message</code>, which says why.</td></tr>
+            <tr><td>A save reset itself after an update.</td><td>A manager setting changed. For more information, refer to <a href="Update%20a%20shipped%20save.html#migration">Lock and migrate saves</a>.</td></tr>
+            <tr><td>A manager, serializer or variable type is missing.</td><td>Install the package it needs. For more information, refer to <a href="Installation.html#dependencies">Optional modules</a>.</td></tr>
+            <tr><td>A remote save never lands.</td><td>Read the manager's <code>Status</code>: it says whether a change is still waiting, held by a <a href="Cloud%20and%20remote.html#conflict">conflict</a>, or already on the server. A player who isn't signed in yet is a retry rather than a failure, so the save lands once sign-in does.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════ recovery ════ -->
+    <section id="recovery">
+      <h2>When a save doesn't load</h2>
+      <p>A load that doesn't land ends in one of two states, and they call for opposite responses:</p>
+      <div class="table-scroll">
+        <table class="cmp">
+          <thead><tr><th scope="col">Result</th><th scope="col">What happened</th><th scope="col">What follows</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><code>IsFailure</code></td>
+              <td>Storage could not be read: a locked file, a server that is down, a runtime secret nobody has supplied yet.</td>
+              <td><code>IsReady</code> stays false, so nothing overwrites what a retry might still recover. The manager keeps retrying on its own, and a plain <code>Load()</code> retries on demand.</td>
+            </tr>
+            <tr>
+              <td><code>IsInvalid</code></td>
+              <td>There is nothing to read: no save yet, or one that wouldn't decode. <code>IsCorrupt</code> tells those two apart.</td>
+              <td><code>IsReady</code> is true, because holding nothing is a valid state, and the next save writes over whatever was there.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="note"><strong>Note:</strong> An abandoned operation reports <code>IsCancelled</code>, and
+        <code>IsTimedOut</code> means storage never answered. Over HTTP,
+        <a href="Connect%20to%20a%20backend%20service.html#missing">what a 404 means</a> is a setting.</div>
+
+      <h3 id="recovery-scene">A scene didn't come back</h3>
+      <p>The console names the cause: a missing Scene State, a missing or duplicated id, a parent that isn't
+        persistent, or a scene outside the build profile's list. Opening the scene and saving it fills the missing
+        ids in.</p>
+      <p>One case reports nothing: the same scene loaded twice additively, because both copies share one key.</p>
+    </section>
+
+    <!-- ══════════════════════════════════════ debug ════ -->
+    <section id="debug">
+      <h2>Debugging</h2>
+
+      <h3 id="logs">Read the logs</h3>
+      <p>Every manager shows its live state and an operation log in its own Inspector window, in the Editor and
+        in development builds only. Each line carries the operation, its result and how long it took.</p>
+
+      <div class="img-block">
+        <img src="../img/manager_logs.png" alt="Manager status and logs in the inspector"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">&#128247;</span>
+          <span><strong>img/manager_logs</strong><br/>The per-manager log panel during play</span>
+        </div>
+      </div>
+      <p>Warnings and errors also reach the Unity console, with a <code>[Persistent Asset]</code> prefix.</p>
+
+      <h3 id="savedata">Inspect what is in the save</h3>
+      <p><strong>Save Data</strong> shows what storage holds next to what a save would write, decompressed and
+        decrypted, for any <strong>Slot</strong>. <strong>Export</strong> and <strong>Import</strong> move that
+        payload as a file, so a save from a device you can't reach opens here.</p>
+      <div class="note warning"><strong>Warning:</strong> Import replaces what is there, and storage has no
+        undo.</div>
+
+      <h3 id="in-game">Debug in game and on a device</h3>
+      <p><a href="../../public-api/pages/API%20-%20Core.html#PersistenceDebugOverlay"><strong>Persistence Debug Overlay</strong></a>
+        puts the same information on screen, opened by a corner handle or <strong>F8</strong>. It removes itself
+        from a release build unless <strong>Keep In Release Builds</strong> is on.</p>
+      <div class="img-block">
+        <img src="../img/ingame_debug_overlay.png" alt="Persistence Debug Overlay"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">&#128247;</span>
+          <span><strong>img/ingame_debug_overlay</strong><br/>The debug overlay over a running game: the object list on the left, the Status, Actions, Logs and Data panes on the right</span>
+        </div>
+      </div>
+
+      <h3 id="across-the-whole-project">Across the whole project</h3>
+      <p>To list every persistent asset in the project, go to <strong>Tools &gt; Persistent Asset &gt; Save
+        Overview</strong>.</p>
+
+      <div class="img-block">
+        <img src="../img/save_overview.png" alt="The Save Overview window"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">&#128247;</span>
+          <span><strong>img/save_overview</strong><br/>Tools &gt; Persistent Asset &gt; Save Overview, one row per persistent asset</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════ performance ════ -->
+    <section id="performance">
+      <h2>Performance</h2>
+      <p>A save costs two things: encoding your data, then writing it to storage. Every result carries how long
+        the whole operation took, and the log and the overlay print the same figure on every line:</p>
+      <pre><code><span class="ty">SaveResult</span> result = <span class="kw">await</span> playerData.PersistenceManager.SaveAsync();
+<span class="ty">Debug</span>.Log(<span class="st">$"saved in {result.ElapsedMilliseconds:F1} ms"</span>);</code></pre>
+      <div class="note"><strong>Note:</strong> <code>ElapsedMilliseconds</code> is <code>NaN</code> outside the
+        Editor and development builds.</div>
+      <p>These are what change that cost:</p>
+      <div class="table-scroll">
+        <table class="cmp">
+          <thead><tr><th scope="col">What to change</th><th scope="col">What it does</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Write Execution Mode</strong> set to <strong>Prefer Async</strong></td><td>Moves compression, encryption and the write to storage off the main thread.</td></tr>
+            <tr><td><strong>Regular Save Delay</strong></td><td>How often the timed save runs. A longer delay is fewer saves, and more progress lost to a crash.</td></tr>
+            <tr><td><strong>Compression</strong></td><td>Spends CPU time to make the save smaller. Until a save grows large, it changes the size more than the serializer does.</td></tr>
+            <tr><td><a href="Save%20and%20load.html#only-save-when-changed"><code>IDirtyTracked</code></a></td><td>Skips every save that would write nothing.</td></tr>
+            <tr><td>The <strong>Serializer</strong></td><td>Encoding is where a large save spends its time, and the four serializers are far apart on it. For measured figures, refer to <a href="What%20can%20be%20saved.html#size">Size and speed</a>.</td></tr>
+            <tr><td>Several assets instead of one</td><td>Each persistent asset encodes and writes on its own, so a change to one doesn't rewrite everything else.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="note"><strong>Note:</strong> Nothing in the package caps the size of a save, but
+        <a href="Save%20on%20the%20device.html#playerprefs">Player Prefs</a>,
+        <a href="Cloud%20and%20remote.html#cloudsave">Cloud Save</a> and
+        <a href="Cloud%20and%20remote.html#steam">Steam Cloud</a> each have a ceiling of their own.
+        <a href="Save%20on%20the%20device.html#file">Local File</a> is bounded by the device's storage
+        alone.</div>
+    </section>
+
+    <!-- ══════════════════════════════════════ testing ════ -->
+    <section id="testing">
+      <h2>Simulate any save outcome</h2>
+      <p>The <a href="Save%20on%20the%20device.html#test"><strong>Test</strong></a> manager stores nothing,
+        and forces any operation to any outcome after a delay you set. It produces the cases real storage
+        rarely produces:</p>
+      <div class="table-scroll">
+        <table class="cmp">
+          <thead><tr><th scope="col">Outcome</th><th scope="col">What it stands in for</th></tr></thead>
+          <tbody>
+            <tr><td><code>Invalid</code></td><td>A first run, with nothing stored yet.</td></tr>
+            <tr><td><code>Corrupt</code></td><td>A save that won't decode.</td></tr>
+            <tr><td><code>Failure</code></td><td>Storage your game can't reach.</td></tr>
+            <tr><td><code>Exception</code></td><td>Something throwing inside the operation.</td></tr>
+            <tr><td>A <strong>Delay</strong></td><td>A slow server, or the wait a shutdown drain holds the quit open for.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════ support ════ -->
+    <section id="support">
+      <h2>Support</h2>
+      <p>For anything the manual doesn't answer, email
+        <a href="mailto:justetools@gmail.com">justetools@gmail.com</a>. I answer within one business day.</p>
+    </section>
+
+    <!-- ══════════════════════════════════════ resources ════ -->
+    <div class="resources">
+      <h2>Additional resources</h2>
+      <ul>
+        <li><a href="How%20saving%20works.html">How saving works</a></li>
+        <li><a href="Save%20and%20load.html#whentosave">Choose when saves happen</a></li>
+        <li><a href="Installation.html#tools">Tools menu reference</a></li>
+      </ul>
+    </div>
+
+    <div class="pager">
+      <a class="prev" href="Secure%20saves.html">
+        <div class="dir">Back</div>
+        <div class="pg-title">Secure saves</div>
+      </a>
+      <a class="next" href="Extend%20the%20package.html">
+        <div class="dir">Next</div>
+        <div class="pg-title">Extend the package</div>
+      </a>
+    </div>
+
+    <div class="doc-footer">Persistent Asset v2.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

@@ -3,383 +3,381 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="How the package behaves under crashes, concurrency, conflicts, faults and attacks, down to the implementation." />
   <title>Persistent Asset - Technical Q&amp;A</title>
   <link rel="stylesheet" href="../shared/styles.css" />
 </head>
 <body>
+<a class="skip-link" href="#content">Skip to content</a>
 <div id="layout">
 
   <script src="../shared/nav.js"></script>
   <noscript><nav><div class="nav-title">Persistent Asset</div><a href="../User%20Manual.html">Home</a></nav></noscript>
 
-  <main>
+  <main id="content">
     <div class="page-header">
-      <h1>Technical Q&amp;A <span class="tag tag-advanced">Advanced</span></h1>
-      <div class="sub">The harder questions, answered with the implementation behind them.</div>
-    </div>
+      <h1>Technical Q&amp;A</h1>
+      <div class="sub">How the package behaves under crashes, concurrency, conflicts, faults and attacks, down to the implementation.</div>
 
-    <div class="note">
-      For quick fixes to the common surprises, see <a href="Quick%20Help.html">Quick Help</a>. This
-      page covers the machinery behind them.
+    <div class="guide-index">
+      <a href="#durability">Crash safety and durability</a>
+      <a href="#security">Security</a>
+      <a href="#editor">Editor safety</a>
+      <a href="#concurrency">Concurrency and threading</a>
+      <a href="#conflicts">Multi-device conflicts</a>
+      <a href="#failures">Error handling</a>
+      <a href="#identity">Identity and portability</a>
+      <a href="#testing">Testing</a>
     </div>
-
+    </div>
 
     <!-- ══════════════════════════════════════ durability ════ -->
     <section id="durability">
-      <h2>Crash &amp; durability</h2>
+      <h2>Crash safety and durability</h2>
 
-      <h3 id="are-my-saves-safe-if-the-game">Are my saves safe if the game crashes in the middle of saving?</h3>
-      <p>
-        Yes. On native platforms (desktop, mobile, console) the file-based managers never write over
-        the live save in place: a save is written to a temporary file first, then swapped in with an
-        atomic rename, so an interrupted write leaves either the complete old save or the complete new
-        one, never a half-written file. WebGL has no atomic rename, so there the write goes straight to
-        the file, but the <em>durable</em> copy only updates when the write succeeds and is then flushed
-        to the browser's IndexedDB. A failed write is never flushed, so the persisted save still cannot
-        tear: an interrupted save keeps the last good one.
-      </p>
+      <h3>Can a crash or a power loss tear a save file?</h3>
+      <p>No, on every platform with a real file system. The file managers stage each write under
+        <code>{file}.tmp</code>, flush it to stable storage with <code>FileStream.Flush(true)</code>, then swap it
+        in with <code>File.Replace</code>. The swap is the last step, so the file on disk is always one complete
+        generation or the other, and the flush before it means the new directory entry never points at data that
+        never reached the disk.</p>
+      <p>Some destinations refuse <code>File.Replace</code>, such as several network shares and some removable
+        media. There the previous file is moved to <code>{file}.old</code>, the staged one takes its place, and the
+        parked copy is deleted. That path is still never torn, but it is no longer atomic: an interruption between
+        the two moves leaves the save missing, which is what the backup covers.</p>
+      <p>WebGL has no atomic rename, and the browser file system lives in memory. The write goes straight to the
+        file, and the package asks the browser to persist it to IndexedDB once the write completes, so a tab closed
+        mid-write keeps the last persisted generation.</p>
 
-      <h3 id="what-about-power-loss-or-the-os">What about power loss, or the OS killing the process?</h3>
-      <p>
-        Same guarantee: the atomic swap is the last step, so the on-disk save is always one whole
-        version or the other. On top of that, the Local File manager can keep a <strong>backup</strong>
-        (on by default): a second copy written alongside the primary. On load, if the primary is
-        locked, errored, unreadable, or read fine but its content no longer decodes (a torn or
-        hand-mangled file), the manager transparently falls back to the backup and logs that it did so.
-      </p>
+      <h3>What does the Local File backup protect against?</h3>
+      <p>The backup is a second byte copy of the primary, written after it, and on by default. A load falls back
+        to it when the primary is missing, locked, unreadable, or reads fine but no longer decodes (a torn or
+        hand-edited file), and logs that it did. A clean first run, with neither copy present, checks the backup
+        silently. One case skips the backup: a primary written by a newer version of your game. Loading the older
+        backup there would let the next save replace the player's newer progress with it.</p>
 
-      <h3 id="can-a-corrupt-or-unreadable-save-brick">Can a corrupt or unreadable save brick the game?</h3>
-      <p>
-        No. A read that finds nothing usable (missing or corrupt) is reported as <code>Invalid</code>:
-        the object keeps its defaults and the next save overwrites the bad data, the same as a normal
-        first run. A read that is only <em>temporarily</em> unavailable (a locked file, a server down)
-        is reported as <code>Failure</code>, which leaves the object not ready so a save can never
-        overwrite data a retry might still recover. That distinction (see
-        <a href="Core%20Concepts.html#results">Core Concepts</a>) is the core safety mechanism: corrupt
-        data degrades to a fresh start, and a transient glitch never costs a recoverable save.
-      </p>
+      <h3>Can a corrupt save brick the game?</h3>
+      <p>No. A save that won't decode is first retried from the manager's alternate copy, such as the Local File
+        backup. When that fails too, the load settles like a first run: the asset keeps its authored values, and the
+        next save overwrites the bad data. Storage that can't be read at all, such as a locked file or a server that
+        is down, is handled the opposite way: <code>IsReady</code> stays false, so nothing overwrites a save a retry
+        might still recover. For the result states, refer to <a href="Troubleshooting.html#recovery">When a save
+        doesn't load</a>.</p>
 
-      <h3 id="what-happens-to-in-flight-saves-when">What happens to in-flight saves when the game quits or play mode exits?</h3>
-      <p>
-        A <strong>shutdown drain</strong> runs: with asynchronous saves still in flight, the quit waits
-        for them to finish before going through, so a save gets up to its timeout to land rather than
-        being cut off by the exit. The wait is bounded both by each manager's
-        <code>SaveTimeout</code> and by a project-wide drain ceiling, and whichever elapses first wins,
-        so with several managers, or a ceiling lower than a manager's <code>SaveTimeout</code>, an
-        individual save can still be cut short. The hooks to show a "saving..." screen or
-        force-quit, and those settings, are in <a href="Guides.html#drain">Saving on quit</a>.
-      </p>
+      <h3>What happens to a save still in flight when the game quits?</h3>
+      <p>A shutdown drain holds the exit open until it lands. In the Editor it forces Play mode back on, and in a
+        player it refuses <code>Application.wantsToQuit</code>, so the player loop keeps pumping while the in-flight
+        asynchronous saves and any queued save or clear complete. Each save stays bounded by its manager's
+        <code>SaveTimeout</code>, and the whole drain by a project-wide ceiling. A remote manager with a local cache skips its in-line push
+        during the drain: the cache write already made the save durable, and the push resumes on the next launch.
+        For the settings and the "saving..." hooks, refer to <a href="Save%20and%20load.html#drain">Save on
+        quit</a>.</p>
+      <div class="note"><strong>Note:</strong> A process the OS kills gets no drain. Only the saves that already
+        completed are on disk.</div>
+
+      <h3>What does an older build do with a save a newer build wrote?</h3>
+      <p>It protects it. The version envelope tells the loader the save is newer than the running code's
+        <code>SaveVersion</code>. When the old code still decodes it, <code>IUpgradable.Downgrade(fromVersion)</code>
+        decides: false keeps the data loaded but blocks every save, so the newer file is never rewritten in the older
+        format. When the old code can't decode it, saving is always blocked, since there is no loaded state to judge.
+        A slot change or a clear lifts the block. For the interface, refer to
+        <a href="Update%20a%20shipped%20save.html#versioning">Version your data</a>.</p>
     </section>
-
-
-    <!-- ══════════════════════════════════════ editor ════ -->
-    <section id="editor">
-      <h2>Editor safety</h2>
-
-      <h3 id="does-entering-and-leaving-play-mode-change">Does entering and leaving play mode change my authored asset values?</h3>
-      <p>
-        No. At the start of a play session the package captures an in-memory snapshot of each
-        persistent object's authored values, and restores them when the object unloads at play-exit.
-        It also guards against the object being written to disk during play. Your committed defaults
-        stay as authored and version control stays free of play-session noise, while the save itself
-        is written and reloads next launch.
-      </p>
-
-      <h3 id="what-if-the-editor-crashes-while-i">What if the editor crashes while I am playing?</h3>
-      <p>
-        The authored asset values are safe. During play, the package vetoes any write of a persistent
-        object's <code>.asset</code> file to disk, including a manual Ctrl+S or a tool calling
-        <code>SaveAssets</code>, so runtime values are never baked into the asset. A crash mid-play
-        leaves the committed asset as authored. The player-facing save was written to its own location
-        with the same atomic, crash-safe guarantees as in a build.
-      </p>
-
-      <h3 id="do-editor-play-sessions-overwrite-the-saves">Do editor play sessions overwrite the saves of a real build installed on my machine?</h3>
-      <p>
-        No. In the editor, the Prototype and file managers redirect their saves into the project's
-        UserSettings folder instead of the platform persistent-data path, so playing in the editor
-        never reads or clobbers the saves of an installed build of the same game.
-      </p>
-
-      <h3 id="does-it-work-with-enter-play-mode">Does it work with "Enter Play Mode without Domain Reload"?</h3>
-      <p>
-        Yes. Static state that would otherwise leak between play sessions (the drain flag, the global
-        slot, runtime auth hooks, the in-memory Session data) is reset as each session begins, so a
-        reload-disabled editor behaves like a cold build launch.
-      </p>
-    </section>
-
-
-    <!-- ══════════════════════════════════════ async ════ -->
-    <section id="async">
-      <h2>Async &amp; concurrency</h2>
-
-      <h3 id="what-if-i-trigger-a-save-while">What if I trigger a save while another operation is already running?</h3>
-      <p>
-        Each manager runs its operations one at a time, never two at once. What happens to the new
-        one depends on the call and the operation:
-      </p>
-      <ul>
-        <li>An asynchronous call <strong>waits its turn</strong> rather than failing: operations queue in arrival order, and a queued operation is never dropped in favor of another (a <code>Slots.SaveTo</code> queued behind a save runs after it).</li>
-        <li>A queued request that means the <strong>same work</strong> as one already queued merges with it: saves to the same slot <strong>coalesce</strong>, and loads of the same slot <strong>join</strong> the pending one.</li>
-        <li>A clear <strong>supersedes</strong> what it makes moot: it cancels the in-flight operation's effect on the object and drops what was queued before it. Their results report it; nothing fails silently.</li>
-        <li>A forced-synchronous call (<code>SaveSync</code>) that cannot run because async work is in flight is declined and reports <code>IsBusy</code>. Retry once idle, or await <code>WhenReady</code>.</li>
-      </ul>
-
-      <h3 id="how-do-you-stop-a-stale-async">How do you stop a stale async result from clobbering newer state?</h3>
-      <p>
-        Every operation is bound to the scope it started in. When an asynchronous result comes back,
-        it is only applied if the manager is still in the same scope and slot it began in. If the
-        object left scope or changed slot meanwhile, the late result is discarded (reported as
-        <code>Cancelled</code>) instead of being written into an object that has moved on.
-      </p>
-
-      <h3 id="is-any-work-done-off-the-main">Is any work done off the main thread? Is it thread-safe?</h3>
-      <p>
-        For managers with a true asynchronous path (Local File, the remote managers), the heavy parts
-        run on a background thread: file IO, compression, encryption, formatting. The target object
-        itself is only ever touched on the main thread, both for serialization and for deserializing a
-        loaded payload back into it. Manager logging is thread-safe, so async code can log from any
-        thread. Custom code must not touch the target from a background thread.
-      </p>
-
-      <h3 id="how-are-operation-timeouts-handled">How are operation timeouts handled?</h3>
-      <p>
-        Asynchronous operations are bounded by per-manager timeouts (<code>LoadTimeout</code>,
-        <code>SaveTimeout</code>, <code>ClearTimeout</code>). When one overruns, its
-        <code>CancellationToken</code> is cancelled and the operation is reported as
-        <code>Cancelled</code>. A manager that guarantees its own bounds can opt out and self-bound
-        (the remote managers do this when their offline cache is on, to avoid double-bounding the same
-        wait).
-      </p>
-      <p>
-        Custom async code has to honor that token. Ignoring it corrupts nothing, since a late result
-        is still discarded if the manager has moved on, but the work cannot be force-stopped and keeps
-        running detached. On a self-bounding manager (one the core does not time out), an async
-        operation that ignores its token and never returns never completes at all: it is stuck as a
-        no-op, and it holds up the shutdown drain on quit.
-      </p>
-    </section>
-
-
-    <!-- ══════════════════════════════════════ conflicts ════ -->
-    <section id="conflicts">
-      <h2>Multi-device conflicts (remote)</h2>
-
-      <h3 id="two-devices-saved-the-same-player-how">Two devices saved the same player. How is the conflict resolved?</h3>
-      <p>
-        It depends on the remote manager's <a href="Cloud%20and%20Remote.html#cache">cache mode</a>
-        (the three modes are described there). With <strong>Server + Cache</strong>, the relevant mode
-        for multiple devices, a load prefers the server and a disagreement is settled by the most
-        recent save, with the save time kept alongside the data, so resolution relies on the devices'
-        clocks.
-      </p>
-      <p>
-        Saves are read back verbatim, byte for byte, and a save written with no cache carries no
-        timestamp, so it reads as the oldest possible save when a cache is later enabled. The reverse
-        direction is safe too: a save written with a cache on still loads after the cache is turned
-        off. Turning the cache off abandons offline changes still awaiting push on players' devices,
-        which is why Cache Mode counts as a breaking field for the
-        <a href="Guides.html#migration">manager lock</a>.
-      </p>
-      <div class="note">
-        Recency-based resolution is last-write-wins, not a field-level merge: if a player makes
-        progress offline on two devices, the later save replaces the earlier one rather than merging
-        them. Strict competitive integrity needs a server-authoritative model instead.
-      </div>
-    </section>
-
-
-    <!-- ══════════════════════════════════════ failures ════ -->
-    <section id="failures">
-      <h2>Failures &amp; exceptions</h2>
-
-      <h3 id="what-if-my-code-throws-inside-a">What if my code throws inside a callback or an optional-interface method?</h3>
-      <p>
-        It is contained. All user-supplied code (event subscribers, optional-interface methods, the
-        serializer) runs behind a single containment layer, so a throw or a returned null cannot
-        corrupt the system or break the operation. One throwing event subscriber neither stops the
-        other subscribers nor fails the save, and the exception is logged. Where it is part of an
-        operation result, it surfaces as a result whose type is <code>Exception</code>.
-      </p>
-
-      <h3 id="what-if-the-serializer-cannot-handle-my">What if the serializer cannot handle my object?</h3>
-      <p>
-        A serializer must not fail on valid data. If an object cannot be encoded as it enters scope
-        (no serializer, or one that throws or returns null), persistence is <em>disabled</em> for that
-        object: every load, save and clear is refused, and a one-time error is logged and shown in the
-        inspector. A broken setup is loud and harmless rather than a quiet corruption.
-      </p>
-    </section>
-
 
     <!-- ══════════════════════════════════════ security ════ -->
     <section id="security">
       <h2>Security</h2>
 
-      <h3 id="what-is-the-threat-model">What is the threat model?</h3>
-      <p>
-        Local save protection is <strong>client-side cheat deterrence</strong>, not a guarantee. It
-        protects data <em>at rest</em> (the file on disk), and it is only as secret as the key behind
-        it. Anyone who can extract that key from the build, or read the game's live memory while it
-        runs, can defeat it. It makes casual and copy-paste cheating impractical. For competitive
-        integrity, the answer is a server-authoritative design where the client is never trusted.
-      </p>
-
-      <h3 id="how-is-the-protection-actually-built">How is the protection actually built?</h3>
-      <p>The Local File manager offers two levels, both keyed off the same derivation:</p>
-      <ul>
-        <li><strong>Append Hash</strong>: the data stays readable but carries an <strong>HMAC-SHA256</strong> authentication tag, so any edit is detected (integrity and authenticity, no secrecy). Detection is <strong>tamper-evident</strong>, not a rejection: the edited save still loads, and every save of that lineage from then on re-writes an authenticated tamper mark into the tag line, so the mark survives sessions and cannot be edited out (see <code>FilePersistenceManager.IsTampered</code>).</li>
-        <li><strong>Encrypt</strong>: the data is encrypted with <strong>AES-256-CBC</strong> (PKCS7 padding, a fresh random IV per save), then authenticated with HMAC-SHA256 over the ciphertext (encrypt-then-MAC). The tag is verified <em>before</em> any decryption, so tampering is caught cleanly.</li>
-      </ul>
-      <p>Key handling:</p>
-      <ul>
-        <li>A 32-byte <strong>master key</strong> is derived as the SHA-256 of length-prefixed (framed) inputs: a package constant, your project secret, and, when the matching lock is set, the device id (Target Machine) and the runtime secret (Runtime Secret). The File Location lock is folded into the MAC instead of the key (see below). Framing the inputs means two different combinations can never collide into the same key.</li>
-        <li>The cipher and the MAC each get their <strong>own sub-key</strong> (a separate SHA-256 of the master key plus a distinct label), so the same bytes are never handed to both AES and HMAC.</li>
-        <li>The Append Hash <strong>tamper mark</strong> is authenticated under a third sub-key of its own: a marked and an unmarked tag can never validate each other's data, so stripping the mark (or forging one onto a clean save) invalidates the tag and the file reads as freshly tampered.</li>
-        <li>Tag verification uses a <strong>constant-time comparison</strong>, so a forged tag cannot be reconstructed byte by byte through timing.</li>
-      </ul>
-      <div class="note">
-        The project secret behind every key is generated automatically and unique to your project,
-        stored in <strong>Project Settings &gt; Persistent Asset &gt; <a href="Settings.html#security">Security</a></strong>.
-        Commit it and keep it identical across builds: a different secret makes existing saves
-        unreadable (see <a href="Guides.html#security">Securing saves</a>).
-      </div>
-
-      <h3 id="what-does-each-attack-actually-face">What does each attack actually face?</h3>
-      <div class="member-group">
-        <table class="mt">
-          <tr><td><strong>Edit the save</strong> in a hex or text editor</td><td>The HMAC tag no longer matches. Under <strong>Encrypt</strong> the load returns Invalid and the save is treated as absent: <strong>blocked</strong>. Under <strong>Append Hash</strong> the edited save loads but is permanently <strong>marked as tampered</strong> (<code>IsTampered</code> / <code>OnTamperedLoaded</code>); the mark is authenticated and re-written into every later save, so it cannot be laundered by re-saving, editing, or slot-copying. Restoring a byte-for-byte pristine copy the player kept from before the edit is the one way back: that is rollback, which no client-side scheme prevents.</td></tr>
-          <tr><td><strong>Forge a fresh save</strong></td><td>Needs the MAC sub-key, which only the secret can produce; without it, no valid tag. <strong>Blocked</strong> as long as the key stays secret.</td></tr>
-          <tr><td><strong>Read an encrypted save</strong></td><td>AES-256 protects the contents at rest; the cipher sub-key is required. <strong>Blocked.</strong></td></tr>
-          <tr><td><strong>Copy a save to another device</strong><br/>(Target Machine lock)</td><td>The device id is mixed into the key, so the save never verifies on any other machine. Under <strong>Encrypt</strong> it is unreadable there: <strong>blocked</strong>; under <strong>Append Hash</strong> it loads <strong>marked as tampered</strong> (a failed check is a failed check: the manager cannot tell an edit from a foreign machine).</td></tr>
-          <tr><td><strong>Move, rename or replay save files</strong><br/>(File Location lock)</td><td>The path is folded into the MAC (never written into the file), so a save only verifies at the exact path it was written to. Under <strong>Encrypt</strong>: <strong>blocked</strong>; under <strong>Append Hash</strong> the moved file loads <strong>marked as tampered</strong>. Copies and renames through the <code>Slots</code> API still work, they re-protect the data for its new path (carrying an existing tamper mark with it).</td></tr>
-          <tr><td><strong>Reverse-engineer the build</strong> to extract the project secret</td><td>The project secret ships inside the player, so a determined reverser can recover it from the build, then forge or decrypt: <strong>not blocked</strong> on its own. The <strong>Runtime Secret</strong> lock changes that: the deciding secret comes from your server at runtime and never ships in the build, so a reverser without it is <strong>blocked</strong>.</td></tr>
-          <tr><td><strong>RAM dump or live memory editor</strong><br/>(Cheat Engine and the like)</td><td>Once loaded, your values are ordinary fields in memory; encryption guards disk, not RAM. <strong>Not blocked</strong>: the hard ceiling of any client-side scheme, where only server authority defends.</td></tr>
+      <h3>What does each attack face?</h3>
+      <p>The anchors below are the flags of the Local File manager's <strong>Anchor Save To</strong> setting.</p>
+      <div class="table-scroll">
+        <table class="cmp">
+          <thead><tr><th scope="col">Attack</th><th scope="col">Result</th></tr></thead>
+          <tbody>
+            <tr><td>Edit the file</td><td>The HMAC-SHA256 tag no longer matches. <strong>Encrypt</strong> refuses the save. <strong>Append Hash</strong> loads it with a permanent tampered mark, which re-saving, editing or copying the slot can't remove. Restoring a pristine copy the player kept is a rollback, which no client-side scheme prevents.</td></tr>
+            <tr><td>Forge a fresh save</td><td>Needs the key derived from your project secret. Blocked while the secret stays secret.</td></tr>
+            <tr><td>Read an encrypted save</td><td>AES-256 protects the contents, and needs the same key. Blocked.</td></tr>
+            <tr><td>Copy a save to another machine</td><td>With <strong>Anchor Save To</strong> set to <strong>Target Machine</strong>, the device id is part of the key, so the check fails on any other machine: refused under Encrypt, marked under Append Hash. A platform that reports no device identifier derives the same key everywhere, and the package warns about it.</td></tr>
+            <tr><td>Move, rename or swap save files</td><td>With <strong>File Location</strong>, the check fails at any other path. Copies and renames through <code>Slots</code> still work, since they re-protect the data for its new path.</td></tr>
+            <tr><td>Extract the secret from the build</td><td>The project secret ships in the player, so a reverser can recover it. <strong>Runtime Secret</strong> closes this: the deciding secret comes from your server at run time and never ships.</td></tr>
+            <tr><td>Edit memory at run time</td><td>Not blocked by save protection, which covers the disk, not RAM. Memory obfuscation tools raise the cost of this, and server authority is the only complete defense.</td></tr>
+          </tbody>
         </table>
       </div>
+
+      <h3>What happens if the project secret changes?</h3>
+      <p>Every protected save already written stops opening: Encrypt refuses them, and Append Hash loads them
+        marked as tampered. The secret is generated once per project and stored in
+        <code>ProjectSettings/PersistentAssetSettings.asset</code>, so commit that file and keep it identical on
+        every machine and in every build. A machine that builds without it generates a new secret, and ships a game
+        that can't read your players' saves. An empty secret falls back to a key every project using the package
+        shares.</p>
+      <div class="note warning"><strong>Warning:</strong> Anyone who reads that file can forge and decrypt your
+        saves. Keep it out of public repositories.</div>
+
+      <h3>Is a remote save protected in transit and on the server?</h3>
+      <p>In transit, the Server (HTTP) manager uses the scheme its URL names, and the Inspector window warns when a
+        release URL uses plain <code>http://</code>, since the save and the <code>Authorization</code> header would
+        then travel unencrypted. Cloud Save goes through the Unity Gaming Services SDK and Steam Cloud through the
+        Steam client, each over its own secured connection.</p>
+      <p>On the server, the manager's <strong>Encryption</strong> applies to what leaves the device, so with
+        Encrypt the server stores only ciphertext it can't read. <strong>Cache Encryption</strong> protects the copy
+        the offline cache keeps on the device, separately. Append Hash and the Target Machine anchor are refused on the
+        remote save, since it has to open on the player's other devices. The server still trusts any request carrying
+        valid credentials, so validate on the server whatever must not be forged. For the setting-by-setting table,
+        refer to <a href="Secure%20saves.html#remotesecurity">Secure a remote save</a>.</p>
+    </section>
+    <!-- ══════════════════════════════════════ editor ════ -->
+    <section id="editor">
+      <h2>Editor safety</h2>
+
+      <h3>Can Play mode write runtime values into my assets?</h3>
+      <p>No. Each persistent asset's authored values are captured in memory as it comes into scope, and restored
+        into the object when it unloads at the end of the session. While a manager is in scope, an
+        <code>AssetModificationProcessor</code> drops its target's path from every
+        <code>OnWillSaveAssets</code> call, so neither Ctrl+S nor a tool calling
+        <code>AssetDatabase.SaveAssets</code> can write the loaded save into the <code>.asset</code> file. That
+        also covers an Editor crash during Play mode: the files were never written, so they reopen with their
+        authored values.</p>
+
+      <h3>Do Editor sessions touch the saves of an installed build?</h3>
+      <p>No. In the Editor, the file-based managers write under the project's
+        <code>UserSettings/Persistent Asset</code> folder instead of <code>Application.persistentDataPath</code>,
+        and the standard Unity ignore lists already exclude that folder from version control. The exception is a
+        Local File manager with an explicit <strong>Save Folder</strong>: it writes there in the Editor too, so it
+        shares its saves with an installed build.</p>
+
+      <h3>Does it support Enter Play Mode with Domain Reload disabled?</h3>
+      <p>Yes. The package never relies on a domain reload to reset its statics. Each one is reset explicitly as
+        Play mode begins, through <code>[InitializeOnEnterPlayMode]</code> or a play-mode-state hook, so a session
+        with Domain Reload disabled starts like a cold build launch.</p>
+
+      <h3>Where are manager locks stored?</h3>
+      <p>In <code>ProjectSettings/PersistentAssetSettings.asset</code>, under <code>LockedManagerIDs</code>, not in
+        the manager asset. Commit that file so the whole team shares the locks. If a merge conflicts there, keep the
+        entries from both sides: an extra one is harmless, while a lost one unlocks a shipped manager. Locks of deleted
+        managers stay until you <a href="Update%20a%20shipped%20save.html#orphaned-locks">clear them</a>.</p>
     </section>
 
+    <!-- ══════════════════════════════════════ concurrency ════ -->
+    <section id="concurrency">
+      <h2>Concurrency and threading</h2>
 
-    <!-- ══════════════════════════════════════ portability ════ -->
-    <section id="portability">
-      <h2>Identity &amp; portability</h2>
+      <h3>What happens when I save while another operation is running?</h3>
+      <p>Each manager runs its storage operations one at a time, through a per-manager gate. What happens to the
+        new request depends on the call:</p>
+      <ul>
+        <li>An asynchronous or automatic request queues in arrival order. The gate never drops a request in favor
+          of another.</li>
+        <li>A request for the same work as one already queued joins it: saves of the same slot coalesce into one,
+          and a load joins an in-flight load of the same slot and scope.</li>
+        <li>A clear of the current slot wins. It invalidates the in-flight operation's write to the target, asks it
+          to cancel, makes everything queued before it stale, and runs once that operation settles, so its delete
+          lands after any superseded save's write. Saving then stays paused until the next load.</li>
+        <li>An explicit synchronous request, such as <code>SaveSync()</code>, never degrades to asynchronous. While
+          asynchronous work is in flight it fails fast as busy: retry once idle, or await <code>WhenReady</code>.</li>
+      </ul>
+      <p>Slot storage operations (<code>Slots.Delete</code>, <code>Copy</code>, <code>Rename</code>) ride the same
+        queue, but they touch another slot's storage, never the target, so they never join, never supersede, and
+        survive a slot change.</p>
 
-      <h3 id="how-is-a-save-matched-to-the">How is a save matched to the right object?</h3>
-      <p>
-        Each manager carries a stable unique id, and its storage defaults to a name derived from that
-        id (a file name, prefs key, server id or Cloud Save key). The managers that surface that name
-        (Local File's File Name, the HTTP Id, the Cloud Save Key) allow overriding it. Slots are
-        encoded into safe path or key segments, so any slot name, including player-controlled ones,
-        resolves to valid, collision-free storage.
-      </p>
+      <h3>Is a late async result ever applied to the wrong slot?</h3>
+      <p>No. When the slot changes or the asset leaves scope while a load is in flight, the load's result is
+        discarded when it lands, whatever it returned, and reports <code>Cancelled</code>. Operations still queued
+        for the old slot no longer apply to anything, so they are dropped without running. With automatic saving on,
+        the old slot's own save is not one of them: it captures the data before the switch, runs on its own path,
+        and is never dropped.</p>
 
-      <h3 id="what-stops-two-managers-from-saving-to">What stops two managers from saving to the same place?</h3>
-      <p>
-        The defaults cannot collide: every storage name derives from the manager's unique id, and a
-        duplicated asset receives a fresh one. Overriding the name (Local File's File Name, the HTTP
-        URL and Id, the Cloud Save Key) is where a duplicate can slip in, and two managers writing to
-        one location would silently overwrite each other's saves. The editor treats that as a
-        configuration error: an error box in both managers' inspectors, an error in the console, and
-        the build fails at its very start until one of the locations is changed.
-      </p>
+      <h3>Which work runs off the main thread?</h3>
+      <p>The target is only ever touched on the main thread. A save encodes the target synchronously, before its
+        first <code>await</code>, so the captured state is atomic with respect to game code. After that, a manager
+        with an asynchronous path runs compression, encryption, envelope work and I/O on the thread pool, then
+        returns to the main thread before decoding into the target, updating the session or raising an event. A
+        custom manager that resumes off the main thread (<code>ConfigureAwait(false)</code>) is brought back
+        automatically. On WebGL, which has no threads, the background work runs on the main thread.</p>
 
-      <h3 id="can-two-managers-report-the-same-location">Can two managers report the same location while saving to different places?</h3>
-      <p>
-        Technically yes. The check above compares locations as plain text (the same
-        <code>GetStorageLocation()</code> strings the import logic trusts when deciding whether an old
-        save can safely be deleted), and a location string only carries what its manager puts in it.
-        Among the built-ins it cannot happen, since their strings are mutually exclusive by
-        construction: a file path always ends with the save extension, which a Cloud Save key cannot
-        contain, a Player Prefs key starts with its package prefix, and an HTTP address carries its
-        URL. A custom manager could report a string another storage also produces. The conflict is
-        reported all the same, and the fix is to shape its <code>StorageLocation</code> so that only
-        its storage can produce it (see <a href="Extending.html">Extending</a>).
-      </p>
+      <h3>Does the package allocate every frame?</h3>
+      <p>No. Between operations, the package's own per-frame work (the automatic save timers, the operation, drain
+        and conflict listeners, and the slot list) allocates nothing. Memory is allocated when a load or a save
+        runs, not while the game idles.</p>
+      <p>One component can: a Variable Binder set to <strong>Two Way</strong> reads its target back on every poll. A
+        value-type member is boxed on each read, and a list or map member boxes its enumerator and every element. It
+        polls every <strong>Binder Poll Delay</strong> seconds, set in the No-Code project settings. Raise that delay,
+        or set the binder to <strong>Variable To Target</strong> when the variable alone drives the member.</p>
 
-      <h3 id="do-saves-work-across-platforms-and-operating">Do saves work across platforms and operating systems?</h3>
-      <p>
-        Yes. Files are written as UTF-8 with a fixed newline, and reads are tolerant of differing
-        newline styles and a stray byte-order mark (so a file touched by cloud sync or a text editor
-        still loads). With no compression or encryption, a save is human-readable text: pristine
-        serializer output, except that an object using save versioning (a non-zero
-        <code>SaveVersion</code>) carries a short version prefix on the payload (still plain
-        text). WebGL flushes writes to the browser's persistent
-        storage; consoles, which gate saving behind
-        their platform SDK, are served by a small custom manager (see <a href="Extending.html">Extending</a>).
-      </p>
+      <h3>How are timeouts enforced?</h3>
+      <p>Each asynchronous operation is bounded by its manager's <code>LoadTimeout</code>, <code>SaveTimeout</code>
+        or <code>ClearTimeout</code>. On expiry the operation's <code>CancellationToken</code> is cancelled, the
+        result reports <code>Cancelled</code> with <code>IsTimedOut</code>, and a warning reaches the console, in
+        release builds too.</p>
+      <p>The next operation starts only when the timed-out task actually ends, so two storage operations never
+        overlap. A manager that overrides <code>SelfBoundsAsyncOperations</code> to true takes over its own bounds,
+        and the core then never cancels it.</p>
+      <div class="note warning"><strong>Warning:</strong> In a custom manager, stop the work when the token is
+        cancelled. An operation that ignores it keeps running after its timeout, and every load, save and clear
+        queued behind it on that manager waits. One that never ends blocks the manager for the rest of the session,
+        and holds the shutdown drain until its ceiling.</div>
     </section>
 
+    <!-- ══════════════════════════════════════ conflicts ════ -->
+    <section id="conflicts">
+      <h2>Multi-device conflicts</h2>
 
-    <!-- ══════════════════════════════════════ performance ════ -->
-    <section id="performance">
-      <h2>Performance</h2>
+      <h3>How does a remote manager detect a conflict?</h3>
+      <p>With a hash, not with clocks. Each cache entry records a base marker: a hash (half of a SHA-256) of the
+        stored form of the last server payload it diverged from, or of the last merged result. When a load finds a
+        pending local change and a server save:</p>
+      <ul>
+        <li>If the server still holds the base, this device is simply ahead: the local save wins and is pushed,
+          whatever the clocks say.</li>
+        <li>If the server moved, both devices changed the same object from the same starting point: a real
+          conflict, settled by <code>IMergeable</code>, then the <strong>Ask</strong> policy, then the most recent
+          save.</li>
+        <li>An entry with no base, such as one written by an older build or a pending deletion, falls back to the
+          most recent save.</li>
+      </ul>
+      <p>The push side classifies the same way, and never pushes over a server save this device has not seen. A
+        change made during an open conflict is held, and <code>Status</code> reports it, until the next load settles
+        it. For the policies and the merge contract, refer to <a href="Cloud%20and%20remote.html#conflict">Resolve
+        a conflict between two devices</a>.</p>
 
-      <h3 id="will-saving-cause-frame-hitches">Will saving cause frame hitches?</h3>
-      <p>
-        The automatic saves that must complete before the object goes away (on unload, focus loss,
-        pause) run synchronously by necessity. The <em>regular timed save</em> and the automatic load
-        retry prefer the asynchronous path, so they do not hitch a frame, and on capable managers the
-        file work runs on a background thread. The cadence is configurable
-        (<code>RegularSaveDelay</code>, and <code>AutoLoadRetryDelay</code> for the load retry), and
-        saves can be driven manually at your own safe points.
-      </p>
-
-      <h3 id="does-it-save-even-when-nothing-changed">Does it save even when nothing changed?</h3>
-      <p>
-        By default, yes: the regular timer saves on schedule regardless. With
-        <code>IDirtyTracked</code> implemented, a save is skipped while the object is not dirty (the
-        flag is cleared after a successful save), so an idle object costs nothing.
-      </p>
-
-      <h3 id="how-big-can-a-save-get">How big can a save get?</h3>
-      <p>
-        There is no hard limit in the package, but each manager has practical ones. Player Prefs is
-        for small values rather than large blobs; Local File handles anything substantial. Cloud Save
-        caps a value's size, which <strong>Compression</strong> raises the ceiling on, and a remote
-        save costs a network round trip. The serializer matters too: a deep object graph is slower to
-        encode, so runtime-only caches are better flattened out of the persisted fields (with
-        <code>ISerializationCallbacks</code>) than saved.
-      </p>
+      <h3>Why must <code>Merge</code> be commutative and idempotent?</h3>
+      <p>Because each device folds the other's save independently, and the merged result is saved and pushed
+        again. If the result depended on the order, two devices would converge on different data. If folding the
+        same save twice changed anything, each device would keep producing a new save for the other to fold, and
+        they would push back and forth forever. A maximum or a set union meets both rules. A sum pays the player
+        twice.</p>
     </section>
 
+    <!-- ══════════════════════════════════════ failures ════ -->
+    <section id="failures">
+      <h2>Error handling</h2>
+
+      <h3>What happens when my code throws inside a callback?</h3>
+      <p>The package contains it. Every call into code you write (an event handler, an optional interface method,
+        a manager override, a serializer) goes through one containment layer, so a throw, a returned null or a hang
+        can't corrupt the package's state. The exception is logged with the asset as context, the other subscribers
+        of the same event still run, and the operation completes. When the fault is the operation's own work, it
+        surfaces as a result of type <code>Exception</code>.</p>
+
+      <h3>What happens when the serializer can't handle my asset?</h3>
+      <p>Persistence is disabled for that asset. As the asset comes into scope, the manager checks it has a
+        serializer and that the serializer can encode the target. If not, it refuses every load, save and clear,
+        including the automatic ones, logs a single error and shows it in the Inspector window.
+        <code>Readiness.Reason</code> reads <code>PersistenceDisabled</code>. Storage is never written through a
+        serializer that has already failed on the data.</p>
+
+      <h3>Can an edited save make a serializer build arbitrary types?</h3>
+      <p>No. The package includes protection against type injection, the attack where a modified save names a
+        framework type whose construction does real work, such as starting a process or writing a file. Each
+        serializer that reads a type name from a save checks it:</p>
+      <div class="table-scroll">
+        <table class="cmp">
+          <thead><tr><th scope="col">Serializer</th><th scope="col">What a save may name</th></tr></thead>
+          <tbody>
+            <tr><td>Unity JSON</td><td>Only the type of a <code>[SerializeReference]</code> value, and Unity builds only a type assignable to that field's declared type. A field declared as your own class or interface can't receive a framework type.</td></tr>
+            <tr><td>Newtonsoft JSON, with polymorphic type names on</td><td>An allowlist. Any type from a non-framework assembly (yours, the engine's, a plugin's), but from the framework assemblies (<code>mscorlib</code>, <code>System.*</code>, <code>Microsoft.*</code>) only primitives, enums, strings, the <code>System.Collections</code> families, tuples, <code>Nullable&lt;T&gt;</code> and a few value types such as <code>Guid</code> and <code>DateTime</code>. Generic arguments and array elements are checked recursively. The check is by assembly, not namespace, so a fake <code>System.Collections.Generic</code> in another assembly doesn't pass.</td></tr>
+            <tr><td>Odin</td><td>A denylist, since Odin names a type for every node, including ordinary data. The construction gadget families are refused: <code>System.IO</code>, <code>System.Reflection</code>, <code>System.Net</code>, <code>System.Data</code>, processes, remoting, interop handles, and a few more.</td></tr>
+            <tr><td>MemoryPack</td><td>Nothing. The root type comes from the target, and unions are closed sets declared at compile time.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>A refused name fails the load and logs the name once. Odin's denylist sets a floor, not a guarantee: for a
+        save that can arrive from off the device, set <strong>Encryption</strong> to <strong>Encrypt</strong>, which
+        refuses a modified save before any serializer reads it. <strong>Append Hash</strong> doesn't: it still loads
+        a modified save, marked as tampered.</p>
+    </section>
+
+    <!-- ══════════════════════════════════════ identity ════ -->
+    <section id="identity">
+      <h2>Identity and portability</h2>
+
+      <h3>How does a save find its asset?</h3>
+      <p>Through the manager, not the asset's path or name. Each manager carries a unique id, and its storage name
+        (a file name, a prefs key, a server id, a Cloud Save key) defaults to one derived from that id. Duplicating
+        a manager gives the copy a fresh id. Renaming or moving the asset changes nothing.</p>
+      <p>The slot is encoded into its path or key segment injectively: every slot, player-typed names included,
+        produces a valid name, and two different slots never produce the same one. Letters pass through, and only
+        the characters a path can't hold, plus the shapes Windows mishandles (reserved device names, a trailing dot
+        or space), are escaped. On a case-insensitive file system, two slots that differ only in case still share a
+        file.</p>
+
+      <h3>How does a scene object keep its identity between sessions?</h3>
+      <p>Through an id, not its name or place in the hierarchy. Each Persistent Scene Object carries an id minted in
+        the Editor and saved into the scene, and its records are keyed by scene and id, so renaming or moving it in
+        the hierarchy loses nothing. A prefab asset carries a prefab id, stamped when it is imported, and no object
+        id of its own, so every instance mints one. An instance created at run time mints its id as it is created,
+        which is what marks it as spawned: its record keeps the prefab id, and a load instantiates it again from
+        that prefab. A build fails when a scene holds a Persistent Scene Object with no id, which a scene not reopened
+        since a prefab change can.</p>
+
+      <h3>What stops two managers from writing to the same place?</h3>
+      <p>Default names can't collide, since each derives from a unique id. An overridden name can, so the Editor
+        compares every manager's storage location as plain text, reports a match in both Inspector windows and in
+        the console, and fails a build at its start until the locations differ. A custom manager should shape its
+        <code>StorageLocation</code> so only its own storage can produce that string.</p>
+
+      <h3>Is it safe under IL2CPP and managed code stripping?</h3>
+      <p>Yes, with no AOT code generation step of its own. The package stays off the generic and reflection paths
+        the linker can't see: No-Code collections, enums and asset variables run through non-generic code, and
+        MemoryPack generates its formatters at compile time. What only serialized data references is preserved by
+        <code>link.xml</code> files the package writes at the start of each build and deletes at the end: every
+        serializer and settings section class, and every member a Variable Binder reaches by reflection, recorded as
+        you author your scenes and prefabs.</p>
+      <p>A few cases are yours to handle:</p>
+      <ul>
+        <li><strong>Odin:</strong> generate Odin's AOT support before an IL2CPP build. For more information, refer
+          to <a href="What%20can%20be%20saved.html#odin">Odin</a>.</li>
+        <li><strong>Properties reached by reflection:</strong> Newtonsoft JSON reads and writes properties through
+          their accessors, and Scene Objects restores object references held in properties the same way. At a
+          <strong>Managed Stripping Level</strong> above Minimal, preserve those accessors with
+          <code>[Preserve]</code> or a <code>link.xml</code> entry.</li>
+        <li><strong>A Binder on a generic collection:</strong> IL2CPP only compiles a generic instantiation your
+          code uses somewhere. When a Binder drives a <code>List&lt;T&gt;</code> or
+          <code>Dictionary&lt;TKey, TValue&gt;</code> of a type nothing else declares, it reports that it can't
+          create it: declare a field of that type in your own code.</li>
+      </ul>
+
+      <h3>Can a save move between machines and operating systems?</h3>
+      <p>Yes. Files are UTF-8 with a fixed <code>\n</code> newline, and a read accepts <code>\r\n</code>,
+        <code>\r</code> and a leading byte order mark, so a file that passed through cloud sync or a text editor
+        still loads. The package writes no byte order mark itself, and never lets a binary payload that happens to
+        start with one be mistaken for it. An unprotected, uncompressed save is exactly the serializer's output,
+        plus the envelope prefix when it is versioned.</p>
+    </section>
 
     <!-- ══════════════════════════════════════ testing ════ -->
     <section id="testing">
-      <h2>Testing &amp; quality</h2>
+      <h2>Testing</h2>
 
-      <h3 id="how-is-the-package-tested">How is the package tested?</h3>
-      <p>
-        The package ships 1700+ Edit-mode and Play-mode NUnit tests, covering the operations, the
-        readiness contract, serialization, slots, security and the No-Code modules. It is also
-        manually verified on every Unity 6 minor release: 6.0, 6.1, 6.2, 6.3, 6.4, 6.5 and 6.6.
-      </p>
-
-      <h3 id="can-i-stress-test-my-own-save">Can I stress-test my own save code?</h3>
-      <p>
-        Yes, with the built-in <strong>Test</strong> persistence manager (last in the Built-Ins group
-        of the manager dropdown). Every operation can be forced to any outcome (Success, Invalid,
-        Failure, Exception, Cancelled), with injectable async delays, so a failed load, a slow save, a
-        cancelled operation or the shutdown drain can all be rehearsed in memory, with no real storage
-        involved.
-      </p>
-      <div class="note">
-        Assigning the Test manager keeps a read-only import copy of the setup it replaces, restored in
-        one click from its inspector.
-      </div>
+      <h3>How is the package tested?</h3>
+      <p>With about 3,000 NUnit test cases, in Edit mode and Play mode. Tests make up about 40% of the codebase, which
+        is above average for a Unity package. They cover the operation gate and its
+        concurrency rules, readiness, every built-in manager and serializer, the offline cache and conflict
+        resolution, security, slots, migration, and the No-Code and Scene Objects modules. The suite runs in every
+        Unity minor from 6.0 to 6.6.</p>
+      <p>To rehearse failures in your own game, refer to
+        <a href="Troubleshooting.html#testing">Simulate any save outcome</a>.</p>
     </section>
 
+    <!-- ══════════════════════════════════════ resources ════ -->
+    <div class="resources">
+      <h2>Additional resources</h2>
+      <ul>
+        <li><a href="How%20saving%20works.html">How saving works</a></li>
+        <li><a href="Extend%20the%20package.html">Extend the package</a></li>
+        <li><a href="API%20-%20Core.html#PersistenceManager">PersistenceManager API reference</a></li>
+      </ul>
+    </div>
 
     <div class="pager">
-      <a class="prev" href="Extending.html">
+      <a class="prev" href="Extend%20the%20package.html">
         <div class="dir">Back</div>
-        <div class="pg-title">Extending</div>
-      </a>
-      <a class="next" href="../User%20Manual.html">
-        <div class="dir">Back to</div>
-        <div class="pg-title">Home</div>
+        <div class="pg-title">Extend the package</div>
       </a>
     </div>
+
+    <div class="doc-footer">Persistent Asset v2.0.0</div>
 
   </main>
 </div>

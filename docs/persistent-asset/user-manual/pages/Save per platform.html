@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Route one persistent asset to a different storage on each platform you ship to." />
+  <title>Persistent Asset - Save per platform</title>
+  <link rel="stylesheet" href="/assets/css/doc-styles.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Persistent Asset</div><a href="../index.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Save per platform</h1>
+      <div class="sub">Route one persistent asset to a different storage on each platform you ship to.</div>
+
+    <div class="guide-index">
+      <a href="#routes">Set up routes</a>
+      <a href="#distribution">Route two builds of the same platform</a>
+      <a href="#converting">Convert an existing manager</a>
+      <a href="#consoles">Consoles</a>
+    </div>
+    </div>
+
+    <!-- ══════════════════════════════════════ routes ════ -->
+    <section id="routes">
+      <h2>Set up routes</h2>
+      <p>One platform sometimes can't save the way the others do: a console saves through its own SDK, a Steam
+        build may want Steam Cloud, everything else a plain file. The <strong>Platform (Routing)</strong> manager
+        holds one manager per platform and picks between them at runtime, so the asset and your game code stay
+        the same everywhere.</p>
+      <p>It holds one route per platform, and each route holds the manager that saves there. The first route
+        that claims the platform the game is running on wins.</p>
+      <p>For example:</p>
+      <div class="table-scroll">
+        <table class="cmp">
+          <thead><tr><th scope="col">Route</th><th scope="col">Platforms</th><th scope="col">Saves with</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Windows Editor</td><td>Session (Memory)</td></tr>
+            <tr><td>2</td><td>PS5</td><td>your PS5 manager</td></tr>
+            <tr><td>3</td><td>Switch</td><td>your Switch manager</td></tr>
+            <tr><td>4</td><td>(none)</td><td>Local File</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>The router holds the settings that describe the data, and each route's manager holds where its bytes
+        go.</p>
+      <div class="img-block">
+        <img src="../img/platform_routes_inspector.png" alt="The Platform (Routing) manager with several routes"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">&#128247;</span>
+          <span><strong>img/platform_routes_inspector</strong><br/>The Platform (Routing) manager: its route list, each route naming its platforms and holding its own manager</span>
+        </div>
+      </div>
+      <div class="note warning"><strong>Warning:</strong> Reorder routes rather than removing and re-adding them.
+        Removing a route deletes the manager it owns, and the saves that manager wrote can no longer be
+        read.</div>
+      <div class="note"><strong>Note:</strong> With no route for the current platform, the asset refuses to
+        persist at all. A last route that names no platform prevents that.</div>
+      <p id="editor">The Editor is a platform of its own, so a set of routes that names only player platforms
+        would match nothing in Play mode. The package resolves that in three steps: a route claiming the Editor
+        platform, then one claiming the matching player platform (<code>WindowsEditor</code> stands in for
+        <code>WindowsPlayer</code>), then the fallback. When none of the three match, persistence is
+        disabled.</p>
+    </section>
+
+    <!-- ══════════════════════════════════════ distribution ════ -->
+    <section id="distribution">
+      <h2>Route two builds of the same platform</h2>
+      <p>Two builds of one platform can need different storage, and the platform alone can't tell them apart: a
+        Steam build, a Microsoft Store build and an itch build are all <code>WindowsPlayer</code>. Name the build
+        once, and routes can match that name:</p>
+      <pre><code>[<span class="ty">RuntimeInitializeOnLoadMethod</span>(<span class="ty">RuntimeInitializeLoadType</span>.SubsystemRegistration)]
+<span class="kw">static void</span> SetDistribution() =&gt; <span class="ty">Persistence</span>.Distribution = <span class="st">"Steam"</span>;</code></pre>
+      <p><strong>Distribution</strong> is a free string, matched ignoring case. A route that leaves it empty takes
+        any distribution, and a route that asks for one while none is set falls through to the fallback. To try a
+        distribution without building, set <strong>Editor Distribution</strong> in <strong>Project Settings &gt;
+        Persistent Asset</strong>.</p>
+    </section>
+
+    <!-- ══════════════════════════════════════ converting ════ -->
+    <section id="converting">
+      <h2>Convert an existing manager</h2>
+      <p>To give an asset that already saves a router, open the manager's context menu and select <strong>Route
+        Per Platform</strong>. The manager becomes the fallback route of a new router, with its identity, its
+        configuration and its storage untouched.</p>
+      <div class="note"><strong>Note:</strong> Switching the manager's type instead demotes it to a kept
+        copy.</div>
+    </section>
+
+    <!-- ══════════════════════════════════════ consoles ════ -->
+    <section id="consoles">
+      <h2>Consoles</h2>
+      <p>Console save APIs are under NDA, so the package can't ship a console manager, and the built-in managers
+        refuse console build targets. Write <a href="Extend%20the%20package.html#manager">a manager of your own</a>. Slots,
+        compression and encryption work there as they do anywhere else.</p>
+      <p>Carry the console user in the <a href="Slots%20and%20save%20menus.html#slots">slot</a>, so that a user
+        switch becomes a scope transition:</p>
+      <pre><code><span class="kw">protected override</span> <span class="ty">SaveResult</span> WritePayloadSync(<span class="ty">PersistenceSource</span> source, <span class="kw">string</span> slot, <span class="kw">byte</span>[] payload)
+{
+    <span class="cm">// Stand-ins for the platform SDK: the slot names the console user.</span>
+    <span class="kw">using</span> <span class="ty">SaveContainer</span> container = <span class="ty">SaveContainer</span>.Mount(slot);
+
+    container.Write(FileName, payload);
+
+    <span class="cm">// Commit inside the write, where the operation's timeout covers it.</span>
+    <span class="kw">return</span> (container.Commit()) ? <span class="ty">SaveResult</span>.Success() : <span class="ty">SaveResult</span>.Failure(<span class="st">"The save container is full."</span>);
+}</code></pre>
+      <div class="note warning"><strong>Warning:</strong> Never release the container in
+        <code>OnLeavingScope</code>. That hook runs <em>before</em> the scope's final automatic save, so
+        unmounting there throws away the save the package is about to write.</div>
+      <p>Certification usually asks for a visible indicator while save data is written, with a minimum duration,
+        and for a declared maximum save size. Draw that indicator from the manager's
+        <a href="Save%20and%20load.html#reacting">save and clear events</a>, which carry the result too, so a
+        failure your write reports reaches the player from the same place.</p>
+      <div class="note"><strong>Note:</strong> A console can suspend and terminate your game without ever
+        quitting, and the save that runs at quit is then never reached. Save at checkpoints instead. For more
+        information, refer to <a href="Save%20and%20load.html#whentosave">Choose when saves happen</a>.</div>
+    </section>
+
+    <!-- ══════════════════════════════════════ resources ════ -->
+    <div class="resources">
+      <h2>Additional resources</h2>
+      <ul>
+        <li><a href="Extend%20the%20package.html#manager">Create a custom persistence manager</a></li>
+        <li><a href="Save%20on%20the%20device.html">Save on the device</a></li>
+        <li><a href="Cloud%20and%20remote.html">Cloud &amp; remote</a></li>
+      </ul>
+    </div>
+
+    <div class="pager">
+      <a class="prev" href="Save%20on%20the%20device.html">
+        <div class="dir">Back</div>
+        <div class="pg-title">Save on the device</div>
+      </a>
+      <a class="next" href="Cloud%20and%20remote.html">
+        <div class="dir">Next</div>
+        <div class="pg-title">Cloud &amp; remote</div>
+      </a>
+    </div>
+
+    <div class="doc-footer">Persistent Asset v2.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

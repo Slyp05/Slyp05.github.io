@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Namespace PersistentAsset.SceneObjects, assemblies PersistentAsset.SceneObjects and .UGUI. Explained in Scene Objects." />
+  <title>Persistent Asset - Public API - Scene Objects</title>
+  <link rel="stylesheet" href="/assets/css/doc-styles.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <nav>
+    <a href="../index.html">Overview</a>
+    <a class="nav-band" href="API%20-%20Core.html">Core</a>
+    <a class="nav-band" href="API%20-%20Built-Ins.html">Built-Ins</a>
+    <a class="nav-band" href="API%20-%20No-Code.html">No-Code</a>
+    <a class="nav-band active" href="API%20-%20Scene%20Objects.html" aria-current="page">Scene Objects</a>
+
+    <div class="nav-group">The pieces</div>
+    <a href="#PersistentSceneState"><span class="badge badge-so">SO</span>PersistentSceneState</a>
+    <a href="#PersistentSceneObject"><span class="badge badge-mb">MB</span><span class="badge badge-class">sealed</span>PersistentSceneObject</a>
+    <a href="#SceneRef"><span class="badge badge-struct">struct</span>SceneRef</a>
+    <a href="#SceneKeys"><span class="badge badge-static">static</span>SceneKeys</a>
+
+    <div class="nav-group">Records</div>
+    <a href="#Records"><span class="badge badge-class">class</span>Record types</a>
+
+    <div class="nav-group">Codecs</div>
+    <a href="#SceneComponentCodec"><span class="badge badge-class">abstract</span>SceneComponentCodec</a>
+    <a href="#SceneComponentCodecs"><span class="badge badge-static">static</span>SceneComponentCodecs</a>
+    <a href="#CodecStates"><span class="badge badge-class">class</span>Built-in states</a>
+
+    <a class="nav-band" href="API%20-%20Prefs.html">Prefs</a>
+    <a class="nav-band" href="API%20-%20Editor%20Extension.html">Editor Extension</a>
+  </nav>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Public API <span class="tag">Scene Objects</span></h1>
+      <div class="sub">Namespace <code>PersistentAsset.SceneObjects</code>, assemblies <code>PersistentAsset.SceneObjects</code> and <code>.UGUI</code>. Explained in <a href="../../user-manual/pages/Scene%20Objects.html">Scene Objects</a>.</div>
+    </div>
+
+    <h2 class="api-group">The pieces</h2>
+
+    <div class="type-section" id="PersistentSceneState">
+      <div class="type-header"><h3>PersistentSceneState</h3><span class="badge badge-so">SO</span></div>
+      <p class="type-desc">Holds the saved state of the scene objects that point at it. An ordinary persistent ScriptableObject, so it takes any Persistence Manager, any serializer, slots, encryption and migration with no extra work. <strong>Create &gt; Persistent Asset &gt; Scene State</strong>. A state several scenes use wants <strong>Always Global</strong> on its manager, like any persistent object that has to outlive the scene that referenced it.</p>
+      <div class="member-group"><table class="mt">
+        <tr><th scope="row"><span class="t">IReadOnlyList&lt;SceneRecord&gt;</span> <span class="mn">Scenes</span> { get; }</th><td>The scenes it holds records for, including the global bucket. Each is keyed by scene GUID: find the one for a loaded scene with <a href="#SceneKeys"><code>SceneKeys.Of(scene)</code></a>, and recognise the global bucket by <code>SceneKeys.GlobalKey</code>.</td></tr>
+        <tr><th scope="row"><span class="kw">void</span> <span class="mn">CaptureAll</span>()</th><td>Pull every live object's current state into the records. Runs on the manager's <code>OnBeforeSave</code>, so you rarely call it.</td></tr>
+        <tr><th scope="row"><span class="kw">void</span> <span class="mn">RestoreAll</span>()</th><td>Push the records back onto every live object and recreate the spawns of every loaded scene. Runs after every load, import, slot change, clear and snapshot restore, and takes away the objects the records say are gone.</td></tr>
+        <tr><th scope="row"><span class="kw">void</span> <span class="mn">RecordDestroyed</span>(<span class="t">PersistentSceneObject</span> sceneObject)</th><td>Record that an object is gone, so it stays gone across loads. Destroying one during play already does this, so call it only for an object you took out of play without destroying it, a pooled spawn returned to its pool for one.</td></tr>
+      </table></div>
+    </div>
+
+    <div class="type-section" id="PersistentSceneObject">
+      <div class="type-header"><h3>PersistentSceneObject</h3><span class="badge badge-mb">MB</span><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">Marks a scene object as persistent. Add it, tick the components to save. On a prefab it also carries the prefab's registry id, which is what lets a runtime instance be recreated; you keep calling plain <code>Instantiate</code>.</p>
+      <div class="member-group">
+        <div class="member-group-title">The inspector tags each component with what ticking it saves</div>
+        <table class="mt">
+        <tr><th scope="row"><strong>fields</strong></th><td>Its serialized fields, written by your project's own serializer, with no interface and no attribute.</td></tr>
+        <tr><th scope="row"><strong>codec</strong></th><td>Through a <a href="#SceneComponentCodecs">component codec</a>, which is how a Unity component with no serializable fields is saved.</td></tr>
+        <tr><th scope="row"><strong>enabled only</strong></th><td>It has no state to save, but whether it is enabled is saved, which is what a disarmed trap needs.</td></tr>
+        <tr><th scope="row"><strong>nothing</strong></th><td>Ticking the row writes nothing: the component has no state and no enabled flag, or its enabled flag is all it has and <strong>Save Active &amp; Enabled</strong> is off.</td></tr>
+      </table></div>
+      <div class="member-group"><table class="mt">
+        <tr><th scope="row"><span class="t">PersistentSceneState</span> <span class="mn">SceneState</span> { get; }</th><td>The scene state its data is stored in.</td></tr>
+        <tr><th scope="row"><span class="t">string</span> <span class="mn">Id</span> { get; }</th><td>Its stable, scene-scoped id.</td></tr>
+        <tr><th scope="row"><span class="t">string</span> <span class="mn">PrefabId</span> { get; }</th><td>The registry id of the prefab behind this object, empty when it came from none. A prefab instance authored into a scene carries one too, so it does not mark a runtime spawn.</td></tr>
+        <tr><th scope="row"><span class="t">bool</span> <span class="mn">SaveActiveAndEnabled</span> { get; }</th><td>Whether the active state and the components' enabled flags are saved.</td></tr>
+        <tr><th scope="row"><span class="t">string</span> <span class="mn">SceneKey</span> { get; }</th><td>The key its records live under: its scene's GUID, the global bucket when it belongs to none, or null for a scene outside the build list, which nothing is saved for.</td></tr>
+        <tr><th scope="row"><span class="t">bool</span> <span class="mn">IsSaved</span>(<span class="t">Component</span> component)</th><td>Whether that component is ticked to be saved.</td></tr>
+      </table></div>
+    </div>
+
+    <div class="type-section" id="SceneRef">
+      <div class="type-header"><h3>SceneRef</h3><span class="badge badge-struct">struct</span></div>
+      <p class="type-desc">A saveable reference to a scene object, for a persistent asset that has to remember one. Unity cannot serialize a scene reference into a project asset at all, so this stores the id and resolves it against what is loaded. Explained in <a href="../../user-manual/pages/Scene%20Objects.html">Scene Objects</a>.</p>
+      <div class="member-group"><table class="mt">
+        <tr><th scope="row"><span class="mn">SceneRef</span>(<span class="t">PersistentSceneObject</span> sceneObject)</th><td>Point it at an object, or at nothing.</td></tr>
+        <tr><th scope="row"><span class="t">bool</span> <span class="mn">TryResolve</span>&lt;<span class="t">T</span>&gt;(<span class="kw">out</span> <span class="t">T</span> value) where T : class</th><td>Find it as a <code>GameObject</code>, a component, or any interface one implements. False when that scene is not loaded.</td></tr>
+        <tr><th scope="row"><span class="t">bool</span> <span class="mn">IsSet</span> { get; }</th><td>Whether an object was assigned. Resolving it also needs that object's scene loaded.</td></tr>
+        <tr><th scope="row"><span class="t">string</span> <span class="mn">Id</span> / <span class="mn">SceneKey</span> { get; }</th><td>What it points at: the object's id, and the key of the scene it belongs to, the same key <a href="#SceneKeys"><code>SceneKeys.Of</code></a> answers and <code>PersistentSceneObject.SceneKey</code> carries.</td></tr>
+        <tr><th scope="row"><span class="t">bool</span> <span class="mn">Equals</span>(<span class="t">SceneRef</span> other) / <span class="mn">==</span> / <span class="mn">!=</span> / <span class="t">int</span> <span class="mn">GetHashCode</span>()</th><td>Value equality on the id and the scene it names, so two references to the same object compare equal and one can be a dictionary key. <code>IEquatable&lt;SceneRef&gt;</code>.</td></tr>
+      </table></div>
+    </div>
+
+    <div class="type-section" id="SceneKeys">
+      <div class="type-header"><h3>SceneKeys</h3><span class="badge badge-static">static</span></div>
+      <p class="type-desc">Nothing to call in ordinary use: the module resolves a scene to the key its records are stored under (the scene asset's GUID, so moving or renaming a scene file never orphans a save) and this is where a tool of your own reads the same key.</p>
+      <div class="member-group"><table class="mt">
+        <tr><th scope="row"><span class="t">const string</span> <span class="mn">GlobalKey</span></th><td>The bucket for objects belonging to no scene (a <code>DontDestroyOnLoad</code> object). Restored as soon as the data is ready, never dropped on a scene unload.</td></tr>
+        <tr><th scope="row"><span class="t">string</span> <span class="mn">Of</span>(<span class="t">Scene</span> scene) / <span class="mn">Of</span>(<span class="t">string</span> scenePath)</th><td>That scene's key, or null when it is not in the build.</td></tr>
+      </table></div>
+    </div>
+
+    <h2 class="api-group">Records</h2>
+
+    <div class="type-section" id="Records">
+      <div class="type-header"><h3>Record types</h3><span class="badge badge-class">class</span></div>
+      <p class="type-desc">The shape a scene state stores, handed out by <a href="#PersistentSceneState"><code>PersistentSceneState.Scenes</code></a> for reading what a save holds: a debug overlay, a save-menu summary, a test. Every member is read-only: what a scene state holds is changed by the scene objects themselves, by <code>CaptureAll</code> and <code>RestoreAll</code>, and by <code>RecordDestroyed</code>, never by writing into a record. The nested lists are <code>IReadOnlyList&lt;T&gt;</code> over the live list rather than copies, so treat them as a view to read and not a guarantee. Records are grouped per scene, never keyed on the object id alone: duplicating a scene file copies every id in it, so a flat store would have the copy read and write the original's records.</p>
+      <div class="member-group"><table class="mt">
+        <tr><th scope="row"><span class="t">SceneStateRecords</span></th><td><code>Scenes</code>, plus <code>Require</code> and <code>Find</code> for one scene's record.</td></tr>
+        <tr><th scope="row"><span class="t">SceneRecord</span></th><td><code>Scene</code> (the key), <code>Objects</code>, <code>Spawned</code>, <code>Destroyed</code>.</td></tr>
+        <tr><th scope="row"><span class="t">ObjectRecord</span></th><td><code>Id</code>, <code>PrefabId</code>, <code>Active</code>, <code>Components</code>, plus <code>ParentId</code> and <code>SiblingIndex</code> (where the object hung; <code>-1</code> when that was not recorded).</td></tr>
+        <tr><th scope="row"><span class="t">ComponentRecord</span></th><td><code>Type</code>, <code>Index</code> (which one among same-typed components), <code>StateType</code> (the type the payload was written from), <code>Payload</code>, <code>Bytes</code> (the binary one, a <code>ReadOnlyMemory&lt;byte&gt;</code>), <code>Enabled</code>, <code>HasEnabled</code>.</td></tr>
+      </table></div>
+    </div>
+
+    <h2 class="api-group">Codecs</h2>
+
+    <div class="type-section" id="SceneComponentCodec">
+      <div class="type-header"><h3>SceneComponentCodec</h3><span class="badge badge-class">abstract</span><span class="warn">extending</span></div>
+      <p class="type-desc">Teaches the module how to save a component whose state a serializer cannot see. It maps the component to and from a plain state class with real fields, which your own serializer writes: a codec never serializes anything itself. Inherit the typed <code>SceneComponentCodec&lt;TComponent, TState&gt;</code>, which handles the casts: it takes <code>where TComponent : Component</code> and <code>where TState : class, new()</code>, seals <code>ComponentType</code>, <code>StateType</code> and <code>CreateState</code>, and re-declares the five above typed. <code>Capture(TComponent)</code> and <code>Restore(TComponent, TState)</code> are abstract; <code>CanCapture(TComponent)</code>, <code>BeforeRestore(TComponent)</code> and <code>AfterRestore(TComponent, TState)</code> are virtual with a working default. Worked example: <a href="../../user-manual/pages/Extend%20the%20package.html#scenecodecs">Custom component codecs</a>.</p>
+      <div class="member-group"><table class="mt">
+        <tr><th scope="row"><span class="t">Type</span> <span class="mn">ComponentType</span> / <span class="mn">StateType</span> { get; }</th><td>What it handles and what it maps to. The state type must be a class, since it is populated in place.</td></tr>
+        <tr><th scope="row"><span class="t">bool</span> <span class="mn">CanCapture</span>(<span class="t">Component</span> component)</th><td>Whether the component can be read right now. False captures nothing for it and keeps what the save already holds, which is the answer for one on an object the game switched off.</td></tr>
+        <tr><th scope="row"><span class="t">object</span> <span class="mn">CreateState</span>()</th><td>A fresh, empty instance of <code>StateType</code>, which the loader fills before <code>Restore</code>. The typed base seals it: a state type must be a class with a public parameterless constructor, or the codec is refused at registration.</td></tr>
+        <tr><th scope="row"><span class="t">object</span> <span class="mn">Capture</span>(<span class="t">Component</span> component)</th><td>Read the component into a fresh state object, or null to save nothing.</td></tr>
+        <tr><th scope="row"><span class="kw">void</span> <span class="mn">BeforeRestore</span>(<span class="t">Component</span> component)</th><td>Phase 1: make writes safe, applying no saved values. Runs before any of the object's codecs restores, and only for the ticked components whose payload read back: a codec that captured nothing gets no bracket.</td></tr>
+        <tr><th scope="row"><span class="kw">void</span> <span class="mn">Restore</span>(<span class="t">Component</span> component, <span class="t">object</span> state)</th><td>Phase 2: write your own payload. No codec touches a sibling here, so order within the phase is irrelevant.</td></tr>
+        <tr><th scope="row"><span class="kw">void</span> <span class="mn">AfterRestore</span>(<span class="t">Component</span> component, <span class="t">object</span> state)</th><td>Phase 3: resync what the other writes invalidated, such as warping an agent to the restored position. The enabled flag is written back for you, so a codec never puts it back itself.</td></tr>
+      </table></div>
+    </div>
+
+    <div class="type-section" id="SceneComponentCodecs">
+      <div class="type-header"><h3>SceneComponentCodecs</h3><span class="badge badge-static">static</span></div>
+      <p class="type-desc">The codec registry. A codec you register replaces the built-in one for that exact type, so you never have to wait for this package to fix or extend one.</p>
+      <div class="member-group"><table class="mt">
+        <tr><th scope="row"><span class="kw">void</span> <span class="mn">Register</span>(<span class="t">SceneComponentCodec</span> codec)</th><td>Register yours, replacing any for the same exact type.</td></tr>
+        <tr><th scope="row"><span class="t">bool</span> <span class="mn">Has</span>(<span class="t">Type</span> componentType)</th><td>Whether any codec applies.</td></tr>
+        <tr><th scope="row"><span class="t">SceneComponentCodec</span> <span class="mn">For</span>(<span class="t">Type</span> componentType)</th><td>The codec that applies: an exact registration first, then the nearest base type's, so a subclass is not skipped.</td></tr>
+      </table></div>
+    </div>
+
+    <div class="type-section" id="CodecStates">
+      <div class="type-header"><h3>Built-in codecs and their states</h3><span class="badge badge-class">class</span></div>
+      <p class="type-desc">What ships. Each state class is public, so a replacement codec can reuse it. The uGUI controls restore their value without raising the control's change event, except the scroll rect, whose position is written directly.</p>
+      <div class="member-group"><table class="mt">
+        <tr><th scope="row"><span class="t">TransformCodec</span> / <span class="t">TransformState</span></th><td><code>Vector3 localPosition</code>, <code>Quaternion localRotation</code>, <code>Vector3 localScale</code>.</td></tr>
+        <tr><th scope="row"><span class="t">RectTransformCodec</span> / <span class="t">RectTransformState</span></th><td><code>Vector3 anchoredPosition</code>, <code>Vector2 sizeDelta</code>, <code>Vector2 anchorMin</code>, <code>Vector2 anchorMax</code>, <code>Vector2 pivot</code>, <code>Quaternion localRotation</code>, <code>Vector3 localScale</code>. The anchored position is kept in its 3D form, so depth survives. Registered for <code>RectTransform</code> in its own right: reached through the base-type walk it would land on <code>TransformCodec</code>, whose local position a layout recomputes away.</td></tr>
+        <tr><th scope="row"><span class="t">RigidbodyCodec</span> / <span class="t">RigidbodyState</span></th><td><code>Vector3 linearVelocity</code>, <code>Vector3 angularVelocity</code>, <code>bool isKinematic</code>. Takes position from the restored transform.</td></tr>
+        <tr><th scope="row"><span class="t">Rigidbody2DCodec</span> / <span class="t">Rigidbody2DState</span></th><td><code>Vector2 linearVelocity</code>, <code>float angularVelocity</code>, <code>int bodyType</code>. The 2D equivalent.</td></tr>
+        <tr><th scope="row"><span class="t">AnimatorCodec</span> / <span class="t">AnimatorState</span></th><td><code>List&lt;AnimatorLayerState&gt; layers</code>, <code>List&lt;AnimatorParameterState&gt; parameters</code>, <code>float speed</code>, <code>bool applyRootMotion</code>. <code>AnimatorLayerState</code> is <code>int stateHash</code>, <code>float normalizedTime</code>, <code>float weight</code>; <code>AnimatorParameterState</code> is <code>int nameHash</code>, <code>int type</code>, <code>float value</code>. Both are public.</td></tr>
+        <tr><th scope="row"><span class="t">SpriteRendererCodec</span> / <span class="t">SpriteRendererState</span></th><td><code>Sprite sprite</code>, <code>Color color</code>, <code>bool flipX</code>, <code>bool flipY</code>.</td></tr>
+        <tr><th scope="row"><span class="t">AudioSourceCodec</span> / <span class="t">AudioSourceState</span></th><td><code>AudioClip clip</code>, <code>float time</code>, <code>bool playing</code>, <code>float volume</code>, <code>float pitch</code>, <code>bool loop</code>.</td></tr>
+        <tr><th scope="row"><span class="t">CharacterControllerCodec</span> / <span class="t">CharacterControllerState</span></th><td>Carries no state: the codec only brackets the position restore.</td></tr>
+        <tr><th scope="row"><span class="t">NavMeshAgentCodec</span> / <span class="t">NavMeshAgentState</span></th><td><code>Vector3 destination</code>, <code>bool hasDestination</code>, <code>bool isStopped</code>, <code>float speed</code>. Restored through <code>Warp</code>. Needs Unity's AI module (<code>com.unity.modules.ai</code>).</td></tr>
+        <tr><th scope="row"><span class="t">MeshRendererCodec</span> / <span class="t">MeshRendererState</span></th><td><code>Material[] materials</code>. Resolved as asset references through the registry.</td></tr>
+        <tr><th scope="row"><span class="t">MeshFilterCodec</span> / <span class="t">MeshFilterState</span></th><td><code>Mesh mesh</code>. For an object the game swaps the shape of.</td></tr>
+        <tr><th scope="row"><span class="t">SkinnedMeshRendererCodec</span> / <span class="t">SkinnedMeshRendererState</span></th><td><code>Material[] materials</code>, <code>Mesh mesh</code>, <code>float[] blendShapeWeights</code>. Bones and the root bone are scene references, not state, so they are not saved.</td></tr>
+        <tr><th scope="row"><span class="t">LightCodec</span> / <span class="t">LightState</span></th><td><code>LightType type</code>, <code>Color color</code>, <code>float intensity</code>, <code>float range</code>, <code>float spotAngle</code>, <code>LightShadows shadows</code>.</td></tr>
+        <tr><th scope="row"><span class="t">LineRendererCodec</span> / <span class="t">LineRendererState</span></th><td><code>Vector3[] positions</code>, <code>float startWidth</code>, <code>float endWidth</code>, <code>Color startColor</code>, <code>Color endColor</code>, <code>bool loop</code>. Its material belongs to the renderer above and is not saved twice.</td></tr>
+        <tr><th scope="row"><span class="t">TrailRendererCodec</span> / <span class="t">TrailRendererState</span></th><td><code>float time</code>, <code>float startWidth</code>, <code>float endWidth</code>, <code>Color startColor</code>, <code>Color endColor</code>. The trail already drawn is not saved: a restored object starts a fresh one.</td></tr>
+        <tr><th scope="row"><span class="t">ParticleSystemCodec</span> / <span class="t">ParticleSystemState</span></th><td><code>bool playing</code>, <code>bool paused</code>, <code>float time</code>, <code>bool emissionEnabled</code>. The system is fast-forwarded to the same point of its own timeline rather than having its live particles restored.</td></tr>
+        <tr><th scope="row"><span class="t">CameraCodec</span> / <span class="t">CameraState</span></th><td><code>float fieldOfView</code>, <code>bool orthographic</code>, <code>float orthographicSize</code>, <code>Color backgroundColor</code>, <code>int cullingMask</code>.</td></tr>
+        <tr><th scope="row"><span class="t">SliderCodec</span> / <span class="t">SliderState</span></th><td><code>float value</code>. Needs uGUI.</td></tr>
+        <tr><th scope="row"><span class="t">ToggleCodec</span> / <span class="t">ToggleState</span></th><td><code>bool isOn</code>. Needs uGUI.</td></tr>
+        <tr><th scope="row"><span class="t">InputFieldCodec</span> / <span class="t">InputFieldState</span></th><td><code>string text</code>. Needs uGUI.</td></tr>
+        <tr><th scope="row"><span class="t">TMPInputFieldCodec</span> / <span class="t">InputFieldState</span></th><td>The same, for a TextMeshPro input field.</td></tr>
+        <tr><th scope="row"><span class="t">DropdownCodec</span> / <span class="t">DropdownState</span></th><td><code>int value</code>. The options themselves are authored or filled in by the game, so they are not saved. Needs uGUI.</td></tr>
+        <tr><th scope="row"><span class="t">TMPDropdownCodec</span> / <span class="t">DropdownState</span></th><td>The same, for a TextMeshPro dropdown.</td></tr>
+        <tr><th scope="row"><span class="t">ScrollRectCodec</span> / <span class="t">ScrollRectState</span></th><td><code>Vector2 normalizedPosition</code>, so a long list opens where the player left it. Needs uGUI.</td></tr>
+      </table></div>
+    </div>
+
+    <div class="doc-footer">Persistent Asset v2.0.0 &nbsp;&middot;&nbsp; For full signatures and remarks, see the XML doc comments in the source.</div>
+
+  </main>
+</div>
+</body>
+</html>

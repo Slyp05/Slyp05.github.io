@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Save what your scene holds: the state of an object, whether it still exists, and references to it." />
+  <title>Persistent Asset - Scene Objects</title>
+  <link rel="stylesheet" href="/assets/css/doc-styles.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Persistent Asset</div><a href="../index.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Scene Objects</h1>
+      <div class="sub">Save what your scene holds: the state of an object, whether it still exists, and references to it.</div>
+
+    <div class="guide-index">
+      <a href="#setup">Save an object in your scene</a>
+      <a href="#components">Supported components</a>
+      <a href="#spawned">Spawned and destroyed objects</a>
+      <a href="#refs">Save a scene reference in a persistent asset</a>
+    </div>
+    </div>
+
+    <!-- ══════════════════════════════════════ setup ════ -->
+    <section id="setup">
+      <h2>Save an object in your scene</h2>
+      <p>A <a href="../../public-api/pages/API%20-%20Scene%20Objects.html#PersistentSceneObject"><strong>Persistent Scene
+        Object</strong></a> component marks a GameObject the save keeps, one component at a time:</p>
+      <ol>
+        <li>Add a <strong>Persistent Scene Object</strong> component to the GameObject.</li>
+        <li>Tick each component whose state you want kept.</li>
+      </ol>
+      <div class="img-block">
+        <img src="../img/scene_object_component.png" alt="The Persistent Scene Object component with several components ticked"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">&#128247;</span>
+          <span><strong>img/scene_object_component</strong><br/>The Persistent Scene Object component on a GameObject, Transform and a couple of others ticked under Saved Components</span>
+        </div>
+      </div>
+      <p>Tick a component under <strong>Runtime Components</strong> instead when the GameObject gains and
+        loses it while the game runs, and the save decides whether the component is there at all.</p>
+      <p>The state of every ticked component lands in a <strong>Scene State</strong> asset, an ordinary
+        <a href="How%20saving%20works.html">persistent asset</a>. A new scene object attaches itself to one, and
+        the package creates the project's first one. Select <strong>Create &gt; Persistent Asset &gt; Scene
+        State</strong> to add more: each one is a save of its own, with its own manager and its own
+        storage.</p>
+      <div class="note"><strong>Note:</strong> A save carries only what changed from what the scene was authored
+        with, and the package reads those authored values as the GameObject first enables, right after its
+        <code>Awake</code>. A value it rolls or computes in <code>Awake</code> therefore counts as
+        authored and stays out of the save, while one set in <code>Start</code> or later is saved.</div>
+    </section>
+
+    <!-- ══════════════════════════════════════ components ════ -->
+    <section id="components">
+      <h2>Supported components</h2>
+      <p>The package ships a codec for each of the following components.</p>
+      <div class="table-scroll">
+        <table class="cmp">
+          <thead><tr><th scope="col">Component</th><th scope="col">Notes</th></tr></thead>
+          <tbody>
+            <tr><td>Animator</td><td>A transition in flight is not restored, and triggers are never re-fired.</td></tr>
+            <tr><td>Rigidbody, Rigidbody2D</td><td>Take their position from the restored transform, so tick Transform as well.</td></tr>
+            <tr><td>NavMeshAgent</td><td>Needs Unity's AI module.</td></tr>
+            <tr><td>MeshRenderer, SkinnedMeshRenderer</td><td>Materials and meshes travel as <a href="Save%20and%20load.html#assetrefs">asset references</a>, so a slot whose material is not a registered asset keeps the one the object already has. A skinned renderer's bones stay as the rig built them.</td></tr>
+            <tr><td>TrailRenderer</td><td>Its length, widths and colours are saved. The trail already drawn is not, so a restored object draws a new one from where it stands.</td></tr>
+            <tr><td>ParticleSystem</td><td>Whether it was playing and how far into its timeline it had run are saved. The particles alive at that moment are not: the system replays from its start up to that point.</td></tr>
+            <tr><td>Slider, Toggle, InputField, Dropdown, ScrollRect</td><td>Restored without raising the control's change event.</td></tr>
+            <tr><td>TMP_InputField, TMP_Dropdown</td><td>Restored without raising the control's change event.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>For every codec and the exact fields it saves, refer to the
+        <a href="../../public-api/pages/API%20-%20Scene%20Objects.html#CodecStates">Scene Objects API reference</a>. To cover a component
+        this package doesn't reach, or to replace one it ships, register
+        <a href="Extend%20the%20package.html#scenecodecs">a codec of your own</a>.</p>
+      <div class="note"><strong>Note:</strong> Two components of the same type are told apart by position, so
+        reordering them swaps their saved state.</div>
+    </section>
+
+    <!-- ══════════════════════════════════════ spawned ════ -->
+    <section id="spawned">
+      <h2>Spawned and destroyed objects</h2>
+      <p>A spawned GameObject is saved when the prefab it comes from carries a <strong>Persistent Scene
+        Object</strong> component. Keep calling plain <code>Instantiate</code>, and a load spawns it again.
+        A GameObject your code builds from nothing has no prefab to bring it back, so nothing about it is
+        saved.</p>
+      <p>The package records the destruction of an authored GameObject, so it stays gone after a load. Destroying
+        a spawned one drops its record instead. Leaving a scene, quitting, and switching a GameObject off are not
+        destruction.</p>
+      <p>Parenting is saved, as long as the parent carries a Persistent Scene Object component too.</p>
+      <div class="note"><strong>Note:</strong> A GameObject that starts switched off and is never switched on gets
+        no <code>OnDestroy</code> call, so destroying it goes unrecorded and it comes back. Switch it on at some
+        point, or call <code>PersistentSceneState.RecordDestroyed</code>.</div>
+      <div class="note"><strong>Note:</strong> To save a GameObject that outlives scene loads, call
+        <code>DontDestroyOnLoad</code> on it in <code>Awake</code>. Called any later, the GameObject stays saved
+        with the scene it started in.</div>
+    </section>
+
+    <!-- ══════════════════════════════════════ refs ════ -->
+    <section id="refs">
+      <h2>Save a scene reference in a persistent asset</h2>
+      <p>Unity refuses to serialize a scene reference into a project asset, so a persistent asset can't hold
+        one. Serialize a
+        <a href="../../public-api/pages/API%20-%20Scene%20Objects.html#SceneRef"><code>SceneRef</code></a> field instead, which stores
+        the object's id and resolves it against what is loaded:</p>
+      <pre><code><span class="kw">public class</span> <span class="ty">GameState</span> : <span class="ty">PersistentScriptableObject</span>
+{
+    <span class="kw">public</span> <span class="ty">SceneRef</span> lastCheckpoint;
+}
+
+gameState.lastCheckpoint = <span class="kw">new</span>(checkpointObject);   <span class="cm">// a Persistent Scene Object</span>
+
+<span class="kw">if</span> (gameState.lastCheckpoint.TryResolve(<span class="kw">out</span> <span class="ty">Checkpoint</span> checkpoint))
+    player.position = checkpoint.transform.position;</code></pre>
+    </section>
+
+    <!-- ══════════════════════════════════════ resources ════ -->
+    <div class="resources">
+      <h2>Additional resources</h2>
+      <ul>
+        <li><a href="../../public-api/pages/API%20-%20Scene%20Objects.html#PersistentSceneObject">Scene Objects API reference</a></li>
+        <li><a href="Extend%20the%20package.html#scenecodecs">Add a component codec</a></li>
+        <li><a href="Slots%20and%20save%20menus.html">Slots and save menus</a></li>
+      </ul>
+    </div>
+
+    <div class="pager">
+      <a class="prev" href="No-Code.html">
+        <div class="dir">Back</div>
+        <div class="pg-title">No-Code</div>
+      </a>
+      <a class="next" href="What%20can%20be%20saved.html">
+        <div class="dir">Next</div>
+        <div class="pg-title">What can be saved</div>
+      </a>
+    </div>
+
+    <div class="doc-footer">Persistent Asset v2.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

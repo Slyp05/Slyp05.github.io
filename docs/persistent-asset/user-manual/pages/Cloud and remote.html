@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Store a save off the device: on your own server, on Unity Cloud Save, or on Steam." />
+  <title>Persistent Asset - Cloud &amp; remote</title>
+  <link rel="stylesheet" href="/assets/css/doc-styles.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Persistent Asset</div><a href="../index.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Cloud &amp; remote</h1>
+      <div class="sub">Store a save off the device: on your own server, on Unity Cloud Save, or on Steam.</div>
+
+    <div class="guide-index">
+      <a href="#async">Remote saving is asynchronous</a>
+      <a href="#conflict">Resolve a conflict between two devices</a>
+      <a href="#merging">Merge two saves</a>
+      <a href="#http">Server (HTTP)</a>
+      <a href="#steam">Steam Cloud</a>
+      <a href="#cloudsave">Cloud Save (UGS)</a>
+    </div>
+    </div>
+
+    <!-- ══════════════════════════════════════ async ════ -->
+    <section id="async">
+      <h2>Remote saving is asynchronous</h2>
+      <p>A remote load can't run synchronously, so a remote manager is not ready the moment its asset comes
+        into scope, and it keeps retrying until that load lands. For more information, refer to
+        <a href="How%20saving%20works.html#ready">When the data is ready</a>.</p>
+      <p>Server (HTTP) and Cloud Save (UGS) can also persist through a local cache, which you pick with
+        <a href="../../public-api/pages/API%20-%20Built-Ins.html#RemoteEnums"><strong>Cache Mode</strong></a>. A save then lands on the
+        device first, which means it succeeds offline, and a background loop pushes it to the server.</p>
+      <div class="img-block">
+        <svg class="diagram" viewBox="0 0 720 236" role="img"
+             aria-label="The game saves into a durable on-device cache; a background push loop reconciles that cache with the server, retrying until confirmed.">
+          <defs>
+            <marker id="cm-arr" markerWidth="9" markerHeight="9" refX="7.5" refY="4.5" orient="auto">
+              <path d="M0,0 L9,4.5 L0,9 Z" fill="#5a8dee"/>
+            </marker>
+            <marker id="cm-arr-g" markerWidth="9" markerHeight="9" refX="7.5" refY="4.5" orient="auto">
+              <path d="M0,0 L9,4.5 L0,9 Z" fill="#9aa0b5"/>
+            </marker>
+          </defs>
+          <rect x="22"  y="96" width="140" height="62" rx="9" fill="#fff" stroke="#d7d7e2"/>
+          <text x="92"  y="123" text-anchor="middle" font-size="10.5" font-weight="700" letter-spacing="0.08em" fill="#888">YOUR GAME</text>
+          <text x="92"  y="144" text-anchor="middle" font-size="14"   font-weight="600" fill="#1e1e2e">save</text>
+          <rect x="286" y="96" width="162" height="62" rx="9" fill="#eef2ff" stroke="#89b4fa"/>
+          <text x="367" y="123" text-anchor="middle" font-size="10.5" font-weight="700" letter-spacing="0.08em" fill="#4338ca">ON DEVICE</text>
+          <text x="367" y="144" text-anchor="middle" font-size="14"   font-weight="600" fill="#1e1e2e">Local cache</text>
+          <rect x="562" y="96" width="134" height="62" rx="9" fill="#1e1e2e" stroke="#1e1e2e"/>
+          <text x="629" y="123" text-anchor="middle" font-size="10.5" font-weight="700" letter-spacing="0.08em" fill="#fbbf77">REMOTE</text>
+          <text x="629" y="144" text-anchor="middle" font-size="14"   font-weight="600" fill="#f7f7f7">Server</text>
+          <line x1="162" y1="127" x2="282" y2="127" stroke="#5a8dee" stroke-width="2" marker-end="url(#cm-arr)"/>
+          <text x="222" y="116" text-anchor="middle" font-size="11.5" font-weight="700" fill="#3457b8">write</text>
+          <text x="222" y="148" text-anchor="middle" font-size="10.5" fill="#777">instant, durable</text>
+          <path d="M448,108 C508,72 552,72 560,104" fill="none" stroke="#5a8dee" stroke-width="2" marker-end="url(#cm-arr)"/>
+          <text x="505" y="64" text-anchor="middle" font-size="11.5" font-weight="700" fill="#3457b8">push (background)</text>
+          <path d="M560,150 C552,182 508,182 450,150" fill="none" stroke="#9aa0b5" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#cm-arr-g)"/>
+          <text x="505" y="200" text-anchor="middle" font-size="11.5" fill="#777">retries until confirmed</text>
+        </svg>
+      </div>
+      <p id="cache">With nothing cached and the server unreachable, <strong>Offline Cold Start</strong> decides
+        what that first load does:</p>
+      <ul>
+        <li><strong>Wait For Server</strong> keeps the load retrying until the server answers, so a reinstalled
+          device restores its backup rather than starting over it. A brand-new player can't start offline.</li>
+        <li><strong>Start Fresh</strong> starts the player on the authored values, so a new player can play
+          offline straight away. The first load that does reach a server already holding a save settles it as an
+          ordinary <a href="#conflict">conflict</a>: <a href="#merging"><code>IMergeable</code></a> folds the
+          offline progress into what the server holds, and without it the most recent save wins.</li>
+      </ul>
+      <p id="status">While the game runs, <code>Status</code> says whether everything has reached the server,
+        whether changes are waiting, or whether one is <a href="#conflict">held</a>. <code>OnStatusChanged</code>
+        fires on every change, and <code>PushPendingChangesAsync()</code> flushes what is waiting.</p>
+    </section>
+
+    <!-- ══════════════════════════════════════ conflict ════ -->
+    <section id="conflict">
+      <h2>Resolve a conflict between two devices</h2>
+      <p>The package never pushes a pending change over a save it hasn't seen, so a second device that played
+        offline can't overwrite the first. It holds the change until the next load settles it.</p>
+      <p>Three things settle a conflict, and the first that applies wins:</p>
+      <ol>
+        <li><a href="#merging"><code>IMergeable</code></a> folds both saves together.</li>
+        <li><code>ConflictPolicy.Ask</code> asks the player.</li>
+        <li><code>ConflictPolicy.PreferNewest</code>, the default, takes the most recent save, which relies on the
+          two devices' clocks.</li>
+      </ol>
+      <p id="asking">Set <strong>Conflict Policy</strong> to <strong>Ask</strong> on the manager, then answer
+        <code>Conflicts.OnAny</code> with <code>Conflicts.Resolve(manager, KeepLocal | KeepRemote)</code>. Both
+        saves arrive as <code>SaveNode</code>s with their save times, and the load stays undecided until you
+        answer.</p>
+      <p><strong>GameObject &gt; Persistent Asset &gt; Conflict Prompt (IMGUI)</strong> is a ready-made
+        panel, which tells the two saves apart by the values you list in <strong>Preview Fields</strong>. It
+        doesn't stop the game around it, so hold your own UI off while <code>IsAsking</code> is true. A pad
+        cannot reach it: for a game played on a pad, use <strong>Conflict Prompt (uGUI)</strong> from the same
+        menu. It asks the same question on a canvas, in your UI's style, blocks the UI behind it, and is driven
+        by a <a href="../../public-api/pages/API%20-%20No-Code.html#PersistenceConflictListener"><code>PersistenceConflictListener</code></a>.</p>
+      <div class="note"><strong>Note:</strong> Set <strong>Ask</strong> only with that panel in the scene or
+        something else listening, or the load settles as <strong>Prefer Newest</strong> anyway.</div>
+    </section>
+
+    <!-- ══════════════════════════════════════ merging ════ -->
+    <section id="merging">
+      <h2>Merge two saves</h2>
+      <p><a href="../../public-api/pages/API%20-%20Core.html#IMergeable"><code>IMergeable</code></a> folds the other device's save into
+        yours instead of discarding one of them. <code>Merge</code> reads the other side as a
+        <code>SaveNode</code>, applies what it wants from it, and returns whether it changed anything.</p>
+      <div class="note warning"><strong>Warning:</strong> <code>Merge</code> must be commutative and idempotent.
+        The result can't depend on which device folds first, and folding the same save twice must change nothing.
+        A maximum or a set union is safe, while <code>coins += otherCoins</code> pays the player twice. Return
+        <code>true</code> only when you changed something, or two devices save back and forth forever.</div>
+    </section>
+
+    <!-- ══════════════════════════════════════ http ════ -->
+    <section id="http">
+      <h2>Server (HTTP)</h2>
+      <p>Server (HTTP) saves to your own server, at <code>url/slot/id</code>. That address needs three routes:</p>
+      <ul>
+        <li><code>GET</code> returns the stored body, and 404 when there is none.</li>
+        <li><code>PUT</code> stores the request body verbatim.</li>
+        <li><code>DELETE</code> removes it.</li>
+      </ul>
+      <div class="img-block">
+        <img src="../img/http_manager_inspector.png" alt="Server (HTTP) manager inspector"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">&#128247;</span>
+          <span><strong>img/http_manager_inspector</strong><br/>The Server (HTTP) manager: the addresses in view, with Backend Service folded below</span>
+        </div>
+      </div>
+      <p>Sign-in is your game's job. Set the credentials as soon as it returns:</p>
+      <pre><code>HttpPersistenceManager.DefaultAuthorization = <span class="st">"Bearer "</span> + token;    <span class="cm">// every HTTP manager</span>
+leaderboardManager.Authorization = <span class="st">"Bearer "</span> + otherToken;          <span class="cm">// or just this one</span></code></pre>
+      <p>A backend service wraps your data in a JSON envelope of its own, which the manager's <strong>Backend
+        Service</strong> fields describe. For copy-ready values per service, refer to
+        <a href="Connect%20to%20a%20backend%20service.html">Connect to a backend service</a>.</p>
+      <div class="note warning"><strong>Warning:</strong> The body must come back byte for byte. A server that
+        trims whitespace or re-encodes the body breaks loading. Use <code>DefaultConfigureRequest</code> when a
+        request needs other headers.</div>
+    </section>
+
+    <!-- ══════════════════════════════════════ steam ════ -->
+    <section id="steam">
+      <h2>Steam Cloud</h2>
+      <p>Steam offers two ways to store a save, and the package supports both:</p>
+      <ul>
+        <li><strong>Auto-Cloud</strong> needs no code and no plugin. Steam uploads the folders you name when the
+          game exits and restores them on the next machine, so the game keeps its
+          <a href="Save%20on%20the%20device.html#file">Local File</a> manager.</li>
+        <li>The <strong>Steam Cloud</strong> manager writes each save through Steam Remote Storage. It needs
+          Steamworks.NET and <code>SteamAPI.Init</code>, and it can report the quota and list what the cloud
+          holds.</li>
+      </ul>
+      <p>To set up Auto-Cloud, point its rule in Steamworks at the folder a Local File manager writes to, and
+        add a path override per platform, taking each value from a real build's
+        <code>Application.persistentDataPath</code>:</p>
+      <div class="table-scroll">
+        <table class="cmp">
+          <thead><tr><th scope="col">Steamworks field</th><th scope="col">Value</th></tr></thead>
+          <tbody>
+            <tr><td>Root Path</td><td><code>WinAppDataLocalLow</code></td></tr>
+            <tr><td>Subdirectory</td><td><code>{CompanyName}/{ProductName}</code>, from your Player Settings</td></tr>
+            <tr><td>Pattern</td><td><code>*.save</code>, or the manager's <a href="Save%20on%20the%20device.html#file">File Extension</a></td></tr>
+            <tr><td>Recursive</td><td><strong>On.</strong> The manager writes into a <code>Save</code> sub-folder, so with this off the rule matches nothing</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Steam syncs in the background and settles conflicts between machines itself, so the Steam Cloud manager
+        needs no offline cache. With Steam Cloud switched off for the account or the application, saves stay on
+        the machine. Outside Steam every operation fails, so
+        <a href="Save%20per%20platform.html#distribution">route</a> a DRM-free build to a Local File manager.</p>
+      <div class="note warning"><strong>Warning:</strong> Auto-Cloud syncs on exit, so a crash or a kill from the
+        Steam overlay can lose that session. Its quota is per application and small by default: raise it in
+        Steamworks and turn compression on, because a save that doesn't fit is dropped silently.</div>
+    </section>
+
+    <!-- ══════════════════════════════════════ cloudsave ════ -->
+    <section id="cloudsave">
+      <h2>Cloud Save (UGS)</h2>
+      <p>Cloud Save stores one key per save in the signed-in player's data, so Unity Services must be initialized
+        and a player signed in before any persistent asset comes into scope.</p>
+      <p>Make the player id the slot, and set it while the old player is still signed in. The cache is keyed by
+        manager and slot, which also stops one player's cached save reaching another on a shared device.</p>
+
+      <div class="note"><strong>Note:</strong> An anonymous player id lives on the device, and uninstalling
+        deletes it, so link the account to a platform identity for a save that survives a reinstall. A player who
+        is not signed in yet is a retry rather than a failure: the load recovers once sign-in lands.</div>
+      <div class="note warning"><strong>Warning:</strong> A save past Cloud Save's size limit fails quietly and
+        keeps retrying, so turn Compression on.</div>
+    </section>
+
+    <!-- ══════════════════════════════════════ resources ════ -->
+    <div class="resources">
+      <h2>Additional resources</h2>
+      <ul>
+        <li><a href="Connect%20to%20a%20backend%20service.html">Connect to a backend service</a></li>
+        <li><a href="Secure%20saves.html#remotesecurity">Secure a remote save</a></li>
+        <li><a href="../../public-api/pages/API%20-%20Built-Ins.html#RemoteEnums">Remote manager API reference</a></li>
+      </ul>
+    </div>
+
+    <div class="pager">
+      <a class="prev" href="Save%20per%20platform.html">
+        <div class="dir">Back</div>
+        <div class="pg-title">Save per platform</div>
+      </a>
+      <a class="next" href="Connect%20to%20a%20backend%20service.html">
+        <div class="dir">Next</div>
+        <div class="pg-title">Connect to a backend service</div>
+      </a>
+    </div>
+
+    <div class="doc-footer">Persistent Asset v2.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Learn what a persistent asset is, when it loads and saves, and when its data is safe to read." />
+  <title>Persistent Asset - How saving works</title>
+  <link rel="stylesheet" href="../shared/styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Persistent Asset</div><a href="../User%20Manual.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>How saving works</h1>
+      <div class="sub">Learn what a persistent asset is, when it loads and saves, and when its data is safe to read.</div>
+
+    <div class="guide-index">
+      <a href="#object">The persistent asset</a>
+      <a href="#scope">Scope and global assets</a>
+      <a href="#operations">Load, save and clear</a>
+      <a href="#ready">When the data is ready</a>
+      <a href="#editor">Edit mode and Play mode</a>
+      <a href="#global">Act on every manager at once</a>
+      <a href="#choosing">Choose a persistence manager</a>
+    </div>
+    </div>
+
+    <!-- ══════════════════════════════════════ object ════ -->
+    <section id="object">
+      <h2>The persistent asset</h2>
+      <p>A persistent asset is any asset the package saves:</p>
+      <ul>
+        <li>A <a href="Data%20class.html">data class</a> of your own.</li>
+        <li>The <a href="Prefs.html">Prefs</a> asset.</li>
+        <li>A <a href="No-Code.html">Persistent Variables</a> asset.</li>
+        <li>A <a href="Scene%20Objects.html">Scene State</a>.</li>
+      </ul>
+      <p>Each one carries a <strong>Persistence Manager</strong>, which decides where its data is stored.</p>
+    </section>
+
+    <!-- ══════════════════════════════════════ scope ════ -->
+    <section id="scope">
+      <h2>Scope and global assets</h2>
+      <p>A persistent asset is <strong>in scope</strong> while it is loaded, which lasts from the first
+        reference to it until Unity unloads it. An asset that nothing references never loads and never
+        saves.</p>
+      <p>Turn on <strong>Always Global</strong> and the asset stays in scope at all times and registers itself,
+        which makes it reachable by type from anywhere:</p>
+      <pre><code><span class="ty">GameSettings</span> settings = <span class="ty">GlobalPersistedData</span>.Find&lt;<span class="ty">GameSettings</span>&gt;();</code></pre>
+      <p><code>GlobalPersistedData.Add</code> registers an asset dynamically, until <code>Remove</code> takes it
+        back out.</p>
+      <div class="note warning"><strong>Warning:</strong> A static field holding a persistent asset that is not
+        global pins it loaded for the session, exactly as if <strong>Always Global</strong> were on.</div>
+    </section>
+
+    <!-- ══════════════════════════════════════ operations ════ -->
+    <section id="operations">
+      <h2>Load, save and clear</h2>
+      <p>A manager loads when its asset enters scope, and retries when that load fails. It then saves at the
+        safe points: on unload, on focus loss or pause, and on a timer. You can tune or turn off each of those. For more
+        information, refer to <a href="Save%20and%20load.html#whentoload">Choose when loads happen</a> and
+        <a href="Save%20and%20load.html#whentosave">Choose when saves happen</a>.</p>
+      <p><strong>Clear</strong> deletes the stored save, resets the asset to its authored values, and pauses
+        saving until the next load.</p>
+      <div class="note"><strong>Note:</strong> A manager doesn't save until it has loaded, or has confirmed that
+        there is nothing to load. While a load is failing, its saves stay held.</div>
+
+      <h3 id="driving-it-yourself">Run an operation from code</h3>
+      <p>Load, save and clear each come in five calling styles:</p>
+      <pre><code><span class="ty">PersistenceManager</span> pm = playerData.PersistenceManager;
+
+pm.Save();                                               <span class="cm">// fire and forget</span>
+pm.Save(result =&gt; ShowSavedTick());                      <span class="cm">// callback when done</span>
+<span class="ty">SaveResult</span> syncResult = pm.SaveSync();                   <span class="cm">// forced synchronous, result inline</span>
+<span class="ty">SaveResult</span> asyncResult = <span class="kw">await</span> pm.SaveAsync();           <span class="cm">// async</span>
+<span class="ty">PersistenceOperation</span>&lt;<span class="ty">SaveResult</span>&gt; op = pm.SaveRoutine();  <span class="cm">// coroutine: yield return it,</span>
+<span class="kw">yield return</span> op;                                         <span class="cm">//   then read op.Result</span></code></pre>
+    </section>
+
+    <!-- ══════════════════════════════════════ ready ════ -->
+    <section id="ready">
+      <h2>When the data is ready</h2>
+      <p><code>IsReady</code> states whether the asset holds real data. It is false before the first load
+        lands, while a slot change reloads, after a clear until the next load, and after a load that failed. The
+        package refuses every save while it is false, so a save can't overwrite data a retry might still
+        recover.</p>
+      <p>Reading the asset before then is safe, but it holds its authored values rather than the player's.</p>
+      <p>To delay something until the data is ready to use:</p>
+      <pre><code><span class="kw">await</span> playerData.PersistenceManager.WhenReady;
+<span class="kw">if</span> (playerData.PersistenceManager.IsReady)
+    StartGame(playerData);</code></pre>
+      <p><code>OnReadinessChanged</code> is the event form, if you want to react rather than wait.</p>
+      <p>How much of this your game has to handle depends on the manager it saves through:</p>
+      <div class="table-scroll">
+        <table class="cmp">
+          <thead><tr><th scope="col">Manager</th><th scope="col">What your game does about readiness</th></tr></thead>
+          <tbody>
+            <tr><td><a href="Save%20on%20the%20device.html#playerprefs">Player Prefs</a>, <a href="Save%20on%20the%20device.html#session">Session (Memory)</a></td><td>Nothing. The load is instant and can't fail, so the asset is never not ready.</td></tr>
+            <tr><td><a href="Save%20on%20the%20device.html#prototype">Prototype</a>, <a href="Save%20on%20the%20device.html#file">Local File</a></td><td>Usually nothing, because the load finishes before your first <code>Awake</code>. It fails only in rare cases, on a locked file or a <a href="Secure%20saves.html#remotesecret">runtime secret</a> nobody supplied, and handling those is your call.</td></tr>
+            <tr><td><a href="Cloud%20and%20remote.html">The remote managers</a></td><td>Gate on it. The load waits on sign-in and connectivity, so a player meets the not-ready state in an ordinary session.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>When the gate doesn't pass, <code>Readiness.Reason</code> says why:</p>
+      <pre><code><span class="ty">Readiness</span> readiness = playerData.PersistenceManager.Readiness;
+
+<span class="kw">if</span> (readiness)                          <span class="cm">// reads as its IsReady</span>
+    ShowContinue();
+<span class="kw">else switch</span> (readiness.Reason)
+{
+    <span class="kw">case</span> <span class="ty">NotReadyReason</span>.Loading:    ShowSpinner(); <span class="kw">break</span>;
+    <span class="kw">case</span> <span class="ty">NotReadyReason</span>.LoadFailed: ShowRetry();   <span class="kw">break</span>;
+    <span class="kw">case</span> <span class="ty">NotReadyReason</span>.NoSlot:     ShowSlotPicker(); <span class="kw">break</span>;
+}</code></pre>
+      <div class="note"><strong>Note:</strong> <code>IsReady</code> is the only signal that says whether the data
+        is safe. Use <code>Reason</code> and <code>Origin</code> to decide what the player sees, never to decide
+        whether to read or write the data.</div>
+
+      <div class="img-block">
+        <svg class="diagram" viewBox="0 0 720 210" role="img"
+             aria-label="A timeline of IsReady across a session: false from scope-in until the first load lands, then true, dropping back to false during a slot change until the new load lands, then true again.">
+          <defs>
+            <marker id="ir-arr" markerWidth="8" markerHeight="8" refX="6.5" refY="4" orient="auto">
+              <path d="M0,0 L8,4 L0,8 Z" fill="#9aa0b5"/>
+            </marker>
+          </defs>
+          <circle cx="486" cy="22" r="5" fill="#15803d"/>
+          <text x="496" y="26" font-size="12" fill="#555">ready (true)</text>
+          <circle cx="588" cy="22" r="5" fill="#dc2626"/>
+          <text x="598" y="26" font-size="12" fill="#555">not ready (false)</text>
+          <line x1="92" y1="66"  x2="694" y2="66"  stroke="#e3e3ec" stroke-width="1" stroke-dasharray="3 4"/>
+          <line x1="92" y1="150" x2="694" y2="150" stroke="#e3e3ec" stroke-width="1" stroke-dasharray="3 4"/>
+          <text x="84" y="70"  text-anchor="end" font-size="11" font-weight="600" fill="#15803d">true</text>
+          <text x="84" y="154" text-anchor="end" font-size="11" font-weight="600" fill="#dc2626">false</text>
+          <line x1="92" y1="170" x2="700" y2="170" stroke="#9aa0b5" stroke-width="1.4" marker-end="url(#ir-arr)"/>
+          <g stroke="#c7c7d4" stroke-width="1" stroke-dasharray="3 3">
+            <line x1="120" y1="58"  x2="120" y2="170"/>
+            <line x1="250" y1="58"  x2="250" y2="170"/>
+            <line x1="470" y1="58"  x2="470" y2="170"/>
+            <line x1="545" y1="58"  x2="545" y2="170"/>
+          </g>
+          <path d="M120,150 L250,150" fill="none" stroke="#dc2626" stroke-width="3"/>
+          <path d="M250,150 L250,66 L470,66" fill="none" stroke="#15803d" stroke-width="3"/>
+          <path d="M470,66 L470,150 L545,150" fill="none" stroke="#dc2626" stroke-width="3"/>
+          <path d="M545,150 L545,66 L688,66" fill="none" stroke="#15803d" stroke-width="3"/>
+          <circle cx="250" cy="150" r="4" fill="#15803d"/>
+          <circle cx="470" cy="66"  r="4" fill="#dc2626"/>
+          <circle cx="545" cy="150" r="4" fill="#15803d"/>
+          <text x="120" y="190" text-anchor="middle" font-size="11.5" fill="#555">scope in</text>
+          <text x="250" y="190" text-anchor="middle" font-size="11.5" fill="#555">first load lands</text>
+          <text x="470" y="190" text-anchor="middle" font-size="11.5" fill="#555">slot change</text>
+          <text x="545" y="206" text-anchor="middle" font-size="11.5" fill="#555">load lands</text>
+        </svg>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════ editor ════ -->
+    <section id="editor">
+      <h2>Edit mode and Play mode</h2>
+      <p>Unity normally writes the changes a play session makes into a project asset, so it comes out of
+        Play mode holding whatever the game left in it. Persistent Asset undoes that. Enter Play mode, change
+        values, leave Play mode, and the asset shows the values you authored again, while the save it wrote keeps
+        them.</p>
+    </section>
+
+    <!-- ══════════════════════════════════════ global ════ -->
+    <section id="global">
+      <h2>Act on every manager at once</h2>
+      <p>The static <a href="API%20-%20Core.html#Persistence"><code>Persistence</code></a> class mirrors every
+        operation and every event across every manager in scope, so one call saves, loads or clears the lot.</p>
+    </section>
+
+    <!-- ══════════════════════════════════════ choosing ════ -->
+    <section id="choosing">
+      <h2>Choose a persistence manager</h2>
+      <p>Each asset picks one manager from the dropdown at the top of its Inspector window, and switching manager
+        changes nothing in your game code. The following table lists the managers the package ships.</p>
+
+      <div class="table-scroll">
+        <table class="cmp">
+          <tr><th scope="col">Manager</th><th scope="col">Saves to</th><th scope="col">Use it for</th></tr>
+          <tr><td><strong>None</strong></td><td>Nowhere</td><td>Turning saving off</td></tr>
+          <tr><td><strong><a href="Save%20on%20the%20device.html#prototype">Prototype</a></strong></td><td>A file on the device, placed for you</td><td>Getting started, jams, prototypes</td></tr>
+          <tr><th colspan="3" scope="colgroup">Local</th></tr>
+          <tr><td><strong><a href="Save%20on%20the%20device.html#file">Local File</a></strong></td><td>Files you name and place</td><td>Shipping your game</td></tr>
+          <tr><td><strong><a href="Save%20on%20the%20device.html#playerprefs">Player Prefs</a></strong></td><td>Unity's PlayerPrefs</td><td>Small saves a silent loss would not hurt</td></tr>
+          <tr><th colspan="3" scope="colgroup">Remote</th></tr>
+          <tr><td><strong><a href="Cloud%20and%20remote.html#http">Server (HTTP)</a></strong></td><td>A backend service, or a server of your own</td><td>Saves that follow the player between devices</td></tr>
+          <tr><td><strong><a href="Cloud%20and%20remote.html#cloudsave">Cloud Save (UGS)</a></strong></td><td>Unity Gaming Services</td><td>The same, with no server of your own</td></tr>
+          <tr><td><strong><a href="Cloud%20and%20remote.html#steam">Steam Cloud</a></strong></td><td>Steam</td><td>Steam releases</td></tr>
+          <tr><th colspan="3" scope="colgroup">Other</th></tr>
+          <tr><td><strong><a href="Save%20per%20platform.html">Platform (Routing)</a></strong></td><td>A different manager per platform</td><td>One project shipping to several platforms</td></tr>
+          <tr><td><strong><a href="Save%20on%20the%20device.html#session">Session (Memory)</a></strong></td><td>Memory, gone when the game closes</td><td>Values kept for one play session only</td></tr>
+          <tr><td><strong><a href="Save%20on%20the%20device.html#test">Test</a></strong></td><td>Nothing, it fakes the result you ask for</td><td>Checking how your game handles a save that fails</td></tr>
+        </table>
+      </div>
+
+      <p>Two cases need a manager of your own. A console saves through its platform SDK, so it needs
+        <a href="Save%20per%20platform.html#consoles">a small manager you write</a>, and any storage this table
+        doesn't reach needs <a href="Extend%20the%20package.html#manager">a custom manager</a>.</p>
+    </section>
+
+    <!-- ══════════════════════════════════════ resources ════ -->
+    <div class="resources">
+      <h2>Additional resources</h2>
+      <ul>
+        <li><a href="Save%20and%20load.html">Save and load</a></li>
+        <li><a href="Save%20on%20the%20device.html">Save on the device</a></li>
+        <li><a href="Cloud%20and%20remote.html">Cloud &amp; remote</a></li>
+        <li><a href="API%20-%20Core.html#PersistenceManager">PersistenceManager API reference</a></li>
+      </ul>
+    </div>
+
+    <div class="pager">
+      <a class="prev" href="What%20can%20be%20saved.html">
+        <div class="dir">Back</div>
+        <div class="pg-title">What can be saved</div>
+      </a>
+      <a class="next" href="Save%20and%20load.html">
+        <div class="dir">Next</div>
+        <div class="pg-title">Save and load</div>
+      </a>
+    </div>
+
+    <div class="doc-footer">Persistent Asset v2.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

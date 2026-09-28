@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Compress, encrypt and anchor a save, on a file and on a server." />
+  <title>Persistent Asset - Secure saves</title>
+  <link rel="stylesheet" href="../shared/styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Persistent Asset</div><a href="../User%20Manual.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Secure saves</h1>
+      <div class="sub">Compress, encrypt and anchor a save, on a file and on a server.</div>
+
+    <div class="guide-index">
+      <a href="#security">Secure a local file</a>
+      <a href="#remotesecurity">Secure a remote save</a>
+      <a href="#threat">What it defends against</a>
+    </div>
+    </div>
+
+    <!-- ══════════════════════════════════════ security ════ -->
+    <section id="security">
+      <h2>Secure a local file</h2>
+      <p><strong>Compression</strong> gzips the save, which changes its size, not its protection.
+        <a href="API%20-%20Built-Ins.html#Encryption"><strong>Encryption</strong></a> is the protection, and it
+        offers two modes:</p>
+      <ul>
+        <li><strong>Append Hash</strong> leaves the save readable, and loads a modified one with a permanent
+          tampered mark.</li>
+        <li><strong>Encrypt</strong> makes the save unreadable, and refuses a modified one outright.</li>
+      </ul>
+      <p>The key comes from a secret generated for your project the first time the package runs.</p>
+      <p><a href="API%20-%20Built-Ins.html#SaveAnchor"><strong>Anchor Save To</strong></a> binds protected data
+        further: to the machine, to its location, or to a <a href="#remotesecret">runtime secret</a>.</p>
+      <div class="note"><strong>Note:</strong> Copying, renaming and deleting a save through the
+        <a href="Slots%20and%20save%20menus.html#otherslots">Slots</a> class are not affected by any of
+        this.</div>
+      <div class="img-block">
+        <img src="../img/security_settings" alt="Security project settings"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">&#128247;</span>
+          <span><strong>img/security_settings</strong><br/>Project Settings &gt; Persistent Asset &gt; Security</span>
+        </div>
+      </div>
+      <p>The mark Append Hash leaves is readable and settable from code:</p>
+      <pre><code><span class="cm">// The tamper mark is written into every later save and cannot be edited out</span>
+<span class="kw">bool</span> cheated = <span class="ty">FilePersistenceManager</span>.IsTampered(myData);
+<span class="ty">FilePersistenceManager</span>.OnTamperedLoaded += target =&gt; DisableAchievements();
+
+<span class="cm">// When your own checks catch a cheat, brand the save yourself</span>
+<span class="ty">FilePersistenceManager</span>.MarkTampered(myData);</code></pre>
+    </section>
+
+    <!-- ══════════════════════════════════════ remotesecurity ════ -->
+    <section id="remotesecurity">
+      <h2>Secure a remote save</h2>
+      <p>A remote manager protects two copies separately: the one that leaves the device, and the one its cache
+        keeps on the device. Setting <strong>Encryption</strong> to <code>None</code> and <strong>Cache
+        Encryption</strong> to <code>Encrypt</code> lets your backend read what it stores while the player's own
+        copy stays opaque.</p>
+      <p>Not every setting works remotely:</p>
+      <div class="table-scroll">
+        <table class="cmp">
+          <thead><tr><th scope="col">Setting</th><th scope="col">On a remote manager</th></tr></thead>
+          <tbody>
+            <tr><td><code>Encryption.AppendHash</code></td><td>Refused, on the remote save and on the cache alike. The tamper mark is a Local File feature.</td></tr>
+            <tr><td><code>SaveAnchor.TargetMachine</code></td><td>Refused on the remote save, which has to open on the player's other devices. It works on the cache, where it stops a copied entry opening on another machine.</td></tr>
+            <tr><td><code>SaveAnchor.FileLocation</code></td><td>Binds to the manager and its slot, so a payload can't move between slots.</td></tr>
+            <tr><td><code>SaveAnchor.RuntimeSecret</code></td><td>Works, and keeps the key out of the build.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 id="remotesecret">Fetch a per-player secret at sign-in</h3>
+      <p>A runtime secret keeps the key out of the build entirely. Your game asks your own endpoint for the secret
+        once the player is signed in, then hands it to the package:</p>
+      <pre><code><span class="cm">// Once per session, before anything loads. A second, different value throws.</span>
+<span class="ty">CheatProtectionUtility</span>.RuntimeSecret = session.SaveSecret;</code></pre>
+      <p>The secret must be the same for that player in every session, or their saves stop opening, so derive it
+        from something stable. Until it is set, a manager anchored to it refuses to load and to save: set it before
+        the assets come into scope, or turn <strong>Auto Load</strong> off and
+        <a href="Save%20and%20load.html#whentoload">load once you have it</a>.</p>
+    </section>
+
+    <!-- ══════════════════════════════════════ threat ════ -->
+    <section id="threat">
+      <h2>What it defends against</h2>
+      <p>Neither mode protects from a RAM editor, and a determined reverser can recover the project secret from
+        the build unless <code>RuntimeSecret</code> keeps it out. Treat local protection as cheat deterrence.
+        Competitive integrity needs a server-authoritative design, where the server holds the values that
+        matter.</p>
+    </section>
+
+    <!-- ══════════════════════════════════════ resources ════ -->
+    <div class="resources">
+      <h2>Additional resources</h2>
+      <ul>
+        <li><a href="API%20-%20Built-Ins.html#Encryption">Encryption API reference</a></li>
+        <li><a href="Cloud%20and%20remote.html">Cloud &amp; remote</a></li>
+        <li><a href="Update%20a%20shipped%20save.html#migration">Lock and migrate saves</a></li>
+      </ul>
+    </div>
+
+    <div class="pager">
+      <a class="prev" href="Connect%20to%20a%20backend%20service.html">
+        <div class="dir">Back</div>
+        <div class="pg-title">Connect to a backend service</div>
+      </a>
+      <a class="next" href="Troubleshooting.html">
+        <div class="dir">Next</div>
+        <div class="pg-title">Troubleshooting</div>
+      </a>
+    </div>
+
+    <div class="doc-footer">Persistent Asset v2.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

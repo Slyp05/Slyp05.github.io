@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Write a class of your own whose serialized fields are what the package saves and loads." />
+  <title>Persistent Asset - Data class</title>
+  <link rel="stylesheet" href="../shared/styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Persistent Asset</div><a href="../User%20Manual.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Data class</h1>
+      <div class="sub">Write a class of your own whose serialized fields are what the package saves and loads.</div>
+
+    <div class="guide-index">
+      <a href="#write">Write the class</a>
+      <a href="#asset">Create the asset</a>
+      <a href="#attribute">Persist a class that already has a base class</a>
+    </div>
+    </div>
+
+    <!-- ══════════════════════════════════════ write ════ -->
+    <section id="write">
+      <h2>Write the class</h2>
+      <p>To make a class of your own persistent, inherit
+        <a href="API%20-%20Core.html#PersistentScriptableObject"><code>PersistentScriptableObject</code></a> and
+        add the fields you want to persist. The values those fields hold outside Play mode are the values a new
+        player starts with.</p>
+      <pre><code><span class="kw">public class</span> <span class="ty">PlayerData</span> : <span class="ty">PersistentScriptableObject</span>
+{
+    <span class="kw">public int</span> gold;
+    <span class="kw">public int</span> level = <span class="nu">1</span>;
+    <span class="kw">public</span> <span class="ty">List</span>&lt;<span class="kw">int</span>&gt; clearedLevels = <span class="kw">new</span>();
+}</code></pre>
+      <p>Which fields can be saved depends on the serializer the asset uses. For more information, refer to
+        <a href="What%20can%20be%20saved.html">What can be saved</a>.</p>
+    </section>
+
+    <!-- ══════════════════════════════════════ asset ════ -->
+    <section id="asset">
+      <h2>Create the asset</h2>
+      <p>One asset instance of your class is one save. To create it:</p>
+      <ol>
+        <li>In the Project window, select
+          <strong>Create &gt; Persistent Asset &gt; Persistent Object&hellip;</strong>.</li>
+        <li>Select your class, then name the asset.</li>
+      </ol>
+      <p>You can move or rename the asset afterwards.</p>
+      <div class="img-block">
+        <img src="../img/data_asset_inspector" alt="A PlayerData asset in the inspector, its manager dropdown above its fields"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">&#128247;</span>
+          <span><strong>img/data_asset_inspector</strong><br/>A PlayerData asset selected: the Persistence Manager dropdown at the top, gold, level and clearedLevels below it</span>
+        </div>
+      </div>
+      <p>Use the asset like any other
+        <a href="https://docs.unity3d.com/Manual/class-ScriptableObject.html">ScriptableObject</a>:</p>
+      <pre><code>[SerializeField] <span class="ty">PlayerData</span> playerData;
+
+<span class="kw">void</span> CollectCoin() =&gt; playerData.gold++;</code></pre>
+      <div class="note"><strong>Note:</strong> Two assets of the same class save separately, each under its own
+        id.</div>
+    </section>
+
+    <!-- ══════════════════════════════════════ attribute ════ -->
+    <section id="attribute">
+      <h2>Persist a class that already has a base class</h2>
+      <p>When your class already inherits a ScriptableObject of its own, use the
+        <code>[PersistentScriptableObject(...)]</code> attribute instead of the base class:</p>
+      <ol>
+        <li>Add a serialized <code>PersistenceManager</code> field to the class.</li>
+        <li>Decorate the class with <code>[PersistentScriptableObject(...)]</code>, and name that field in the
+          attribute.</li>
+      </ol>
+      <pre><code>[PersistentScriptableObject(<span class="kw">nameof</span>(persistenceManager))]
+<span class="kw">public class</span> <span class="ty">MyData</span> : <span class="ty">SomeOtherScriptableObject</span>
+{
+    [SerializeField] <span class="ty">PersistenceManager</span> persistenceManager;
+}</code></pre>
+      <p>Everything else on this page applies unchanged.</p>
+    </section>
+
+    <!-- ══════════════════════════════════════ resources ════ -->
+    <div class="resources">
+      <h2>Additional resources</h2>
+      <ul>
+        <li><a href="What%20can%20be%20saved.html">What can be saved</a></li>
+        <li><a href="How%20saving%20works.html">How saving works</a></li>
+        <li><a href="Save%20and%20load.html">Save and load</a></li>
+        <li><a href="API%20-%20Core.html#PersistentScriptableObject">PersistentScriptableObject API reference</a></li>
+      </ul>
+    </div>
+
+    <div class="pager">
+      <a class="prev" href="Installation.html">
+        <div class="dir">Back</div>
+        <div class="pg-title">Installation</div>
+      </a>
+      <a class="next" href="Prefs.html">
+        <div class="dir">Next</div>
+        <div class="pg-title">Prefs</div>
+      </a>
+    </div>
+
+    <div class="doc-footer">Persistent Asset v2.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

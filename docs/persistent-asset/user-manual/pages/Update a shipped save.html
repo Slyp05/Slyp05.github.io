@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Change the shape of a save that already shipped, and erase a player's data on request." />
+  <title>Persistent Asset - Update a shipped save</title>
+  <link rel="stylesheet" href="/assets/css/doc-styles.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Persistent Asset</div><a href="../index.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Update a shipped save</h1>
+      <div class="sub">Change the shape of a save that already shipped, and erase a player's data on request.</div>
+
+    <div class="guide-index">
+      <a href="#migration">Lock and migrate saves</a>
+      <a href="#versioning">Version your data</a>
+      <a href="#erasure">Delete a player's data</a>
+    </div>
+    </div>
+
+    <!-- ══════════════════════════════════════ migration ════ -->
+    <section id="migration">
+      <h2>Lock and migrate saves</h2>
+      <p>A <strong>lock</strong> keeps the saves your players already have working. It marks a manager as
+        shipped: its breaking fields turn read-only, and a change that would strand those saves offers to
+        migrate them first, so you can't strand them by accident.</p>
+      <p>The <strong>breaking fields</strong> are the settings that decide where a save is stored and how it is
+        written: the file name, compression, encryption, the server URL, the serializer and so on.</p>
+      <p>A release build locks every manager for you. To lock them yourself, go to <strong>Tools &gt; Persistent
+        Asset &gt; Actions &gt; Lock All Persistence Managers</strong>.</p>
+      <div class="note warning"><strong>Warning:</strong> The package treats an unlocked manager as one that
+        has not shipped yet, so changing a breaking field on it strands its old saves with no warning.</div>
+
+      <h3 id="import-sources">Migrate with an import copy</h3>
+      <p>When you change something that would strand the saves a manager has already written, the package
+        offers to keep the old setup as a read-only import copy:</p>
+      <div class="img-block">
+        <img src="../img/import_copy_dialog.png" alt="Keep import copy dialog"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">&#128247;</span>
+          <span><strong>img/import_copy_dialog</strong><br/>The "Keep a read-only import copy?" dialog shown when changing the setup</span>
+        </div>
+      </div>
+      <p>The copy stays under the asset as a sub-asset named <code>[Import N] ...</code>. The next time the new
+        manager finds no save of its own, it reads that copy, writes the data back in the new format and place,
+        then deletes the copy, so each player's save migrates once.</p>
+      <div class="img-block">
+        <img src="../img/import_sources_list.png" alt="Import sources under the asset"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">&#128247;</span>
+          <span><strong>img/import_sources_list</strong><br/>The "[Import 1] ..." sub-assets sitting under the active manager</span>
+        </div>
+      </div>
+
+      <h3 id="orphaned-locks">Clear a lock whose manager is gone</h3>
+      <p>Deleting a manager leaves its lock behind. To tidy those away once the managers are gone for good, go
+        to <strong>Tools &gt; Persistent Asset &gt; Actions &gt; Clear Orphaned Locks&hellip;</strong>.</p>
+    </section>
+
+    <!-- ══════════════════════════════════════ versioning ════ -->
+    <section id="versioning">
+      <h2>Version your data</h2>
+      <p>Some changes need nothing from the package. A new field loads at its default value, and your
+        serializer's own mechanisms cover others, such as renaming a field with
+        <code>[FormerlySerializedAs("oldName")]</code> on Unity JSON.</p>
+      <p>Implement <code>IUpgradable</code> for a change none of that covers:</p>
+      <pre><code><span class="kw">public class</span> <span class="ty">PlayerData</span> : <span class="ty">PersistentScriptableObject</span>, <span class="ty">IUpgradable</span>
+{
+    <span class="kw">public int</span> coins;
+
+    <span class="kw">public int</span> SaveVersion =&gt; <span class="nu">1</span>;
+
+    <span class="kw">public void</span> Upgrade(<span class="kw">int</span> fromVersion, <span class="ty">SaveNode</span> oldData)
+    {
+        <span class="cm">// v0 stored "gold" and "silver" separately; combine them</span>
+        <span class="kw">if</span> (fromVersion &lt; <span class="nu">1</span>)
+            coins = oldData[<span class="st">"gold"</span>].AsInt() + oldData[<span class="st">"silver"</span>].AsInt();
+    }
+
+    <span class="kw">public bool</span> Downgrade(<span class="kw">int</span> fromVersion) =&gt; <span class="kw">false</span>;   <span class="cm">// refuse a save from a newer build</span>
+}</code></pre>
+      <p><code>Upgrade</code> runs after the load, and only on a save older than the current version. An asset
+        with no <code>IUpgradable</code> ships as version 0, so you can add the interface in a later release.</p>
+      <div class="note"><strong>Note:</strong> Reading the old values needs a serializer that can produce them.
+        For more information, refer to <a href="What%20can%20be%20saved.html#choosing">Choose a
+        serializer</a>.</div>
+      <p>For a change even <code>IUpgradable</code> can't express, keep the old asset, create a new one beside it,
+        and copy the values across in <code>DynamicInitialize()</code>.</p>
+    </section>
+
+    <!-- ══════════════════════════════════════ erasure ════ -->
+    <section id="erasure">
+      <h2>Delete a player's data</h2>
+      <p>A right-to-erasure request, such as a privacy or account-deletion request, has to remove everything that
+        player saved, not only what is loaded now. <code>Persistence.ClearAll()</code> reaches the managers that
+        are in scope at that moment, and only their current slot, so the other slots have to be read before
+        anything wipes the registry that lists them:</p>
+      <pre><code><span class="cm">// Every save asset and slot registry of that player is in scope by now.</span>
+<span class="ty">List</span>&lt;<span class="kw">string</span>&gt; slots = <span class="kw">new</span>(profileRegistry.SavedSlots);   <span class="cm">// read it before clearing empties it</span>
+
+<span class="kw">await</span> <span class="ty">Persistence</span>.ClearAllAsync();                       <span class="cm">// the current slot of everything in scope</span>
+
+<span class="kw">foreach</span> (<span class="kw">string</span> slot <span class="kw">in</span> slots)
+    <span class="kw">foreach</span> (<span class="ty">ClearResult</span> result <span class="kw">in await</span> <span class="ty">Slots</span>.DeleteAsync(slot, profileData, worldData))
+        <span class="kw">if</span> (result.IsFailure || result.IsCancelled)
+            <span class="kw">return false</span>;                                 <span class="cm">// that slot still holds data: say so</span>
+
+<span class="kw">await</span> remoteManager.PushPendingChangesAsync();          <span class="cm">// only with an offline cache on</span>
+<span class="kw">return true</span>;</code></pre>
+      <p>Await each operation, so the deletes have run before your code reports success. The slot that was
+        current answers <code>Ignored</code>, because the clear above already emptied it.</p>
+      <div class="note"><strong>Note:</strong> On a server of your own, erasure is the server's job. On Unity
+        Cloud Save, deleting the saved data is not the same as deleting the player:
+        <code>AuthenticationService.Instance.DeleteAccountAsync()</code> removes the identity.</div>
+    </section>
+
+    <!-- ══════════════════════════════════════ resources ════ -->
+    <div class="resources">
+      <h2>Additional resources</h2>
+      <ul>
+        <li><a href="What%20can%20be%20saved.html#choosing">Choose a serializer</a></li>
+        <li><a href="Secure%20saves.html">Secure saves</a></li>
+        <li><a href="Slots%20and%20save%20menus.html">Slots and save menus</a></li>
+      </ul>
+    </div>
+
+    <div class="pager">
+      <a class="prev" href="Slots%20and%20save%20menus.html">
+        <div class="dir">Back</div>
+        <div class="pg-title">Slots and save menus</div>
+      </a>
+      <a class="next" href="Save%20on%20the%20device.html">
+        <div class="dir">Next</div>
+        <div class="pg-title">Save on the device</div>
+      </a>
+    </div>
+
+    <div class="doc-footer">Persistent Asset v2.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>
