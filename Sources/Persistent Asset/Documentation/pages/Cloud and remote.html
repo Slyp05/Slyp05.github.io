@@ -77,9 +77,9 @@
           ordinary <a href="#conflict">conflict</a>: <a href="#merging"><code>IMergeable</code></a> folds the
           offline progress into what the server holds, and without it the most recent save wins.</li>
       </ul>
-      <p id="status">While the game runs, <code>Status</code> says whether everything has reached the server,
-        whether changes are waiting, or whether one is <a href="#conflict">held</a>. <code>OnStatusChanged</code>
-        fires on every change, and <code>PushPendingChangesAsync()</code> flushes what is waiting.</p>
+      <p id="status">While the game runs, <a href="API%20-%20Built-Ins.html#RemotePersistenceManager"><code>Status</code></a> says whether everything has reached the server,
+        whether changes are waiting, or whether one is <a href="#conflict">held</a>. <a href="API%20-%20Built-Ins.html#RemotePersistenceManager"><code>OnStatusChanged</code></a>
+        fires on every change, and <a href="API%20-%20Built-Ins.html#RemotePersistenceManager"><code>PushPendingChangesAsync()</code></a> flushes what is waiting.</p>
     </section>
 
     <!-- ══════════════════════════════════════ conflict ════ -->
@@ -90,21 +90,25 @@
       <p>Three things settle a conflict, and the first that applies wins:</p>
       <ol>
         <li><a href="#merging"><code>IMergeable</code></a> folds both saves together.</li>
-        <li><code>ConflictPolicy.Ask</code> asks the player.</li>
-        <li><code>ConflictPolicy.PreferNewest</code>, the default, takes the most recent save, which relies on the
+        <li><a href="API%20-%20Built-Ins.html#RemoteEnums"><code>ConflictPolicy.Ask</code></a> asks the player.</li>
+        <li><a href="API%20-%20Built-Ins.html#RemoteEnums"><code>ConflictPolicy.PreferNewest</code></a>, the default, takes the most recent save, which relies on the
           two devices' clocks.</li>
       </ol>
       <p id="asking">Set <strong>Conflict Policy</strong> to <strong>Ask</strong> on the manager, then answer
-        <code>Conflicts.OnAny</code> with <code>Conflicts.Resolve(manager, KeepLocal | KeepRemote)</code>. Both
-        saves arrive as <code>SaveNode</code>s with their save times, and the load stays undecided until you
+        <a href="API%20-%20Core.html#Conflicts"><code>Conflicts.OnAny</code></a> with <a href="API%20-%20Core.html#Conflicts"><code>Conflicts.Resolve(manager, KeepLocal | KeepRemote)</code></a>. Both
+        saves arrive as <a href="API%20-%20Core.html#SaveNode"><code>SaveNode</code></a>s with their save times, and the load stays undecided until you
         answer.</p>
-      <p><strong>GameObject &gt; Persistent Asset &gt; Conflict Prompt (IMGUI)</strong> is a ready-made
-        panel, which tells the two saves apart by the values you list in <strong>Preview Fields</strong>. It
-        doesn't stop the game around it, so hold your own UI off while <code>IsAsking</code> is true. A pad
-        cannot reach it: for a game played on a pad, use <strong>Conflict Prompt (uGUI)</strong> from the same
-        menu. It asks the same question on a canvas, in your UI's style, blocks the UI behind it, and is driven
-        by a <a href="API%20-%20No-Code.html#PersistenceConflictListener"><code>PersistenceConflictListener</code></a>.</p>
-      <div class="note"><strong>Note:</strong> Set <strong>Ask</strong> only with that panel in the scene or
+      <p><strong>GameObject &gt; Persistent Asset &gt; Conflict Prompt (IMGUI)</strong> and
+        <strong>Conflict Prompt (uGUI)</strong> are ready-made panels, which tell the two saves apart by the
+        values you list in <strong>Preview Fields</strong>. For how to pick one, refer to
+        <a href="No-Code.html#savemenu">Build a save menu</a>.</p>
+      <ul>
+        <li>The IMGUI one doesn't stop the game around it, so hold your own UI off while
+          <a href="API%20-%20Core.html#PersistenceConflictPrompt"><code>IsAsking</code></a> is true.</li>
+        <li>The uGUI one blocks the UI behind it, and is driven by a
+          <a href="API%20-%20No-Code.html#PersistenceConflictListener"><code>PersistenceConflictListener</code></a>.</li>
+      </ul>
+      <div class="note"><strong>Note:</strong> Set <strong>Ask</strong> only with one of those panels in the scene or
         something else listening, or the load settles as <strong>Prefer Newest</strong> anyway.</div>
     </section>
 
@@ -112,12 +116,13 @@
     <section id="merging">
       <h2>Merge two saves</h2>
       <p><a href="API%20-%20Core.html#IMergeable"><code>IMergeable</code></a> folds the other device's save into
-        yours instead of discarding one of them. <code>Merge</code> reads the other side as a
-        <code>SaveNode</code>, applies what it wants from it, and returns whether it changed anything.</p>
-      <div class="note warning"><strong>Warning:</strong> <code>Merge</code> must be commutative and idempotent.
+        yours instead of discarding one of them. <a href="API%20-%20Core.html#IMergeable"><code>Merge</code></a> reads the other side as a
+        <a href="API%20-%20Core.html#SaveNode"><code>SaveNode</code></a>, applies what it wants from it, and returns whether it changed anything.</p>
+      <div class="note warning"><strong>Warning:</strong> <a href="API%20-%20Core.html#IMergeable"><code>Merge</code></a> must be commutative and idempotent.
         The result can't depend on which device folds first, and folding the same save twice must change nothing.
-        A maximum or a set union is safe, while <code>coins += otherCoins</code> pays the player twice. Return
-        <code>true</code> only when you changed something, or two devices save back and forth forever.</div>
+        A maximum or a set union is safe, while <code>coins += otherCoins</code> pays the player twice.</div>
+      <div class="note warning"><strong>Warning:</strong> Return <code>true</code> only when you changed something, or two devices
+        save back and forth forever.</div>
     </section>
 
     <!-- ══════════════════════════════════════ http ════ -->
@@ -144,8 +149,9 @@ leaderboardManager.Authorization = <span class="st">"Bearer "</span> + otherToke
         Service</strong> fields describe. For copy-ready values per service, refer to
         <a href="Connect%20to%20a%20backend%20service.html">Connect to a backend service</a>.</p>
       <div class="note warning"><strong>Warning:</strong> The body must come back byte for byte. A server that
-        trims whitespace or re-encodes the body breaks loading. Use <code>DefaultConfigureRequest</code> when a
-        request needs other headers.</div>
+        trims whitespace or re-encodes the body breaks loading.</div>
+      <div class="note"><strong>Note:</strong> Use <a href="API%20-%20Built-Ins.html#HttpPersistenceManager"><code>DefaultConfigureRequest</code></a> when a request needs other
+        headers.</div>
     </section>
 
     <!-- ══════════════════════════════════════ steam ════ -->
@@ -179,8 +185,9 @@ leaderboardManager.Authorization = <span class="st">"Bearer "</span> + otherToke
         the machine. Outside Steam every operation fails, so
         <a href="Save%20per%20platform.html#distribution">route</a> a DRM-free build to a Local File manager.</p>
       <div class="note warning"><strong>Warning:</strong> Auto-Cloud syncs on exit, so a crash or a kill from the
-        Steam overlay can lose that session. Its quota is per application and small by default: raise it in
-        Steamworks and turn compression on, because a save that doesn't fit is dropped silently.</div>
+        Steam overlay can lose that session.</div>
+      <div class="note warning"><strong>Warning:</strong> The Auto-Cloud quota is per application and small by default: raise it
+        in Steamworks and turn compression on, because a save that doesn't fit is dropped silently.</div>
     </section>
 
     <!-- ══════════════════════════════════════ cloudsave ════ -->
@@ -192,8 +199,9 @@ leaderboardManager.Authorization = <span class="st">"Bearer "</span> + otherToke
         manager and slot, which also stops one player's cached save reaching another on a shared device.</p>
 
       <div class="note"><strong>Note:</strong> An anonymous player id lives on the device, and uninstalling
-        deletes it, so link the account to a platform identity for a save that survives a reinstall. A player who
-        is not signed in yet is a retry rather than a failure: the load recovers once sign-in lands.</div>
+        deletes it, so link the account to a platform identity for a save that survives a reinstall.</div>
+      <div class="note"><strong>Note:</strong> A player who is not signed in yet is a retry rather than a failure: the
+        load recovers once sign-in lands.</div>
       <div class="note warning"><strong>Warning:</strong> A save past Cloud Save's size limit fails quietly and
         keeps retrying, so turn Compression on.</div>
     </section>

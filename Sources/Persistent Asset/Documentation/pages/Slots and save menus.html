@@ -36,7 +36,7 @@
       <p>To use slots:</p>
       <ol>
         <li>Turn on <strong>Use Slot</strong> on the asset's manager.</li>
-        <li>Set <code>manager.Slot</code> for that one asset, or <code>Slots.GlobalSlot</code> for every active
+        <li>Set <a href="API%20-%20Core.html#PersistenceManager"><code>manager.Slot</code></a> for that one asset, or <a href="API%20-%20Core.html#Slots"><code>Slots.GlobalSlot</code></a> for every active
           manager at once, including the ones that come into scope later.</li>
       </ol>
       <p>Until a slot is set, the asset neither saves nor loads.</p>
@@ -56,8 +56,8 @@
       <p>A <a href="No-Code.html#savemenu">Persistent Variables asset has a ready-made registry</a>.</p>
       <p>For a data class of your own, inherit
         <a href="API%20-%20Core.html#PersistentSlotRegistry"><code>PersistentSlotRegistry&lt;TTarget,
-        TInfo&gt;</code></a>, return the summary from <code>CaptureInfo</code>, and, for a thumbnail, override
-        <code>CaptureScreenshotAsync</code> with one of
+        TInfo&gt;</code></a>, return the summary from <a href="API%20-%20Core.html#PersistentSlotRegistry"><code>CaptureInfo</code></a>, and, for a thumbnail, override
+        <a href="API%20-%20Core.html#PersistentSlotRegistry"><code>CaptureScreenshotAsync</code></a> with one of
         <a href="API%20-%20Core.html#SaveScreenshot"><code>SaveScreenshot</code></a>'s own captures:</p>
       <pre><code>[Serializable]
 <span class="kw">public struct</span> <span class="ty">ProfileSummary</span>
@@ -96,8 +96,8 @@
     <section id="otherslots">
       <h2>Work with other slots from code</h2>
       <p>The static <a href="API%20-%20Core.html#Slots"><code>Slots</code></a> class acts on a slot's stored data
-        while the player stays on the slot they are on. <code>Copy</code>, <code>Rename</code> and
-        <code>Delete</code> move storage around without loading any of it:</p>
+        while the player stays on the slot they are on. <a href="API%20-%20Core.html#Slots"><code>Copy</code></a>, <a href="API%20-%20Core.html#Slots"><code>Rename</code></a> and
+        <a href="API%20-%20Core.html#Slots"><code>Delete</code></a> move storage around without loading any of it:</p>
       <pre><code><span class="ty">Slots</span>.Copy(<span class="st">"Slot 1"</span>, <span class="st">"Slot 2"</span>, playerData, worldData);
 <span class="ty">Slots</span>.Rename(<span class="st">"Slot 2"</span>, <span class="st">"Backup"</span>, playerData);
 <span class="ty">Slots</span>.Delete(<span class="st">"Backup"</span>, playerData);</code></pre>
@@ -107,8 +107,9 @@
 
 <span class="cm">// Bring a slot's saved data into the ongoing game; the next save still lands on the current slot</span>
 <span class="ty">Slots</span>.LoadFrom(<span class="st">"snapshot 0"</span>, playerData);</code></pre>
-      <div class="note"><strong>Note:</strong> Each one is refused on the manager's current slot. For every
-        shape these calls come in, refer to the <a href="API%20-%20Core.html#Slots">Slots API reference</a>.</div>
+      <p>For every shape these calls come in, refer to the <a href="API%20-%20Core.html#Slots">Slots API
+        reference</a>.</p>
+      <div class="note"><strong>Note:</strong> Each one is refused on the manager's current slot.</div>
     </section>
 
     <!-- ══════════════════════════════════════ quicksave ════ -->
@@ -118,7 +119,7 @@
         next slot of the ring, and once the ring is full the oldest one is overwritten. The player keeps the slot
         they were on, and the save it holds is untouched, so a quick save never costs them their ordinary
         one.</p>
-      <p><code>NextRingSlot</code> names the slot to write, and the registry lists the ring back latest
+      <p><a href="API%20-%20Core.html#PersistentSlotRegistry"><code>NextRingSlot</code></a> names the slot to write, and the registry lists the ring back latest
         first:</p>
       <pre><code><span class="kw">const string</span> Ring = <span class="st">"quicksave "</span>;
 <span class="kw">const int</span> RingSize = <span class="nu">3</span>;
@@ -144,7 +145,7 @@
         <a href="No-Code.html#savemenu">Quick Save Button</a> prefab.</p>
       <div class="note"><strong>Note:</strong> Give the ring a prefix that no ordinary slot uses, and keep it out
         of the slots a save-select menu offers.</div>
-      <div class="note"><strong>Note:</strong> <code>LoadFrom</code> needs a current slot, because the saves that
+      <div class="note"><strong>Note:</strong> <a href="API%20-%20Core.html#Slots"><code>LoadFrom</code></a> needs a current slot, because the saves that
         follow it go there.</div>
     </section>
 
@@ -153,23 +154,23 @@
       <h2>New Game and Continue</h2>
       <p>With slots, the registry answers both buttons before anything is loaded:</p>
       <ul>
-        <li><strong>Continue</strong> is <code>Slots.GlobalSlot = profileRegistry.LatestSlot</code>.</li>
-        <li><strong>New Game</strong> is <code>Slots.GlobalSlot = profileRegistry.NextFreeSlot("save ")</code>,
+        <li><strong>Continue</strong> is <a href="API%20-%20Core.html#Slots"><code>Slots.GlobalSlot = profileRegistry.LatestSlot</code></a>.</li>
+        <li><strong>New Game</strong> is <a href="API%20-%20Core.html#Slots"><code>Slots.GlobalSlot = profileRegistry.NextFreeSlot("save ")</code></a>,
           which deletes nothing.</li>
       </ul>
       <p>An empty registry means there is nothing to continue, so leave that button disabled while
-        <code>Entries</code> is empty.</p>
+        <a href="API%20-%20Core.html#PersistentSlotRegistry"><code>Entries</code></a> is empty.</p>
 
       <h3 id="newgame-noslots">Without slots</h3>
       <p>One asset then holds one save, and whether it exists is what a <strong>Continue</strong> button needs
-        to know. <code>Readiness.Origin</code> answers it: <code>StoredSave</code> and <code>Imported</code> both
+        to know. <a href="API%20-%20Core.html#Readiness"><code>Readiness.Origin</code></a> answers it: <a href="API%20-%20Core.html#DataOrigin"><code>StoredSave</code></a> and <a href="API%20-%20Core.html#DataOrigin"><code>Imported</code></a> both
         mean there is a save.</p>
       <pre><code><span class="kw">await</span> profileData.PersistenceManager.WhenReady;
 <span class="ty">Readiness</span> readiness = profileData.PersistenceManager.Readiness;
 
 <span class="kw">bool</span> hasSave = (readiness.Origin == <span class="ty">DataOrigin</span>.StoredSave) || (readiness.Origin == <span class="ty">DataOrigin</span>.Imported);
 continueButton.interactable = readiness.IsReady &amp;&amp; hasSave;</code></pre>
-      <p>A new game then deletes that one save. <code>Clear</code> pauses saving until the next load, so follow
+      <p>A new game then deletes that one save. <a href="API%20-%20Core.html#PersistenceManager"><code>Clear</code></a> pauses saving until the next load, so follow
         it with one:</p>
       <pre><code><span class="kw">await</span> profileData.PersistenceManager.ClearAsync();
 <span class="kw">await</span> profileData.PersistenceManager.LoadAsync();   <span class="cm">// nothing to read, and it ends ready on defaults</span></code></pre>

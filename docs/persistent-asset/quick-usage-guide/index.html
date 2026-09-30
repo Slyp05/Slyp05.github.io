@@ -63,47 +63,6 @@
 
       <p>You write no saving code. The game saves itself when it loses focus, when it is paused, when it quits,
         and on a timer.</p>
-      <p>You can still ask for a <a href="../user-manual/pages/Save%20and%20load.html">save, a load or a clear</a> yourself:</p>
-      <div class="call-styles" role="radiogroup" aria-label="Call style">
-        <input type="radio" name="call-style" id="cs-sync" /><label for="cs-sync">Sync</label>
-        <input type="radio" name="call-style" id="cs-callback" /><label for="cs-callback">Callback</label>
-        <input type="radio" name="call-style" id="cs-forget" checked /><label for="cs-forget">Fire and forget</label>
-        <input type="radio" name="call-style" id="cs-routine" /><label for="cs-routine">Coroutine</label>
-        <input type="radio" name="call-style" id="cs-async" /><label for="cs-async">Async</label>
-        <pre class="cs-sync"><code><span class="ty">PersistenceManager</span> pm = playerData.PersistenceManager;   <span class="cm">// any persistent asset</span>
-
-<span class="ty">SaveResult</span> saved = pm.SaveSync();       <span class="cm">// the result is final when it returns</span>
-<span class="ty">LoadResult</span> loaded = pm.LoadSync();
-<span class="ty">ClearResult</span> cleared = pm.ClearSync();
-
-<span class="cm">// fails on a manager that cannot run synchronously</span></code></pre>
-        <pre class="cs-callback"><code><span class="ty">PersistenceManager</span> pm = playerData.PersistenceManager;   <span class="cm">// any persistent asset</span>
-
-pm.Save(result =&gt; <span class="ty">Debug</span>.Log(result.IsSuccess));
-pm.Load(result =&gt; <span class="ty">Debug</span>.Log(result.IsSuccess));
-pm.Clear(result =&gt; <span class="ty">Debug</span>.Log(result.IsSuccess));</code></pre>
-        <pre class="cs-forget"><code><span class="ty">PersistenceManager</span> pm = playerData.PersistenceManager;   <span class="cm">// any persistent asset</span>
-
-pm.Save();    <span class="cm">// fits straight onto a UI event</span>
-pm.Load();
-pm.Clear();</code></pre>
-        <pre class="cs-routine"><code><span class="ty">PersistenceManager</span> pm = playerData.PersistenceManager;   <span class="cm">// any persistent asset</span>
-
-<span class="ty">PersistenceOperation</span>&lt;<span class="ty">SaveResult</span>&gt; saveOperation = pm.SaveRoutine();
-<span class="kw">yield return</span> saveOperation;
-<span class="ty">Debug</span>.Log(saveOperation.Result.IsSuccess);
-
-<span class="kw">yield return</span> pm.LoadRoutine();
-<span class="kw">yield return</span> pm.ClearRoutine();</code></pre>
-        <pre class="cs-async"><code><span class="ty">PersistenceManager</span> pm = playerData.PersistenceManager;   <span class="cm">// any persistent asset</span>
-
-<span class="ty">SaveResult</span> saved = <span class="kw">await</span> pm.SaveAsync();
-<span class="ty">LoadResult</span> loaded = <span class="kw">await</span> pm.LoadAsync();
-<span class="ty">ClearResult</span> cleared = <span class="kw">await</span> pm.ClearAsync();
-
-<span class="cm">// run synchronously if the manager can, otherwise asynchronously</span>
-<span class="ty">SaveResult</span> quick = <span class="kw">await</span> pm.SaveAsync(<span class="ty">ExecutionMode</span>.PreferSync);</code></pre>
-      </div>
       <p><a href="../user-manual/pages/Slots%20and%20save%20menus.html">Slots</a>,
         <a href="../user-manual/pages/Update%20a%20shipped%20save.html">versioned saves</a>,
         <a href="../user-manual/pages/Secure%20saves.html">encryption</a>, and more are there when you need them.</p>
@@ -205,7 +164,7 @@ pm.Clear();</code></pre>
             </div>
           </div>
 
-          <p>Unity's built-in components are supported out of the box, your own scripts are saved by their
+          <p>The common built-in components are supported out of the box, your own scripts are saved by their
             fields, and objects spawned during play are covered too.</p>
           <p class="fold-more"><a href="../user-manual/pages/Scene%20Objects.html">Scene Objects &rarr;</a></p>
         </div>
@@ -374,11 +333,55 @@ pm.Clear();</code></pre>
     </section>
 
 
+    <!-- ══════════════════════════════════════ control ════ -->
+    <section id="control">
+      <h2>Take control when you want it</h2>
+      <p>You can still ask for a <a href="../user-manual/pages/Save%20and%20load.html">save, a load or a clear</a> from code:</p>
+      <div class="call-styles" role="radiogroup" aria-label="Call style">
+        <input type="radio" name="call-style" id="cs-sync" /><label for="cs-sync">Sync</label>
+        <input type="radio" name="call-style" id="cs-callback" /><label for="cs-callback">Callback</label>
+        <input type="radio" name="call-style" id="cs-forget" checked /><label for="cs-forget">Fire and forget</label>
+        <input type="radio" name="call-style" id="cs-routine" /><label for="cs-routine">Coroutine</label>
+        <input type="radio" name="call-style" id="cs-async" /><label for="cs-async">Async</label>
+        <pre class="cs-sync"><code><span class="ty">PersistenceManager</span> pm = playerData.PersistenceManager;   <span class="cm">// any persistent asset</span>
+
+<span class="ty">SaveResult</span> saved = pm.SaveSync();       <span class="cm">// forced synchronous, on a manager that supports it</span>
+<span class="ty">LoadResult</span> loaded = pm.LoadSync();
+<span class="ty">ClearResult</span> cleared = pm.ClearSync();</code></pre>
+        <pre class="cs-callback"><code><span class="ty">PersistenceManager</span> pm = playerData.PersistenceManager;   <span class="cm">// any persistent asset</span>
+
+pm.Save(result =&gt; <span class="ty">Debug</span>.Log(result.IsSuccess));
+pm.Load(result =&gt; <span class="ty">Debug</span>.Log(result.IsSuccess));
+pm.Clear(result =&gt; <span class="ty">Debug</span>.Log(result.IsSuccess));</code></pre>
+        <pre class="cs-forget"><code><span class="ty">PersistenceManager</span> pm = playerData.PersistenceManager;   <span class="cm">// any persistent asset</span>
+
+pm.Save();    <span class="cm">// fits straight onto a UI event</span>
+pm.Load();
+pm.Clear();</code></pre>
+        <pre class="cs-routine"><code><span class="ty">PersistenceManager</span> pm = playerData.PersistenceManager;   <span class="cm">// any persistent asset</span>
+
+<span class="ty">PersistenceOperation</span>&lt;<span class="ty">SaveResult</span>&gt; saveOperation = pm.SaveRoutine();
+<span class="kw">yield return</span> saveOperation;
+<span class="ty">Debug</span>.Log(saveOperation.Result.IsSuccess);
+
+<span class="kw">yield return</span> pm.LoadRoutine();
+<span class="kw">yield return</span> pm.ClearRoutine();</code></pre>
+        <pre class="cs-async"><code><span class="ty">PersistenceManager</span> pm = playerData.PersistenceManager;   <span class="cm">// any persistent asset</span>
+
+<span class="ty">SaveResult</span> saved = <span class="kw">await</span> pm.SaveAsync();
+<span class="ty">LoadResult</span> loaded = <span class="kw">await</span> pm.LoadAsync();
+<span class="ty">ClearResult</span> cleared = <span class="kw">await</span> pm.ClearAsync();</code></pre>
+      </div>
+    </section>
+
+
     <!-- ══════════════════════════════════════ learn more ════ -->
     <section id="learnmore">
       <h2>Learn more</h2>
       <p>The <a href="../user-manual/index.html">User Manual</a> covers every feature in detail.</p>
       <p>The <a href="../public-api/index.html">Public API</a> lists every type and member.</p>
+      <p>The demo's scripts, in <code>Assets/Persistent Asset/Demo/Scripts</code>, show the package at work in a
+        small game.</p>
     </section>
 
 

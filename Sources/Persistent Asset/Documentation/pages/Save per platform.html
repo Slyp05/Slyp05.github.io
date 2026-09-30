@@ -113,7 +113,7 @@
     <span class="kw">return</span> (container.Commit()) ? <span class="ty">SaveResult</span>.Success() : <span class="ty">SaveResult</span>.Failure(<span class="st">"The save container is full."</span>);
 }</code></pre>
       <div class="note warning"><strong>Warning:</strong> Never release the container in
-        <code>OnLeavingScope</code>. That hook runs <em>before</em> the scope's final automatic save, so
+        <a href="API%20-%20Core.html#PersistenceManager"><code>OnLeavingScope</code></a>. That hook runs <em>before</em> the scope's final automatic save, so
         unmounting there throws away the save the package is about to write.</div>
       <p>Certification usually asks for a visible indicator while save data is written, with a minimum duration,
         and for a declared maximum save size. Draw that indicator from the manager's

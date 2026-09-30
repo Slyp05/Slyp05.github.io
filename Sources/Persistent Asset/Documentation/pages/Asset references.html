@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Save a field that holds a project asset, by registering the assets a save can point at." />
+  <title>Persistent Asset - Asset references</title>
+  <link rel="stylesheet" href="../shared/styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Persistent Asset</div><a href="../User%20Manual.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Asset references</h1>
+      <div class="sub">Save a field that holds a project asset, by registering the assets a save can point at.</div>
+
+    <div class="guide-index">
+      <a href="#fields">Save a field that holds an asset</a>
+      <a href="#register">Register an asset</a>
+      <a href="#runtime">Images, audio and runtime-created objects</a>
+    </div>
+    </div>
+
+    <!-- ══════════════════════════════════════ fields ════ -->
+    <section id="fields">
+      <h2>Save a field that holds an asset</h2>
+      <p>A field that holds a project asset, or a list of them, saves and loads like any other field, as long
+        as the asset is <a href="#register">registered</a>. A deleted asset reads back as
+        <code>null</code>.</p>
+      <pre><code><span class="kw">public class</span> <span class="ty">PlayerData</span> : <span class="ty">PersistentScriptableObject</span>
+{
+    <span class="kw">public</span> <span class="ty">WeaponDefinition</span> equippedWeapon;
+    <span class="kw">public</span> <span class="ty">List</span>&lt;<span class="ty">LevelDefinition</span>&gt; unlockedLevels = <span class="kw">new</span>();
+}</code></pre>
+    </section>
+
+    <!-- ══════════════════════════════════════ register ════ -->
+    <section id="register">
+      <h2>Register an asset</h2>
+      <p>Register every asset a save can end up pointing at. Three things register one:</p>
+      <ul>
+        <li>A persistent asset, or a
+          <a href="Scene%20Objects.html#components">persistent scene object</a>'s ticked components, pointing at
+          it.</li>
+        <li>A folder you add to <strong>Registered Folders</strong>, in <strong>Project Settings &gt; Persistent
+          Asset</strong>.</li>
+        <li>A call to <a href="API%20-%20Editor%20Extension.html#AssetRegistration"><code>AssetRegistration.Register(asset)</code></a> from an editor script.</li>
+      </ul>
+      <p>To see what is registered, go to <strong>Tools &gt; Persistent Asset &gt; Asset References</strong>.</p>
+      <div class="img-block">
+        <img src="../img/asset_references_window" alt="The Asset References window listing the registered assets"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">&#128247;</span>
+          <span><strong>img/asset_references_window</strong><br/>Tools &gt; Persistent Asset &gt; Asset References, listing the registered assets and what registered each one</span>
+        </div>
+      </div>
+      <div class="note warning"><strong>Warning:</strong> Every registered asset ships in the build and loads at
+        startup, the same cost as a preloaded asset. Registering a folder of heavy assets is paid for on every
+        launch, whether a save names them or not.</div>
+      <div class="note"><strong>Note:</strong> Registration happens in the Editor. A build finds no asset that
+        was not included in it, so nothing registers at runtime.</div>
+      <div class="note"><strong>Note:</strong> Addressables are not supported as asset references. A reference
+        resolves to the exact object the table holds, and an asset loaded through Addressables is a separate copy
+        of it, so a field pointing at that copy saves as empty. Save the asset's address as a string and load it
+        yourself instead.</div>
+    </section>
+
+    <!-- ══════════════════════════════════════ runtime ════ -->
+    <section id="runtime">
+      <h2>Images, audio and runtime-created objects</h2>
+      <p>An object your game creates while it runs has no id, so it saves as empty. Save what produced it and
+        make it again on load, or write its bytes yourself, through a converter on
+        <a href="What%20can%20be%20saved.html#newtonsoft">Newtonsoft</a> or a formatter on
+        <a href="What%20can%20be%20saved.html#memorypack">MemoryPack</a>.</p>
+      <div class="note"><strong>Note:</strong> A save that carries an image carries every byte of it. For a save
+        menu's thumbnails, use the <a href="Slots%20and%20save%20menus.html#registry">slot registry</a> instead.</div>
+      <div class="note"><strong>Note:</strong> To point at an object in your scene, use
+        <a href="API%20-%20Scene%20Objects.html#SceneRef"><code>SceneRef</code></a>.</div>
+    </section>
+
+    <!-- ══════════════════════════════════════ resources ════ -->
+    <div class="resources">
+      <h2>Additional resources</h2>
+      <ul>
+        <li><a href="What%20can%20be%20saved.html">What can be saved</a></li>
+        <li><a href="Scene%20Objects.html#refs">Save a scene reference in a persistent asset</a></li>
+        <li><a href="API%20-%20Core.html#AssetRegistry">AssetRegistry API reference</a></li>
+      </ul>
+    </div>
+
+    <div class="pager">
+      <a class="prev" href="What%20can%20be%20saved.html">
+        <div class="dir">Back</div>
+        <div class="pg-title">What can be saved</div>
+      </a>
+      <a class="next" href="Save%20and%20load.html">
+        <div class="dir">Next</div>
+        <div class="pg-title">Save and load</div>
+      </a>
+    </div>
+
+    <div class="doc-footer">Persistent Asset v2.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

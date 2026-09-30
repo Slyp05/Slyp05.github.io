@@ -22,7 +22,6 @@
     <div class="guide-index">
       <a href="#whentoload">Choose when loads happen</a>
       <a href="#whentosave">Choose when saves happen</a>
-      <a href="#assetrefs">Save asset references</a>
       <a href="#reacting">React to load and save</a>
       <a href="#drain">Save on quit</a>
       <a href="#reset">Reset an asset or restore a snapshot</a>
@@ -47,9 +46,9 @@ pm.Load(result =&gt; StartGame());                          <span class="cm">// 
 <span class="kw">yield return</span> op;                                         <span class="cm">//   then read op.Result</span>
 
 <span class="ty">Persistence</span>.LoadAll();                                   <span class="cm">// every object in scope at once</span></code></pre>
-      <p>With <strong>Auto Load</strong> off, the manager reads nothing until you call <code>Load()</code>, and
+      <p>With <strong>Auto Load</strong> off, the manager reads nothing until you call <a href="API%20-%20Core.html#PersistenceManager"><code>Load()</code></a>, and
         refuses every save until it has.</p>
-      <p>To veto a load, subscribe to the manager's <code>BlockLoad</code> hook.</p>
+      <p>To veto a load, subscribe to the manager's <a href="API%20-%20Core.html#PersistenceManager"><code>BlockLoad</code></a> hook.</p>
     </section>
 
     <!-- ══════════════════════════════════════ whentosave ════ -->
@@ -58,14 +57,14 @@ pm.Load(result =&gt; StartGame());                          <span class="cm">// 
       <p>A manager saves on its own at four moments: when a persistent asset leaves scope, when the game loses
         focus or pauses, before a <a href="Slots%20and%20save%20menus.html#slots">slot</a> change, and every
         <strong>Regular Save Delay</strong> seconds.</p>
-      <p>Your own saves run on top of those. Every way of calling <code>Load</code> works for <code>Save</code>
+      <p>Your own saves run on top of those. Every way of calling <a href="API%20-%20Core.html#PersistenceManager"><code>Load</code></a> works for <a href="API%20-%20Core.html#PersistenceManager"><code>Save</code></a>
         too:</p>
       <pre><code>pm.Save();                                  <span class="cm">// fire and forget</span>
 <span class="ty">SaveResult</span> result = <span class="kw">await</span> pm.SaveAsync();   <span class="cm">// async</span>
 <span class="cm">// ...</span></code></pre>
       <p>With <strong>Auto Save</strong> off, a crash or a task switch loses everything since your last
-        <code>Save</code>.</p>
-      <p>To veto a save from outside a persistent asset, subscribe to the manager's <code>BlockSave</code>
+        save.</p>
+      <p>To veto a save from outside a persistent asset, subscribe to the manager's <a href="API%20-%20Core.html#PersistenceManager"><code>BlockSave</code></a>
         hook:</p>
       <pre><code><span class="cm">// Blocks every save, the quit-time one included</span>
 manager.BlockSave += source =&gt; inCutscene;
@@ -74,58 +73,12 @@ manager.BlockSave += source =&gt; inCutscene;
 manager.BlockSave += source =&gt; (source == <span class="ty">PersistenceSource</span>.Manual);</code></pre>
     </section>
 
-    <!-- ══════════════════════════════════════ assetrefs ════ -->
-    <section id="assetrefs">
-      <h2>Save asset references</h2>
-      <p>A save can't carry a reference to a project asset, so the package keeps a table of the assets a save
-        may point at, writes the id of the one you assigned, and resolves that id back to the asset on load. A
-        field that holds an asset, or a list of them, then saves and loads like any other field, and a deleted
-        asset reads back as <code>null</code>.</p>
-      <p>Register every asset a save can end up pointing at: a save can only store a project asset if it is
-        registered.</p>
-      <p><span id="registering">Three things register one</span>:</p>
-      <ul>
-        <li>A persistent asset, or a
-          <a href="Scene%20Objects.html#components">persistent scene object</a>'s ticked components, pointing at
-          it.</li>
-        <li>A folder you add to <strong>Registered Folders</strong>, in <strong>Project Settings &gt; Persistent
-          Asset</strong>.</li>
-        <li>A call to <code>AssetRegistration.Register(asset)</code> from an editor script.</li>
-      </ul>
-      <p>To see what is registered, go to <strong>Tools &gt; Persistent Asset &gt; Asset References</strong>.</p>
-      <div class="img-block">
-        <img src="../img/asset_references_window" alt="The Asset References window listing the registered assets"
-             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
-        <div class="img-placeholder" style="display:none">
-          <span class="icon">&#128247;</span>
-          <span><strong>img/asset_references_window</strong><br/>Tools &gt; Persistent Asset &gt; Asset References, listing the registered assets and what registered each one</span>
-        </div>
-      </div>
-      <div class="note warning"><strong>Warning:</strong> Every registered asset ships in the build and loads at
-        startup, the same cost as a preloaded asset. Registering a folder of heavy assets is paid for on every
-        launch, whether a save names them or not.</div>
-      <div class="note"><strong>Note:</strong> Registration happens in the Editor. A build finds no asset that
-        was not included in it, so nothing registers at runtime.</div>
-      <div class="note"><strong>Note:</strong> Addressables are not supported as asset references. A reference
-        resolves to the exact object the table holds, and an asset loaded through Addressables is a separate copy
-        of it, so a field pointing at that copy saves as empty. Save the asset's address as a string and load it
-        yourself instead.</div>
-      <h3 id="assetrefs-runtime">Images, audio and runtime-created objects</h3>
-      <p>An object your game creates while it runs has no id, so it saves as empty. Save what produced it and
-        make it again on load, or write its bytes yourself, through a converter on
-        <a href="What%20can%20be%20saved.html#newtonsoft">Newtonsoft</a> or a formatter on
-        <a href="What%20can%20be%20saved.html#memorypack">MemoryPack</a>.</p>
-      <div class="note"><strong>Note:</strong> A save that carries an image carries every byte of it. For a save
-        menu's thumbnails, use the <a href="Slots%20and%20save%20menus.html#registry">slot registry</a> instead, and
-        for a scene object, use <a href="API%20-%20Scene%20Objects.html#SceneRef"><code>SceneRef</code></a>.</div>
-    </section>
-
     <!-- ══════════════════════════════════════ reacting ════ -->
     <section id="reacting">
       <h2>React to load and save</h2>
       <p>To react from outside a persistent asset, subscribe to the manager's
-        <a href="API%20-%20Core.html#PersistenceManager">events</a>. <code>OnBeforeLoad</code> and
-        <code>OnAfterLoad</code> bracket a load, and save and clear have the same pairs.</p>
+        <a href="API%20-%20Core.html#PersistenceManager">events</a>. <a href="API%20-%20Core.html#PersistenceManager"><code>OnBeforeLoad</code></a> and
+        <a href="API%20-%20Core.html#PersistenceManager"><code>OnAfterLoad</code></a> bracket a load, and save and clear have the same pairs.</p>
       <p>To react from inside a persistent asset, implement one of two interfaces:</p>
       <ul>
         <li><a href="API%20-%20Core.html#ISerializationCallbacks"><code>ISerializationCallbacks</code></a> runs
@@ -142,21 +95,21 @@ manager.BlockSave += source =&gt; (source == <span class="ty">PersistenceSource<
         quits mid-save finishes writing it. The manager's <strong>Save Timeout</strong> bounds how long that
         lasts, as do <strong>Max Drain Time In Editor</strong> and <strong>Max Drain Time In Build</strong>, in
         <strong>Project Settings &gt; Persistent Asset</strong>.</p>
-      <p>The drain's own events, the flag that polls it and the call that cuts it short are on the static
-        <a href="API%20-%20Core.html#Persistence"><code>Persistence</code></a> class.</p>
+      <p>The static <a href="API%20-%20Core.html#Persistence"><code>Persistence</code></a> class reports and
+        controls the drain.</p>
     </section>
 
     <!-- ══════════════════════════════════════ reset ════ -->
     <section id="reset">
       <h2>Reset an asset or restore a snapshot</h2>
-      <p><code>ResetToDefaults()</code> puts the asset back to its authored values in memory, and
-        <code>Clear()</code> does that and deletes the stored save as well.</p>
+      <p><a href="API%20-%20Core.html#PersistenceManager"><code>ResetToDefaults()</code></a> puts the asset back to its authored values in memory, and
+        <a href="API%20-%20Core.html#PersistenceManager"><code>Clear()</code></a> does that and deletes the stored save as well.</p>
       <p><a href="API%20-%20Core.html#SaveData"><code>SaveData.Snapshot(manager)</code></a> hands you the asset's
-        values as a string, and <code>SaveData.Restore(manager, snapshot)</code> puts them back, which covers an
+        values as a string, and <a href="API%20-%20Core.html#SaveData"><code>SaveData.Restore(manager, snapshot)</code></a> puts them back, which covers an
         undo step or a checkpoint your game holds itself.</p>
       <p>To reset single fields rather than the whole asset, implement
         <a href="API%20-%20Core.html#IFieldResettable"><code>IFieldResettable</code></a>, whose
-        <code>DefaultValuesRequested()</code> hands back the authored values as a <code>SaveNode</code>.</p>
+        <a href="API%20-%20Core.html#IFieldResettable"><code>DefaultValuesRequested()</code></a> hands back the authored values as a <a href="API%20-%20Core.html#SaveNode"><code>SaveNode</code></a>.</p>
     </section>
 
     <!-- ══════════════════════════════════════ interfaces ════ -->
@@ -189,9 +142,9 @@ manager.BlockSave += source =&gt; (source == <span class="ty">PersistenceSource<
     </div>
 
     <div class="pager">
-      <a class="prev" href="How%20saving%20works.html">
+      <a class="prev" href="Asset%20references.html">
         <div class="dir">Back</div>
-        <div class="pg-title">How saving works</div>
+        <div class="pg-title">Asset references</div>
       </a>
       <a class="next" href="Slots%20and%20save%20menus.html">
         <div class="dir">Next</div>

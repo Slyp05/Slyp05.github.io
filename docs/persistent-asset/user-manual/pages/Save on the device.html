@@ -53,8 +53,10 @@
       </div>
       <p>In the Editor, its saves live in the project's <code>UserSettings</code> folder, so a Play mode session
         never overwrites the saves of a build installed on the same machine.</p>
-      <p>Move to <a href="#file">Local File</a> once you need to choose the file name, the folder, compression or
-        encryption.</p>
+      <p>Prototype works in a shipped game as it is. Move to <a href="#file">Local File</a> once you need to
+        choose the file name, the folder, compression or encryption. After release, that move offers to keep the
+        saves players already have as an import copy. For more information, refer to
+        <a href="Update%20a%20shipped%20save.html#migration">Lock and migrate saves</a>.</p>
     </section>
 
     <!-- ══════════════════════════════════════ file ════ -->
@@ -150,7 +152,7 @@
         </div>
       </div>
       <div class="note"><strong>Note:</strong> This window is a developer tool. To erase a player's save from
-        inside your game, call <code>Clear()</code>.</div>
+        inside your game, call <a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><code>Clear()</code></a>.</div>
     </section>
 
     <!-- ══════════════════════════════════════ resources ════ -->

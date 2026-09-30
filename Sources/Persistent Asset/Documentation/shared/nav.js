@@ -4,6 +4,8 @@
   - PAGES below is the manual's one list: the sidebar, the reading order the Back/Next pager
     follows, and the page list the search index is built from all come from it. Add, remove or
     reorder a page here and the rest follows, and Check-DocsLinks.ps1 holds the pagers to it.
+    `hideSections: true` keeps a page's section links out of the sidebar while its sections still
+    feed the search index and the link checks: Home, whose sections only repeat the sidebar's groups.
     Every page stands at the same level. A `group:` starts a group, drawn as a heading above its
     pages. Every page is listed at all times: the headings order the sidebar, they never fold it
     away.
@@ -51,7 +53,7 @@
     + "done how why who whom whose because rather still just").split(" ");
 
   var PAGES = [
-    { group: "Start here", file: "User Manual.html", title: "Home", sections: [
+    { group: "Start here", file: "User Manual.html", title: "Home", hideSections: true, sections: [
       ["start", "Start here"],
       ["ways", "Ways to save"],
       ["saving", "Saving and loading"],
@@ -94,6 +96,15 @@
       ["spawned", "Spawned and destroyed objects"],
       ["refs", "Save a scene reference in a persistent asset"]
     ] },
+    { group: "Saving and loading", file: "pages/How saving works.html", title: "How saving works", sections: [
+      ["object", "The persistent asset"],
+      ["scope", "Scope and global assets"],
+      ["operations", "Load, save and clear"],
+      ["ready", "When the data is ready"],
+      ["editor", "Edit mode and Play mode"],
+      ["global", "Act on every manager at once"],
+      ["choosing", "Choose a persistence manager"]
+    ] },
     { file: "pages/What can be saved.html", title: "What can be saved", sections: [
       ["choosing", "Choose a serializer"],
       ["unity", "Unity JSON"],
@@ -104,19 +115,14 @@
       ["switching", "Change the serializer later"],
       ["custom", "Create your own serializer"]
     ] },
-    { group: "Saving and loading", file: "pages/How saving works.html", title: "How saving works", sections: [
-      ["object", "The persistent asset"],
-      ["scope", "Scope and global assets"],
-      ["operations", "Load, save and clear"],
-      ["ready", "When the data is ready"],
-      ["editor", "Edit mode and Play mode"],
-      ["global", "Act on every manager at once"],
-      ["choosing", "Choose a persistence manager"]
+    { file: "pages/Asset references.html", title: "Asset references", sections: [
+      ["fields", "Save a field that holds an asset"],
+      ["register", "Register an asset"],
+      ["runtime", "Images, audio and runtime-created objects"]
     ] },
     { file: "pages/Save and load.html", title: "Save and load", sections: [
       ["whentoload", "Choose when loads happen"],
       ["whentosave", "Choose when saves happen"],
-      ["assetrefs", "Save asset references"],
       ["reacting", "React to load and save"],
       ["drain", "Save on quit"],
       ["reset", "Reset an asset or restore a snapshot"],
@@ -204,6 +210,16 @@
       ["identity", "Identity and portability"],
       ["testing", "Testing"]
     ] },
+    { file: "pages/Diagrams.html", title: "Diagrams", sections: [
+      ["lifecycle", "Session lifecycle"],
+      ["skipped", "When a call is skipped"],
+      ["queue", "Overlapping operations"],
+      ["load", "What a load leaves you with"],
+      ["slotchange", "Slot change"],
+      ["shutdown", "Quitting mid-save"],
+      ["versioning", "Versioning and migration"],
+      ["modules", "Module dependencies"]
+    ] },
   ];
 
   function esc(text)
@@ -278,7 +294,7 @@
       var classes = (isActive) ? 'active' : '';
       html += '<a href="' + hrefOf(page.file) + '"' + ((classes === '') ? '' : ' class="' + classes + '"')
             + ((isActive) ? ' aria-current="page"' : '') + '>' + esc(page.title) + '</a>';
-      if (isActive && page.sections)
+      if (isActive && page.sections && page.hideSections !== true)
         for (var s = 0; s < page.sections.length; s++)
           html += '<a href="#' + page.sections[s][0] + '" class="indent">' + esc(page.sections[s][1]) + '</a>';
     }

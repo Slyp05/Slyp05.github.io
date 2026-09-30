@@ -73,20 +73,27 @@
         <table class="cmp">
           <thead><tr><th scope="col">Component</th><th scope="col">Notes</th></tr></thead>
           <tbody>
-            <tr><td>Animator</td><td>A transition in flight is not restored, and triggers are never re-fired.</td></tr>
+            <tr><td>Transform</td><td>Local position, rotation and scale, so a reparented object still lands in place.</td></tr>
+            <tr><td>RectTransform</td><td>Anchors, pivot, anchored position and size, plus rotation and scale.</td></tr>
+            <tr><td>CharacterController</td><td>Switched off while the transform is restored, so it can't snap the object back. Tick Transform as well.</td></tr>
             <tr><td>Rigidbody, Rigidbody2D</td><td>Take their position from the restored transform, so tick Transform as well.</td></tr>
             <tr><td>NavMeshAgent</td><td>Needs Unity's AI module.</td></tr>
-            <tr><td>MeshRenderer, SkinnedMeshRenderer</td><td>Materials and meshes travel as <a href="Save%20and%20load.html#assetrefs">asset references</a>, so a slot whose material is not a registered asset keeps the one the object already has. A skinned renderer's bones stay as the rig built them.</td></tr>
-            <tr><td>TrailRenderer</td><td>Its length, widths and colours are saved. The trail already drawn is not, so a restored object draws a new one from where it stands.</td></tr>
+            <tr><td>Animator</td><td>A transition in flight is not restored, and triggers are never re-fired.</td></tr>
+            <tr><td>AudioSource</td><td>Whether it was playing and how far in, its volume, pitch and looping, so music resumes where it left off.</td></tr>
+            <tr><td>Camera</td><td>Field of view, projection, background and culling mask.</td></tr>
+            <tr><td>Light</td><td>Type, color, intensity, range, cone and shadows.</td></tr>
+            <tr><td>MeshFilter</td><td>The mesh, as an <a href="Asset%20references.html">asset reference</a>.</td></tr>
+            <tr><td>MeshRenderer, SkinnedMeshRenderer</td><td>Materials and meshes travel as <a href="Asset%20references.html">asset references</a>, so a slot whose material is not a registered asset keeps the one the object already has. A skinned renderer's bones stay as the rig built them.</td></tr>
+            <tr><td>SpriteRenderer</td><td>Sprite, color and flip. The sprite travels as an asset reference.</td></tr>
+            <tr><td>LineRenderer</td><td>Points, widths and colors.</td></tr>
+            <tr><td>TrailRenderer</td><td>Its length, widths and colors are saved. The trail already drawn is not, so a restored object draws a new one from where it stands.</td></tr>
             <tr><td>ParticleSystem</td><td>Whether it was playing and how far into its timeline it had run are saved. The particles alive at that moment are not: the system replays from its start up to that point.</td></tr>
             <tr><td>Slider, Toggle, InputField, Dropdown, ScrollRect</td><td>Restored without raising the control's change event.</td></tr>
             <tr><td>TMP_InputField, TMP_Dropdown</td><td>Restored without raising the control's change event.</td></tr>
           </tbody>
         </table>
       </div>
-      <p>For every codec and the exact fields it saves, refer to the
-        <a href="../../public-api/pages/API%20-%20Scene%20Objects.html#CodecStates">Scene Objects API reference</a>. To cover a component
-        this package doesn't reach, or to replace one it ships, register
+      <p>To cover a component this package doesn't reach, or to replace one it ships, register
         <a href="Extend%20the%20package.html#scenecodecs">a codec of your own</a>.</p>
       <div class="note"><strong>Note:</strong> Two components of the same type are told apart by position, so
         reordering them swaps their saved state.</div>
@@ -102,13 +109,17 @@
       <p>The package records the destruction of an authored GameObject, so it stays gone after a load. Destroying
         a spawned one drops its record instead. Leaving a scene, quitting, and switching a GameObject off are not
         destruction.</p>
+      <p>A load or a slot change that no longer has a destroyed GameObject destroyed cannot put it back in place,
+        because it no longer exists. It comes back the next time its scene loads, and the Console names it. To have
+        the package reload the scene for you, turn on <strong>Reload Scenes To Restore Destroyed Objects</strong> in
+        <strong>Edit &gt; Project Settings &gt; Persistent Asset</strong>.</p>
       <p>Parenting is saved, as long as the parent carries a Persistent Scene Object component too.</p>
       <div class="note"><strong>Note:</strong> A GameObject that starts switched off and is never switched on gets
         no <code>OnDestroy</code> call, so destroying it goes unrecorded and it comes back. Switch it on at some
-        point, or call <code>PersistentSceneState.RecordDestroyed</code>.</div>
+        point, or call <a href="../../public-api/pages/API%20-%20Scene%20Objects.html#PersistentSceneState"><code>PersistentSceneState.RecordDestroyed</code></a>.</div>
       <div class="note"><strong>Note:</strong> To save a GameObject that outlives scene loads, call
-        <code>DontDestroyOnLoad</code> on it in <code>Awake</code>. Called any later, the GameObject stays saved
-        with the scene it started in.</div>
+        <code>DontDestroyOnLoad</code> on it. The next save files it with the other GameObjects that outlive scene
+        loads.</div>
     </section>
 
     <!-- ══════════════════════════════════════ refs ════ -->
@@ -127,6 +138,15 @@ gameState.lastCheckpoint = <span class="kw">new</span>(checkpointObject);   <spa
 
 <span class="kw">if</span> (gameState.lastCheckpoint.TryResolve(<span class="kw">out</span> <span class="ty">Checkpoint</span> checkpoint))
     player.position = checkpoint.transform.position;</code></pre>
+
+      <h3 id="refs-components">In a saved component</h3>
+      <p>A component ticked on a <strong>Persistent Scene Object</strong> keeps its scene references as ordinary
+        fields: a <code>Transform</code>, a GameObject or a component of any type, in a list or a dictionary too.
+        Each one is saved through the nearest Persistent Scene Object on the referenced GameObject or on one of its
+        parents, so a child of a GameObject that has one works, including inside a prefab you can't edit. The
+        Console names a referenced GameObject with none above it.</p>
+      <div class="note"><strong>Note:</strong> A reference reached through a property, or held by a component
+        saved through a codec, isn't saved this way.</div>
     </section>
 
     <!-- ══════════════════════════════════════ resources ════ -->
@@ -144,9 +164,9 @@ gameState.lastCheckpoint = <span class="kw">new</span>(checkpointObject);   <spa
         <div class="dir">Back</div>
         <div class="pg-title">No-Code</div>
       </a>
-      <a class="next" href="What%20can%20be%20saved.html">
+      <a class="next" href="How%20saving%20works.html">
         <div class="dir">Next</div>
-        <div class="pg-title">What can be saved</div>
+        <div class="pg-title">How saving works</div>
       </a>
     </div>
 

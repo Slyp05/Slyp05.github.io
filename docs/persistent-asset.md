@@ -155,7 +155,7 @@ Persistent Asset lets you create project assets whose content persists between p
 <summary><strong>Modules</strong></summary>
 <div class="patch-note-body" markdown="1">
 
-Core, Built-Ins, No-Code, Scene Objects and Prefs, each in its own assemblies. Parts needing another library turn on once it is installed, without compile errors.
+**Core**, **Built-Ins**, **No-Code**, **Scene Objects** and **Prefs**, each in its own assemblies. Parts needing another library turn on once it is installed, without compile errors.
 
 </div>
 </details>

@@ -113,10 +113,10 @@
       <h2>Build a save menu</h2>
       <p id="prefabs"><strong>GameObject &gt; Persistent Asset</strong> adds ready-made controls, each wired to
         the action it names: Save, Load, Continue, New Game and Quick Save buttons, a Loading Spinner, a
-        <a href="Cloud%20and%20remote.html#asking">Conflict Prompt</a>, a Drain Display and the
-        <a href="Troubleshooting.html#in-game">Persistence Debug Overlay</a>. Assign your asset on the ones that
-        act on it.</p>
-      <p>The Conflict Prompt and Drain Display come in two versions. <strong>IMGUI</strong> needs no canvas but
+        <a href="Cloud%20and%20remote.html#asking">Conflict Prompt</a> and a Drain Display, each in an IMGUI and a
+        uGUI version, and the <a href="Troubleshooting.html#in-game">Persistence Debug Overlay</a>. Assign your
+        asset on the ones that act on it.</p>
+      <p><strong>IMGUI</strong> needs no canvas but
         ignores gamepad input. <strong>uGUI</strong> builds on a canvas, takes your UI's style and accepts a
         gamepad.</p>
       <div class="note"><strong>Note:</strong> Place the Drain Display in the scene the game quits from, or in one
@@ -147,7 +147,7 @@ variables.RebindAndStore(<span class="st">"Jump"</span>, jumpAction);      <span
 variables.SelectLocale(<span class="st">"Language"</span>, <span class="kw">new</span>(<span class="st">"fr"</span>));     <span class="cm">// pick one from a dropdown</span></code></pre>
       <div class="note"><strong>Note:</strong> The locale helpers need Unity Localization initialized
         first.</div>
-      <div class="note"><strong>Note:</strong> <code>RebindAndStore</code> returns a
+      <div class="note"><strong>Note:</strong> <a href="../../public-api/pages/API%20-%20No-Code.html#InputBindingPersistence"><code>RebindAndStore</code></a> returns a
         <code>RebindingOperation</code>. Cancel it in <code>OnDisable</code>.</div>
     </section>
 
@@ -177,18 +177,18 @@ unlockedSkins.List.Add(<span class="st">"gold"</span>);</code></pre>
     <!-- ══════════════════════════════════════ onthefly ════ -->
     <section id="onthefly">
       <h2>Store values under keys of your own</h2>
-      <p><code>Set</code> creates a variable on the spot, under a key you choose:</p>
+      <p><a href="../../public-api/pages/API%20-%20No-Code.html#PersistentVariables"><code>Set</code></a> creates a variable on the spot, under a key you choose:</p>
       <pre><code>variables.Set(<span class="st">"gold"</span>, <span class="nu">120</span>);
 <span class="kw">int</span> gold = variables.Get(<span class="st">"gold"</span>, <span class="nu">0</span>);                 <span class="cm">// the fallback stands in when missing</span>
 
 <span class="ty">VariableList</span>&lt;<span class="kw">string</span>&gt; inventory = variables.GetList&lt;<span class="kw">string</span>&gt;(<span class="st">"inventory"</span>);
 inventory.Add(<span class="st">"sword"</span>);</code></pre>
       <p>The key is what identifies the variable, so writing under a new key creates another variable rather
-        than renaming the first. <code>Remove</code> deletes the one you no longer want.</p>
+        than renaming the first. <a href="../../public-api/pages/API%20-%20No-Code.html#PersistentVariables"><code>Remove</code></a> deletes the one you no longer want.</p>
       <p>A variable authored in the Inspector window takes priority over a runtime one of the same key, from the
         next load on.</p>
       <div class="note"><strong>Note:</strong> Don't cache a list or a map. Fetch it again each time you need
-        it, or in <code>OnReloaded</code>.</div>
+        it, or in <a href="../../public-api/pages/API%20-%20No-Code.html#PersistentVariables"><code>OnReloaded</code></a>.</div>
     </section>
 
     <!-- ══════════════════════════════════════ resources ════ -->

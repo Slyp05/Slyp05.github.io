@@ -81,7 +81,7 @@
       <p>Some changes need nothing from the package. A new field loads at its default value, and your
         serializer's own mechanisms cover others, such as renaming a field with
         <code>[FormerlySerializedAs("oldName")]</code> on Unity JSON.</p>
-      <p>Implement <code>IUpgradable</code> for a change none of that covers:</p>
+      <p>Implement <a href="../../public-api/pages/API%20-%20Core.html#IUpgradable"><code>IUpgradable</code></a> for a change none of that covers:</p>
       <pre><code><span class="kw">public class</span> <span class="ty">PlayerData</span> : <span class="ty">PersistentScriptableObject</span>, <span class="ty">IUpgradable</span>
 {
     <span class="kw">public int</span> coins;
@@ -97,20 +97,20 @@
 
     <span class="kw">public bool</span> Downgrade(<span class="kw">int</span> fromVersion) =&gt; <span class="kw">false</span>;   <span class="cm">// refuse a save from a newer build</span>
 }</code></pre>
-      <p><code>Upgrade</code> runs after the load, and only on a save older than the current version. An asset
-        with no <code>IUpgradable</code> ships as version 0, so you can add the interface in a later release.</p>
+      <p><a href="../../public-api/pages/API%20-%20Core.html#IUpgradable"><code>Upgrade</code></a> runs after the load, and only on a save older than the current version. An asset
+        with no <a href="../../public-api/pages/API%20-%20Core.html#IUpgradable"><code>IUpgradable</code></a> ships as version 0, so you can add the interface in a later release.</p>
       <div class="note"><strong>Note:</strong> Reading the old values needs a serializer that can produce them.
         For more information, refer to <a href="What%20can%20be%20saved.html#choosing">Choose a
         serializer</a>.</div>
-      <p>For a change even <code>IUpgradable</code> can't express, keep the old asset, create a new one beside it,
-        and copy the values across in <code>DynamicInitialize()</code>.</p>
+      <p>For a change even <a href="../../public-api/pages/API%20-%20Core.html#IUpgradable"><code>IUpgradable</code></a> can't express, keep the old asset, create a new one beside it,
+        and copy the values across in <a href="../../public-api/pages/API%20-%20Core.html#IDynamicInitialize"><code>DynamicInitialize()</code></a>.</p>
     </section>
 
     <!-- ══════════════════════════════════════ erasure ════ -->
     <section id="erasure">
       <h2>Delete a player's data</h2>
       <p>A right-to-erasure request, such as a privacy or account-deletion request, has to remove everything that
-        player saved, not only what is loaded now. <code>Persistence.ClearAll()</code> reaches the managers that
+        player saved, not only what is loaded now. <a href="../../public-api/pages/API%20-%20Core.html#Persistence"><code>Persistence.ClearAll()</code></a> reaches the managers that
         are in scope at that moment, and only their current slot, so the other slots have to be read before
         anything wipes the registry that lists them:</p>
       <pre><code><span class="cm">// Every save asset and slot registry of that player is in scope by now.</span>
@@ -126,9 +126,9 @@
 <span class="kw">await</span> remoteManager.PushPendingChangesAsync();          <span class="cm">// only with an offline cache on</span>
 <span class="kw">return true</span>;</code></pre>
       <p>Await each operation, so the deletes have run before your code reports success. The slot that was
-        current answers <code>Ignored</code>, because the clear above already emptied it.</p>
-      <div class="note"><strong>Note:</strong> On a server of your own, erasure is the server's job. On Unity
-        Cloud Save, deleting the saved data is not the same as deleting the player:
+        current answers <a href="../../public-api/pages/API%20-%20Core.html#ResultType"><code>Ignored</code></a>, because the clear above already emptied it.</p>
+      <div class="note"><strong>Note:</strong> On a server of your own, erasure is the server's job.</div>
+      <div class="note"><strong>Note:</strong> On Unity Cloud Save, deleting the saved data is not the same as deleting the player:
         <code>AuthenticationService.Instance.DeleteAccountAsync()</code> removes the identity.</div>
     </section>
 

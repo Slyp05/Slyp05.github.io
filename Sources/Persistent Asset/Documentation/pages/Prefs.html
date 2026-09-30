@@ -29,21 +29,24 @@
     <!-- ══════════════════════════════════════ api ════ -->
     <section id="api">
       <h2>Set and get a value</h2>
-      <p><code>Prefs</code> is a static class. Call <code>Set</code> to store a value under a key, and
-        <code>Get</code> to read it back:</p>
+      <p><a href="API%20-%20Prefs.html#Prefs"><code>Prefs</code></a> is a static class. Call <a href="API%20-%20Prefs.html#Prefs"><code>Set</code></a> to store a value under a key, and
+        <a href="API%20-%20Prefs.html#Prefs"><code>Get</code></a> to read it back:</p>
       <pre><code><span class="ty">Prefs</span>.Set(<span class="st">"gold"</span>, <span class="nu">120</span>);
 <span class="ty">Prefs</span>.Set(<span class="st">"lastCheckpoint"</span>, transform.position);
 
 <span class="kw">int</span> gold = <span class="ty">Prefs</span>.Get&lt;<span class="kw">int</span>&gt;(<span class="st">"gold"</span>);
 <span class="ty">Vector3</span> spot = <span class="ty">Prefs</span>.Get(<span class="st">"lastCheckpoint"</span>, spawn.position);   <span class="cm">// the fallback stands in when missing</span></code></pre>
-      <p>A key holds what a <a href="No-Code.html#variables">Persistent Variable</a> holds. Prefs saves at the
-        usual <a href="Save%20and%20load.html#whentosave">safe points</a>.</p>
-      <div class="note"><strong>Note:</strong> <code>Set</code> and <code>Get</code> take a single value. For a
-        collection, use <code>Prefs.GetList&lt;string&gt;</code> or
-        <code>Prefs.GetMap&lt;string, int&gt;</code>, which hand back live collections. For every member, refer to
+      <p>A key holds any of over 40 types, including any enum, Unity's serializable structs and a project
+        asset. Prefs saves when every other persistent asset does. For more information, refer to
+        <a href="Save%20and%20load.html#whentosave">Choose when saves happen</a>.</p>
+      <div class="note"><strong>Note:</strong> <a href="API%20-%20Prefs.html#Prefs"><code>Set</code></a> and <a href="API%20-%20Prefs.html#Prefs"><code>Get</code></a> take a single value. For a
+        collection, use <a href="API%20-%20Prefs.html#Prefs"><code>Prefs.GetList&lt;string&gt;</code></a> or
+        <a href="API%20-%20Prefs.html#Prefs"><code>Prefs.GetMap&lt;string, int&gt;</code></a>, which hand back live collections. For every member, refer to
         the <a href="API%20-%20Prefs.html#Prefs">Prefs API reference</a>.</div>
-      <div class="note"><strong>Note:</strong> With a remote manager, <code>Get</code> answers with its fallback
-        until the first load lands, and a <code>Set</code> made before then is overwritten. For more information,
+      <div class="note"><strong>Note:</strong> Don't cache a list or a map. Fetch it again each time you need
+        it, or in <a href="API%20-%20Prefs.html#Prefs"><code>Prefs.OnReloaded</code></a>.</div>
+      <div class="note"><strong>Note:</strong> With a remote manager, <a href="API%20-%20Prefs.html#Prefs"><code>Get</code></a> answers with its fallback
+        until the first load lands, and a <a href="API%20-%20Prefs.html#Prefs"><code>Set</code></a> made before then is overwritten. For more information,
         refer to <a href="How%20saving%20works.html#ready">When the data is ready</a>.</div>
     </section>
 
@@ -52,7 +55,7 @@
       <h2>The Prefs asset</h2>
       <p>Prefs keeps every key in one asset of type
         <a href="API%20-%20Prefs.html#PersistentPrefs"><code>PersistentPrefs</code></a>. The package creates the
-        asset the first time your code touches <code>Prefs</code>, and
+        asset the first time your code touches <a href="API%20-%20Prefs.html#Prefs"><code>Prefs</code></a>, and
         <strong>Tools &gt; Persistent Asset &gt; Prefs Asset</strong> selects it. You can move the asset anywhere,
         because the package looks it up by type. It is an ordinary persistent asset, so it takes any manager,
         slots and protection without a change to your code.</p>
@@ -67,7 +70,7 @@
       <div class="note"><strong>Note:</strong> Only the Editor creates the asset, so enter Play mode once before
         you build.</div>
       <p>To give a key a starting value for every new game, add the key in the asset's Inspector window.
-        <code>Prefs.ResetVariable</code> puts one key back to that value. To show or change a key without writing
+        <a href="API%20-%20Prefs.html#Prefs"><code>Prefs.ResetVariable</code></a> puts one key back to that value. To show or change a key without writing
         a script, drag the asset onto a <a href="No-Code.html#components">variable component</a>.</p>
     </section>
 

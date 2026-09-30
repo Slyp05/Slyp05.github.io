@@ -72,18 +72,18 @@
     <section id="remotesecurity">
       <h2>Secure a remote save</h2>
       <p>A remote manager protects two copies separately: the one that leaves the device, and the one its cache
-        keeps on the device. Setting <strong>Encryption</strong> to <code>None</code> and <strong>Cache
-        Encryption</strong> to <code>Encrypt</code> lets your backend read what it stores while the player's own
+        keeps on the device. Setting <strong>Encryption</strong> to <a href="../../public-api/pages/API%20-%20Built-Ins.html#Encryption"><code>None</code></a> and <strong>Cache
+        Encryption</strong> to <a href="../../public-api/pages/API%20-%20Built-Ins.html#Encryption"><code>Encrypt</code></a> lets your backend read what it stores while the player's own
         copy stays opaque.</p>
       <p>Not every setting works remotely:</p>
       <div class="table-scroll">
         <table class="cmp">
           <thead><tr><th scope="col">Setting</th><th scope="col">On a remote manager</th></tr></thead>
           <tbody>
-            <tr><td><code>Encryption.AppendHash</code></td><td>Refused, on the remote save and on the cache alike. The tamper mark is a Local File feature.</td></tr>
-            <tr><td><code>SaveAnchor.TargetMachine</code></td><td>Refused on the remote save, which has to open on the player's other devices. It works on the cache, where it stops a copied entry opening on another machine.</td></tr>
-            <tr><td><code>SaveAnchor.FileLocation</code></td><td>Binds to the manager and its slot, so a payload can't move between slots.</td></tr>
-            <tr><td><code>SaveAnchor.RuntimeSecret</code></td><td>Works, and keeps the key out of the build.</td></tr>
+            <tr><td><a href="../../public-api/pages/API%20-%20Built-Ins.html#Encryption"><code>Encryption.AppendHash</code></a></td><td>Refused, on the remote save and on the cache alike. The tamper mark is a Local File feature.</td></tr>
+            <tr><td><a href="../../public-api/pages/API%20-%20Built-Ins.html#SaveAnchor"><code>SaveAnchor.TargetMachine</code></a></td><td>Refused on the remote save, which has to open on the player's other devices. It works on the cache, where it stops a copied entry opening on another machine.</td></tr>
+            <tr><td><a href="../../public-api/pages/API%20-%20Built-Ins.html#SaveAnchor"><code>SaveAnchor.FileLocation</code></a></td><td>Binds to the manager and its slot, so a payload can't move between slots.</td></tr>
+            <tr><td><a href="../../public-api/pages/API%20-%20Built-Ins.html#SaveAnchor"><code>SaveAnchor.RuntimeSecret</code></a></td><td>Works, and keeps the key out of the build.</td></tr>
           </tbody>
         </table>
       </div>
@@ -103,7 +103,7 @@
     <section id="threat">
       <h2>What it defends against</h2>
       <p>Neither mode protects from a RAM editor, and a determined reverser can recover the project secret from
-        the build unless <code>RuntimeSecret</code> keeps it out. Treat local protection as cheat deterrence.
+        the build unless <a href="../../public-api/pages/API%20-%20Built-Ins.html#SaveAnchor"><code>RuntimeSecret</code></a> keeps it out. Treat local protection as cheat deterrence.
         Competitive integrity needs a server-authoritative design, where the server holds the values that
         matter.</p>
     </section>

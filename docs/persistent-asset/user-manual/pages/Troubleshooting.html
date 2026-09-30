@@ -47,10 +47,18 @@
           <tbody>
             <tr><td>The asset shows its authored values again after Play mode.</td><td>This is intentional, and the save is untouched. For more information, refer to <a href="How%20saving%20works.html#editor">Edit mode and Play mode</a>.</td></tr>
             <tr><td>A field never saves.</td><td>Each serializer saves a different set of members. For more information, refer to <a href="What%20can%20be%20saved.html#choosing">Choose a serializer</a>.</td></tr>
-            <tr><td>A save is ignored.</td><td>Read the result's <code>Message</code>, which says why.</td></tr>
+            <tr><td>A save is ignored.</td><td>Read the result's <a href="../../public-api/pages/API%20-%20Core.html#Result"><code>Message</code></a>, which says why.</td></tr>
             <tr><td>A save reset itself after an update.</td><td>A manager setting changed. For more information, refer to <a href="Update%20a%20shipped%20save.html#migration">Lock and migrate saves</a>.</td></tr>
             <tr><td>A manager, serializer or variable type is missing.</td><td>Install the package it needs. For more information, refer to <a href="Installation.html#dependencies">Optional modules</a>.</td></tr>
-            <tr><td>A remote save never lands.</td><td>Read the manager's <code>Status</code>: it says whether a change is still waiting, held by a <a href="Cloud%20and%20remote.html#conflict">conflict</a>, or already on the server. A player who isn't signed in yet is a retry rather than a failure, so the save lands once sign-in does.</td></tr>
+            <tr><td>A remote save never lands.</td><td>Read the manager's <a href="../../public-api/pages/API%20-%20Built-Ins.html#RemotePersistenceManager"><code>Status</code></a>: it says whether a change is still waiting, held by a <a href="Cloud%20and%20remote.html#conflict">conflict</a>, or already on the server. A player who isn't signed in yet is a retry rather than a failure, so the save lands once sign-in does.</td></tr>
+            <tr><td>A load fails in an IL2CPP player on Odin.</td><td>Generate Odin's AOT support before you build. For more information, refer to <a href="What%20can%20be%20saved.html#odin">Odin</a>.</td></tr>
+            <tr><td>Prefs keeps nothing in a build.</td><td>Only the Editor creates the Prefs asset, so enter Play mode once before you build. For more information, refer to <a href="Prefs.html#asset">The Prefs asset</a>.</td></tr>
+            <tr><td>A field holding an asset loads as empty.</td><td>Register the asset, and don't point the field at an asset loaded through Addressables. For more information, refer to <a href="Asset%20references.html">Asset references</a>.</td></tr>
+            <tr><td>A list or map from <a href="../../public-api/pages/API%20-%20No-Code.html#PersistentVariables"><code>GetList</code></a> or <a href="../../public-api/pages/API%20-%20No-Code.html#PersistentVariables"><code>GetMap</code></a> stops saving its changes.</td><td>It went stale on a reload. Fetch it again each time you need it. For more information, refer to <a href="No-Code.html#onthefly">Store values under keys of your own</a>.</td></tr>
+            <tr><td>An asset never saves on unload.</td><td>A static field holding it keeps it loaded for the session. For more information, refer to <a href="How%20saving%20works.html#scope">Scope and global assets</a>.</td></tr>
+            <tr><td>A scene object value set in <code>Awake</code> doesn't save.</td><td>The package reads a value set in <code>Awake</code> as authored. Set it in <code>Start</code> or later. For more information, refer to <a href="Scene%20Objects.html#setup">Save an object in your scene</a>.</td></tr>
+            <tr><td>A destroyed scene object comes back after a load.</td><td>It started switched off and was never switched on. For more information, refer to <a href="Scene%20Objects.html#spawned">Spawned and destroyed objects</a>.</td></tr>
+            <tr><td>A Persistence Operation Listener stops raising its events.</td><td>A disabled component stops listening. Put it on a parent of any panel it switches off. For more information, refer to <a href="No-Code.html#persistencecomponents">Save and load from the Inspector</a>.</td></tr>
           </tbody>
         </table>
       </div>
@@ -65,21 +73,22 @@
           <thead><tr><th scope="col">Result</th><th scope="col">What happened</th><th scope="col">What follows</th></tr></thead>
           <tbody>
             <tr>
-              <td><code>IsFailure</code></td>
+              <td><a href="../../public-api/pages/API%20-%20Core.html#Result"><code>IsFailure</code></a></td>
               <td>Storage could not be read: a locked file, a server that is down, a runtime secret nobody has supplied yet.</td>
-              <td><code>IsReady</code> stays false, so nothing overwrites what a retry might still recover. The manager keeps retrying on its own, and a plain <code>Load()</code> retries on demand.</td>
+              <td><a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><code>IsReady</code></a> stays false, so nothing overwrites what a retry might still recover. The manager keeps retrying on its own, and a plain <a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><code>Load()</code></a> retries on demand.</td>
             </tr>
             <tr>
-              <td><code>IsInvalid</code></td>
-              <td>There is nothing to read: no save yet, or one that wouldn't decode. <code>IsCorrupt</code> tells those two apart.</td>
-              <td><code>IsReady</code> is true, because holding nothing is a valid state, and the next save writes over whatever was there.</td>
+              <td><a href="../../public-api/pages/API%20-%20Core.html#LoadResult"><code>IsInvalid</code></a></td>
+              <td>There is nothing to read: no save yet, or one that wouldn't decode. <a href="../../public-api/pages/API%20-%20Core.html#LoadResult"><code>IsCorrupt</code></a> tells those two apart.</td>
+              <td><a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><code>IsReady</code></a> is true, because holding nothing is a valid state, and the next save writes over whatever was there.</td>
             </tr>
           </tbody>
         </table>
       </div>
-      <div class="note"><strong>Note:</strong> An abandoned operation reports <code>IsCancelled</code>, and
-        <code>IsTimedOut</code> means storage never answered. Over HTTP,
-        <a href="Connect%20to%20a%20backend%20service.html#missing">what a 404 means</a> is a setting.</div>
+      <div class="note"><strong>Note:</strong> An abandoned operation reports <a href="../../public-api/pages/API%20-%20Core.html#Result"><code>IsCancelled</code></a>.</div>
+      <div class="note"><strong>Note:</strong> <a href="../../public-api/pages/API%20-%20Core.html#Result"><code>IsTimedOut</code></a> means storage never answered.</div>
+      <div class="note"><strong>Note:</strong> Over HTTP, <a href="Connect%20to%20a%20backend%20service.html#missing">what
+        a 404 means</a> is a setting.</div>
 
       <h3 id="recovery-scene">A scene didn't come back</h3>
       <p>The console names the cause: a missing Scene State, a missing or duplicated id, a parent that isn't
@@ -147,7 +156,7 @@
         the whole operation took, and the log and the overlay print the same figure on every line:</p>
       <pre><code><span class="ty">SaveResult</span> result = <span class="kw">await</span> playerData.PersistenceManager.SaveAsync();
 <span class="ty">Debug</span>.Log(<span class="st">$"saved in {result.ElapsedMilliseconds:F1} ms"</span>);</code></pre>
-      <div class="note"><strong>Note:</strong> <code>ElapsedMilliseconds</code> is <code>NaN</code> outside the
+      <div class="note"><strong>Note:</strong> <a href="../../public-api/pages/API%20-%20Core.html#Result"><code>ElapsedMilliseconds</code></a> is <code>NaN</code> outside the
         Editor and development builds.</div>
       <p>These are what change that cost:</p>
       <div class="table-scroll">
@@ -181,10 +190,10 @@
         <table class="cmp">
           <thead><tr><th scope="col">Outcome</th><th scope="col">What it stands in for</th></tr></thead>
           <tbody>
-            <tr><td><code>Invalid</code></td><td>A first run, with nothing stored yet.</td></tr>
-            <tr><td><code>Corrupt</code></td><td>A save that won't decode.</td></tr>
-            <tr><td><code>Failure</code></td><td>Storage your game can't reach.</td></tr>
-            <tr><td><code>Exception</code></td><td>Something throwing inside the operation.</td></tr>
+            <tr><td><a href="../../public-api/pages/API%20-%20Built-Ins.html#TestPersistenceManager"><code>Invalid</code></a></td><td>A first run, with nothing stored yet.</td></tr>
+            <tr><td><a href="../../public-api/pages/API%20-%20Built-Ins.html#TestPersistenceManager"><code>Corrupt</code></a></td><td>A save that won't decode.</td></tr>
+            <tr><td><a href="../../public-api/pages/API%20-%20Built-Ins.html#TestPersistenceManager"><code>Failure</code></a></td><td>Storage your game can't reach.</td></tr>
+            <tr><td><a href="../../public-api/pages/API%20-%20Built-Ins.html#TestPersistenceManager"><code>Exception</code></a></td><td>Something throwing inside the operation.</td></tr>
             <tr><td>A <strong>Delay</strong></td><td>A slow server, or the wait a shutdown drain holds the quit open for.</td></tr>
           </tbody>
         </table>

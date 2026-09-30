@@ -60,7 +60,7 @@
       <p>Turn on <strong>Always Global</strong> and the asset stays in scope at all times and registers itself,
         which makes it reachable by type from anywhere:</p>
       <pre><code><span class="ty">GameSettings</span> settings = <span class="ty">GlobalPersistedData</span>.Find&lt;<span class="ty">GameSettings</span>&gt;();</code></pre>
-      <p><code>GlobalPersistedData.Add</code> registers an asset dynamically, until <code>Remove</code> takes it
+      <p><a href="../../public-api/pages/API%20-%20Core.html#GlobalPersistedData"><code>GlobalPersistedData.Add</code></a> registers an asset dynamically, until <a href="../../public-api/pages/API%20-%20Core.html#GlobalPersistedData"><code>Remove</code></a> takes it
         back out.</p>
       <div class="note warning"><strong>Warning:</strong> A static field holding a persistent asset that is not
         global pins it loaded for the session, exactly as if <strong>Always Global</strong> were on.</div>
@@ -93,7 +93,7 @@ pm.Save(result =&gt; ShowSavedTick());                      <span class="cm">// 
     <!-- ══════════════════════════════════════ ready ════ -->
     <section id="ready">
       <h2>When the data is ready</h2>
-      <p><code>IsReady</code> states whether the asset holds real data. It is false before the first load
+      <p><a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><code>IsReady</code></a> states whether the asset holds real data. It is false before the first load
         lands, while a slot change reloads, after a clear until the next load, and after a load that failed. The
         package refuses every save while it is false, so a save can't overwrite data a retry might still
         recover.</p>
@@ -102,7 +102,7 @@ pm.Save(result =&gt; ShowSavedTick());                      <span class="cm">// 
       <pre><code><span class="kw">await</span> playerData.PersistenceManager.WhenReady;
 <span class="kw">if</span> (playerData.PersistenceManager.IsReady)
     StartGame(playerData);</code></pre>
-      <p><code>OnReadinessChanged</code> is the event form, if you want to react rather than wait.</p>
+      <p><a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><code>OnReadinessChanged</code></a> is the event form, if you want to react rather than wait.</p>
       <p>How much of this your game has to handle depends on the manager it saves through:</p>
       <div class="table-scroll">
         <table class="cmp">
@@ -114,7 +114,7 @@ pm.Save(result =&gt; ShowSavedTick());                      <span class="cm">// 
           </tbody>
         </table>
       </div>
-      <p>When the gate doesn't pass, <code>Readiness.Reason</code> says why:</p>
+      <p>When the gate doesn't pass, <a href="../../public-api/pages/API%20-%20Core.html#Readiness"><code>Readiness.Reason</code></a> says why:</p>
       <pre><code><span class="ty">Readiness</span> readiness = playerData.PersistenceManager.Readiness;
 
 <span class="kw">if</span> (readiness)                          <span class="cm">// reads as its IsReady</span>
@@ -125,8 +125,8 @@ pm.Save(result =&gt; ShowSavedTick());                      <span class="cm">// 
     <span class="kw">case</span> <span class="ty">NotReadyReason</span>.LoadFailed: ShowRetry();   <span class="kw">break</span>;
     <span class="kw">case</span> <span class="ty">NotReadyReason</span>.NoSlot:     ShowSlotPicker(); <span class="kw">break</span>;
 }</code></pre>
-      <div class="note"><strong>Note:</strong> <code>IsReady</code> is the only signal that says whether the data
-        is safe. Use <code>Reason</code> and <code>Origin</code> to decide what the player sees, never to decide
+      <div class="note"><strong>Note:</strong> <a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><code>IsReady</code></a> is the only signal that says whether the data
+        is safe. Use <a href="../../public-api/pages/API%20-%20Core.html#Readiness"><code>Reason</code></a> and <a href="../../public-api/pages/API%20-%20Core.html#Readiness"><code>Origin</code></a> to decide what the player sees, never to decide
         whether to read or write the data.</div>
 
       <div class="img-block">
@@ -225,13 +225,13 @@ pm.Save(result =&gt; ShowSavedTick());                      <span class="cm">// 
     </div>
 
     <div class="pager">
-      <a class="prev" href="What%20can%20be%20saved.html">
+      <a class="prev" href="Scene%20Objects.html">
         <div class="dir">Back</div>
-        <div class="pg-title">What can be saved</div>
+        <div class="pg-title">Scene Objects</div>
       </a>
-      <a class="next" href="Save%20and%20load.html">
+      <a class="next" href="What%20can%20be%20saved.html">
         <div class="dir">Next</div>
-        <div class="pg-title">Save and load</div>
+        <div class="pg-title">What can be saved</div>
       </a>
     </div>
 

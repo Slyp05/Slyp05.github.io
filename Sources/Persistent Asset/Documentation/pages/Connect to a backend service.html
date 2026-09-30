@@ -50,7 +50,7 @@
             <tr><td><code>{url}</code></td><td>The manager's own address, from <strong>Release Url</strong>.</td></tr>
             <tr><td><code>{slot}</code></td><td>The <a href="Slots%20and%20save%20menus.html">slot</a> being read or written, which is usually the player id.</td></tr>
             <tr><td><code>{id}</code></td><td>The persistent asset's own id, which is what tells two saves of one player apart.</td></tr>
-            <tr><td><code>{token}</code></td><td>Whatever your code put in the manager's <code>Authorization</code>, or in <code>HttpPersistenceManager.DefaultAuthorization</code>.</td></tr>
+            <tr><td><code>{token}</code></td><td>Whatever your code put in the manager's <code>Authorization</code>, or in <a href="API%20-%20Built-Ins.html#HttpPersistenceManager"><code>HttpPersistenceManager.DefaultAuthorization</code></a>.</td></tr>
             <tr><td><code>{payload}</code></td><td>The save itself. Bodies only.</td></tr>
           </tbody>
         </table>
@@ -59,7 +59,7 @@
         numbers for positions in an array. Leave the load and clear bodies empty for a REST backend, and fill them
         in for an RPC, the way <a href="#playfab">PlayFab</a> and <a href="#nakama">Nakama</a> need.</p>
       <p>Sign-in is your game's job. As soon as it returns, set
-        <code>HttpPersistenceManager.DefaultAuthorization</code> to the session token, which is what
+        <a href="API%20-%20Built-Ins.html#HttpPersistenceManager"><code>HttpPersistenceManager.DefaultAuthorization</code></a> to the session token, which is what
         <code>{token}</code> stands for.</p>
       <p>What <code>{slot}</code> is free to hold depends on whether the service can name the player itself:</p>
       <ul>
@@ -67,7 +67,7 @@
           <a href="#lootlocker">LootLocker</a> do. The address names the save alone, so
           <a href="Slots%20and%20save%20menus.html">slots</a> are yours and work as they do anywhere else.</li>
         <li><strong>The address has to name the player</strong>, which is what the other recipes here do. Turn on
-          <strong>Use Slot</strong> and set <code>Slots.GlobalSlot</code> to the player id, so <code>{slot}</code>
+          <strong>Use Slot</strong> and set <a href="API%20-%20Core.html#Slots"><code>Slots.GlobalSlot</code></a> to the player id, so <code>{slot}</code>
           carries it. That asset then holds one save per player.</li>
       </ul>
       <p>To have both on a service of the second kind, put <a href="#own">an endpoint of your own</a> in front of
@@ -224,7 +224,7 @@
       <div class="note warning"><strong>Warning:</strong> The save body is a list, and its rows need an
         <code>order</code>. A flat body answers <code>200</code> and stores nothing.</div>
       <div class="note"><strong>Note:</strong> A clear stays invisible to the next load until LootLocker's cache
-        lapses, so trust the result your <code>Clear()</code> returned over what a load reports.</div>
+        lapses, so trust the result your <a href="API%20-%20Core.html#PersistenceManager"><code>Clear()</code></a> returned over what a load reports.</div>
     </section>
 
     <!-- ══════════════════════════════════════ pocketbase ════ -->
@@ -319,7 +319,8 @@
         body.</p>
       <div class="note"><strong>Note:</strong> Store the payload as bytes, in a <code>LONGBLOB</code> or a
         <code>BYTEA</code> column. With compression or encryption on it is not text, and a column that re-encodes
-        it produces corrupt saves. Bound its size, and trust nothing in it.</div>
+        it produces corrupt saves.</div>
+      <div class="note"><strong>Note:</strong> Bound the payload's size, and trust nothing in it.</div>
     </section>
 
     <!-- ══════════════════════════════════════ others ════ -->

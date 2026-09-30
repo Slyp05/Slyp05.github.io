@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="How the package behaves under crashes, concurrency, conflicts, faults and attacks, down to the implementation." />
+  <meta name="description" content="Find out how the package behaves under crashes, concurrency, conflicts, faults and attacks, down to the implementation." />
   <title>Persistent Asset - Technical Q&amp;A</title>
   <link rel="stylesheet" href="/assets/css/doc-styles.css" />
   <link rel="stylesheet" href="/assets/css/doc-dark.css" />
@@ -25,7 +25,7 @@
   <main id="content">
     <div class="page-header">
       <h1>Technical Q&amp;A</h1>
-      <div class="sub">How the package behaves under crashes, concurrency, conflicts, faults and attacks, down to the implementation.</div>
+      <div class="sub">Find out how the package behaves under crashes, concurrency, conflicts, faults and attacks, down to the implementation.</div>
 
     <div class="guide-index">
       <a href="#durability">Crash safety and durability</a>
@@ -66,30 +66,32 @@
 
       <h3>Can a corrupt save brick the game?</h3>
       <p>No. A save that won't decode is first retried from the manager's alternate copy, such as the Local File
-        backup. When that fails too, the load settles like a first run: the asset keeps its authored values, and the
+        backup. When that fails too, the load settles like a first run: the asset keeps its current values, and the
         next save overwrites the bad data. Storage that can't be read at all, such as a locked file or a server that
-        is down, is handled the opposite way: <code>IsReady</code> stays false, so nothing overwrites a save a retry
+        is down, is handled the opposite way: <a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><code>IsReady</code></a> stays false, so nothing overwrites a save a retry
         might still recover. For the result states, refer to <a href="Troubleshooting.html#recovery">When a save
-        doesn't load</a>.</p>
+        doesn't load</a>, and for the whole load as a diagram, to <a href="Diagrams.html#load">What a load leaves you
+        with</a>.</p>
 
       <h3>What happens to a save still in flight when the game quits?</h3>
       <p>A shutdown drain holds the exit open until it lands. In the Editor it forces Play mode back on, and in a
         player it refuses <code>Application.wantsToQuit</code>, so the player loop keeps pumping while the in-flight
         asynchronous saves and any queued save or clear complete. Each save stays bounded by its manager's
-        <code>SaveTimeout</code>, and the whole drain by a project-wide ceiling. A remote manager with a local cache skips its in-line push
+        <a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><code>SaveTimeout</code></a>, and the whole drain by a project-wide ceiling. A remote manager with a local cache skips its in-line push
         during the drain: the cache write already made the save durable, and the push resumes on the next launch.
         For the settings and the "saving..." hooks, refer to <a href="Save%20and%20load.html#drain">Save on
-        quit</a>.</p>
+        quit</a>, and for the sequence as a diagram, to <a href="Diagrams.html#shutdown">Quitting mid-save</a>.</p>
       <div class="note"><strong>Note:</strong> A process the OS kills gets no drain. Only the saves that already
         completed are on disk.</div>
 
       <h3>What does an older build do with a save a newer build wrote?</h3>
       <p>It protects it. The version envelope tells the loader the save is newer than the running code's
-        <code>SaveVersion</code>. When the old code still decodes it, <code>IUpgradable.Downgrade(fromVersion)</code>
+        <a href="../../public-api/pages/API%20-%20Core.html#IUpgradable"><code>SaveVersion</code></a>. When the old code still decodes it, <a href="../../public-api/pages/API%20-%20Core.html#IUpgradable"><code>IUpgradable.Downgrade(fromVersion)</code></a>
         decides: false keeps the data loaded but blocks every save, so the newer file is never rewritten in the older
         format. When the old code can't decode it, saving is always blocked, since there is no loaded state to judge.
         A slot change or a clear lifts the block. For the interface, refer to
-        <a href="Update%20a%20shipped%20save.html#versioning">Version your data</a>.</p>
+        <a href="Update%20a%20shipped%20save.html#versioning">Version your data</a>, and for the version check as a
+        diagram, to <a href="Diagrams.html#versioning">Versioning and migration</a>.</p>
     </section>
 
     <!-- ══════════════════════════════════════ security ════ -->
@@ -106,7 +108,7 @@
             <tr><td>Forge a fresh save</td><td>Needs the key derived from your project secret. Blocked while the secret stays secret.</td></tr>
             <tr><td>Read an encrypted save</td><td>AES-256 protects the contents, and needs the same key. Blocked.</td></tr>
             <tr><td>Copy a save to another machine</td><td>With <strong>Anchor Save To</strong> set to <strong>Target Machine</strong>, the device id is part of the key, so the check fails on any other machine: refused under Encrypt, marked under Append Hash. A platform that reports no device identifier derives the same key everywhere, and the package warns about it.</td></tr>
-            <tr><td>Move, rename or swap save files</td><td>With <strong>File Location</strong>, the check fails at any other path. Copies and renames through <code>Slots</code> still work, since they re-protect the data for its new path.</td></tr>
+            <tr><td>Move, rename or swap save files</td><td>With <strong>File Location</strong>, the check fails at any other path. Copies and renames through <a href="../../public-api/pages/API%20-%20Core.html#Slots"><code>Slots</code></a> still work, since they re-protect the data for its new path.</td></tr>
             <tr><td>Extract the secret from the build</td><td>The project secret ships in the player, so a reverser can recover it. <strong>Runtime Secret</strong> closes this: the deciding secret comes from your server at run time and never ships.</td></tr>
             <tr><td>Edit memory at run time</td><td>Not blocked by save protection, which covers the disk, not RAM. Memory obfuscation tools raise the cost of this, and server authority is the only complete defense.</td></tr>
           </tbody>
@@ -125,7 +127,7 @@
 
       <h3>Is a remote save protected in transit and on the server?</h3>
       <p>In transit, the Server (HTTP) manager uses the scheme its URL names, and the Inspector window warns when a
-        release URL uses plain <code>http://</code>, since the save and the <code>Authorization</code> header would
+        release URL uses plain <code>http://</code>, since the save and the <a href="../../public-api/pages/API%20-%20Built-Ins.html#HttpPersistenceManager"><code>Authorization</code></a> header would
         then travel unencrypted. Cloud Save goes through the Unity Gaming Services SDK and Steam Cloud through the
         Steam client, each over its own secured connection.</p>
       <p>On the server, the manager's <strong>Encryption</strong> applies to what leaves the device, so with
@@ -175,26 +177,39 @@
       <p>Each manager runs its storage operations one at a time, through a per-manager gate. What happens to the
         new request depends on the call:</p>
       <ul>
-        <li>An asynchronous or automatic request queues in arrival order. The gate never drops a request in favor
-          of another.</li>
+        <li>An asynchronous or automatic request queues in arrival order.</li>
         <li>A request for the same work as one already queued joins it: saves of the same slot coalesce into one,
           and a load joins an in-flight load of the same slot and scope.</li>
         <li>A clear of the current slot wins. It invalidates the in-flight operation's write to the target, asks it
           to cancel, makes everything queued before it stale, and runs once that operation settles, so its delete
           lands after any superseded save's write. Saving then stays paused until the next load.</li>
-        <li>An explicit synchronous request, such as <code>SaveSync()</code>, never degrades to asynchronous. While
-          asynchronous work is in flight it fails fast as busy: retry once idle, or await <code>WhenReady</code>.</li>
+        <li>An explicit synchronous request, such as <a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><code>SaveSync()</code></a>, never degrades to asynchronous. While
+          asynchronous work is in flight it fails fast as busy: retry once idle, or await <a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><code>WhenReady</code></a>.</li>
       </ul>
-      <p>Slot storage operations (<code>Slots.Delete</code>, <code>Copy</code>, <code>Rename</code>) ride the same
+      <p>Slot storage operations (<a href="../../public-api/pages/API%20-%20Core.html#Slots"><code>Slots.Delete</code></a>, <a href="../../public-api/pages/API%20-%20Core.html#Slots"><code>Copy</code></a>, <a href="../../public-api/pages/API%20-%20Core.html#Slots"><code>Rename</code></a>) ride the same
         queue, but they touch another slot's storage, never the target, so they never join, never supersede, and
-        survive a slot change.</p>
+        survive a slot change. For every pairing as a table, refer to <a href="Diagrams.html#queue">Overlapping
+        operations</a>.</p>
+
+      <h3>In what order do my calls take effect?</h3>
+      <p>In the order you make them, per manager, with one refinement: a request that joins another is served where
+        that other request sits in the queue. A joined save still captures the asset when it runs, so it holds every
+        change made before it.</p>
+      <p>A clear never joins another clear. A load made between the two would then run after the second clear and
+        leave the asset loaded, although the last call cleared it. So a clear made during another clear replaces
+        it.</p>
+      <p>Once queued, a request is dropped only by a later clear, a slot change, the asset unloading or the shutdown
+        drain, and still answers <a href="../../public-api/pages/API%20-%20Core.html#ResultType"><code>Ignored</code></a>, so an awaited call never hangs.</p>
+      <p>There is no order between managers: each has its own queue. When two assets must be written in a set order,
+        await the first save before starting the second.</p>
 
       <h3>Is a late async result ever applied to the wrong slot?</h3>
       <p>No. When the slot changes or the asset leaves scope while a load is in flight, the load's result is
-        discarded when it lands, whatever it returned, and reports <code>Cancelled</code>. Operations still queued
+        discarded when it lands, whatever it returned, and reports <a href="../../public-api/pages/API%20-%20Core.html#ResultType"><code>Cancelled</code></a>. Operations still queued
         for the old slot no longer apply to anything, so they are dropped without running. With automatic saving on,
         the old slot's own save is not one of them: it captures the data before the switch, runs on its own path,
-        and is never dropped.</p>
+        and is never dropped. For the full sequence as a diagram, refer to <a href="Diagrams.html#slotchange">Slot
+        change</a>.</p>
 
       <h3>Which work runs off the main thread?</h3>
       <p>The target is only ever touched on the main thread. A save encodes the target synchronously, before its
@@ -214,12 +229,12 @@
         or set the binder to <strong>Variable To Target</strong> when the variable alone drives the member.</p>
 
       <h3>How are timeouts enforced?</h3>
-      <p>Each asynchronous operation is bounded by its manager's <code>LoadTimeout</code>, <code>SaveTimeout</code>
-        or <code>ClearTimeout</code>. On expiry the operation's <code>CancellationToken</code> is cancelled, the
-        result reports <code>Cancelled</code> with <code>IsTimedOut</code>, and a warning reaches the console, in
+      <p>Each asynchronous operation is bounded by its manager's <a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><code>LoadTimeout</code></a>, <a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><code>SaveTimeout</code></a>
+        or <a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><code>ClearTimeout</code></a>. On expiry the operation's <code>CancellationToken</code> is cancelled, the
+        result reports <a href="../../public-api/pages/API%20-%20Core.html#ResultType"><code>Cancelled</code></a> with <a href="../../public-api/pages/API%20-%20Core.html#Result"><code>IsTimedOut</code></a>, and a warning reaches the console, in
         release builds too.</p>
       <p>The next operation starts only when the timed-out task actually ends, so two storage operations never
-        overlap. A manager that overrides <code>SelfBoundsAsyncOperations</code> to true takes over its own bounds,
+        overlap. A manager that overrides <a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><code>SelfBoundsAsyncOperations</code></a> to true takes over its own bounds,
         and the core then never cancels it.</p>
       <div class="note warning"><strong>Warning:</strong> In a custom manager, stop the work when the token is
         cancelled. An operation that ignores it keeps running after its timeout, and every load, save and clear
@@ -239,13 +254,13 @@
         <li>If the server still holds the base, this device is simply ahead: the local save wins and is pushed,
           whatever the clocks say.</li>
         <li>If the server moved, both devices changed the same object from the same starting point: a real
-          conflict, settled by <code>IMergeable</code>, then the <strong>Ask</strong> policy, then the most recent
+          conflict, settled by <a href="../../public-api/pages/API%20-%20Core.html#IMergeable"><code>IMergeable</code></a>, then the <strong>Ask</strong> policy, then the most recent
           save.</li>
         <li>An entry with no base, such as one written by an older build or a pending deletion, falls back to the
           most recent save.</li>
       </ul>
       <p>The push side classifies the same way, and never pushes over a server save this device has not seen. A
-        change made during an open conflict is held, and <code>Status</code> reports it, until the next load settles
+        change made during an open conflict is held, and <a href="../../public-api/pages/API%20-%20Built-Ins.html#RemotePersistenceManager"><code>Status</code></a> reports it, until the next load settles
         it. For the policies and the merge contract, refer to <a href="Cloud%20and%20remote.html#conflict">Resolve
         a conflict between two devices</a>.</p>
 
@@ -266,13 +281,13 @@
         a manager override, a serializer) goes through one containment layer, so a throw, a returned null or a hang
         can't corrupt the package's state. The exception is logged with the asset as context, the other subscribers
         of the same event still run, and the operation completes. When the fault is the operation's own work, it
-        surfaces as a result of type <code>Exception</code>.</p>
+        surfaces as a result of type <a href="../../public-api/pages/API%20-%20Core.html#ResultType"><code>Exception</code></a>.</p>
 
       <h3>What happens when the serializer can't handle my asset?</h3>
       <p>Persistence is disabled for that asset. As the asset comes into scope, the manager checks it has a
         serializer and that the serializer can encode the target. If not, it refuses every load, save and clear,
         including the automatic ones, logs a single error and shows it in the Inspector window.
-        <code>Readiness.Reason</code> reads <code>PersistenceDisabled</code>. Storage is never written through a
+        <a href="../../public-api/pages/API%20-%20Core.html#Readiness"><code>Readiness.Reason</code></a> reads <a href="../../public-api/pages/API%20-%20Core.html#NotReadyReason"><code>PersistenceDisabled</code></a>. Storage is never written through a
         serializer that has already failed on the data.</p>
 
       <h3>Can an edited save make a serializer build arbitrary types?</h3>
@@ -323,7 +338,7 @@
       <p>Default names can't collide, since each derives from a unique id. An overridden name can, so the Editor
         compares every manager's storage location as plain text, reports a match in both Inspector windows and in
         the console, and fails a build at its start until the locations differ. A custom manager should shape its
-        <code>StorageLocation</code> so only its own storage can produce that string.</p>
+        <a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><code>StorageLocation</code></a> so only its own storage can produce that string.</p>
 
       <h3>Is it safe under IL2CPP and managed code stripping?</h3>
       <p>Yes, with no AOT code generation step of its own. The package stays off the generic and reflection paths
@@ -382,6 +397,10 @@
       <a class="prev" href="Extend%20the%20package.html">
         <div class="dir">Back</div>
         <div class="pg-title">Extend the package</div>
+      </a>
+      <a class="next" href="Diagrams.html">
+        <div class="dir">Next</div>
+        <div class="pg-title">Diagrams</div>
       </a>
     </div>
 

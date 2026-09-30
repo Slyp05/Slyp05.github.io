@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Answer the questions that come up while building on the package, from when each hook runs to what happens to an old save in a new build, with annotated diagrams." />
+  <title>Persistent Asset - Diagrams</title>
+  <link rel="stylesheet" href="/assets/css/doc-styles.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Persistent Asset</div><a href="../index.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Diagrams</h1>
+      <div class="sub">Answer the questions that come up while building on the package, from when each hook runs to what happens to an old save in a new build, with annotated diagrams.</div>
+
+    <div class="guide-index">
+      <a href="#lifecycle">Session lifecycle</a>
+      <a href="#skipped">When a call is skipped</a>
+      <a href="#queue">Overlapping operations</a>
+      <a href="#load">What a load leaves you with</a>
+      <a href="#slotchange">Slot change</a>
+      <a href="#shutdown">Quitting mid-save</a>
+      <a href="#versioning">Versioning and migration</a>
+      <a href="#modules">Module dependencies</a>
+    </div>
+    </div>
+
+    <!-- ══════════════════════════════════════ lifecycle ════ -->
+    <section id="lifecycle">
+      <h2>Session lifecycle</h2>
+      <p>Each hook runs at a fixed point in the asset's session, from the moment Unity loads the asset until it unloads
+        it. Use this order to decide where your setup and cleanup code goes.</p>
+      <div class="img-block">
+        <svg class="diagram" viewBox="0 0 720 758" role="img"
+             aria-label="When each hook runs in an asset&#x27;s session: six steps as it enters scope, ending with IsReady true; automatic saves and your calls while in scope; five steps as it leaves scope, ending with the Editor showing the authored values again; and quit, where running saves finish first.">
+          <defs>
+            <marker id="dg-life-arr" markerWidth="8" markerHeight="8" refX="6.5" refY="4" orient="auto">
+              <path d="M0,0 L8,4 L0,8 Z" fill="#9aa0b5"/>
+            </marker>
+          </defs>
+          <line x1="26" y1="521" x2="26" y2="657" stroke="#c7c7d4" stroke-width="2"/>
+          <line x1="26" y1="345" x2="26" y2="447" stroke="#c7c7d4" stroke-width="2"/>
+          <line x1="26" y1="101" x2="26" y2="271" stroke="#c7c7d4" stroke-width="2"/>
+          <rect x="16" y="13" width="14" height="11" rx="3" fill="#f5f7ff" stroke="#c3cbe8" stroke-width="1.2"/>
+          <text x="36" y="22" font-size="11" fill="#555">package step</text>
+          <rect x="131.92" y="13" width="14" height="11" rx="3" fill="#fff6e0" stroke="#e0b44a" stroke-width="1.2"/>
+          <text x="151.92" y="22" font-size="11" fill="#555">your code runs</text>
+          <rect x="260.16" y="13" width="14" height="11" rx="3" fill="#ecfdf3" stroke="#8fd1a7" stroke-width="1.2"/>
+          <text x="280.16" y="22" font-size="11" fill="#555">done or ready</text>
+          <rect x="382.24" y="13" width="14" height="11" rx="3" fill="#fef2f2" stroke="#efa8a8" stroke-width="1.2"/>
+          <text x="402.24" y="22" font-size="11" fill="#555">stopped or not ready</text>
+          <rect x="547.44" y="13" width="14" height="11" rx="3" fill="#f4f4f7" stroke="#d4d4de" stroke-width="1.2"/>
+          <text x="567.44" y="22" font-size="11" fill="#555">note</text>
+          <text x="16" y="68" font-size="13" fill="#1e1e2e" font-weight="700">Scope in</text>
+          <text x="90.8992" y="68" font-size="11" fill="#6b7085">Unity loads the asset: a scene uses it, or it is Always Global</text>
+          <line x1="16" y1="76" x2="704" y2="76" stroke="#e3e3ec" stroke-width="1"/>
+          <rect x="46" y="88" width="404" height="26" rx="6" fill="#f5f7ff" stroke="#c3cbe8" stroke-width="1.2"/>
+          <text x="248" y="105.14" font-size="11.5" fill="#1e1e2e" text-anchor="middle">Your authored values are kept for <a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><tspan style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">ResetToDefaults()</tspan></a></text>
+          <circle cx="26" cy="101" r="10" fill="#1e1e2e"/>
+          <text x="26" y="105" font-size="10.5" fill="#ffffff" text-anchor="middle" font-weight="700">1</text>
+          <rect x="46" y="122" width="404" height="26" rx="6" fill="#f5f7ff" stroke="#c3cbe8" stroke-width="1.2"/>
+          <text x="248" y="139.14" font-size="11.5" fill="#1e1e2e" text-anchor="middle"><a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><tspan style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">Slot</tspan></a> starts on <a href="../../public-api/pages/API%20-%20Core.html#Slots"><tspan style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">Slots.GlobalSlot</tspan></a> (slotted assets)</text>
+          <circle cx="26" cy="135" r="10" fill="#1e1e2e"/>
+          <text x="26" y="139" font-size="10.5" fill="#ffffff" text-anchor="middle" font-weight="700">2</text>
+          <rect x="46" y="156" width="404" height="26" rx="6" fill="#f5f7ff" stroke="#c3cbe8" stroke-width="1.2"/>
+          <text x="248" y="173.14" font-size="11.5" fill="#1e1e2e" text-anchor="middle">The asset is told it is entering scope</text>
+          <path d="M450,169 L480,169" fill="none" stroke="#c7c7d4" stroke-width="1.4" stroke-dasharray="3 3"/>
+          <rect x="480" y="156" width="224" height="26" rx="6" fill="#fff6e0" stroke="#e0b44a" stroke-width="1.2"/>
+          <a href="../../public-api/pages/API%20-%20Core.html#IScopeCallbacks"><text x="592" y="172.96" font-size="11" fill="#7a4f00" text-anchor="middle" style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">OnBeforeScopeIn(slot, true)</text></a>
+          <circle cx="26" cy="169" r="10" fill="#1e1e2e"/>
+          <text x="26" y="173" font-size="10.5" fill="#ffffff" text-anchor="middle" font-weight="700">3</text>
+          <rect x="46" y="190" width="404" height="26" rx="6" fill="#f5f7ff" stroke="#c3cbe8" stroke-width="1.2"/>
+          <text x="248" y="207.14" font-size="11.5" fill="#1e1e2e" text-anchor="middle">The automatic load starts (<a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><tspan style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">AutoLoad</tspan></a> on)</text>
+          <path d="M450,203 L480,203" fill="none" stroke="#c7c7d4" stroke-width="1.4" stroke-dasharray="3 3"/>
+          <rect x="480" y="190" width="224" height="26" rx="6" fill="#fff6e0" stroke="#e0b44a" stroke-width="1.2"/>
+          <a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><text x="592" y="206.96" font-size="11" fill="#7a4f00" text-anchor="middle" style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">OnBeforeLoad</text></a>
+          <circle cx="26" cy="203" r="10" fill="#1e1e2e"/>
+          <text x="26" y="207" font-size="10.5" fill="#ffffff" text-anchor="middle" font-weight="700">4</text>
+          <rect x="46" y="224" width="404" height="26" rx="6" fill="#f5f7ff" stroke="#c3cbe8" stroke-width="1.2"/>
+          <text x="248" y="241.14" font-size="11.5" fill="#1e1e2e" text-anchor="middle">A custom manager is told</text>
+          <path d="M450,237 L480,237" fill="none" stroke="#c7c7d4" stroke-width="1.4" stroke-dasharray="3 3"/>
+          <rect x="480" y="224" width="224" height="26" rx="6" fill="#fff6e0" stroke="#e0b44a" stroke-width="1.2"/>
+          <a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><text x="592" y="240.96" font-size="11" fill="#7a4f00" text-anchor="middle" style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">OnEnteringScope()</text></a>
+          <circle cx="26" cy="237" r="10" fill="#1e1e2e"/>
+          <text x="26" y="241" font-size="10.5" fill="#ffffff" text-anchor="middle" font-weight="700">5</text>
+          <rect x="46" y="258" width="404" height="26" rx="6" fill="#ecfdf3" stroke="#8fd1a7" stroke-width="1.2"/>
+          <text x="248" y="275.14" font-size="11.5" fill="#15803d" text-anchor="middle">The load finishes: <a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><tspan style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">IsReady</tspan></a> true</text>
+          <path d="M450,271 L480,271" fill="none" stroke="#c7c7d4" stroke-width="1.4" stroke-dasharray="3 3"/>
+          <rect x="480" y="258" width="224" height="26" rx="6" fill="#fff6e0" stroke="#e0b44a" stroke-width="1.2"/>
+          <a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><text x="592" y="274.96" font-size="11" fill="#7a4f00" text-anchor="middle" style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">OnReadinessChanged, OnAfterLoad</text></a>
+          <circle cx="26" cy="271" r="10" fill="#1e1e2e"/>
+          <text x="26" y="275" font-size="10.5" fill="#ffffff" text-anchor="middle" font-weight="700">6</text>
+          <text x="16" y="312" font-size="13" fill="#1e1e2e" font-weight="700">In scope</text>
+          <text x="90.8992" y="312" font-size="11" fill="#6b7085">play</text>
+          <line x1="16" y1="320" x2="704" y2="320" stroke="#e3e3ec" stroke-width="1"/>
+          <rect x="46" y="332" width="404" height="26" rx="6" fill="#f5f7ff" stroke="#c3cbe8" stroke-width="1.2"/>
+          <text x="248" y="349.14" font-size="11.5" fill="#1e1e2e" text-anchor="middle">Automatic saves: <a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><tspan style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">RegularSaveDelay</tspan></a> timer, focus loss, pause</text>
+          <path d="M450,345 L480,345" fill="none" stroke="#c7c7d4" stroke-width="1.4" stroke-dasharray="3 3"/>
+          <rect x="480" y="332" width="224" height="26" rx="6" fill="#fff6e0" stroke="#e0b44a" stroke-width="1.2"/>
+          <a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><text x="592" y="348.96" font-size="11" fill="#7a4f00" text-anchor="middle" style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">OnBeforeSave, OnAfterSave</text></a>
+          <circle cx="26" cy="345" r="10" fill="#1e1e2e"/>
+          <text x="26" y="349" font-size="10.5" fill="#ffffff" text-anchor="middle" font-weight="700">7</text>
+          <rect x="46" y="366" width="404" height="26" rx="6" fill="#f5f7ff" stroke="#c3cbe8" stroke-width="1.2"/>
+          <text x="248" y="383.14" font-size="11.5" fill="#1e1e2e" text-anchor="middle">Your own Load, Save and Clear calls</text>
+          <circle cx="26" cy="379" r="10" fill="#1e1e2e"/>
+          <text x="26" y="383" font-size="10.5" fill="#ffffff" text-anchor="middle" font-weight="700">8</text>
+          <rect x="46" y="400" width="404" height="26" rx="6" fill="#f5f7ff" stroke="#c3cbe8" stroke-width="1.2"/>
+          <text x="248" y="417.14" font-size="11.5" fill="#1e1e2e" text-anchor="middle">A failed automatic load retries after <a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><tspan style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">AutoLoadRetryDelay</tspan></a></text>
+          <circle cx="26" cy="413" r="10" fill="#1e1e2e"/>
+          <text x="26" y="417" font-size="10.5" fill="#ffffff" text-anchor="middle" font-weight="700">9</text>
+          <rect x="46" y="434" width="404" height="26" rx="6" fill="#f5f7ff" stroke="#c3cbe8" stroke-width="1.2"/>
+          <text x="248" y="451.14" font-size="11.5" fill="#1e1e2e" text-anchor="middle">The slot changes</text>
+          <path d="M450,447 L480,447" fill="none" stroke="#c7c7d4" stroke-width="1.4" stroke-dasharray="3 3"/>
+          <rect x="480" y="434" width="224" height="26" rx="6" fill="#f4f4f7" stroke="#d4d4de" stroke-width="1.2"/>
+          <text x="592" y="450.78" font-size="10.5" fill="#555555" text-anchor="middle">refer to Slot change</text>
+          <circle cx="26" cy="447" r="10" fill="#1e1e2e"/>
+          <text x="26" y="451" font-size="10.5" fill="#ffffff" text-anchor="middle" font-weight="700">10</text>
+          <text x="16" y="488" font-size="13" fill="#1e1e2e" font-weight="700">Scope out</text>
+          <text x="98.7616" y="488" font-size="11" fill="#6b7085">Unity unloads the asset during play</text>
+          <line x1="16" y1="496" x2="704" y2="496" stroke="#e3e3ec" stroke-width="1"/>
+          <rect x="46" y="508" width="404" height="26" rx="6" fill="#f5f7ff" stroke="#c3cbe8" stroke-width="1.2"/>
+          <text x="248" y="525.14" font-size="11.5" fill="#1e1e2e" text-anchor="middle">A custom manager is told</text>
+          <path d="M450,521 L480,521" fill="none" stroke="#c7c7d4" stroke-width="1.4" stroke-dasharray="3 3"/>
+          <rect x="480" y="508" width="224" height="26" rx="6" fill="#fff6e0" stroke="#e0b44a" stroke-width="1.2"/>
+          <a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><text x="592" y="524.96" font-size="11" fill="#7a4f00" text-anchor="middle" style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">OnLeavingScope()</text></a>
+          <circle cx="26" cy="521" r="10" fill="#1e1e2e"/>
+          <text x="26" y="525" font-size="10.5" fill="#ffffff" text-anchor="middle" font-weight="700">11</text>
+          <rect x="46" y="542" width="404" height="26" rx="6" fill="#f5f7ff" stroke="#c3cbe8" stroke-width="1.2"/>
+          <text x="248" y="559.14" font-size="11.5" fill="#1e1e2e" text-anchor="middle">The final automatic save (<a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><tspan style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">AutoSave</tspan></a> on)</text>
+          <path d="M450,555 L480,555" fill="none" stroke="#c7c7d4" stroke-width="1.4" stroke-dasharray="3 3"/>
+          <rect x="480" y="542" width="224" height="26" rx="6" fill="#fff6e0" stroke="#e0b44a" stroke-width="1.2"/>
+          <a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><text x="592" y="558.96" font-size="11" fill="#7a4f00" text-anchor="middle" style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">OnBeforeSave, OnAfterSave</text></a>
+          <circle cx="26" cy="555" r="10" fill="#1e1e2e"/>
+          <text x="26" y="559" font-size="10.5" fill="#ffffff" text-anchor="middle" font-weight="700">12</text>
+          <rect x="46" y="576" width="404" height="26" rx="6" fill="#f5f7ff" stroke="#c3cbe8" stroke-width="1.2"/>
+          <text x="248" y="593.14" font-size="11.5" fill="#1e1e2e" text-anchor="middle">The asset is told it left scope</text>
+          <path d="M450,589 L480,589" fill="none" stroke="#c7c7d4" stroke-width="1.4" stroke-dasharray="3 3"/>
+          <rect x="480" y="576" width="224" height="26" rx="6" fill="#fff6e0" stroke="#e0b44a" stroke-width="1.2"/>
+          <a href="../../public-api/pages/API%20-%20Core.html#IScopeCallbacks"><text x="592" y="592.96" font-size="11" fill="#7a4f00" text-anchor="middle" style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">OnAfterScopeOut(slot, true)</text></a>
+          <circle cx="26" cy="589" r="10" fill="#1e1e2e"/>
+          <text x="26" y="593" font-size="10.5" fill="#ffffff" text-anchor="middle" font-weight="700">13</text>
+          <rect x="46" y="610" width="404" height="26" rx="6" fill="#fef2f2" stroke="#efa8a8" stroke-width="1.2"/>
+          <text x="248" y="627.14" font-size="11.5" fill="#b91c1c" text-anchor="middle"><a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><tspan style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">IsReady</tspan></a> false</text>
+          <path d="M450,623 L480,623" fill="none" stroke="#c7c7d4" stroke-width="1.4" stroke-dasharray="3 3"/>
+          <rect x="480" y="610" width="224" height="26" rx="6" fill="#fff6e0" stroke="#e0b44a" stroke-width="1.2"/>
+          <a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><text x="592" y="626.96" font-size="11" fill="#7a4f00" text-anchor="middle" style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">OnReadinessChanged</text></a>
+          <circle cx="26" cy="623" r="10" fill="#1e1e2e"/>
+          <text x="26" y="627" font-size="10.5" fill="#ffffff" text-anchor="middle" font-weight="700">14</text>
+          <rect x="46" y="644" width="404" height="26" rx="6" fill="#f5f7ff" stroke="#c3cbe8" stroke-width="1.2"/>
+          <text x="248" y="661.14" font-size="11.5" fill="#1e1e2e" text-anchor="middle">In the Editor: the asset shows its authored values again</text>
+          <circle cx="26" cy="657" r="10" fill="#1e1e2e"/>
+          <text x="26" y="661" font-size="10.5" fill="#ffffff" text-anchor="middle" font-weight="700">15</text>
+          <text x="16" y="698" font-size="13" fill="#1e1e2e" font-weight="700">Quit</text>
+          <text x="59.4496" y="698" font-size="11" fill="#6b7085">the player quits, or Play mode ends</text>
+          <line x1="16" y1="706" x2="704" y2="706" stroke="#e3e3ec" stroke-width="1"/>
+          <rect x="46" y="718" width="404" height="26" rx="6" fill="#f5f7ff" stroke="#c3cbe8" stroke-width="1.2"/>
+          <text x="248" y="735.14" font-size="11.5" fill="#1e1e2e" text-anchor="middle">Saves still running finish before the exit</text>
+          <path d="M450,731 L480,731" fill="none" stroke="#c7c7d4" stroke-width="1.4" stroke-dasharray="3 3"/>
+          <rect x="480" y="718" width="224" height="26" rx="6" fill="#f4f4f7" stroke="#d4d4de" stroke-width="1.2"/>
+          <text x="592" y="734.78" font-size="10.5" fill="#555555" text-anchor="middle">refer to Quitting mid-save</text>
+          <circle cx="26" cy="731" r="10" fill="#1e1e2e"/>
+          <text x="26" y="735" font-size="10.5" fill="#ffffff" text-anchor="middle" font-weight="700">16</text>
+        </svg>
+      </div>
+      <p>Read or change the data only once <a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><code>IsReady</code></a> is true, at step 6. <a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><code>OnEnteringScope()</code></a> at
+        step 5 does not wait for the load, so with an asynchronous manager the data is usually not there yet.</p>
+      <p>For what brings an asset into scope, refer to <a href="How%20saving%20works.html#scope">Scope and global
+        assets</a>. For the hooks, refer to <a href="Save%20and%20load.html#interfaces">Optional hooks</a>.</p>
+    </section>
+
+    <!-- ══════════════════════════════════════ skipped ════ -->
+    <section id="skipped">
+      <h2>When a call is skipped</h2>
+      <p>A load, save or clear that returns <a href="../../public-api/pages/API%20-%20Core.html#ResultType"><code>Ignored</code></a> did nothing on purpose. Find the reason here before
+        looking for a bug.</p>
+      <div class="img-block">
+        <svg class="diagram" viewBox="0 0 720 352" role="img"
+             aria-label="When a call is skipped. Any operation is ignored during quit (except the final automatic save) and on a slotted asset with no slot; one started from another operation&#x27;s event handler, or a synchronous call while an asynchronous one runs, fails with IsBusy. A load is also ignored when AutoLoad is off or it already loaded, or BlockLoad returns true. A save is ignored before the first load finishes, while a newer save or a failed upgrade is protected, when the asset is not dirty, or when BlockSave returns true. A clear is ignored when BlockClear returns true.">
+          <defs>
+            <marker id="dg-skip-arr" markerWidth="8" markerHeight="8" refX="6.5" refY="4" orient="auto">
+              <path d="M0,0 L8,4 L0,8 Z" fill="#9aa0b5"/>
+            </marker>
+          </defs>
+          <rect x="16" y="16" width="688" height="136" rx="8" fill="#f4f4f7" stroke="#d4d4de" stroke-width="1.2"/>
+          <text x="28" y="36" font-size="12" fill="#1e1e2e" font-weight="700">Any operation</text>
+          <text x="28" y="61" font-size="10.8" fill="#333">During quit, anything but an automatic save</text>
+          <rect x="610" y="48" width="84" height="20" rx="5" fill="#fef2f2" stroke="#efa8a8" stroke-width="1"/>
+          <text x="652" y="62" font-size="10" fill="#b91c1c" text-anchor="middle">Ignored</text>
+          <text x="28" y="87" font-size="10.8" fill="#333">A slotted asset with no slot set</text>
+          <rect x="610" y="74" width="84" height="20" rx="5" fill="#fef2f2" stroke="#efa8a8" stroke-width="1"/>
+          <text x="652" y="88" font-size="10" fill="#b91c1c" text-anchor="middle">Ignored</text>
+          <text x="28" y="113" font-size="10.8" fill="#333">Started from an <a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><tspan style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">OnBefore</tspan></a> handler, or the <a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><tspan style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">OnAfter</tspan></a> handler of a synchronous call</text>
+          <rect x="610" y="100" width="84" height="20" rx="5" fill="#fef2f2" stroke="#efa8a8" stroke-width="1"/>
+          <text x="652" y="114" font-size="10" fill="#b91c1c" text-anchor="middle">Ignored, <a href="../../public-api/pages/API%20-%20Core.html#Result"><tspan style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">IsBusy</tspan></a></text>
+          <text x="28" y="139" font-size="10.8" fill="#333">A <a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><tspan style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">SaveSync</tspan></a>, <a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><tspan style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">LoadSync</tspan></a> or <a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><tspan style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">ClearSync</tspan></a> while an asynchronous operation runs</text>
+          <rect x="610" y="126" width="84" height="20" rx="5" fill="#fef2f2" stroke="#efa8a8" stroke-width="1"/>
+          <text x="652" y="140" font-size="10" fill="#b91c1c" text-anchor="middle">Ignored, <a href="../../public-api/pages/API%20-%20Core.html#Result"><tspan style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">IsBusy</tspan></a></text>
+          <rect x="16" y="166" width="226" height="118" rx="8" fill="#f4f4f7" stroke="#d4d4de" stroke-width="1.2"/>
+          <text x="28" y="186" font-size="12" fill="#1e1e2e" font-weight="700">A load is ignored when</text>
+          <text x="28" y="211" font-size="10.8" fill="#333"><a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><tspan style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">AutoLoad</tspan></a> is off (automatic load)</text>
+          <text x="28" y="237" font-size="10.8" fill="#333">It already loaded or saved (automatic)</text>
+          <text x="28" y="263" font-size="10.8" fill="#333"><a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><tspan style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">BlockLoad</tspan></a> returns true</text>
+          <rect x="250" y="166" width="226" height="170" rx="8" fill="#f4f4f7" stroke="#d4d4de" stroke-width="1.2"/>
+          <text x="262" y="186" font-size="12" fill="#1e1e2e" font-weight="700">A save is ignored when</text>
+          <text x="262" y="211" font-size="10.8" fill="#333">It is not ready, and no load is running</text>
+          <text x="262" y="237" font-size="10.8" fill="#333"><a href="../../public-api/pages/API%20-%20Core.html#IUpgradable"><tspan style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">Downgrade</tspan></a> returned false</text>
+          <text x="262" y="263" font-size="10.8" fill="#333">An <a href="../../public-api/pages/API%20-%20Core.html#IUpgradable"><tspan style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">Upgrade</tspan></a> threw</text>
+          <text x="262" y="289" font-size="10.8" fill="#333">It is not dirty (<a href="../../public-api/pages/API%20-%20Core.html#IDirtyTracked"><tspan style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">IDirtyTracked</tspan></a>)</text>
+          <text x="262" y="315" font-size="10.8" fill="#333"><a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><tspan style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">BlockSave</tspan></a> returns true</text>
+          <rect x="484" y="166" width="220" height="66" rx="8" fill="#f4f4f7" stroke="#d4d4de" stroke-width="1.2"/>
+          <text x="496" y="186" font-size="12" fill="#1e1e2e" font-weight="700">A clear is ignored when</text>
+          <text x="496" y="211" font-size="10.8" fill="#333"><a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><tspan style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">BlockClear</tspan></a> returns true</text>
+        </svg>
+      </div>
+      <p>In the Editor, the manager's log in the Inspector names the reason for every ignored call. To get past an
+        <a href="../../public-api/pages/API%20-%20Core.html#Result"><code>IsBusy</code></a> result:</p>
+      <ul>
+        <li>From a synchronous call, call <a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><code>Save</code></a>, <a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><code>Load</code></a> or <a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><code>Clear</code></a> instead: they
+          queue behind the running operation.</li>
+        <li>From an event handler, or from <a href="../../public-api/pages/API%20-%20Core.html#IScopeCallbacks"><code>OnBeforeScopeIn</code></a> or <a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><code>OnReadinessChanged</code></a> during a
+          slot change, start the call after the handler returns. The asynchronous forms are refused there too.</li>
+        <li>A <a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><code>LoadSync</code></a> that has to read an import copy only readable asynchronously also answers
+          <a href="../../public-api/pages/API%20-%20Core.html#Result"><code>IsBusy</code></a>, and the load goes on in the background: await <a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><code>WhenReady</code></a>.</li>
+      </ul>
+    </section>
+
+    <!-- ══════════════════════════════════════ queue ════ -->
+    <section id="queue">
+      <h2>Overlapping operations</h2>
+      <p>You can call <a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><code>Load</code></a>, <a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><code>Save</code></a> and <a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><code>Clear</code></a> at any time, even while another
+        operation on the same asset is still running. Nothing overlaps, and your calls take effect in the order you make
+        them: each one is answered as this table shows.</p>
+      <div class="img-block">
+        <svg class="diagram" viewBox="0 0 720 332" role="img"
+             aria-label="What happens when you ask for an operation while another runs on the same asset. A load running: another load of the same slot shares its result, a save waits for it, a clear cancels it. A save running: a load waits, another save is merged into one extra save, a clear cancels it. A clear running: a load waits, a save is dropped until the next load, another clear replaces it. A clear always drops anything still waiting before it runs.">
+          <defs>
+            <marker id="dg-queue-arr" markerWidth="8" markerHeight="8" refX="6.5" refY="4" orient="auto">
+              <path d="M0,0 L8,4 L0,8 Z" fill="#9aa0b5"/>
+            </marker>
+          </defs>
+          <rect x="16" y="16" width="124" height="40" rx="6" fill="#ffffff" stroke="#e3e3ec" stroke-width="1"/>
+          <text x="130" y="32" font-size="10" fill="#6b7085" text-anchor="end" font-weight="600">you ask for</text>
+          <text x="26" y="48" font-size="10" fill="#6b7085" font-weight="600">already running</text>
+          <rect x="148" y="16" width="180" height="40" rx="6" fill="#f4f4f7" stroke="#d4d4de" stroke-width="1.2"/>
+          <text x="238" y="40.5" font-size="12.5" fill="#555555" text-anchor="middle" font-weight="700">Load</text>
+          <rect x="336" y="16" width="180" height="40" rx="6" fill="#f4f4f7" stroke="#d4d4de" stroke-width="1.2"/>
+          <text x="426" y="40.5" font-size="12.5" fill="#555555" text-anchor="middle" font-weight="700">Save</text>
+          <rect x="524" y="16" width="180" height="40" rx="6" fill="#f4f4f7" stroke="#d4d4de" stroke-width="1.2"/>
+          <text x="614" y="40.5" font-size="12.5" fill="#555555" text-anchor="middle" font-weight="700">Clear</text>
+          <rect x="16" y="64" width="124" height="72" rx="6" fill="#f4f4f7" stroke="#d4d4de" stroke-width="1.2"/>
+          <text x="78" y="104.5" font-size="12.5" fill="#555555" text-anchor="middle" font-weight="700">Load</text>
+          <rect x="148" y="64" width="180" height="72" rx="6" fill="#ecfdf3" stroke="#8fd1a7" stroke-width="1.2"/>
+          <text x="238" y="90.5" font-size="12" fill="#15803d" text-anchor="middle" font-weight="700">Shares it</text>
+          <text x="238" y="106.5" font-size="10.5" fill="#444" text-anchor="middle">same slot: you get</text>
+          <text x="238" y="119.5" font-size="10.5" fill="#444" text-anchor="middle">the same result</text>
+          <rect x="336" y="64" width="180" height="72" rx="6" fill="#f4f4f7" stroke="#d4d4de" stroke-width="1.2"/>
+          <text x="426" y="90.5" font-size="12" fill="#555555" text-anchor="middle" font-weight="700">Waits</text>
+          <text x="426" y="106.5" font-size="10.5" fill="#444" text-anchor="middle">saves once the</text>
+          <text x="426" y="119.5" font-size="10.5" fill="#444" text-anchor="middle">load has finished</text>
+          <rect x="524" y="64" width="180" height="72" rx="6" fill="#ecfdf3" stroke="#8fd1a7" stroke-width="1.2"/>
+          <text x="614" y="84" font-size="12" fill="#15803d" text-anchor="middle" font-weight="700">Clear wins</text>
+          <text x="614" y="100" font-size="10.5" fill="#444" text-anchor="middle">the load is asked to stop,</text>
+          <text x="614" y="113" font-size="10.5" fill="#444" text-anchor="middle">anything waiting is dropped,</text>
+          <text x="614" y="126" font-size="10.5" fill="#444" text-anchor="middle">then the slot is cleared</text>
+          <rect x="16" y="144" width="124" height="72" rx="6" fill="#f4f4f7" stroke="#d4d4de" stroke-width="1.2"/>
+          <text x="78" y="184.5" font-size="12.5" fill="#555555" text-anchor="middle" font-weight="700">Save</text>
+          <rect x="148" y="144" width="180" height="72" rx="6" fill="#f4f4f7" stroke="#d4d4de" stroke-width="1.2"/>
+          <text x="238" y="170.5" font-size="12" fill="#555555" text-anchor="middle" font-weight="700">Waits</text>
+          <text x="238" y="186.5" font-size="10.5" fill="#444" text-anchor="middle">loads what was</text>
+          <text x="238" y="199.5" font-size="10.5" fill="#444" text-anchor="middle">just saved</text>
+          <rect x="336" y="144" width="180" height="72" rx="6" fill="#ecfdf3" stroke="#8fd1a7" stroke-width="1.2"/>
+          <text x="426" y="170.5" font-size="12" fill="#15803d" text-anchor="middle" font-weight="700">Merged</text>
+          <text x="426" y="186.5" font-size="10.5" fill="#444" text-anchor="middle">one extra save covers</text>
+          <text x="426" y="199.5" font-size="10.5" fill="#444" text-anchor="middle">every request</text>
+          <rect x="524" y="144" width="180" height="72" rx="6" fill="#ecfdf3" stroke="#8fd1a7" stroke-width="1.2"/>
+          <text x="614" y="164" font-size="12" fill="#15803d" text-anchor="middle" font-weight="700">Clear wins</text>
+          <text x="614" y="180" font-size="10.5" fill="#444" text-anchor="middle">the save is asked to stop,</text>
+          <text x="614" y="193" font-size="10.5" fill="#444" text-anchor="middle">anything waiting is dropped,</text>
+          <text x="614" y="206" font-size="10.5" fill="#444" text-anchor="middle">then the slot is cleared</text>
+          <rect x="16" y="224" width="124" height="72" rx="6" fill="#f4f4f7" stroke="#d4d4de" stroke-width="1.2"/>
+          <text x="78" y="264.5" font-size="12.5" fill="#555555" text-anchor="middle" font-weight="700">Clear</text>
+          <rect x="148" y="224" width="180" height="72" rx="6" fill="#f4f4f7" stroke="#d4d4de" stroke-width="1.2"/>
+          <text x="238" y="250.5" font-size="12" fill="#555555" text-anchor="middle" font-weight="700">Waits</text>
+          <text x="238" y="266.5" font-size="10.5" fill="#444" text-anchor="middle">loads the emptied</text>
+          <text x="238" y="279.5" font-size="10.5" fill="#444" text-anchor="middle">slot</text>
+          <rect x="336" y="224" width="180" height="72" rx="6" fill="#fef2f2" stroke="#efa8a8" stroke-width="1.2"/>
+          <text x="426" y="250.5" font-size="12" fill="#b91c1c" text-anchor="middle" font-weight="700">Dropped</text>
+          <text x="426" y="266.5" font-size="10.5" fill="#444" text-anchor="middle">saving pauses until</text>
+          <text x="426" y="279.5" font-size="10.5" fill="#444" text-anchor="middle">the next load</text>
+          <rect x="524" y="224" width="180" height="72" rx="6" fill="#ecfdf3" stroke="#8fd1a7" stroke-width="1.2"/>
+          <text x="614" y="244" font-size="12" fill="#15803d" text-anchor="middle" font-weight="700">Replaced</text>
+          <text x="614" y="260" font-size="10.5" fill="#444" text-anchor="middle">the running clear is asked</text>
+          <text x="614" y="273" font-size="10.5" fill="#444" text-anchor="middle">to stop, anything waiting is</text>
+          <text x="614" y="286" font-size="10.5" fill="#444" text-anchor="middle">dropped, then this one runs</text>
+          <rect x="148" y="309" width="14" height="11" rx="3" fill="#ecfdf3" stroke="#8fd1a7" stroke-width="1.2"/>
+          <text x="168" y="318" font-size="11" fill="#555">your request is served</text>
+          <rect x="325.52" y="309" width="14" height="11" rx="3" fill="#f4f4f7" stroke="#d4d4de" stroke-width="1.2"/>
+          <text x="345.52" y="318" font-size="11" fill="#555">it waits its turn</text>
+          <rect x="472.24" y="309" width="14" height="11" rx="3" fill="#fef2f2" stroke="#efa8a8" stroke-width="1.2"/>
+          <text x="492.24" y="318" font-size="11" fill="#555">it is dropped</text>
+        </svg>
+      </div>
+      <p>For the ordering guarantee and its limits, refer to <a href="Technical%20QA.html#concurrency">Concurrency
+        and threading</a>.</p>
+    </section>
+
+    <!-- ══════════════════════════════════════ load ════ -->
+    <section id="load">
+      <h2>What a load leaves you with</h2>
+      <p>Every load ends in one of three results, and the result tells you what the asset now holds.</p>
+      <div class="img-block">
+        <svg class="diagram" viewBox="0 0 720 522" role="img"
+             aria-label="What a load leaves you with. A save that was found is read into the asset, with the backup copy tried when it is unreadable. With no usable save, the manager&#x27;s import copies are tried newest first, and otherwise the asset keeps its values and DynamicInitialize runs. Both make IsReady true. A read that failed or timed out leaves the asset untouched and IsReady unchanged. A slot change or unload meanwhile drops the result as Cancelled.">
+          <defs>
+            <marker id="dg-load-arr" markerWidth="8" markerHeight="8" refX="6.5" refY="4" orient="auto">
+              <path d="M0,0 L8,4 L0,8 Z" fill="#9aa0b5"/>
+            </marker>
+          </defs>
+          <rect x="16" y="13" width="14" height="11" rx="3" fill="#f5f7ff" stroke="#c3cbe8" stroke-width="1.2"/>
+          <text x="36" y="22" font-size="11" fill="#555">package step</text>
+          <rect x="131.92" y="13" width="14" height="11" rx="3" fill="#ffffff" stroke="#9aa0b5" stroke-width="1.2"/>
+          <text x="151.92" y="22" font-size="11" fill="#555">check</text>
+          <rect x="204.72" y="13" width="14" height="11" rx="3" fill="#fff6e0" stroke="#e0b44a" stroke-width="1.2"/>
+          <text x="224.72" y="22" font-size="11" fill="#555">your code runs</text>
+          <rect x="332.96" y="13" width="14" height="11" rx="3" fill="#ecfdf3" stroke="#8fd1a7" stroke-width="1.2"/>
+          <text x="352.96" y="22" font-size="11" fill="#555">done or ready</text>
+          <rect x="455.04" y="13" width="14" height="11" rx="3" fill="#fef2f2" stroke="#efa8a8" stroke-width="1.2"/>
+          <text x="475.04" y="22" font-size="11" fill="#555">stopped or not ready</text>
+          <rect x="190" y="40" width="260" height="26" rx="6" fill="#f5f7ff" stroke="#c3cbe8" stroke-width="1.2"/>
+          <text x="320" y="57.14" font-size="11.5" fill="#1e1e2e" text-anchor="middle">The load starts</text>
+          <path d="M450,53 L480,53" fill="none" stroke="#c7c7d4" stroke-width="1.4" stroke-dasharray="3 3"/>
+          <rect x="480" y="40" width="224" height="26" rx="6" fill="#fff6e0" stroke="#e0b44a" stroke-width="1.2"/>
+          <a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><text x="592" y="56.96" font-size="11" fill="#7a4f00" text-anchor="middle" style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">OnBeforeLoad(source)</text></a>
+          <path d="M320,66 L320,82" fill="none" stroke="#9aa0b5" stroke-width="1.4" marker-end="url(#dg-load-arr)"/>
+          <rect x="190" y="82" width="260" height="26" rx="6" fill="#f5f7ff" stroke="#c3cbe8" stroke-width="1.2"/>
+          <text x="320" y="99.14" font-size="11.5" fill="#1e1e2e" text-anchor="middle">Read the save</text>
+          <path d="M320,108 L320,124" fill="none" stroke="#9aa0b5" stroke-width="1.4" marker-end="url(#dg-load-arr)"/>
+          <rect x="190" y="124" width="260" height="26" rx="6" fill="#ffffff" stroke="#9aa0b5" stroke-width="1.2"/>
+          <text x="320" y="141.14" font-size="11.5" fill="#1e1e2e" text-anchor="middle">Slot change, clear or unload meanwhile?</text>
+          <path d="M450,137 L480,137" fill="none" stroke="#9aa0b5" stroke-width="1.4" marker-end="url(#dg-load-arr)"/>
+          <text x="465" y="132" font-size="9.5" fill="#6b7085" text-anchor="middle" font-weight="600">yes</text>
+          <rect x="480" y="124" width="224" height="26" rx="6" fill="#fef2f2" stroke="#efa8a8" stroke-width="1.2"/>
+          <text x="592" y="141.14" font-size="11.5" fill="#b91c1c" text-anchor="middle">The result is dropped: <a href="../../public-api/pages/API%20-%20Core.html#ResultType"><tspan style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">Cancelled</tspan></a></text>
+          <path d="M320,150 L320,164" fill="none" stroke="#9aa0b5" stroke-width="1.4"/>
+          <text x="326" y="161" font-size="9.5" fill="#6b7085" font-weight="600">no</text>
+          <path d="M130,164 L590,164" fill="none" stroke="#9aa0b5" stroke-width="1.4"/>
+          <path d="M130,164 L130,190" fill="none" stroke="#9aa0b5" stroke-width="1.4" marker-end="url(#dg-load-arr)"/>
+          <path d="M360,164 L360,190" fill="none" stroke="#9aa0b5" stroke-width="1.4" marker-end="url(#dg-load-arr)"/>
+          <path d="M590,164 L590,190" fill="none" stroke="#9aa0b5" stroke-width="1.4" marker-end="url(#dg-load-arr)"/>
+          <text x="136" y="182" font-size="9.5" fill="#6b7085" font-weight="600">a save was found</text>
+          <text x="366" y="182" font-size="9.5" fill="#6b7085" font-weight="600">no save</text>
+          <text x="596" y="182" font-size="9.5" fill="#6b7085" font-weight="600">the read failed or timed out</text>
+          <rect x="25" y="190" width="210" height="26" rx="6" fill="#f5f7ff" stroke="#c3cbe8" stroke-width="1.2"/>
+          <text x="130" y="207.14" font-size="11.5" fill="#1e1e2e" text-anchor="middle">Read it into the asset</text>
+          <path d="M130,216 L130,232" fill="none" stroke="#9aa0b5" stroke-width="1.4" marker-end="url(#dg-load-arr)"/>
+          <rect x="25" y="232" width="210" height="26" rx="6" fill="#ffffff" stroke="#9aa0b5" stroke-width="1.2"/>
+          <text x="130" y="249.14" font-size="11.5" fill="#1e1e2e" text-anchor="middle">Readable?</text>
+          <path d="M25,245 L12,245 L12,427 L25,427" fill="none" stroke="#9aa0b5" stroke-width="1.4" marker-end="url(#dg-load-arr)"/>
+          <text x="18" y="240" font-size="9.5" fill="#6b7085" font-weight="600">yes</text>
+          <path d="M147,258 L147,276" fill="none" stroke="#9aa0b5" stroke-width="1.4" marker-end="url(#dg-load-arr)"/>
+          <text x="153" y="271" font-size="9.5" fill="#6b7085" font-weight="600">no</text>
+          <rect x="60" y="276" width="175" height="26" rx="6" fill="#f5f7ff" stroke="#c3cbe8" stroke-width="1.2"/>
+          <text x="147.5" y="293.14" font-size="11.5" fill="#1e1e2e" text-anchor="middle">Try a backup copy, if any</text>
+          <path d="M147,302 L147,318" fill="none" stroke="#9aa0b5" stroke-width="1.4" marker-end="url(#dg-load-arr)"/>
+          <rect x="60" y="318" width="175" height="26" rx="6" fill="#ffffff" stroke="#9aa0b5" stroke-width="1.2"/>
+          <text x="147.5" y="335.14" font-size="11.5" fill="#1e1e2e" text-anchor="middle">Backup readable?</text>
+          <path d="M60,331 L12,331" fill="none" stroke="#9aa0b5" stroke-width="1.4"/>
+          <text x="40" y="326" font-size="9.5" fill="#6b7085" text-anchor="middle" font-weight="600">yes</text>
+          <path d="M235,331 L241,331 L241,208 L255,208" fill="none" stroke="#9aa0b5" stroke-width="1.4" marker-end="url(#dg-load-arr)"/>
+          <text x="150" y="360" font-size="9.5" fill="#6b7085" text-anchor="middle" font-weight="600">no: counts as no save</text>
+          <rect x="255" y="190" width="210" height="26" rx="6" fill="#ffffff" stroke="#9aa0b5" stroke-width="1.2"/>
+          <text x="360" y="207.14" font-size="11.5" fill="#1e1e2e" text-anchor="middle">Import copies on this manager?</text>
+          <path d="M345,216 L345,232" fill="none" stroke="#9aa0b5" stroke-width="1.4" marker-end="url(#dg-load-arr)"/>
+          <text x="351" y="228" font-size="9.5" fill="#6b7085" font-weight="600">yes</text>
+          <path d="M465,203 L476,203 L476,378 L465,378" fill="none" stroke="#9aa0b5" stroke-width="1.4" marker-end="url(#dg-load-arr)"/>
+          <text x="470" y="290" font-size="9.5" fill="#6b7085" text-anchor="end" font-weight="600">no</text>
+          <rect x="255" y="232" width="190" height="26" rx="6" fill="#f5f7ff" stroke="#c3cbe8" stroke-width="1.2"/>
+          <text x="350" y="249.14" font-size="11.5" fill="#1e1e2e" text-anchor="middle">Try them, newest first</text>
+          <path d="M345,258 L345,276" fill="none" stroke="#9aa0b5" stroke-width="1.4" marker-end="url(#dg-load-arr)"/>
+          <rect x="255" y="276" width="190" height="26" rx="6" fill="#ffffff" stroke="#9aa0b5" stroke-width="1.2"/>
+          <text x="350" y="293.14" font-size="11.5" fill="#1e1e2e" text-anchor="middle">One holds a save?</text>
+          <path d="M345,302 L345,362" fill="none" stroke="#9aa0b5" stroke-width="1.4" marker-end="url(#dg-load-arr)"/>
+          <text x="351" y="338" font-size="9.5" fill="#6b7085" font-weight="600">no</text>
+          <path d="M255,289 L249,289 L249,404 L180,404 L180,414" fill="none" stroke="#9aa0b5" stroke-width="1.4" marker-end="url(#dg-load-arr)"/>
+          <text x="244" y="398" font-size="9.5" fill="#6b7085" text-anchor="end" font-weight="600">yes</text>
+          <rect x="255" y="362" width="210" height="36" rx="6" fill="#f5f7ff" stroke="#c3cbe8" stroke-width="1.2"/>
+          <text x="360" y="376.868" font-size="10.8" fill="#1e1e2e" text-anchor="middle">The asset keeps its values,</text>
+          <text x="360" y="390.908" font-size="10.8" fill="#1e1e2e" text-anchor="middle">then <a href="../../public-api/pages/API%20-%20Core.html#IDynamicInitialize"><tspan style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">DynamicInitialize</tspan></a> runs</text>
+          <path d="M360,398 L360,414" fill="none" stroke="#9aa0b5" stroke-width="1.4" marker-end="url(#dg-load-arr)"/>
+          <rect x="485" y="190" width="210" height="26" rx="6" fill="#f5f7ff" stroke="#c3cbe8" stroke-width="1.2"/>
+          <text x="590" y="207.14" font-size="11.5" fill="#1e1e2e" text-anchor="middle">The asset is not touched</text>
+          <path d="M590,216 L590,414" fill="none" stroke="#9aa0b5" stroke-width="1.4" marker-end="url(#dg-load-arr)"/>
+          <path d="M445,245 L590,245" fill="none" stroke="#9aa0b5" stroke-width="1.4" stroke-dasharray="3 3" marker-end="url(#dg-load-arr)"/>
+          <text x="518" y="240" font-size="9.5" fill="#6b7085" text-anchor="middle" font-weight="600">a copy can't be read</text>
+          <rect x="25" y="414" width="210" height="40" rx="6" fill="#ecfdf3" stroke="#8fd1a7" stroke-width="1.2"/>
+          <text x="130" y="430.868" font-size="10.8" fill="#15803d" text-anchor="middle"><a href="../../public-api/pages/API%20-%20Core.html#ResultType"><tspan style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">Success</tspan></a>: <a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><tspan style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">IsReady</tspan></a> true</text>
+          <text x="130" y="444.908" font-size="10.8" fill="#15803d" text-anchor="middle">data from the save or a copy</text>
+          <rect x="255" y="414" width="210" height="40" rx="6" fill="#ecfdf3" stroke="#8fd1a7" stroke-width="1.2"/>
+          <text x="360" y="430.868" font-size="10.8" fill="#15803d" text-anchor="middle"><a href="../../public-api/pages/API%20-%20Core.html#ResultType"><tspan style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">Invalid</tspan></a>: <a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><tspan style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">IsReady</tspan></a> true</text>
+          <text x="360" y="444.908" font-size="10.8" fill="#15803d" text-anchor="middle">values as they were</text>
+          <rect x="485" y="414" width="210" height="40" rx="6" fill="#fef2f2" stroke="#efa8a8" stroke-width="1.2"/>
+          <text x="590" y="430.868" font-size="10.8" fill="#b91c1c" text-anchor="middle"><a href="../../public-api/pages/API%20-%20Core.html#ResultType"><tspan style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">Failure</tspan></a>: <a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><tspan style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">IsReady</tspan></a> unchanged</text>
+          <text x="590" y="444.908" font-size="10.8" fill="#b91c1c" text-anchor="middle">not ready stays not ready</text>
+          <path d="M130,454 L130,468 L320,468" fill="none" stroke="#9aa0b5" stroke-width="1.4"/>
+          <path d="M360,454 L360,468 L320,468" fill="none" stroke="#9aa0b5" stroke-width="1.4"/>
+          <path d="M590,454 L590,468 L320,468" fill="none" stroke="#9aa0b5" stroke-width="1.4"/>
+          <path d="M320,468 L320,482" fill="none" stroke="#9aa0b5" stroke-width="1.4" marker-end="url(#dg-load-arr)"/>
+          <rect x="190" y="482" width="260" height="26" rx="6" fill="#f5f7ff" stroke="#c3cbe8" stroke-width="1.2"/>
+          <text x="320" y="499.14" font-size="11.5" fill="#1e1e2e" text-anchor="middle">The load finishes</text>
+          <path d="M450,495 L480,495" fill="none" stroke="#c7c7d4" stroke-width="1.4" stroke-dasharray="3 3"/>
+          <rect x="480" y="482" width="224" height="26" rx="6" fill="#fff6e0" stroke="#e0b44a" stroke-width="1.2"/>
+          <a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><text x="592" y="498.96" font-size="11" fill="#7a4f00" text-anchor="middle" style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">OnAfterLoad(source, result)</text></a>
+        </svg>
+      </div>
+      <p>An unreadable save is treated as no save because it never becomes readable again, so blocking saves would
+        strand the player for good. A failed read may succeed on a retry, so the asset is not made ready over a save it could not reach.
+        For what to show the player in each case, refer to <a href="Troubleshooting.html#recovery">When a save doesn't
+        load</a>.</p>
+    </section>
+
+    <!-- ══════════════════════════════════════ slotchange ════ -->
+    <section id="slotchange">
+      <h2>Slot change</h2>
+      <p>Changing the slot saves the slot you leave and loads the one you enter, in one call.</p>
+      <div class="img-block">
+        <svg class="diagram" viewBox="0 0 720 400" role="img"
+             aria-label="A slot change from A to B: slot A is saved, the asset is told it left A, work waiting for A is dropped, IsReady goes false, the asset is told it enters B and returns to its authored values, then B loads and IsReady goes true.">
+          <defs>
+            <marker id="dg-slot-arr" markerWidth="8" markerHeight="8" refX="6.5" refY="4" orient="auto">
+              <path d="M0,0 L8,4 L0,8 Z" fill="#9aa0b5"/>
+            </marker>
+          </defs>
+          <line x1="26" y1="101" x2="26" y2="373" stroke="#c7c7d4" stroke-width="2"/>
+          <rect x="16" y="13" width="14" height="11" rx="3" fill="#f5f7ff" stroke="#c3cbe8" stroke-width="1.2"/>
+          <text x="36" y="22" font-size="11" fill="#555">package step</text>
+          <rect x="131.92" y="13" width="14" height="11" rx="3" fill="#fff6e0" stroke="#e0b44a" stroke-width="1.2"/>
+          <text x="151.92" y="22" font-size="11" fill="#555">your code runs</text>
+          <rect x="260.16" y="13" width="14" height="11" rx="3" fill="#ecfdf3" stroke="#8fd1a7" stroke-width="1.2"/>
+          <text x="280.16" y="22" font-size="11" fill="#555">done or ready</text>
+          <rect x="382.24" y="13" width="14" height="11" rx="3" fill="#fef2f2" stroke="#efa8a8" stroke-width="1.2"/>
+          <text x="402.24" y="22" font-size="11" fill="#555">stopped or not ready</text>
+          <rect x="547.44" y="13" width="14" height="11" rx="3" fill="#f4f4f7" stroke="#d4d4de" stroke-width="1.2"/>
+          <text x="567.44" y="22" font-size="11" fill="#555">note</text>
+          <text x="16" y="68" font-size="13" fill="#1e1e2e" font-weight="700">Slot change</text>
+          <text x="114.486" y="68" font-size="11" fill="#6b7085">from slot A to slot B</text>
+          <line x1="16" y1="76" x2="704" y2="76" stroke="#e3e3ec" stroke-width="1"/>
+          <rect x="46" y="88" width="404" height="26" rx="6" fill="#f5f7ff" stroke="#c3cbe8" stroke-width="1.2"/>
+          <text x="248" y="105.14" font-size="11.5" fill="#1e1e2e" text-anchor="middle"><a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><tspan style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">Slot</tspan></a> or <a href="../../public-api/pages/API%20-%20Core.html#Slots"><tspan style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">Slots.GlobalSlot</tspan></a> is set to B</text>
+          <circle cx="26" cy="101" r="10" fill="#1e1e2e"/>
+          <text x="26" y="105" font-size="10.5" fill="#ffffff" text-anchor="middle" font-weight="700">1</text>
+          <rect x="46" y="122" width="404" height="26" rx="6" fill="#f5f7ff" stroke="#c3cbe8" stroke-width="1.2"/>
+          <text x="248" y="139.14" font-size="11.5" fill="#1e1e2e" text-anchor="middle">Slot A is saved (<a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><tspan style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">AutoSave</tspan></a> on)</text>
+          <path d="M450,135 L480,135" fill="none" stroke="#c7c7d4" stroke-width="1.4" stroke-dasharray="3 3"/>
+          <rect x="480" y="122" width="224" height="26" rx="6" fill="#fff6e0" stroke="#e0b44a" stroke-width="1.2"/>
+          <a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><text x="592" y="138.96" font-size="11" fill="#7a4f00" text-anchor="middle" style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">OnBeforeSave, OnAfterSave</text></a>
+          <circle cx="26" cy="135" r="10" fill="#1e1e2e"/>
+          <text x="26" y="139" font-size="10.5" fill="#ffffff" text-anchor="middle" font-weight="700">2</text>
+          <rect x="46" y="156" width="404" height="26" rx="6" fill="#f5f7ff" stroke="#c3cbe8" stroke-width="1.2"/>
+          <text x="248" y="173.14" font-size="11.5" fill="#1e1e2e" text-anchor="middle">The asset is told it left slot A</text>
+          <path d="M450,169 L480,169" fill="none" stroke="#c7c7d4" stroke-width="1.4" stroke-dasharray="3 3"/>
+          <rect x="480" y="156" width="224" height="26" rx="6" fill="#fff6e0" stroke="#e0b44a" stroke-width="1.2"/>
+          <a href="../../public-api/pages/API%20-%20Core.html#IScopeCallbacks"><text x="592" y="172.96" font-size="11" fill="#7a4f00" text-anchor="middle" style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">OnAfterScopeOut("A", false)</text></a>
+          <circle cx="26" cy="169" r="10" fill="#1e1e2e"/>
+          <text x="26" y="173" font-size="10.5" fill="#ffffff" text-anchor="middle" font-weight="700">3</text>
+          <rect x="46" y="190" width="404" height="26" rx="6" fill="#f5f7ff" stroke="#c3cbe8" stroke-width="1.2"/>
+          <text x="248" y="207.14" font-size="11.5" fill="#1e1e2e" text-anchor="middle">Anything still waiting for slot A is dropped</text>
+          <path d="M450,203 L480,203" fill="none" stroke="#c7c7d4" stroke-width="1.4" stroke-dasharray="3 3"/>
+          <rect x="480" y="190" width="224" height="26" rx="6" fill="#f4f4f7" stroke="#d4d4de" stroke-width="1.2"/>
+          <text x="592" y="206.78" font-size="10.5" fill="#555555" text-anchor="middle">a load of A still running is cancelled</text>
+          <circle cx="26" cy="203" r="10" fill="#1e1e2e"/>
+          <text x="26" y="207" font-size="10.5" fill="#ffffff" text-anchor="middle" font-weight="700">4</text>
+          <rect x="46" y="224" width="404" height="26" rx="6" fill="#fef2f2" stroke="#efa8a8" stroke-width="1.2"/>
+          <text x="248" y="241.14" font-size="11.5" fill="#b91c1c" text-anchor="middle"><a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><tspan style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">IsReady</tspan></a> false</text>
+          <path d="M450,237 L480,237" fill="none" stroke="#c7c7d4" stroke-width="1.4" stroke-dasharray="3 3"/>
+          <rect x="480" y="224" width="224" height="26" rx="6" fill="#fff6e0" stroke="#e0b44a" stroke-width="1.2"/>
+          <a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><text x="592" y="240.96" font-size="11" fill="#7a4f00" text-anchor="middle" style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">OnReadinessChanged</text></a>
+          <circle cx="26" cy="237" r="10" fill="#1e1e2e"/>
+          <text x="26" y="241" font-size="10.5" fill="#ffffff" text-anchor="middle" font-weight="700">5</text>
+          <rect x="46" y="258" width="404" height="26" rx="6" fill="#f5f7ff" stroke="#c3cbe8" stroke-width="1.2"/>
+          <text x="248" y="275.14" font-size="11.5" fill="#1e1e2e" text-anchor="middle">The asset is told it enters slot B</text>
+          <path d="M450,271 L480,271" fill="none" stroke="#c7c7d4" stroke-width="1.4" stroke-dasharray="3 3"/>
+          <rect x="480" y="258" width="224" height="26" rx="6" fill="#fff6e0" stroke="#e0b44a" stroke-width="1.2"/>
+          <a href="../../public-api/pages/API%20-%20Core.html#IScopeCallbacks"><text x="592" y="274.96" font-size="11" fill="#7a4f00" text-anchor="middle" style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">OnBeforeScopeIn("B", false)</text></a>
+          <circle cx="26" cy="271" r="10" fill="#1e1e2e"/>
+          <text x="26" y="275" font-size="10.5" fill="#ffffff" text-anchor="middle" font-weight="700">6</text>
+          <rect x="46" y="292" width="404" height="26" rx="6" fill="#f5f7ff" stroke="#c3cbe8" stroke-width="1.2"/>
+          <text x="248" y="309.14" font-size="11.5" fill="#1e1e2e" text-anchor="middle">The asset returns to its authored values</text>
+          <path d="M450,305 L480,305" fill="none" stroke="#c7c7d4" stroke-width="1.4" stroke-dasharray="3 3"/>
+          <rect x="480" y="292" width="224" height="26" rx="6" fill="#f4f4f7" stroke="#d4d4de" stroke-width="1.2"/>
+          <text x="592" y="308.78" font-size="10.5" fill="#555555" text-anchor="middle">A's data never reaches B</text>
+          <circle cx="26" cy="305" r="10" fill="#1e1e2e"/>
+          <text x="26" y="309" font-size="10.5" fill="#ffffff" text-anchor="middle" font-weight="700">7</text>
+          <rect x="46" y="326" width="404" height="26" rx="6" fill="#f5f7ff" stroke="#c3cbe8" stroke-width="1.2"/>
+          <text x="248" y="343.14" font-size="11.5" fill="#1e1e2e" text-anchor="middle">The automatic load of B starts (<a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><tspan style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">AutoLoad</tspan></a> on)</text>
+          <path d="M450,339 L480,339" fill="none" stroke="#c7c7d4" stroke-width="1.4" stroke-dasharray="3 3"/>
+          <rect x="480" y="326" width="224" height="26" rx="6" fill="#fff6e0" stroke="#e0b44a" stroke-width="1.2"/>
+          <a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><text x="592" y="342.96" font-size="11" fill="#7a4f00" text-anchor="middle" style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">OnBeforeLoad</text></a>
+          <circle cx="26" cy="339" r="10" fill="#1e1e2e"/>
+          <text x="26" y="343" font-size="10.5" fill="#ffffff" text-anchor="middle" font-weight="700">8</text>
+          <rect x="46" y="360" width="404" height="26" rx="6" fill="#ecfdf3" stroke="#8fd1a7" stroke-width="1.2"/>
+          <text x="248" y="377.14" font-size="11.5" fill="#15803d" text-anchor="middle">The load finishes: <a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><tspan style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">IsReady</tspan></a> true</text>
+          <path d="M450,373 L480,373" fill="none" stroke="#c7c7d4" stroke-width="1.4" stroke-dasharray="3 3"/>
+          <rect x="480" y="360" width="224" height="26" rx="6" fill="#fff6e0" stroke="#e0b44a" stroke-width="1.2"/>
+          <a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><text x="592" y="376.96" font-size="11" fill="#7a4f00" text-anchor="middle" style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">OnReadinessChanged, OnAfterLoad</text></a>
+          <circle cx="26" cy="373" r="10" fill="#1e1e2e"/>
+          <text x="26" y="377" font-size="10.5" fill="#ffffff" text-anchor="middle" font-weight="700">9</text>
+        </svg>
+      </div>
+      <p>The reset at step 7 happens even with <a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><code>AutoLoad</code></a> off, so the old slot's values never show while
+        the new one loads. For setting up slots, refer to <a href="Slots%20and%20save%20menus.html#slots">Set up save
+        slots</a>.</p>
+    </section>
+
+    <!-- ══════════════════════════════════════ shutdown ════ -->
+    <section id="shutdown">
+      <h2>Quitting mid-save</h2>
+      <p>A player who quits while a save is running does not lose it: the game waits for the save to finish, up to
+        the limits you set.</p>
+      <div class="img-block">
+        <svg class="diagram" viewBox="0 0 720 372" role="img"
+             aria-label="Quitting mid-save: the exit waits and OnShutdownDrainStarted fires, every asset in scope makes its final automatic save, each save gets up to its SaveTimeout, other calls are ignored, then the game quits and OnShutdownDrainCompleted fires. With nothing running the game exits at once; reaching Max Drain Time or pressing Force quit cancels what is left.">
+          <defs>
+            <marker id="dg-drain-arr" markerWidth="8" markerHeight="8" refX="6.5" refY="4" orient="auto">
+              <path d="M0,0 L8,4 L0,8 Z" fill="#9aa0b5"/>
+            </marker>
+          </defs>
+          <line x1="26" y1="101" x2="26" y2="237" stroke="#c7c7d4" stroke-width="2"/>
+          <rect x="16" y="13" width="14" height="11" rx="3" fill="#f5f7ff" stroke="#c3cbe8" stroke-width="1.2"/>
+          <text x="36" y="22" font-size="11" fill="#555">package step</text>
+          <rect x="131.92" y="13" width="14" height="11" rx="3" fill="#fff6e0" stroke="#e0b44a" stroke-width="1.2"/>
+          <text x="151.92" y="22" font-size="11" fill="#555">your code runs</text>
+          <rect x="260.16" y="13" width="14" height="11" rx="3" fill="#ecfdf3" stroke="#8fd1a7" stroke-width="1.2"/>
+          <text x="280.16" y="22" font-size="11" fill="#555">done or ready</text>
+          <rect x="382.24" y="13" width="14" height="11" rx="3" fill="#fef2f2" stroke="#efa8a8" stroke-width="1.2"/>
+          <text x="402.24" y="22" font-size="11" fill="#555">stopped or not ready</text>
+          <rect x="547.44" y="13" width="14" height="11" rx="3" fill="#f4f4f7" stroke="#d4d4de" stroke-width="1.2"/>
+          <text x="567.44" y="22" font-size="11" fill="#555">note</text>
+          <text x="16" y="68" font-size="13" fill="#1e1e2e" font-weight="700">Quitting mid-save</text>
+          <text x="161.661" y="68" font-size="11" fill="#6b7085">there is a save or clear to wait for</text>
+          <line x1="16" y1="76" x2="704" y2="76" stroke="#e3e3ec" stroke-width="1"/>
+          <rect x="46" y="88" width="404" height="26" rx="6" fill="#f5f7ff" stroke="#c3cbe8" stroke-width="1.2"/>
+          <text x="248" y="105.14" font-size="11.5" fill="#1e1e2e" text-anchor="middle">The exit waits</text>
+          <path d="M450,101 L480,101" fill="none" stroke="#c7c7d4" stroke-width="1.4" stroke-dasharray="3 3"/>
+          <rect x="480" y="88" width="224" height="26" rx="6" fill="#fff6e0" stroke="#e0b44a" stroke-width="1.2"/>
+          <a href="../../public-api/pages/API%20-%20Core.html#Persistence"><text x="592" y="104.96" font-size="11" fill="#7a4f00" text-anchor="middle" style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">OnShutdownDrainStarted</text></a>
+          <circle cx="26" cy="101" r="10" fill="#1e1e2e"/>
+          <text x="26" y="105" font-size="10.5" fill="#ffffff" text-anchor="middle" font-weight="700">1</text>
+          <rect x="46" y="122" width="404" height="26" rx="6" fill="#f5f7ff" stroke="#c3cbe8" stroke-width="1.2"/>
+          <text x="248" y="139.14" font-size="11.5" fill="#1e1e2e" text-anchor="middle">Every asset in scope makes its final save (<a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><tspan style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">AutoSave</tspan></a> on)</text>
+          <path d="M450,135 L480,135" fill="none" stroke="#c7c7d4" stroke-width="1.4" stroke-dasharray="3 3"/>
+          <rect x="480" y="122" width="224" height="26" rx="6" fill="#fff6e0" stroke="#e0b44a" stroke-width="1.2"/>
+          <a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><text x="592" y="138.96" font-size="11" fill="#7a4f00" text-anchor="middle" style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">OnBeforeSave, OnAfterSave</text></a>
+          <circle cx="26" cy="135" r="10" fill="#1e1e2e"/>
+          <text x="26" y="139" font-size="10.5" fill="#ffffff" text-anchor="middle" font-weight="700">2</text>
+          <rect x="46" y="156" width="404" height="26" rx="6" fill="#f5f7ff" stroke="#c3cbe8" stroke-width="1.2"/>
+          <text x="248" y="173.14" font-size="11.5" fill="#1e1e2e" text-anchor="middle">Each save gets up to its <a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><tspan style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">SaveTimeout</tspan></a></text>
+          <circle cx="26" cy="169" r="10" fill="#1e1e2e"/>
+          <text x="26" y="173" font-size="10.5" fill="#ffffff" text-anchor="middle" font-weight="700">3</text>
+          <rect x="46" y="190" width="404" height="26" rx="6" fill="#f5f7ff" stroke="#c3cbe8" stroke-width="1.2"/>
+          <text x="248" y="207.14" font-size="11.5" fill="#1e1e2e" text-anchor="middle">Other calls are ignored until the exit</text>
+          <circle cx="26" cy="203" r="10" fill="#1e1e2e"/>
+          <text x="26" y="207" font-size="10.5" fill="#ffffff" text-anchor="middle" font-weight="700">4</text>
+          <rect x="46" y="224" width="404" height="26" rx="6" fill="#ecfdf3" stroke="#8fd1a7" stroke-width="1.2"/>
+          <text x="248" y="241.14" font-size="11.5" fill="#15803d" text-anchor="middle">The game quits, or Play mode ends</text>
+          <path d="M450,237 L480,237" fill="none" stroke="#c7c7d4" stroke-width="1.4" stroke-dasharray="3 3"/>
+          <rect x="480" y="224" width="224" height="26" rx="6" fill="#fff6e0" stroke="#e0b44a" stroke-width="1.2"/>
+          <a href="../../public-api/pages/API%20-%20Core.html#Persistence"><text x="592" y="240.96" font-size="11" fill="#7a4f00" text-anchor="middle" style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">OnShutdownDrainCompleted</text></a>
+          <circle cx="26" cy="237" r="10" fill="#1e1e2e"/>
+          <text x="26" y="241" font-size="10.5" fill="#ffffff" text-anchor="middle" font-weight="700">5</text>
+          <text x="16" y="278" font-size="13" fill="#1e1e2e" font-weight="700">Other outcomes</text>
+          <text x="138.074" y="278" font-size="11" fill="#6b7085"></text>
+          <line x1="16" y1="286" x2="704" y2="286" stroke="#e3e3ec" stroke-width="1"/>
+          <rect x="46" y="298" width="404" height="26" rx="6" fill="#ecfdf3" stroke="#8fd1a7" stroke-width="1.2"/>
+          <text x="248" y="315.14" font-size="11.5" fill="#15803d" text-anchor="middle">Nothing to wait for: the game exits at once</text>
+          <circle cx="26" cy="311" r="7" fill="#ffffff" stroke="#1e1e2e" stroke-width="2"/>
+          <rect x="46" y="332" width="404" height="26" rx="6" fill="#fef2f2" stroke="#efa8a8" stroke-width="1.2"/>
+          <text x="248" y="349.14" font-size="11.5" fill="#b91c1c" text-anchor="middle">Max Drain Time or Force quit: what is left is cancelled</text>
+          <path d="M450,345 L480,345" fill="none" stroke="#c7c7d4" stroke-width="1.4" stroke-dasharray="3 3"/>
+          <rect x="480" y="332" width="224" height="26" rx="6" fill="#f4f4f7" stroke="#d4d4de" stroke-width="1.2"/>
+          <text x="592" y="348.78" font-size="10.5" fill="#555555" text-anchor="middle">a warning says data may be lost</text>
+          <circle cx="26" cy="345" r="7" fill="#ffffff" stroke="#1e1e2e" stroke-width="2"/>
+        </svg>
+      </div>
+      <p>Use the two events to show a "saving..." message. A game killed by the operating system gets no wait, so only
+        saves that already finished are kept. For the settings, refer to <a href="Save%20and%20load.html#drain">Save
+        on quit</a>.</p>
+    </section>
+
+    <!-- ══════════════════════════════════════ versioning ════ -->
+    <section id="versioning">
+      <h2>Versioning and migration</h2>
+      <p>Two tools keep a player's save working across your releases. <a href="../../public-api/pages/API%20-%20Core.html#IUpgradable"><code>IUpgradable</code></a> handles a change to the
+        data, such as a renamed or merged field. An import copy handles a change to where or how the save is stored,
+        such as a new file name or a new serializer.</p>
+      <div class="img-block">
+        <svg class="diagram" viewBox="0 0 720 404" role="img"
+             aria-label="What happens to a player&#x27;s save when they open a new build. If the current storage holds no save, the old setup&#x27;s save is moved over from its import copy. The save is read into the asset. A save from an older SaveVersion runs Upgrade; one from a newer build asks Downgrade. When two devices&#x27; saves conflict, IMergeable merges them. Then OnAfterDeserialize runs, and the asset is ready.">
+          <defs>
+            <marker id="dg-over-arr" markerWidth="8" markerHeight="8" refX="6.5" refY="4" orient="auto">
+              <path d="M0,0 L8,4 L0,8 Z" fill="#9aa0b5"/>
+            </marker>
+          </defs>
+          <rect x="16" y="13" width="14" height="11" rx="3" fill="#f5f7ff" stroke="#c3cbe8" stroke-width="1.2"/>
+          <text x="36" y="22" font-size="11" fill="#555">package step</text>
+          <rect x="131.92" y="13" width="14" height="11" rx="3" fill="#ffffff" stroke="#9aa0b5" stroke-width="1.2"/>
+          <text x="151.92" y="22" font-size="11" fill="#555">check</text>
+          <rect x="204.72" y="13" width="14" height="11" rx="3" fill="#fff6e0" stroke="#e0b44a" stroke-width="1.2"/>
+          <text x="224.72" y="22" font-size="11" fill="#555">your code runs</text>
+          <rect x="332.96" y="13" width="14" height="11" rx="3" fill="#ecfdf3" stroke="#8fd1a7" stroke-width="1.2"/>
+          <text x="352.96" y="22" font-size="11" fill="#555">done or ready</text>
+          <rect x="40" y="40" width="410" height="28" rx="6" fill="#f5f7ff" stroke="#c3cbe8" stroke-width="1.2"/>
+          <text x="245" y="58.14" font-size="11.5" fill="#1e1e2e" text-anchor="middle">A player opens a new build, and the asset loads</text>
+          <path d="M245,68 L245,84" fill="none" stroke="#9aa0b5" stroke-width="1.4" marker-end="url(#dg-over-arr)"/>
+          <rect x="40" y="84" width="410" height="28" rx="6" fill="#ffffff" stroke="#9aa0b5" stroke-width="1.2"/>
+          <text x="245" y="102.14" font-size="11.5" fill="#1e1e2e" text-anchor="middle">Does the current storage hold a usable save?</text>
+          <path d="M450,98 L480,98" fill="none" stroke="#9aa0b5" stroke-width="1.4" marker-end="url(#dg-over-arr)"/>
+          <text x="465" y="93" font-size="9.5" fill="#6b7085" text-anchor="middle" font-weight="600">no</text>
+          <rect x="480" y="84" width="224" height="40" rx="6" fill="#f5f7ff" stroke="#c3cbe8" stroke-width="1.2"/>
+          <text x="592" y="100.868" font-size="10.8" fill="#1e1e2e" text-anchor="middle">The old setup's save is moved</text>
+          <text x="592" y="114.908" font-size="10.8" fill="#1e1e2e" text-anchor="middle">over from its import copy (below)</text>
+          <path d="M592,124 L592,140 L450,140" fill="none" stroke="#9aa0b5" stroke-width="1.4" marker-end="url(#dg-over-arr)"/>
+          <path d="M245,112 L245,140" fill="none" stroke="#9aa0b5" stroke-width="1.4" marker-end="url(#dg-over-arr)"/>
+          <text x="251" y="124" font-size="9.5" fill="#6b7085" font-weight="600">yes</text>
+          <rect x="40" y="140" width="410" height="28" rx="6" fill="#f5f7ff" stroke="#c3cbe8" stroke-width="1.2"/>
+          <text x="245" y="158.14" font-size="11.5" fill="#1e1e2e" text-anchor="middle">The save is read into the asset</text>
+          <path d="M245,168 L245,184" fill="none" stroke="#9aa0b5" stroke-width="1.4" marker-end="url(#dg-over-arr)"/>
+          <rect x="40" y="184" width="410" height="28" rx="6" fill="#ffffff" stroke="#9aa0b5" stroke-width="1.2"/>
+          <text x="245" y="202.14" font-size="11.5" fill="#1e1e2e" text-anchor="middle">Written at an older <a href="../../public-api/pages/API%20-%20Core.html#IUpgradable"><tspan style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">SaveVersion</tspan></a>?</text>
+          <path d="M450,198 L480,198" fill="none" stroke="#9aa0b5" stroke-width="1.4" marker-end="url(#dg-over-arr)"/>
+          <text x="465" y="193" font-size="9.5" fill="#6b7085" text-anchor="middle" font-weight="600">yes</text>
+          <rect x="480" y="184" width="224" height="28" rx="6" fill="#fff6e0" stroke="#e0b44a" stroke-width="1.2"/>
+          <a href="../../public-api/pages/API%20-%20Core.html#IUpgradable"><text x="592" y="202.14" font-size="11.5" fill="#7a4f00" text-anchor="middle" style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">Upgrade(N, oldData)</text></a>
+          <path d="M245,212 L245,228" fill="none" stroke="#9aa0b5" stroke-width="1.4" marker-end="url(#dg-over-arr)"/>
+          <rect x="40" y="228" width="410" height="28" rx="6" fill="#ffffff" stroke="#9aa0b5" stroke-width="1.2"/>
+          <text x="245" y="246.14" font-size="11.5" fill="#1e1e2e" text-anchor="middle">Written by a newer build?</text>
+          <path d="M450,242 L480,242" fill="none" stroke="#9aa0b5" stroke-width="1.4" marker-end="url(#dg-over-arr)"/>
+          <text x="465" y="237" font-size="9.5" fill="#6b7085" text-anchor="middle" font-weight="600">yes</text>
+          <rect x="480" y="228" width="224" height="28" rx="6" fill="#fff6e0" stroke="#e0b44a" stroke-width="1.2"/>
+          <a href="../../public-api/pages/API%20-%20Core.html#IUpgradable"><text x="592" y="246.14" font-size="11.5" fill="#7a4f00" text-anchor="middle" style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">Downgrade(N)</text></a>
+          <path d="M245,256 L245,272" fill="none" stroke="#9aa0b5" stroke-width="1.4" marker-end="url(#dg-over-arr)"/>
+          <rect x="40" y="272" width="410" height="28" rx="6" fill="#ffffff" stroke="#9aa0b5" stroke-width="1.2"/>
+          <text x="245" y="290.14" font-size="11.5" fill="#1e1e2e" text-anchor="middle">Two devices' saves in conflict?</text>
+          <path d="M450,286 L480,286" fill="none" stroke="#9aa0b5" stroke-width="1.4" marker-end="url(#dg-over-arr)"/>
+          <text x="465" y="281" font-size="9.5" fill="#6b7085" text-anchor="middle" font-weight="600">yes</text>
+          <rect x="480" y="272" width="224" height="28" rx="6" fill="#fff6e0" stroke="#e0b44a" stroke-width="1.2"/>
+          <text x="592" y="290.14" font-size="11.5" fill="#7a4f00" text-anchor="middle"><a href="../../public-api/pages/API%20-%20Core.html#IMergeable"><tspan style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">IMergeable</tspan></a> merges them</text>
+          <path d="M245,300 L245,316" fill="none" stroke="#9aa0b5" stroke-width="1.4" marker-end="url(#dg-over-arr)"/>
+          <rect x="40" y="316" width="410" height="28" rx="6" fill="#f5f7ff" stroke="#c3cbe8" stroke-width="1.2"/>
+          <text x="245" y="334.14" font-size="11.5" fill="#1e1e2e" text-anchor="middle">The asset is told the save is in</text>
+          <path d="M450,330 L480,330" fill="none" stroke="#c7c7d4" stroke-width="1.4" stroke-dasharray="3 3"/>
+          <rect x="480" y="316" width="224" height="28" rx="6" fill="#fff6e0" stroke="#e0b44a" stroke-width="1.2"/>
+          <a href="../../public-api/pages/API%20-%20Core.html#ISerializationCallbacks"><text x="592" y="333.96" font-size="11" fill="#7a4f00" text-anchor="middle" style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">OnAfterDeserialize()</text></a>
+          <path d="M245,344 L245,360" fill="none" stroke="#9aa0b5" stroke-width="1.4" marker-end="url(#dg-over-arr)"/>
+          <rect x="40" y="360" width="410" height="28" rx="6" fill="#ecfdf3" stroke="#8fd1a7" stroke-width="1.2"/>
+          <text x="245" y="378.14" font-size="11.5" fill="#15803d" text-anchor="middle"><a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><tspan style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">IsReady</tspan></a> true</text>
+          <path d="M450,374 L480,374" fill="none" stroke="#c7c7d4" stroke-width="1.4" stroke-dasharray="3 3"/>
+          <rect x="480" y="360" width="224" height="28" rx="6" fill="#fff6e0" stroke="#e0b44a" stroke-width="1.2"/>
+          <a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><text x="592" y="377.96" font-size="11" fill="#7a4f00" text-anchor="middle" style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">OnReadinessChanged, OnAfterLoad</text></a>
+        </svg>
+      </div>
+
+      <h3>What the version check decides</h3>
+      <p>Raise <a href="../../public-api/pages/API%20-%20Core.html#IUpgradable"><code>SaveVersion</code></a> whenever a release changes the data in a way the serializer cannot follow on
+        its own.</p>
+      <div class="img-block">
+        <svg class="diagram" viewBox="0 0 720 318" role="img"
+             aria-label="The version check. A save written at an older SaveVersion runs Upgrade(N, oldData): when it returns, the next save writes the new format; when it throws, saving is blocked until a fixed build. The same version needs nothing. A save written by a newer build asks Downgrade(N): false blocks saving and keeps the newer save intact, true saves in this format and loses the fields this build does not know.">
+          <defs>
+            <marker id="dg-ver-arr" markerWidth="8" markerHeight="8" refX="6.5" refY="4" orient="auto">
+              <path d="M0,0 L8,4 L0,8 Z" fill="#9aa0b5"/>
+            </marker>
+          </defs>
+          <rect x="16" y="13" width="14" height="11" rx="3" fill="#ffffff" stroke="#9aa0b5" stroke-width="1.2"/>
+          <text x="36" y="22" font-size="11" fill="#555">check</text>
+          <rect x="88.8" y="13" width="14" height="11" rx="3" fill="#fff6e0" stroke="#e0b44a" stroke-width="1.2"/>
+          <text x="108.8" y="22" font-size="11" fill="#555">your code runs</text>
+          <rect x="217.04" y="13" width="14" height="11" rx="3" fill="#ecfdf3" stroke="#8fd1a7" stroke-width="1.2"/>
+          <text x="237.04" y="22" font-size="11" fill="#555">done or ready</text>
+          <rect x="339.12" y="13" width="14" height="11" rx="3" fill="#fef2f2" stroke="#efa8a8" stroke-width="1.2"/>
+          <text x="359.12" y="22" font-size="11" fill="#555">stopped or not ready</text>
+          <rect x="504.32" y="13" width="14" height="11" rx="3" fill="#f4f4f7" stroke="#d4d4de" stroke-width="1.2"/>
+          <text x="524.32" y="22" font-size="11" fill="#555">note</text>
+          <rect x="200" y="40" width="320" height="28" rx="6" fill="#ffffff" stroke="#9aa0b5" stroke-width="1.2"/>
+          <text x="360" y="58.14" font-size="11.5" fill="#1e1e2e" text-anchor="middle">Which version was the save written at?</text>
+          <path d="M360,68 L360,80 L125,80 L125,102" fill="none" stroke="#9aa0b5" stroke-width="1.4" marker-end="url(#dg-ver-arr)"/>
+          <text x="131" y="96" font-size="9.5" fill="#6b7085" font-weight="600">older</text>
+          <path d="M360,68 L360,80 L360,80 L360,102" fill="none" stroke="#9aa0b5" stroke-width="1.4" marker-end="url(#dg-ver-arr)"/>
+          <text x="366" y="96" font-size="9.5" fill="#6b7085" font-weight="600">the same</text>
+          <path d="M360,68 L360,80 L595,80 L595,102" fill="none" stroke="#9aa0b5" stroke-width="1.4" marker-end="url(#dg-ver-arr)"/>
+          <text x="601" y="96" font-size="9.5" fill="#6b7085" font-weight="600">newer</text>
+          <rect x="20" y="102" width="210" height="28" rx="6" fill="#fff6e0" stroke="#e0b44a" stroke-width="1.2"/>
+          <a href="../../public-api/pages/API%20-%20Core.html#IUpgradable"><text x="125" y="120.14" font-size="11.5" fill="#7a4f00" text-anchor="middle" style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">Upgrade(N, oldData)</text></a>
+          <path d="M125,130 L125,156" fill="none" stroke="#9aa0b5" stroke-width="1.4" marker-end="url(#dg-ver-arr)"/>
+          <text x="131" y="147" font-size="9.5" fill="#6b7085" font-weight="600">returns</text>
+          <rect x="20" y="156" width="210" height="40" rx="6" fill="#ecfdf3" stroke="#8fd1a7" stroke-width="1.2"/>
+          <text x="125" y="172.868" font-size="10.8" fill="#15803d" text-anchor="middle">The next save writes</text>
+          <text x="125" y="186.908" font-size="10.8" fill="#15803d" text-anchor="middle">the new format</text>
+          <path d="M20,116 L8,116 L8,234 L20,234" fill="none" stroke="#9aa0b5" stroke-width="1.4" marker-end="url(#dg-ver-arr)"/>
+          <text x="14" y="212" font-size="9.5" fill="#6b7085" font-weight="600">throws</text>
+          <rect x="20" y="214" width="210" height="40" rx="6" fill="#fef2f2" stroke="#efa8a8" stroke-width="1.2"/>
+          <text x="125" y="230.868" font-size="10.8" fill="#b91c1c" text-anchor="middle">Saving is blocked</text>
+          <text x="125" y="244.908" font-size="10.8" fill="#b91c1c" text-anchor="middle">until a fixed build</text>
+          <rect x="255" y="102" width="210" height="28" rx="6" fill="#ecfdf3" stroke="#8fd1a7" stroke-width="1.2"/>
+          <text x="360" y="120.14" font-size="11.5" fill="#15803d" text-anchor="middle">Nothing to do</text>
+          <rect x="490" y="102" width="210" height="28" rx="6" fill="#fff6e0" stroke="#e0b44a" stroke-width="1.2"/>
+          <a href="../../public-api/pages/API%20-%20Core.html#IUpgradable"><text x="595" y="120.14" font-size="11.5" fill="#7a4f00" text-anchor="middle" style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">Downgrade(N)</text></a>
+          <path d="M595,130 L595,156" fill="none" stroke="#9aa0b5" stroke-width="1.4" marker-end="url(#dg-ver-arr)"/>
+          <text x="601" y="147" font-size="9.5" fill="#6b7085" font-weight="600">false</text>
+          <rect x="490" y="156" width="210" height="40" rx="6" fill="#fef2f2" stroke="#efa8a8" stroke-width="1.2"/>
+          <text x="595" y="172.868" font-size="10.8" fill="#b91c1c" text-anchor="middle">Saving is blocked, the</text>
+          <text x="595" y="186.908" font-size="10.8" fill="#b91c1c" text-anchor="middle">newer save stays intact</text>
+          <path d="M700,116 L712,116 L712,234 L700,234" fill="none" stroke="#9aa0b5" stroke-width="1.4" marker-end="url(#dg-ver-arr)"/>
+          <text x="706" y="212" font-size="9.5" fill="#6b7085" text-anchor="end" font-weight="600">true</text>
+          <rect x="490" y="214" width="210" height="40" rx="6" fill="#ecfdf3" stroke="#8fd1a7" stroke-width="1.2"/>
+          <text x="595" y="230.868" font-size="10.8" fill="#15803d" text-anchor="middle">Saves in this format; fields</text>
+          <text x="595" y="244.908" font-size="10.8" fill="#15803d" text-anchor="middle">it does not know are lost</text>
+          <rect x="20" y="274" width="680" height="30" rx="6" fill="#f4f4f7" stroke="#d4d4de" stroke-width="1.2"/>
+          <text x="360" y="292.888" font-size="10.8" fill="#555555" text-anchor="middle">Upgrade only runs on a save the serializer can still read: add fields rather than rename or retype them.</text>
+        </svg>
+      </div>
+      <p>For a worked example, refer to <a href="Update%20a%20shipped%20save.html#versioning">Version your data</a>.
+        Reading <code>oldData</code> needs a serializer that supports it: refer to
+        <a href="What%20can%20be%20saved.html#choosing">Choose a serializer</a>.</p>
+
+      <h3>How an import copy moves a save</h3>
+      <p>An import copy moves each player's save to the new setup once, the first time the new setup finds nothing.</p>
+      <div class="img-block">
+        <svg class="diagram" viewBox="0 0 720 480" role="img"
+             aria-label="How an import copy moves a save. In the Editor, a breaking change keeps the old setup as an [Import N] copy. At the first load of the new setup, which finds no save, the copies are tried newest first with their old settings; the first holding a save is read into the asset, running Upgrade if it is older, OnImportingFrom runs, the save is written with the new setup and the old copy&#x27;s save is deleted. If no copy holds a save the asset keeps its values; if a copy can&#x27;t be read the load fails and the old save is kept.">
+          <defs>
+            <marker id="dg-imp-arr" markerWidth="8" markerHeight="8" refX="6.5" refY="4" orient="auto">
+              <path d="M0,0 L8,4 L0,8 Z" fill="#9aa0b5"/>
+            </marker>
+          </defs>
+          <line x1="26" y1="175" x2="26" y2="345" stroke="#c7c7d4" stroke-width="2"/>
+          <rect x="16" y="13" width="14" height="11" rx="3" fill="#f5f7ff" stroke="#c3cbe8" stroke-width="1.2"/>
+          <text x="36" y="22" font-size="11" fill="#555">package step</text>
+          <rect x="131.92" y="13" width="14" height="11" rx="3" fill="#fff6e0" stroke="#e0b44a" stroke-width="1.2"/>
+          <text x="151.92" y="22" font-size="11" fill="#555">your code runs</text>
+          <rect x="260.16" y="13" width="14" height="11" rx="3" fill="#ecfdf3" stroke="#8fd1a7" stroke-width="1.2"/>
+          <text x="280.16" y="22" font-size="11" fill="#555">done or ready</text>
+          <rect x="382.24" y="13" width="14" height="11" rx="3" fill="#fef2f2" stroke="#efa8a8" stroke-width="1.2"/>
+          <text x="402.24" y="22" font-size="11" fill="#555">stopped or not ready</text>
+          <rect x="547.44" y="13" width="14" height="11" rx="3" fill="#f4f4f7" stroke="#d4d4de" stroke-width="1.2"/>
+          <text x="567.44" y="22" font-size="11" fill="#555">note</text>
+          <text x="16" y="68" font-size="13" fill="#1e1e2e" font-weight="700">In the Editor</text>
+          <text x="130.211" y="68" font-size="11" fill="#6b7085">you make a breaking change to a locked manager</text>
+          <line x1="16" y1="76" x2="704" y2="76" stroke="#e3e3ec" stroke-width="1"/>
+          <rect x="46" y="88" width="404" height="26" rx="6" fill="#f5f7ff" stroke="#c3cbe8" stroke-width="1.2"/>
+          <text x="248" y="105.14" font-size="11.5" fill="#1e1e2e" text-anchor="middle">You can keep the old setup as an <tspan style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">[Import N]</tspan> copy</text>
+          <circle cx="26" cy="101" r="10" fill="#1e1e2e"/>
+          <text x="26" y="105" font-size="10.5" fill="#ffffff" text-anchor="middle" font-weight="700">1</text>
+          <text x="16" y="142" font-size="13" fill="#1e1e2e" font-weight="700">At runtime</text>
+          <text x="106.624" y="142" font-size="11" fill="#6b7085">the new setup's first load finds no usable save</text>
+          <line x1="16" y1="150" x2="704" y2="150" stroke="#e3e3ec" stroke-width="1"/>
+          <rect x="46" y="162" width="404" height="26" rx="6" fill="#f5f7ff" stroke="#c3cbe8" stroke-width="1.2"/>
+          <text x="248" y="179.14" font-size="11.5" fill="#1e1e2e" text-anchor="middle">The copies are tried newest first, each with its old settings</text>
+          <circle cx="26" cy="175" r="10" fill="#1e1e2e"/>
+          <text x="26" y="179" font-size="10.5" fill="#ffffff" text-anchor="middle" font-weight="700">2</text>
+          <rect x="46" y="196" width="404" height="26" rx="6" fill="#f5f7ff" stroke="#c3cbe8" stroke-width="1.2"/>
+          <text x="248" y="213.14" font-size="11.5" fill="#1e1e2e" text-anchor="middle">The first copy holding a save is read into the asset</text>
+          <path d="M450,209 L480,209" fill="none" stroke="#c7c7d4" stroke-width="1.4" stroke-dasharray="3 3"/>
+          <rect x="480" y="196" width="224" height="26" rx="6" fill="#fff6e0" stroke="#e0b44a" stroke-width="1.2"/>
+          <text x="592" y="212.96" font-size="11" fill="#7a4f00" text-anchor="middle"><a href="../../public-api/pages/API%20-%20Core.html#IUpgradable"><tspan style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">Upgrade(N, oldData)</tspan></a> if older</text>
+          <circle cx="26" cy="209" r="10" fill="#1e1e2e"/>
+          <text x="26" y="213" font-size="10.5" fill="#ffffff" text-anchor="middle" font-weight="700">3</text>
+          <rect x="46" y="230" width="404" height="26" rx="6" fill="#f5f7ff" stroke="#c3cbe8" stroke-width="1.2"/>
+          <text x="248" y="247.14" font-size="11.5" fill="#1e1e2e" text-anchor="middle">A custom manager is told</text>
+          <path d="M450,243 L480,243" fill="none" stroke="#c7c7d4" stroke-width="1.4" stroke-dasharray="3 3"/>
+          <rect x="480" y="230" width="224" height="26" rx="6" fill="#fff6e0" stroke="#e0b44a" stroke-width="1.2"/>
+          <a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><text x="592" y="246.96" font-size="11" fill="#7a4f00" text-anchor="middle" style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">OnImportingFrom(source, slot)</text></a>
+          <circle cx="26" cy="243" r="10" fill="#1e1e2e"/>
+          <text x="26" y="247" font-size="10.5" fill="#ffffff" text-anchor="middle" font-weight="700">4</text>
+          <rect x="46" y="264" width="404" height="26" rx="6" fill="#f5f7ff" stroke="#c3cbe8" stroke-width="1.2"/>
+          <text x="248" y="281.14" font-size="11.5" fill="#1e1e2e" text-anchor="middle">The save is written with the new setup</text>
+          <circle cx="26" cy="277" r="10" fill="#1e1e2e"/>
+          <text x="26" y="281" font-size="10.5" fill="#ffffff" text-anchor="middle" font-weight="700">5</text>
+          <rect x="46" y="298" width="404" height="26" rx="6" fill="#f5f7ff" stroke="#c3cbe8" stroke-width="1.2"/>
+          <text x="248" y="315.14" font-size="11.5" fill="#1e1e2e" text-anchor="middle">The old copy's save is deleted</text>
+          <circle cx="26" cy="311" r="10" fill="#1e1e2e"/>
+          <text x="26" y="315" font-size="10.5" fill="#ffffff" text-anchor="middle" font-weight="700">6</text>
+          <rect x="46" y="332" width="404" height="26" rx="6" fill="#ecfdf3" stroke="#8fd1a7" stroke-width="1.2"/>
+          <text x="248" y="349.14" font-size="11.5" fill="#15803d" text-anchor="middle">Moved once, for good</text>
+          <path d="M450,345 L480,345" fill="none" stroke="#c7c7d4" stroke-width="1.4" stroke-dasharray="3 3"/>
+          <rect x="480" y="332" width="224" height="26" rx="6" fill="#fff6e0" stroke="#e0b44a" stroke-width="1.2"/>
+          <text x="592" y="348.96" font-size="11" fill="#7a4f00" text-anchor="middle"><a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager"><tspan style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">OnAfterLoad</tspan></a> reports Success</text>
+          <circle cx="26" cy="345" r="10" fill="#1e1e2e"/>
+          <text x="26" y="349" font-size="10.5" fill="#ffffff" text-anchor="middle" font-weight="700">7</text>
+          <text x="16" y="386" font-size="13" fill="#1e1e2e" font-weight="700">Other outcomes</text>
+          <text x="138.074" y="386" font-size="11" fill="#6b7085"></text>
+          <line x1="16" y1="394" x2="704" y2="394" stroke="#e3e3ec" stroke-width="1"/>
+          <rect x="46" y="406" width="404" height="26" rx="6" fill="#f5f7ff" stroke="#c3cbe8" stroke-width="1.2"/>
+          <text x="248" y="423.14" font-size="11.5" fill="#1e1e2e" text-anchor="middle">No copy holds a save: the asset keeps its values</text>
+          <path d="M450,419 L480,419" fill="none" stroke="#c7c7d4" stroke-width="1.4" stroke-dasharray="3 3"/>
+          <rect x="480" y="406" width="224" height="26" rx="6" fill="#fff6e0" stroke="#e0b44a" stroke-width="1.2"/>
+          <a href="../../public-api/pages/API%20-%20Core.html#IDynamicInitialize"><text x="592" y="422.96" font-size="11" fill="#7a4f00" text-anchor="middle" style="font-family:'Cascadia Code','Fira Code',Consolas,monospace">DynamicInitialize()</text></a>
+          <circle cx="26" cy="419" r="7" fill="#ffffff" stroke="#1e1e2e" stroke-width="2"/>
+          <rect x="46" y="440" width="404" height="26" rx="6" fill="#fef2f2" stroke="#efa8a8" stroke-width="1.2"/>
+          <text x="248" y="457.14" font-size="11.5" fill="#b91c1c" text-anchor="middle">A copy can't be read: the load fails, the old save is kept</text>
+          <path d="M450,453 L480,453" fill="none" stroke="#c7c7d4" stroke-width="1.4" stroke-dasharray="3 3"/>
+          <rect x="480" y="440" width="224" height="26" rx="6" fill="#f4f4f7" stroke="#d4d4de" stroke-width="1.2"/>
+          <text x="592" y="456.78" font-size="10.5" fill="#555555" text-anchor="middle">the next load tries again</text>
+          <circle cx="26" cy="453" r="7" fill="#ffffff" stroke="#1e1e2e" stroke-width="2"/>
+        </svg>
+      </div>
+      <p>A storage change and a data change can ship in the same release. For the Editor side, refer to <a href="Update%20a%20shipped%20save.html#migration">Lock and
+        migrate saves</a>.</p>
+    </section>
+
+    <!-- ══════════════════════════════════════ modules ════ -->
+    <section id="modules">
+      <h2>Module dependencies</h2>
+      <p>Use this map to see what a module needs before you delete it, and which package turns an optional one on.</p>
+      <div class="img-block">
+        <svg class="diagram" viewBox="0 0 936 470" role="img"
+             aria-label="Module dependencies across all 54 assemblies. Core is at the bottom and every assembly references it. Built-Ins Shared holds up Essentials, Newtonsoft, Odin, MemoryPack, Steam and Ugs. No-Code Variables holds up Input, Localization and Prefs. No-Code Persistence holds up Persistence.UGUI, which also uses Variables. Scene Objects holds up SceneObjects.UGUI. The Demo uses Essentials, Shared and Variables. Optional modules compile only when their package is installed.">
+          <defs>
+            <marker id="dg-mod-arr" markerWidth="8" markerHeight="8" refX="6.5" refY="4" orient="auto">
+              <path d="M0,0 L8,4 L0,8 Z" fill="#9aa0b5"/>
+            </marker>
+          </defs>
+          <rect x="6" y="18" width="388" height="304" rx="10" fill="#fafafc" stroke="#dcdce6" stroke-width="1" stroke-dasharray="5 4"/>
+          <text x="16" y="31" font-size="9.5" fill="#8a8fa3" font-weight="700">BUILT-INS</text>
+          <rect x="402" y="116" width="388" height="206" rx="10" fill="#fafafc" stroke="#dcdce6" stroke-width="1" stroke-dasharray="5 4"/>
+          <text x="412" y="129" font-size="9.5" fill="#8a8fa3" font-weight="700">NO CODE</text>
+          <rect x="798" y="116" width="132" height="206" rx="10" fill="#fafafc" stroke="#dcdce6" stroke-width="1" stroke-dasharray="5 4"/>
+          <text x="808" y="129" font-size="9.5" fill="#8a8fa3" font-weight="700">SCENE OBJECTS</text>
+          <rect x="10" y="34" width="380" height="178" rx="9" fill="none" stroke="#c3cbe8" stroke-width="1.2"/>
+          <rect x="14" y="40" width="116" height="70" rx="7" fill="#ffffff" stroke="#9aa0b5" stroke-width="1.3"/>
+          <a href="../../public-api/pages/API%20-%20Built-Ins.html"><text x="23" y="58" font-size="11.5" fill="#1e1e2e" font-weight="700">Essentials</text></a>
+          <rect x="23" y="67" width="18" height="15" rx="4" fill="#e8eeff" stroke="#8ea4e0" stroke-width="1"/>
+          <text x="32" y="78" font-size="9.5" fill="#2c4a9a" text-anchor="middle" font-weight="700">R</text>
+          <rect x="45" y="67" width="18" height="15" rx="4" fill="#f3efff" stroke="#b7a6e8" stroke-width="1"/>
+          <text x="54" y="78" font-size="9.5" fill="#5a3e99" text-anchor="middle" font-weight="700">E</text>
+          <rect x="67" y="67" width="26" height="15" rx="4" fill="#f4f4f7" stroke="#b9b9c6" stroke-width="1"/>
+          <text x="80" y="78" font-size="9.5" fill="#444" text-anchor="middle" font-weight="700">EM</text>
+          <rect x="97" y="67" width="26" height="15" rx="4" fill="#f4f4f7" stroke="#b9b9c6" stroke-width="1"/>
+          <text x="110" y="78" font-size="9.5" fill="#444" text-anchor="middle" font-weight="700">PM</text>
+          <rect x="142" y="40" width="116" height="70" rx="7" fill="#ffffff" stroke="#9aa0b5" stroke-width="1.3"/>
+          <a href="../../public-api/pages/API%20-%20Built-Ins.html#NewtonsoftJsonSerializer"><text x="151" y="58" font-size="11.5" fill="#1e1e2e" font-weight="700">Newtonsoft</text></a>
+          <rect x="151" y="67" width="18" height="15" rx="4" fill="#e8eeff" stroke="#8ea4e0" stroke-width="1"/>
+          <text x="160" y="78" font-size="9.5" fill="#2c4a9a" text-anchor="middle" font-weight="700">R</text>
+          <rect x="173" y="67" width="26" height="15" rx="4" fill="#f4f4f7" stroke="#b9b9c6" stroke-width="1"/>
+          <text x="186" y="78" font-size="9.5" fill="#444" text-anchor="middle" font-weight="700">EM</text>
+          <text x="151" y="100" font-size="10" fill="#9a6700">needs Newtonsoft Json</text>
+          <rect x="270" y="40" width="116" height="70" rx="7" fill="#ffffff" stroke="#9aa0b5" stroke-width="1.3"/>
+          <a href="../../public-api/pages/API%20-%20Built-Ins.html#OdinDataSerializer"><text x="279" y="58" font-size="11.5" fill="#1e1e2e" font-weight="700">Odin</text></a>
+          <rect x="279" y="67" width="18" height="15" rx="4" fill="#e8eeff" stroke="#8ea4e0" stroke-width="1"/>
+          <text x="288" y="78" font-size="9.5" fill="#2c4a9a" text-anchor="middle" font-weight="700">R</text>
+          <rect x="301" y="67" width="26" height="15" rx="4" fill="#f4f4f7" stroke="#b9b9c6" stroke-width="1"/>
+          <text x="314" y="78" font-size="9.5" fill="#444" text-anchor="middle" font-weight="700">EM</text>
+          <text x="279" y="100" font-size="10" fill="#9a6700">needs Odin Serializer</text>
+          <rect x="14" y="136" width="116" height="70" rx="7" fill="#ffffff" stroke="#9aa0b5" stroke-width="1.3"/>
+          <a href="../../public-api/pages/API%20-%20Built-Ins.html#MemoryPackDataSerializer"><text x="23" y="154" font-size="11.5" fill="#1e1e2e" font-weight="700">MemoryPack</text></a>
+          <rect x="23" y="163" width="18" height="15" rx="4" fill="#e8eeff" stroke="#8ea4e0" stroke-width="1"/>
+          <text x="32" y="174" font-size="9.5" fill="#2c4a9a" text-anchor="middle" font-weight="700">R</text>
+          <rect x="45" y="163" width="26" height="15" rx="4" fill="#f4f4f7" stroke="#b9b9c6" stroke-width="1"/>
+          <text x="58" y="174" font-size="9.5" fill="#444" text-anchor="middle" font-weight="700">EM</text>
+          <text x="23" y="196" font-size="10" fill="#9a6700">needs MemoryPack</text>
+          <rect x="142" y="136" width="116" height="70" rx="7" fill="#ffffff" stroke="#9aa0b5" stroke-width="1.3"/>
+          <a href="../../public-api/pages/API%20-%20Built-Ins.html#SteamCloudPersistenceManager"><text x="151" y="154" font-size="11.5" fill="#1e1e2e" font-weight="700">Steam</text></a>
+          <rect x="151" y="163" width="18" height="15" rx="4" fill="#e8eeff" stroke="#8ea4e0" stroke-width="1"/>
+          <text x="160" y="174" font-size="9.5" fill="#2c4a9a" text-anchor="middle" font-weight="700">R</text>
+          <rect x="173" y="163" width="18" height="15" rx="4" fill="#f3efff" stroke="#b7a6e8" stroke-width="1"/>
+          <text x="182" y="174" font-size="9.5" fill="#5a3e99" text-anchor="middle" font-weight="700">E</text>
+          <rect x="195" y="163" width="26" height="15" rx="4" fill="#f4f4f7" stroke="#b9b9c6" stroke-width="1"/>
+          <text x="208" y="174" font-size="9.5" fill="#444" text-anchor="middle" font-weight="700">EM</text>
+          <text x="151" y="196" font-size="10" fill="#9a6700">needs Steamworks.NET</text>
+          <rect x="270" y="136" width="116" height="70" rx="7" fill="#ffffff" stroke="#9aa0b5" stroke-width="1.3"/>
+          <a href="../../public-api/pages/API%20-%20Built-Ins.html#CloudSavePersistenceManager"><text x="279" y="154" font-size="11.5" fill="#1e1e2e" font-weight="700">Ugs</text></a>
+          <rect x="279" y="163" width="18" height="15" rx="4" fill="#e8eeff" stroke="#8ea4e0" stroke-width="1"/>
+          <text x="288" y="174" font-size="9.5" fill="#2c4a9a" text-anchor="middle" font-weight="700">R</text>
+          <rect x="301" y="163" width="18" height="15" rx="4" fill="#f3efff" stroke="#b7a6e8" stroke-width="1"/>
+          <text x="310" y="174" font-size="9.5" fill="#5a3e99" text-anchor="middle" font-weight="700">E</text>
+          <rect x="323" y="163" width="26" height="15" rx="4" fill="#f4f4f7" stroke="#b9b9c6" stroke-width="1"/>
+          <text x="336" y="174" font-size="9.5" fill="#444" text-anchor="middle" font-weight="700">EM</text>
+          <text x="279" y="196" font-size="10" fill="#9a6700">needs Cloud Save</text>
+          <rect x="14" y="244" width="372" height="70" rx="7" fill="#ffffff" stroke="#9aa0b5" stroke-width="1.3"/>
+          <a href="../../public-api/pages/API%20-%20Built-Ins.html"><text x="23" y="262" font-size="11.5" fill="#1e1e2e" font-weight="700">Shared</text></a>
+          <rect x="23" y="271" width="18" height="15" rx="4" fill="#e8eeff" stroke="#8ea4e0" stroke-width="1"/>
+          <text x="32" y="282" font-size="9.5" fill="#2c4a9a" text-anchor="middle" font-weight="700">R</text>
+          <rect x="45" y="271" width="18" height="15" rx="4" fill="#f3efff" stroke="#b7a6e8" stroke-width="1"/>
+          <text x="54" y="282" font-size="9.5" fill="#5a3e99" text-anchor="middle" font-weight="700">E</text>
+          <rect x="67" y="271" width="26" height="15" rx="4" fill="#f4f4f7" stroke="#b9b9c6" stroke-width="1"/>
+          <text x="80" y="282" font-size="9.5" fill="#444" text-anchor="middle" font-weight="700">EM</text>
+          <rect x="97" y="271" width="26" height="15" rx="4" fill="#f4f4f7" stroke="#b9b9c6" stroke-width="1"/>
+          <text x="110" y="282" font-size="9.5" fill="#444" text-anchor="middle" font-weight="700">PM</text>
+          <text x="372" y="262" font-size="10" fill="#6b7085" text-anchor="end">the base the six above build on</text>
+          <path d="M200,212 L200,244" fill="none" stroke="#9aa0b5" stroke-width="1.4" marker-end="url(#dg-mod-arr)"/>
+          <text x="206" y="232" font-size="9.5" fill="#6b7085" font-weight="600">all six</text>
+          <rect x="474" y="40" width="116" height="70" rx="7" fill="#ffffff" stroke="#9aa0b5" stroke-width="1.3"/>
+          <a href="../../public-api/pages/API%20-%20Prefs.html#Prefs"><text x="483" y="58" font-size="11.5" fill="#1e1e2e" font-weight="700">Prefs</text></a>
+          <rect x="483" y="67" width="18" height="15" rx="4" fill="#e8eeff" stroke="#8ea4e0" stroke-width="1"/>
+          <text x="492" y="78" font-size="9.5" fill="#2c4a9a" text-anchor="middle" font-weight="700">R</text>
+          <rect x="505" y="67" width="18" height="15" rx="4" fill="#f3efff" stroke="#b7a6e8" stroke-width="1"/>
+          <text x="514" y="78" font-size="9.5" fill="#5a3e99" text-anchor="middle" font-weight="700">E</text>
+          <rect x="527" y="67" width="26" height="15" rx="4" fill="#f4f4f7" stroke="#b9b9c6" stroke-width="1"/>
+          <text x="540" y="78" font-size="9.5" fill="#444" text-anchor="middle" font-weight="700">EM</text>
+          <rect x="557" y="67" width="26" height="15" rx="4" fill="#f4f4f7" stroke="#b9b9c6" stroke-width="1"/>
+          <text x="570" y="78" font-size="9.5" fill="#444" text-anchor="middle" font-weight="700">PM</text>
+          <rect x="806" y="40" width="116" height="70" rx="7" fill="#ffffff" stroke="#9aa0b5" stroke-width="1.3" stroke-dasharray="5 3"/>
+          <text x="815" y="58" font-size="11.5" fill="#1e1e2e" font-weight="700">Demo</text>
+          <rect x="815" y="67" width="18" height="15" rx="4" fill="#e8eeff" stroke="#8ea4e0" stroke-width="1"/>
+          <text x="824" y="78" font-size="9.5" fill="#2c4a9a" text-anchor="middle" font-weight="700">R</text>
+          <rect x="837" y="67" width="18" height="15" rx="4" fill="#f3efff" stroke="#b7a6e8" stroke-width="1"/>
+          <text x="846" y="78" font-size="9.5" fill="#5a3e99" text-anchor="middle" font-weight="700">E</text>
+          <rect x="859" y="67" width="26" height="15" rx="4" fill="#f4f4f7" stroke="#b9b9c6" stroke-width="1"/>
+          <text x="872" y="78" font-size="9.5" fill="#444" text-anchor="middle" font-weight="700">EM</text>
+          <text x="815" y="100" font-size="10" fill="#9a6700">needs uGUI</text>
+          <rect x="410" y="136" width="116" height="70" rx="7" fill="#ffffff" stroke="#9aa0b5" stroke-width="1.3"/>
+          <a href="../../public-api/pages/API%20-%20No-Code.html#InputBindingPersistence"><text x="419" y="154" font-size="11.5" fill="#1e1e2e" font-weight="700">Input</text></a>
+          <rect x="419" y="163" width="18" height="15" rx="4" fill="#e8eeff" stroke="#8ea4e0" stroke-width="1"/>
+          <text x="428" y="174" font-size="9.5" fill="#2c4a9a" text-anchor="middle" font-weight="700">R</text>
+          <rect x="441" y="163" width="18" height="15" rx="4" fill="#f3efff" stroke="#b7a6e8" stroke-width="1"/>
+          <text x="450" y="174" font-size="9.5" fill="#5a3e99" text-anchor="middle" font-weight="700">E</text>
+          <rect x="463" y="163" width="26" height="15" rx="4" fill="#f4f4f7" stroke="#b9b9c6" stroke-width="1"/>
+          <text x="476" y="174" font-size="9.5" fill="#444" text-anchor="middle" font-weight="700">EM</text>
+          <text x="419" y="196" font-size="10" fill="#9a6700">needs Input System</text>
+          <rect x="538" y="136" width="116" height="70" rx="7" fill="#ffffff" stroke="#9aa0b5" stroke-width="1.3"/>
+          <a href="../../public-api/pages/API%20-%20No-Code.html#LocalePersistence"><text x="547" y="154" font-size="11.5" fill="#1e1e2e" font-weight="700">Localization</text></a>
+          <rect x="547" y="163" width="18" height="15" rx="4" fill="#e8eeff" stroke="#8ea4e0" stroke-width="1"/>
+          <text x="556" y="174" font-size="9.5" fill="#2c4a9a" text-anchor="middle" font-weight="700">R</text>
+          <rect x="569" y="163" width="18" height="15" rx="4" fill="#f3efff" stroke="#b7a6e8" stroke-width="1"/>
+          <text x="578" y="174" font-size="9.5" fill="#5a3e99" text-anchor="middle" font-weight="700">E</text>
+          <rect x="591" y="163" width="26" height="15" rx="4" fill="#f4f4f7" stroke="#b9b9c6" stroke-width="1"/>
+          <text x="604" y="174" font-size="9.5" fill="#444" text-anchor="middle" font-weight="700">EM</text>
+          <text x="547" y="196" font-size="10" fill="#9a6700">needs Localization</text>
+          <rect x="666" y="136" width="116" height="70" rx="7" fill="#ffffff" stroke="#9aa0b5" stroke-width="1.3"/>
+          <text x="675" y="154" font-size="11.5" fill="#1e1e2e" font-weight="700">Persistence.UGUI</text>
+          <rect x="675" y="163" width="18" height="15" rx="4" fill="#f3efff" stroke="#b7a6e8" stroke-width="1"/>
+          <text x="684" y="174" font-size="9.5" fill="#5a3e99" text-anchor="middle" font-weight="700">E</text>
+          <rect x="697" y="163" width="26" height="15" rx="4" fill="#f4f4f7" stroke="#b9b9c6" stroke-width="1"/>
+          <text x="710" y="174" font-size="9.5" fill="#444" text-anchor="middle" font-weight="700">EM</text>
+          <text x="675" y="196" font-size="10" fill="#9a6700">needs uGUI</text>
+          <rect x="410" y="244" width="244" height="70" rx="7" fill="#ffffff" stroke="#9aa0b5" stroke-width="1.3"/>
+          <a href="../../public-api/pages/API%20-%20No-Code.html#PersistentVariables"><text x="419" y="262" font-size="11.5" fill="#1e1e2e" font-weight="700">Variables</text></a>
+          <rect x="419" y="271" width="18" height="15" rx="4" fill="#e8eeff" stroke="#8ea4e0" stroke-width="1"/>
+          <text x="428" y="282" font-size="9.5" fill="#2c4a9a" text-anchor="middle" font-weight="700">R</text>
+          <rect x="441" y="271" width="18" height="15" rx="4" fill="#f3efff" stroke="#b7a6e8" stroke-width="1"/>
+          <text x="450" y="282" font-size="9.5" fill="#5a3e99" text-anchor="middle" font-weight="700">E</text>
+          <rect x="463" y="271" width="26" height="15" rx="4" fill="#f4f4f7" stroke="#b9b9c6" stroke-width="1"/>
+          <text x="476" y="282" font-size="9.5" fill="#444" text-anchor="middle" font-weight="700">EM</text>
+          <rect x="493" y="271" width="26" height="15" rx="4" fill="#f4f4f7" stroke="#b9b9c6" stroke-width="1"/>
+          <text x="506" y="282" font-size="9.5" fill="#444" text-anchor="middle" font-weight="700">PM</text>
+          <rect x="666" y="244" width="116" height="70" rx="7" fill="#ffffff" stroke="#9aa0b5" stroke-width="1.3"/>
+          <a href="../../public-api/pages/API%20-%20No-Code.html#PersistenceComponent"><text x="675" y="262" font-size="11.5" fill="#1e1e2e" font-weight="700">Persistence</text></a>
+          <rect x="675" y="271" width="18" height="15" rx="4" fill="#e8eeff" stroke="#8ea4e0" stroke-width="1"/>
+          <text x="684" y="282" font-size="9.5" fill="#2c4a9a" text-anchor="middle" font-weight="700">R</text>
+          <rect x="697" y="271" width="18" height="15" rx="4" fill="#f3efff" stroke="#b7a6e8" stroke-width="1"/>
+          <text x="706" y="282" font-size="9.5" fill="#5a3e99" text-anchor="middle" font-weight="700">E</text>
+          <rect x="719" y="271" width="26" height="15" rx="4" fill="#f4f4f7" stroke="#b9b9c6" stroke-width="1"/>
+          <text x="732" y="282" font-size="9.5" fill="#444" text-anchor="middle" font-weight="700">EM</text>
+          <rect x="749" y="271" width="26" height="15" rx="4" fill="#f4f4f7" stroke="#b9b9c6" stroke-width="1"/>
+          <text x="762" y="282" font-size="9.5" fill="#444" text-anchor="middle" font-weight="700">PM</text>
+          <path d="M468,206 L468,244" fill="none" stroke="#9aa0b5" stroke-width="1.4" marker-end="url(#dg-mod-arr)"/>
+          <path d="M596,206 L596,244" fill="none" stroke="#9aa0b5" stroke-width="1.4" marker-end="url(#dg-mod-arr)"/>
+          <path d="M532,110 L532,244" fill="none" stroke="#9aa0b5" stroke-width="1.4" marker-end="url(#dg-mod-arr)"/>
+          <path d="M724,206 L724,244" fill="none" stroke="#9aa0b5" stroke-width="1.4" marker-end="url(#dg-mod-arr)"/>
+          <path d="M690,206 L690,224 L660,224 L660,279 L656,279" fill="none" stroke="#9aa0b5" stroke-width="1.4" marker-end="url(#dg-mod-arr)"/>
+          <rect x="806" y="136" width="116" height="70" rx="7" fill="#ffffff" stroke="#9aa0b5" stroke-width="1.3"/>
+          <a href="../../public-api/pages/API%20-%20Scene%20Objects.html"><text x="815" y="154" font-size="11.5" fill="#1e1e2e" font-weight="700">SceneObjects.UGUI</text></a>
+          <rect x="815" y="163" width="18" height="15" rx="4" fill="#e8eeff" stroke="#8ea4e0" stroke-width="1"/>
+          <text x="824" y="174" font-size="9.5" fill="#2c4a9a" text-anchor="middle" font-weight="700">R</text>
+          <rect x="837" y="163" width="18" height="15" rx="4" fill="#f3efff" stroke="#b7a6e8" stroke-width="1"/>
+          <text x="846" y="174" font-size="9.5" fill="#5a3e99" text-anchor="middle" font-weight="700">E</text>
+          <rect x="859" y="163" width="26" height="15" rx="4" fill="#f4f4f7" stroke="#b9b9c6" stroke-width="1"/>
+          <text x="872" y="174" font-size="9.5" fill="#444" text-anchor="middle" font-weight="700">EM</text>
+          <text x="815" y="196" font-size="10" fill="#9a6700">needs uGUI</text>
+          <rect x="806" y="244" width="116" height="70" rx="7" fill="#ffffff" stroke="#9aa0b5" stroke-width="1.3"/>
+          <a href="../../public-api/pages/API%20-%20Scene%20Objects.html#PersistentSceneState"><text x="815" y="262" font-size="11.5" fill="#1e1e2e" font-weight="700">SceneObjects</text></a>
+          <rect x="815" y="271" width="18" height="15" rx="4" fill="#e8eeff" stroke="#8ea4e0" stroke-width="1"/>
+          <text x="824" y="282" font-size="9.5" fill="#2c4a9a" text-anchor="middle" font-weight="700">R</text>
+          <rect x="837" y="271" width="18" height="15" rx="4" fill="#f3efff" stroke="#b7a6e8" stroke-width="1"/>
+          <text x="846" y="282" font-size="9.5" fill="#5a3e99" text-anchor="middle" font-weight="700">E</text>
+          <rect x="859" y="271" width="26" height="15" rx="4" fill="#f4f4f7" stroke="#b9b9c6" stroke-width="1"/>
+          <text x="872" y="282" font-size="9.5" fill="#444" text-anchor="middle" font-weight="700">EM</text>
+          <rect x="889" y="271" width="26" height="15" rx="4" fill="#f4f4f7" stroke="#b9b9c6" stroke-width="1"/>
+          <text x="902" y="282" font-size="9.5" fill="#444" text-anchor="middle" font-weight="700">PM</text>
+          <path d="M864,206 L864,244" fill="none" stroke="#9aa0b5" stroke-width="1.4" marker-end="url(#dg-mod-arr)"/>
+          <path d="M864,40 L864,10 L100,10 L100,40" fill="none" stroke="#9aa0b5" stroke-width="1.4" stroke-dasharray="3 3" marker-end="url(#dg-mod-arr)"/>
+          <path d="M398,10 L398,284 L388,284" fill="none" stroke="#9aa0b5" stroke-width="1.4" stroke-dasharray="3 3" marker-end="url(#dg-mod-arr)"/>
+          <path d="M398,284 L408,284" fill="none" stroke="#9aa0b5" stroke-width="1.4" stroke-dasharray="3 3" marker-end="url(#dg-mod-arr)"/>
+          <rect x="14" y="352" width="908" height="56" rx="7" fill="#ffffff" stroke="#9aa0b5" stroke-width="1.3"/>
+          <a href="../../public-api/pages/API%20-%20Core.html"><text x="23" y="370" font-size="11.5" fill="#1e1e2e" font-weight="700">Core</text></a>
+          <rect x="23" y="379" width="18" height="15" rx="4" fill="#e8eeff" stroke="#8ea4e0" stroke-width="1"/>
+          <text x="32" y="390" font-size="9.5" fill="#2c4a9a" text-anchor="middle" font-weight="700">R</text>
+          <rect x="45" y="379" width="18" height="15" rx="4" fill="#f3efff" stroke="#b7a6e8" stroke-width="1"/>
+          <text x="54" y="390" font-size="9.5" fill="#5a3e99" text-anchor="middle" font-weight="700">E</text>
+          <rect x="67" y="379" width="26" height="15" rx="4" fill="#f4f4f7" stroke="#b9b9c6" stroke-width="1"/>
+          <text x="80" y="390" font-size="9.5" fill="#444" text-anchor="middle" font-weight="700">EM</text>
+          <rect x="97" y="379" width="26" height="15" rx="4" fill="#f4f4f7" stroke="#b9b9c6" stroke-width="1"/>
+          <text x="110" y="390" font-size="9.5" fill="#444" text-anchor="middle" font-weight="700">PM</text>
+          <text x="908" y="370" font-size="10.5" fill="#6b7085" text-anchor="end">every assembly references Core</text>
+          <path d="M200,314 L200,352" fill="none" stroke="#9aa0b5" stroke-width="1.4" marker-end="url(#dg-mod-arr)"/>
+          <path d="M532,314 L532,352" fill="none" stroke="#9aa0b5" stroke-width="1.4" marker-end="url(#dg-mod-arr)"/>
+          <path d="M724,314 L724,352" fill="none" stroke="#9aa0b5" stroke-width="1.4" marker-end="url(#dg-mod-arr)"/>
+          <path d="M864,314 L864,352" fill="none" stroke="#9aa0b5" stroke-width="1.4" marker-end="url(#dg-mod-arr)"/>
+          <rect x="14" y="427" width="18" height="15" rx="4" fill="#e8eeff" stroke="#8ea4e0" stroke-width="1"/>
+          <text x="23" y="438" font-size="9.5" fill="#2c4a9a" text-anchor="middle" font-weight="700">R</text>
+          <text x="38" y="438" font-size="10.5" fill="#555">runtime</text>
+          <rect x="101.16" y="427" width="18" height="15" rx="4" fill="#f3efff" stroke="#b7a6e8" stroke-width="1"/>
+          <text x="110.16" y="438" font-size="9.5" fill="#5a3e99" text-anchor="middle" font-weight="700">E</text>
+          <text x="125.16" y="438" font-size="10.5" fill="#555">.Editor</text>
+          <rect x="188.32" y="427" width="26" height="15" rx="4" fill="#f4f4f7" stroke="#b9b9c6" stroke-width="1"/>
+          <text x="201.32" y="438" font-size="9.5" fill="#444" text-anchor="middle" font-weight="700">EM</text>
+          <text x="220.32" y="438" font-size="10.5" fill="#555">.EditModeTests</text>
+          <rect x="324.64" y="427" width="26" height="15" rx="4" fill="#f4f4f7" stroke="#b9b9c6" stroke-width="1"/>
+          <text x="337.64" y="438" font-size="9.5" fill="#444" text-anchor="middle" font-weight="700">PM</text>
+          <text x="356.64" y="438" font-size="10.5" fill="#555">.PlayModeTests</text>
+          <text x="460.96" y="438" font-size="10.5" fill="#9a6700">needs X: compiles only with that package</text>
+          <text x="922" y="438" font-size="10.5" fill="#555" text-anchor="end">dashed: sample code, nothing references it</text>
+        </svg>
+      </div>
+      <p>An assembly is named <code>PersistentAsset.&lt;Module&gt;.&lt;SubModule&gt;</code>, such as
+        <code>PersistentAsset.BuiltIns.Essentials</code>, plus the suffix of its kind. Test assemblies never reach a
+        player build.</p>
+      <p>Steam also builds only for the Editor, Windows, macOS, Linux and Android. For installing the optional
+        modules, refer to
+        <a href="Installation.html#dependencies">Optional modules</a>.</p>
+    </section>
+
+    <!-- ══════════════════════════════════════ resources ════ -->
+    <div class="resources">
+      <h2>Additional resources</h2>
+      <ul>
+        <li><a href="How%20saving%20works.html">How saving works</a></li>
+        <li><a href="Technical%20QA.html">Technical Q&amp;A</a></li>
+        <li><a href="Update%20a%20shipped%20save.html">Update a shipped save</a></li>
+        <li><a href="../../public-api/pages/API%20-%20Core.html#PersistenceManager">PersistenceManager API reference</a></li>
+      </ul>
+    </div>
+
+    <div class="pager">
+      <a class="prev" href="Technical%20QA.html">
+        <div class="dir">Back</div>
+        <div class="pg-title">Technical Q&amp;A</div>
+      </a>
+    </div>
+
+    <div class="doc-footer">Persistent Asset v2.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

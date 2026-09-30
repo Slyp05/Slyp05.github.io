@@ -53,6 +53,9 @@
         <li>Select your class, then name the asset.</li>
       </ol>
       <p>You can move or rename the asset afterwards.</p>
+      <p>A new asset saves through the Prototype manager, with nothing to set up. To store it somewhere else,
+        select a manager from the dropdown at the top of its Inspector window. For more information, refer to
+        <a href="How%20saving%20works.html#choosing">Choose a persistence manager</a>.</p>
       <div class="img-block">
         <img src="../img/data_asset_inspector" alt="A PlayerData asset in the inspector, its manager dropdown above its fields"
              onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
@@ -76,7 +79,7 @@
       <p>When your class already inherits a ScriptableObject of its own, use the
         <code>[PersistentScriptableObject(...)]</code> attribute instead of the base class:</p>
       <ol>
-        <li>Add a serialized <code>PersistenceManager</code> field to the class.</li>
+        <li>Add a serialized <a href="API%20-%20Core.html#PersistenceManager"><code>PersistenceManager</code></a> field to the class.</li>
         <li>Decorate the class with <code>[PersistentScriptableObject(...)]</code>, and name that field in the
           attribute.</li>
       </ol>

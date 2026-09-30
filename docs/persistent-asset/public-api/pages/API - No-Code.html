@@ -87,7 +87,7 @@
           <tr><th scope="row"><span class="t">bool</span> <span class="mn">TryGet&lt;T&gt;</span>(<span class="t">string</span> name, out <span class="t">T</span> value)</th><td>Read, returning false when missing or incompatible.</td></tr>
           <tr><th scope="row"><span class="kw">void</span> <span class="mn">Set&lt;T&gt;</span>(<span class="t">string</span> name, <span class="t">T</span> value)</th><td>Write, creating it when absent. Writing an equal value-type/string is a no-op that does not re-raise <code>OnChanged</code>. <span class="ex">Throws ArgumentException (null/empty name, or null untyped value), NotSupportedException (no registered variable type for T), InvalidOperationException (exists with an incompatible type/shape).</span></td></tr>
           <tr><th scope="row"><span class="t">bool</span> <span class="mn">TrySet&lt;T&gt;</span>(<span class="t">string</span> name, <span class="t">T</span> value)</th><td>Write, returning false instead of throwing.</td></tr>
-          <tr><th scope="row"><span class="kw">void</span> <span class="mn">NotifyChanged</span>(<span class="t">string</span> name)</th><td>Tell the asset a variable changed, so it saves and its binders and listeners react. Needed only when you mutate a value in place instead of assigning it: an <code>AnimationCurve</code> whose keys you edited, a <code>Gradient</code> you recoloured. Assigning through <code>Set</code> or a reference already flags itself, and a name that holds no variable does nothing.</td></tr>
+          <tr><th scope="row"><span class="kw">void</span> <span class="mn">NotifyChanged</span>(<span class="t">string</span> name)</th><td>Tell the asset a variable changed, so it saves and its binders and listeners react. Needed only when you mutate a value in place instead of assigning it: an <code>AnimationCurve</code> whose keys you edited, a <code>Gradient</code> you recolored. Assigning through <code>Set</code> or a reference already flags itself, and a name that holds no variable does nothing.</td></tr>
         </table>
       </div>
       <div class="member-group">
@@ -314,7 +314,7 @@
 
     <div class="type-section" id="LocalePersistence">
       <div class="type-header"><h3>LocalePersistence</h3><span class="badge badge-static">static</span></div>
-      <p class="type-desc">Makes the chosen locale persistable through a variable. Needs the Localization package, and localization initialised first (await <code>LocalizationSettings.InitializationOperation</code>), or every call answers false.</p>
+      <p class="type-desc">Makes the chosen locale persistable through a variable. Needs the Localization package, and localization initialized first (await <code>LocalizationSettings.InitializationOperation</code>), or every call answers false.</p>
       <div class="member-group"><table class="mt">
         <tr><th scope="row"><span class="t">bool</span> <span class="mn">ApplyLocale</span>(this <span class="t">PersistentVariables</span>, <span class="t">string</span> name) / <span class="mn">CaptureLocale</span>(this <span class="t">PersistentVariables</span>, <span class="t">string</span> name)</th><td>Apply the stored locale as the active one, or capture the active one into the variable.</td></tr>
         <tr><th scope="row"><span class="t">bool</span> <span class="mn">SelectLocale</span>(this <span class="t">PersistentVariables</span>, <span class="t">string</span> name, <span class="t">LocaleIdentifier</span> locale)</th><td>Set a chosen locale and store it.</td></tr>
