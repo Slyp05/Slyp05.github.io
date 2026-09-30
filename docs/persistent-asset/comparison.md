@@ -113,7 +113,7 @@ description: "Persistent Asset checked against every feature Easy Save 3, Crysta
 .cmp-vs th:nth-child(3), .cmp-vs td:nth-child(3) { width: 50%; }
 </style>
 
-Every feature that [Easy Save 3](https://assetstore.unity.com/packages/tools/utilities/easy-save-the-complete-save-game-data-serializer-system-768), [Crystal Save Pro](https://assetstore.unity.com/packages/tools/utilities/crystal-save-professional-save-system-save-migration-319719) and [Bayat Save System](https://assetstore.unity.com/packages/tools/input-management/bayat-save-system-108890) list for themselves, checked against Persistent Asset. Their features were read in September 2026 from their store pages and docs. Some of it may be wrong: email [justetools@gmail.com](mailto:justetools@gmail.com) and I'll fix it.
+Every feature that [Easy Save 3](https://assetstore.unity.com/packages/tools/utilities/easy-save-the-complete-save-game-data-serializer-system-768), [Crystal Save Pro](https://assetstore.unity.com/packages/tools/utilities/crystal-save-professional-save-system-save-migration-319719) and [Bayat Save System](https://assetstore.unity.com/packages/tools/input-management/bayat-save-system-108890) list for themselves, checked against [Persistent Asset](/persistent-asset/). Their features were read in September 2026 from their store pages and docs. Some of it may be wrong: email [justetools@gmail.com](mailto:justetools@gmail.com) and I'll fix it.
 
 **Legend:** ⭐ yes, and more · ✅ yes · 🟠 partly · ❌ no
 
