@@ -77,6 +77,7 @@ $theme = @(
     '  <link rel="stylesheet" href="/assets/css/doc-dark.css" />'
     '  <script>(function(){try{var t=localStorage.getItem(''theme'');if(t===''dark''||t===''light''){document.documentElement.setAttribute(''data-theme'',t);}}catch(e){}})();</script>'
     '  <script src="/assets/js/theme.js" defer></script>'
+    '  <script src="/assets/js/doc-nav.js" defer></script>'
 ) -join "`n"
 
 $favicons = @(

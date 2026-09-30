@@ -299,6 +299,8 @@
    sidebar's column stays dark for the full height of a short page. */
 html { background: var(--d-bg); }
 #layout { background: linear-gradient(to right, var(--d-nav-bg) 0 270px, var(--d-bg) 270px); }
+/* On a phone the sidebar sits above the content, so there is no column to paint. */
+@media (max-width: 760px) { #layout { background: none; } }
 
 body { color: var(--d-text); background: var(--d-bg); }
 
@@ -470,6 +472,9 @@ nav a.nav-band:hover, nav .nav-band.active { color: var(--d-nav-accent); }
 nav .nav-group { color: var(--d-nav-faint); }
 nav a.nav-back, nav .nav-band { border-color: var(--d-nav-rule); }
 nav a .badge-new { background: var(--d-badge-new-bg); color: var(--d-badge-new-fg); }
+.nav-menu-btn { color: var(--d-nav-fg); }
+.nav-menu-btn:hover,
+.nav-menu-btn[aria-expanded="true"] { background: var(--d-surface); }
 .nav-search input { background: var(--d-surface); border-color: var(--d-nav-rule); color: var(--d-nav-fg); }
 .nav-search input:focus { border-color: var(--d-nav-accent); }
 .nav-search input::placeholder { color: var(--d-nav-faint); }

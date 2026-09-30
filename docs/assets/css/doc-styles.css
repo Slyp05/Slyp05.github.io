@@ -661,33 +661,57 @@ table.cmp.keycol th:not([colspan]):first-child {
   .doc-top .doc-brand { display: none; }
   .doc-top-links { width: 100%; justify-content: space-between; }
 
+  /* The sidebar becomes a plain list above the content. Where the site loads doc-nav.js, the list
+     moves into a drawer instead (the phone menu rules at the end of this file). */
   #layout { display: block; background: none; }
   nav {
     position: static;
     width: 100%;
     height: auto;
     top: auto;
-    padding: 14px 8px;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 2px 4px;
+    padding: 12px 0 16px;
   }
-  nav .nav-title { width: 100%; padding: 0 12px 8px; }
-  .nav-search { width: 100%; padding: 0 12px 10px; }
-  #pa-results { width: 100%; }
-  #pa-links { display: contents; }
-  nav a { padding: 4px 10px; border-radius: 6px; }
+  nav .nav-title { padding: 0 16px 10px; }
+  .nav-search { padding: 0 16px 10px; }
+  nav a { padding: 7px 16px; }
   nav a.indent { display: none; }
-  nav .nav-group, nav .nav-band { padding-top: 6px; margin-top: 0; border-top: none; }
-  main { padding: 28px 18px 56px; max-width: none; }
+  nav a[href^="#"] { padding-left: 28px; }
+  nav .nav-group { padding: 14px 16px 4px; }
+  main { padding: 28px 16px 56px; max-width: none; min-width: 0; overflow-wrap: break-word; }
   .page-header { margin-bottom: 32px; }
   .page-header h1 { font-size: 28px; }
   .hero h1 { font-size: 32px; }
   .pager { flex-direction: column; }
   .pager a.next { text-align: left; }
   .member-group { overflow-x: auto; }
+
+  /* A namespace or a long generic name is one unbroken word, wider than the screen. */
+  :not(pre) > code { overflow-wrap: anywhere; }
+  .type-header { flex-wrap: wrap; }
+  .type-header .ns { margin-left: 0; flex-basis: 100%; overflow-wrap: anywhere; }
+  .type-header h2,
+  .type-header h3 { font-size: 19px; overflow-wrap: anywhere; }
+
+  pre { padding: 14px 14px; font-size: 12.5px; }
+  .note { padding: 10px 12px; }
+
+  /* The folds nest their body two indents deep, which a phone cannot spare. */
+  .fold > summary { padding: 12px 14px 12px 32px; }
+  .fold > summary::before { left: 13px; top: 12px; }
+  .fold-body { margin: 0 14px; padding-left: 0; }
+  .fold-tags { display: flex; margin: 6px 0 0; }
+  .module-band { padding: 14px 16px; }
+  .api-group { margin-top: 44px; }
 }
+
+/* No hover on a touch screen, so the copy button would never appear. */
+@media (hover: none) {
+  .copy-btn { opacity: 0.85; }
+}
+
+/* Android Chrome enlarges the text of some blocks and not others once it decides a page is not built
+   for phones. These pages are, so every block keeps the size the stylesheet gives it. */
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 
 /* Heading links: a "#" that appears on hover and copies the section's address */
 .heading-link {
@@ -984,4 +1008,107 @@ table.cmp th[colspan] {
   border-color: #89b4fa;
   background: #f5f7ff;
   text-decoration: none;
+}
+
+/* Phone menu. doc-nav.js puts a button at the right of the top bar (drawing a bar with the package
+   name where a page has none) and turns the sidebar into a drawer that slides over the page from the
+   right. Without the script, as in the docs opened from disk, the sidebar stays a list above the
+   content. These rules sit last so they win over the .doc-top base above. */
+.nav-menu-btn,
+.doc-top-phone,
+.nav-backdrop { display: none; }
+
+@media (max-width: 760px) {
+  .doc-top { padding: 0 6px 0 10px; gap: 6px; }
+  .doc-top-links { flex: 1; min-width: 0; gap: 2px; justify-content: space-between; }
+  .doc-top-links a { padding: 5px 8px; }
+  .doc-top-phone { display: flex; }
+  .doc-top-phone .doc-brand {
+    display: block;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .nav-menu-btn {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    margin-left: auto;
+    padding: 0;
+    background: none;
+    border: none;
+    border-radius: 8px;
+    color: #cdd6f4;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .nav-menu-btn:hover,
+  .nav-menu-btn[aria-expanded="true"] { background: #313244; }
+  .nav-menu-btn svg {
+    width: 22px;
+    height: 22px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+  }
+  .nav-menu-btn .icon-close,
+  .nav-menu-btn[aria-expanded="true"] .icon-open { display: none; }
+  .nav-menu-btn[aria-expanded="true"] .icon-close { display: block; }
+
+  nav.nav-drawer {
+    position: fixed;
+    top: var(--doc-top);
+    right: 0;
+    bottom: 0;
+    z-index: 30;
+    width: min(320px, 86vw);
+    height: auto;
+    padding: 14px 0 32px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    box-shadow: -8px 0 24px rgba(0, 0, 0, 0.3);
+    transform: translateX(100%);
+    visibility: hidden;
+    transition: transform .2s ease, visibility 0s linear .2s;
+  }
+  nav.nav-drawer.nav-open {
+    transform: none;
+    visibility: visible;
+    transition: transform .2s ease;
+  }
+  .nav-backdrop {
+    display: block;
+    position: fixed;
+    top: var(--doc-top);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 25;
+    background: rgba(10, 10, 20, 0.5);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .2s ease;
+  }
+  .nav-backdrop.nav-open { opacity: 1; pointer-events: auto; }
+
+  /* The page behind an open drawer stays put, so a swipe in the drawer never scrolls the page. Only
+     the root is locked: a locked body would clip the sticky top bar and scroll it out of view. */
+  html.nav-locked { overflow: hidden; }
+  html.nav-locked .theme-toggle { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  nav.nav-drawer,
+  nav.nav-drawer.nav-open,
+  .nav-backdrop { transition: none; }
+}
+
+@media print {
+  .nav-menu-btn, .nav-backdrop { display: none !important; }
 }
