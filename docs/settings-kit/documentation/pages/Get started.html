@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Declare a page, add settings to it, and read them, in three steps." />
+  <title>Settings Kit - Get started</title>
+  <link rel="stylesheet" href="/assets/css/doc-styles.css" />
+  <link rel="stylesheet" href="/assets/css/settings-kit.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <nav>
+    <div class="nav-title">Settings Kit</div>
+    <div class="nav-books"><a href="../index.html" class="active" aria-current="true">User Manual</a><a href="../../public-api/index.html">Public API</a></div>
+    <a href="../index.html">Home</a>
+    <a href="Installation.html">Installation</a>
+    <a href="Get%20started.html" class="active" aria-current="page">Get started</a>
+    <a href="#page" class="indent">Declare a page</a>
+    <a href="#settings" class="indent">Add settings to it</a>
+    <a href="#read" class="indent">Read them anywhere</a>
+    <a href="Declare%20settings.html">Declare settings</a>
+    <a href="Read%20settings.html">Read settings</a>
+    <a href="Customize%20the%20window.html">Customize the window</a>
+    <a href="Update%20your%20settings.html">Update your settings</a>
+  </nav>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Get started</h1>
+      <div class="sub">Declare a page, add settings to it, and read them, in three steps.</div>
+
+    <div class="guide-index">
+      <a href="#page">Declare a page</a>
+      <a href="#settings">Add settings to it</a>
+      <a href="#read">Read them anywhere</a>
+    </div>
+    </div>
+
+    <p class="lead">Put the code from the first two steps in any script in your project, let Unity compile, then open
+      <strong>Edit &gt; Project Settings</strong>. All types are in the <code>SettingsKit</code> namespace.</p>
+
+    <!-- ══════════════════════════════════════ page ════ -->
+    <section id="page" class="step">
+      <div class="step-head"><span class="step-num">1</span><h2>Declare a page</h2></div>
+      <p>A page is one entry in the left-hand list of the settings window.</p>
+      <pre><code><span class="kw">using</span> SettingsKit;
+
+<span class="kw">public sealed class</span> <span class="ty">GamePage</span> : <span class="ty">SettingsPage</span>
+{
+    <span class="kw">public override string</span> Path =&gt; <span class="st">"Settings Kit Demo"</span>;   <span class="cm">// shown under Project Settings &gt; Settings Kit Demo</span>
+    <span class="kw">public override string</span> Description =&gt; <span class="st">"Settings Kit demo of build settings: shipped into the build, read anywhere, no Resources folder."</span>;
+    <span class="kw">public override string</span> HelpUrl =&gt; <span class="st">"https://justetools.net/settings-kit/documentation/"</span>;
+}</code></pre>
+    </section>
+
+    <!-- ══════════════════════════════════════ settings ════ -->
+    <section id="settings" class="step">
+      <div class="step-head"><span class="step-num">2</span><h2>Add settings to it</h2></div>
+      <p>Each settings class becomes a section on the page, with one row per field.</p>
+      <pre><code><span class="kw">using</span> SettingsKit;
+<span class="kw">using</span> UnityEngine;
+
+[<span class="ty">System.Serializable</span>]
+[<span class="ty">SettingsDisplay</span>(<span class="st">"Audio"</span>)]
+<span class="kw">public sealed class</span> <span class="ty">AudioDefaults</span> : <span class="ty">BuildSettingsEntry</span>&lt;<span class="ty">GamePage</span>&gt;
+{
+    [<span class="ty">SerializeField</span>, <span class="ty">Range</span>(<span class="nu">0f</span>, <span class="nu">1f</span>)] <span class="kw">float</span> masterVolume = <span class="nu">0.8f</span>;
+    [<span class="ty">SerializeField</span>] <span class="kw">bool</span> muteOnFocusLoss = <span class="kw">true</span>;
+
+    <span class="kw">public float</span> MasterVolume =&gt; masterVolume;
+    <span class="kw">public bool</span> MuteOnFocusLoss =&gt; muteOnFocusLoss;
+}</code></pre>
+    </section>
+
+    <!-- ══════════════════════════════════════ read ════ -->
+    <section id="read" class="step">
+      <div class="step-head"><span class="step-num">3</span><h2>Read them anywhere</h2></div>
+      <p>From any script, in the editor or at runtime in a build:</p>
+      <pre><code><span class="kw">float</span> volume = <span class="ty">Settings</span>&lt;<span class="ty">AudioDefaults</span>&gt;.Instance.MasterVolume;</code></pre>
+      <div class="img-block">
+        <img src="../img/project_settings_page.png" alt="The demo page under Project Settings"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">&#128247;</span>
+          <span><strong>img/project_settings_page</strong><br/>The Unity Project Settings window with the "Settings Kit Demo" page selected</span>
+        </div>
+        <div class="img-caption">Steps 1 and 2 declare this page and its Audio section. The other sections are covered in Declare settings.</div>
+      </div>
+      <p>There is no asset to create and nothing to register, and the values are included in your next build.</p>
+    </section>
+
+    <div class="pager">
+      <a class="prev" href="Installation.html">
+        <div class="dir">Back</div>
+        <div class="pg-title">Installation</div>
+      </a>
+      <a class="next" href="Declare%20settings.html">
+        <div class="dir">Next</div>
+        <div class="pg-title">Declare settings</div>
+      </a>
+    </div>
+
+    <div class="doc-footer">Settings Kit v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Declare pages, write settings classes, and choose the kind of each setting." />
+  <title>Settings Kit - Declare settings</title>
+  <link rel="stylesheet" href="../shared/styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <nav>
+    <div class="nav-title">Settings Kit</div>
+    <div class="nav-books"><a href="../User%20Manual.html" class="active" aria-current="true">User Manual</a><a href="../Public%20API.html">Public API</a></div>
+    <a href="../User%20Manual.html">Home</a>
+    <a href="Installation.html">Installation</a>
+    <a href="Get%20started.html">Get started</a>
+    <a href="Declare%20settings.html" class="active" aria-current="page">Declare settings</a>
+    <a href="#page" class="indent">Declare a page</a>
+    <a href="#class" class="indent">Write a settings class</a>
+    <a href="#kinds" class="indent">Choose a kind of setting</a>
+    <a href="Read%20settings.html">Read settings</a>
+    <a href="Customize%20the%20window.html">Customize the window</a>
+    <a href="Update%20your%20settings.html">Update your settings</a>
+  </nav>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Declare settings</h1>
+      <div class="sub">Declare pages, write settings classes, and choose the kind of each setting.</div>
+
+    <div class="guide-index">
+      <a href="#page">Declare a page</a>
+      <a href="#class">Write a settings class</a>
+      <a href="#kinds">Choose a kind of setting</a>
+    </div>
+    </div>
+
+    <!-- ══════════════════════════════════════ page ════ -->
+    <section id="page">
+      <h2>Declare a page</h2>
+      <p>Inherit <code>SettingsPage</code> once per page. It appears in Project Settings, in Preferences, or in both,
+        depending on the kinds of settings it holds.</p>
+      <pre><code><span class="kw">public sealed class</span> <span class="ty">GamePage</span> : <span class="ty">SettingsPage</span>
+{
+    <span class="kw">public override string</span> Path =&gt; <span class="st">"My Game"</span>;
+    <span class="kw">public override string</span> Description =&gt; <span class="st">"Runtime tunables."</span>;
+    <span class="kw">public override string</span> HelpUrl =&gt; <span class="st">"https://docs.example.com"</span>;
+}</code></pre>
+      <div class="table-scroll">
+        <table class="cmp keycol">
+          <thead><tr><th scope="col">Property</th><th scope="col">Description</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Path</strong></td><td>Where the page appears in the list. Use <code>/</code> to nest it, for example <code>"My Game/Networking"</code>. <strong>Required.</strong></td></tr>
+            <tr><td><strong>Description</strong></td><td>A short text at the top of the page. <strong>Optional.</strong></td></tr>
+            <tr><td><strong>HelpUrl</strong></td><td>Adds a "?" button that opens this link. <strong>Optional.</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="note warning"><strong>Warning:</strong> Keep <code>Path</code> constant. It is read once per editor session, so a path that changes during a session doesn't move the page until Unity restarts.</div>
+      <div class="note"><strong>Note:</strong> Pages are identified by their class, not their title, so two packages that both name their page "Settings" still get separate pages.</div>
+    </section>
+
+    <!-- ══════════════════════════════════════ class ════ -->
+    <section id="class">
+      <h2>Write a settings class</h2>
+      <p>A settings class holds the values of one section on a page. To write one:</p>
+      <ul>
+        <li>Inherit one of the <a href="#kinds">four base classes</a>, with your page as the type argument.</li>
+        <li>Mark it <code>[System.Serializable]</code>.</li>
+        <li>Give it a parameterless constructor (the default one is fine).</li>
+        <li>Store its values in <code>[SerializeField]</code> fields.</li>
+      </ul>
+      <pre><code>[<span class="ty">System.Serializable</span>]
+<span class="kw">public sealed class</span> <span class="ty">AudioDefaults</span> : <span class="ty">BuildSettingsEntry</span>&lt;<span class="ty">GamePage</span>&gt;
+{
+    [<span class="ty">SerializeField</span>, <span class="ty">Range</span>(<span class="nu">0f</span>, <span class="nu">1f</span>)] <span class="kw">float</span> masterVolume = <span class="nu">0.8f</span>;
+    <span class="kw">public float</span> MasterVolume =&gt; masterVolume;
+}</code></pre>
+      <p>Each field's initializer sets its default value: the value a new project starts with, and the value
+        <a href="Customize%20the%20window.html#revert">Revert to Default</a> restores. A field can also reference a
+        project asset, such as a texture or a ScriptableObject; in a build setting, the asset is included in the build
+        along with it.</p>
+    </section>
+
+    <!-- ══════════════════════════════════════ kinds ════ -->
+    <section id="kinds">
+      <h2>Choose a kind of setting</h2>
+      <p>The base class decides where a setting appears and whether it reaches your builds:</p>
+      <div class="table-scroll">
+        <table class="cmp keycol">
+          <thead><tr><th scope="col">Base class</th><th scope="col">Window</th><th scope="col">Shared with the team</th><th scope="col">In builds</th><th scope="col">Use it for</th></tr></thead>
+          <tbody>
+            <tr><td><code>BuildSettingsEntry&lt;TPage&gt;</code></td><td>Project Settings</td><td>Yes</td><td>Yes</td><td>Values your game or package reads at runtime.</td></tr>
+            <tr><td><a href="#platform"><code>PlatformSettingsEntry&lt;TPage&gt;</code></a></td><td>Project Settings</td><td>Yes</td><td>Yes, per platform</td><td>Values that differ per platform, like a server URL.</td></tr>
+            <tr><td><code>EditorSettingsEntry&lt;TPage&gt;</code></td><td>Project Settings</td><td>Yes</td><td>No</td><td>Options for your editor tools.</td></tr>
+            <tr><td><code>UserSettingsEntry&lt;TPage&gt;</code></td><td>Preferences</td><td>No</td><td>No</td><td>Personal options, like a highlight color.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="note"><strong>Note:</strong> Project settings are saved in <code>ProjectSettings/SettingsKit.asset</code> and user settings in <code>UserSettings/SettingsKit.asset</code>. With Unity's standard <code>.gitignore</code>, the first is shared with your team and the second stays on each machine, with nothing to set up.</div>
+      <div class="note warning"><strong>Warning:</strong> In a build, reading an editor or user setting returns its default values, not the ones set in the editor.</div>
+
+      <p id="platform">A per-platform setting gets a row of tabs in its section. <strong>Default</strong> holds the values
+        every platform uses; select <strong>+</strong> to give a platform its own values, and <strong>-</strong> to
+        remove them. A read returns the values for the platform the game runs on, which in the editor is the active
+        build target.</p>
+      <div class="img-block">
+        <img src="../img/platform_tab_strip" alt="A per-platform section with its tabs"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">&#128247;</span>
+          <span><strong>img/platform_tab_strip</strong><br/>A per-platform section: the Default tab, platform tabs with their icons, and the + and - buttons</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="pager">
+      <a class="prev" href="Get%20started.html">
+        <div class="dir">Back</div>
+        <div class="pg-title">Get started</div>
+      </a>
+      <a class="next" href="Read%20settings.html">
+        <div class="dir">Next</div>
+        <div class="pg-title">Read settings</div>
+      </a>
+    </div>
+
+    <div class="doc-footer">Settings Kit v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

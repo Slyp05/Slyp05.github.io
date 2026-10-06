@@ -76,6 +76,6 @@
   card: /assets/images/settings-kit-card.jpg
   icon: /assets/images/SK.png
   blurb: >-
-    Declare Project Settings and Preferences pages in Unity from a small class, read them
-    anywhere including at runtime in a built player, with no editor boilerplate and nothing
-    under Resources/.
+    Add your own pages to Project Settings and Preferences from a small class, and read
+    their values anywhere, in the editor or in a build. No editor code, nothing under
+    Resources/.

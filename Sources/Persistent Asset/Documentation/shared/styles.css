@@ -10,6 +10,10 @@ html {
 /* The bar sticks to the top of the viewport, so an anchor jump has to stop that far short of its
    target or the heading lands behind it. */
 :root { --doc-top: 50px; }
+/* Pages without a bar start the sidebar at the very top. The other packages only get the phone bar
+   doc-nav.js adds, which is hidden above the phone breakpoint. */
+:root:not(:has(.doc-top)) { --doc-top: 0px; }
+@media (min-width: 761px) { :root:not(:has(.doc-top:not(.doc-top-phone))) { --doc-top: 0px; } }
 html { scroll-padding-top: calc(var(--doc-top) + 16px); }
 
 body {
@@ -61,6 +65,10 @@ nav a {
 }
 nav a.indent,
 nav a[href^="#"] { padding-left: 36px; color: #a6adc8; font-size: 13px; }
+/* The other packages' single-page docs point every entry at an anchor and mark only the sub-entries
+   .indent, so their other anchor links stay at the top level. */
+nav:not(:has(.nav-band, .nav-group, .nav-books)) a[href^="#"]:not(.indent) { padding-left: 20px; color: #cdd6f4; }
+nav:not(:has(.nav-band, .nav-group, .nav-books)) a[href^="#"]:not(.indent):hover { color: #89b4fa; }
 nav a:hover { color: #89b4fa; }
 
 /* Main content */

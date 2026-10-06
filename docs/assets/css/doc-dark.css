@@ -467,6 +467,8 @@ table.cmp th[colspan] {
 nav { background: var(--d-nav-bg); color: var(--d-nav-fg); }
 nav a, nav .nav-band { color: var(--d-nav-fg); }
 nav a.indent, nav a[href^="#"], nav a.nav-back { color: var(--d-nav-dim); }
+nav:not(:has(.nav-band, .nav-group, .nav-books)) a[href^="#"]:not(.indent) { color: var(--d-nav-fg); }
+nav:not(:has(.nav-band, .nav-group, .nav-books)) a[href^="#"]:not(.indent):hover { color: var(--d-nav-accent); }
 nav .nav-title, nav a:hover, nav a.active, nav a.nav-ext,
 nav a.nav-band:hover, nav .nav-band.active { color: var(--d-nav-accent); }
 nav .nav-group { color: var(--d-nav-faint); }

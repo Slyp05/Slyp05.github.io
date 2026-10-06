@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Choose how sections are titled, ordered and drawn, and flag invalid values." />
+  <title>Settings Kit - Customize the window</title>
+  <link rel="stylesheet" href="../shared/styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <nav>
+    <div class="nav-title">Settings Kit</div>
+    <div class="nav-books"><a href="../User%20Manual.html" class="active" aria-current="true">User Manual</a><a href="../Public%20API.html">Public API</a></div>
+    <a href="../User%20Manual.html">Home</a>
+    <a href="Installation.html">Installation</a>
+    <a href="Get%20started.html">Get started</a>
+    <a href="Declare%20settings.html">Declare settings</a>
+    <a href="Read%20settings.html">Read settings</a>
+    <a href="Customize%20the%20window.html" class="active" aria-current="page">Customize the window</a>
+    <a href="#titles" class="indent">Set titles and order</a>
+    <a href="#revert" class="indent">Revert a section</a>
+    <a href="#drawer" class="indent">Draw a section yourself</a>
+    <a href="#validation" class="indent">Validate values</a>
+    <a href="Update%20your%20settings.html">Update your settings</a>
+  </nav>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Customize the window</h1>
+      <div class="sub">Choose how sections are titled, ordered and drawn, and flag invalid values.</div>
+
+    <div class="guide-index">
+      <a href="#titles">Set titles and order</a>
+      <a href="#revert">Revert a section</a>
+      <a href="#drawer">Draw a section yourself</a>
+      <a href="#validation">Validate values</a>
+    </div>
+    </div>
+
+    <!-- ══════════════════════════════════════ titles ════ -->
+    <section id="titles">
+      <h2>Set titles and order</h2>
+      <p>Each settings class shows as a section titled after its class name: <code>AudioDefaults</code> becomes "Audio
+        Defaults". Add <code>[SettingsDisplay]</code> to choose the title, add a tooltip, or change the order. Lower
+        <code>Order</code> values come first.</p>
+      <pre><code>[<span class="ty">SettingsDisplay</span>(<span class="st">"Audio"</span>, Tooltip = <span class="st">"Master mix defaults."</span>, Order = <span class="nu">0</span>)]
+<span class="kw">public sealed class</span> <span class="ty">AudioDefaults</span> : <span class="ty">BuildSettingsEntry</span>&lt;<span class="ty">GamePage</span>&gt; { <span class="cm">/* ... */</span> }</code></pre>
+      <div class="note"><strong>Note:</strong> <code>[SettingsDisplay]</code> works on pages too, to rename or reorder them in the left-hand list.</div>
+    </section>
+
+    <!-- ══════════════════════════════════════ revert ════ -->
+    <section id="revert">
+      <h2>Revert a section</h2>
+      <p>When a section's values differ from their defaults, a grey bar appears along its left edge. To go back to the
+        defaults, right-click the section header and select <strong>Revert to Default</strong>.</p>
+      <div class="img-block">
+        <img src="../img/section_modified_bar" alt="A modified section with its Revert to Default menu"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">&#128247;</span>
+          <span><strong>img/section_modified_bar</strong><br/>A modified section with its grey bar, and the right-click menu open on its header showing Revert to Default</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════ drawer ════ -->
+    <section id="drawer">
+      <h2>Draw a section yourself</h2>
+      <p>Sections draw their fields one per line, like the Inspector. For another layout, write a regular
+        <code>PropertyDrawer</code> for your settings class. Settings Kit uses it automatically.</p>
+      <pre><code>[<span class="ty">CustomPropertyDrawer</span>(<span class="kw">typeof</span>(<span class="ty">NetworkConfig</span>))]
+<span class="kw">public sealed class</span> <span class="ty">NetworkConfigDrawer</span> : <span class="ty">PropertyDrawer</span>
+{
+    <span class="kw">public override float</span> GetPropertyHeight(<span class="ty">SerializedProperty</span> property, <span class="ty">GUIContent</span> label)
+        =&gt; <span class="ty">EditorGUIUtility</span>.singleLineHeight;
+
+    <span class="kw">public override void</span> OnGUI(<span class="ty">Rect</span> position, <span class="ty">SerializedProperty</span> property, <span class="ty">GUIContent</span> label)
+    {
+        <span class="ty">SerializedProperty</span> host = property.FindPropertyRelative(<span class="st">"host"</span>);
+        <span class="ty">SerializedProperty</span> port = property.FindPropertyRelative(<span class="st">"port"</span>);
+        <span class="cm">// ... draw host and port on one line ...</span>
+    }
+}</code></pre>
+      <div class="img-block">
+        <img src="../img/custom_drawer" alt="A section drawn by a custom PropertyDrawer"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">&#128247;</span>
+          <span><strong>img/custom_drawer</strong><br/>A Networking section with Host and Port drawn on a single line</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════ validation ════ -->
+    <section id="validation">
+      <h2>Validate values</h2>
+      <p>Implement <code>IValidatedSettings</code> and return <code>false</code> with a message when a value is wrong:</p>
+      <pre><code>[<span class="ty">System.Serializable</span>]
+<span class="kw">public sealed class</span> <span class="ty">NetworkConfig</span> : <span class="ty">BuildSettingsEntry</span>&lt;<span class="ty">GamePage</span>&gt;, <span class="ty">IValidatedSettings</span>
+{
+    [<span class="ty">SerializeField</span>] <span class="kw">int</span> port = <span class="nu">7777</span>;
+
+    <span class="kw">public bool</span> Validate(<span class="kw">out string</span> error)
+    {
+        <span class="kw">if</span> (port &lt; <span class="nu">1024</span> || port &gt; <span class="nu">65535</span>)
+        {
+            error = $<span class="st">"Port must be between 1024 and 65535 (was {port})."</span>;
+            <span class="kw">return false</span>;
+        }
+
+        error = <span class="kw">null</span>;
+        <span class="kw">return true</span>;
+    }
+}</code></pre>
+      <p>The message appears under the section: as an error for build settings, and as a warning for editor and user
+        settings.</p>
+      <div class="img-block">
+        <img src="../img/validation_helpbox" alt="A validation message under a section"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">&#128247;</span>
+          <span><strong>img/validation_helpbox</strong><br/>A section with an invalid value and a red error message below its fields</span>
+        </div>
+      </div>
+      <div class="note"><strong>Note:</strong> A build setting that fails validation also stops the build, so an invalid value never ships.</div>
+    </section>
+
+    <div class="pager">
+      <a class="prev" href="Read%20settings.html">
+        <div class="dir">Back</div>
+        <div class="pg-title">Read settings</div>
+      </a>
+      <a class="next" href="Update%20your%20settings.html">
+        <div class="dir">Next</div>
+        <div class="pg-title">Update your settings</div>
+      </a>
+    </div>
+
+    <div class="doc-footer">Settings Kit v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>
