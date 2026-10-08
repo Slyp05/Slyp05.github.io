@@ -1,10 +1,11 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Infinite Value — Public API</title>
+  <title>Infinite Value - Public API</title>
   <link rel="stylesheet" href="/assets/css/doc-styles.css" />
+  <link rel="stylesheet" href="/assets/css/infinite-value.css" />
   <link rel="stylesheet" href="/assets/css/doc-dark.css" />
   <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
   <script src="/assets/js/theme.js" defer></script>
@@ -16,44 +17,51 @@
   <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </head>
 <body>
+<a class="skip-link" href="#content">Skip to content</a>
 <div id="layout">
 
-  <!-- ─── Sidebar ─── -->
-  <nav>
+  <nav class="api-nav">
     <div class="nav-title">Infinite Value</div>
+    <div class="nav-books"><a href="../user-manual/index.html">User Manual</a><a href="index.html" class="active" aria-current="true">Public API</a></div>
+    <div class="nav-group">Value type</div>
     <a href="#InfVal"><span class="badge badge-struct">struct</span>InfVal</a>
+    <div class="nav-group">Formatting</div>
     <a href="#IInfValFormatter"><span class="badge badge-interface">iface</span>IInfValFormatter</a>
     <a href="#FormatterAsset"><span class="badge badge-so">SO</span>FormatterAsset</a>
+    <a href="#CultureFormatter"><span class="badge badge-class">class</span>CultureFormatter</a>
     <a href="#ManualFormatter"><span class="badge badge-class">class</span>ManualFormatter</a>
     <a href="#ScientificFormatter"><span class="badge badge-class">class</span>ScientificFormatter</a>
     <a href="#AlphabeticFormatter"><span class="badge badge-class">class</span>AlphabeticFormatter</a>
-    <a href="#CultureFormatter"><span class="badge badge-class">class</span>CultureFormatter</a>
+    <a href="#ConwayGuyFormatter"><span class="badge badge-class">class</span>ConwayGuyFormatter</a>
+    <a href="#Culture"><span class="badge badge-class">class</span>Culture</a>
     <a href="#InfValFormatHelper"><span class="badge badge-static">static</span>InfValFormatHelper</a>
-    <a href="#Configuration"><span class="badge badge-so">SO</span>Configuration</a>
-    <a href="#InfValInputField"><span class="badge badge-mb">MB</span>InfValInputField</a>
+    <div class="nav-group">Math</div>
     <a href="#MathInfVal"><span class="badge badge-static">static</span>MathInfVal</a>
     <a href="#InterpolateInfVal"><span class="badge badge-static">static</span>InterpolateInfVal</a>
-    <a href="#Culture"><span class="badge badge-class">class</span>Culture</a>
+    <div class="nav-group">Configuration</div>
+    <a href="#Configuration"><span class="badge badge-so">SO</span>Configuration</a>
+    <div class="nav-group">UI</div>
+    <a href="#InfValInputField"><span class="badge badge-mb">MB</span>InfValInputField</a>
   </nav>
 
-  <!-- ─── Main ─── -->
-  <main>
+  <main id="content">
     <div class="page-header">
       <h1>Public API</h1>
-      <div class="sub">Infinite Value v2.2 &nbsp;·&nbsp; namespace <code>InfiniteValue</code></div>
+      <div class="sub">Namespace <code>InfiniteValue</code>.</div>
     </div>
 
 
+    <h2 class="api-group">Value type</h2>
     <!-- ═══════════════════════════════════════════════════ InfVal ═══ -->
     <div class="type-section" id="InfVal">
       <div class="type-header">
-        <h2>InfVal</h2>
+        <h3>InfVal</h3>
         <span class="badge badge-struct">struct</span>
       </div>
       <p class="type-desc">
         Infinite-precision value type. Represents <code>digits &times; 10<sup>exponent</sup></code>.
         Immutable on the public side. Implements <code>IComparable</code>,
-        <code>IComparable&lt;InfVal&gt;</code>, <code>IEquatable&lt;InfVal&gt;</code>.
+        <code>IComparable&lt;InfVal&gt;</code>, <code>IEquatable&lt;InfVal&gt;</code>, <code>IConvertible</code>.
       </p>
 
       <!-- Constructors -->
@@ -61,63 +69,64 @@
         <div class="member-group-title">Constructors</div>
         <div class="note">
           The optional <code>precision</code> parameter sets the number of significant digits.
-          Must be &gt; 0. When omitted, use the max digit count for the type;
+          When omitted, a primitive type uses the default precision listed below, and an InfVal, a BigInteger or a string keeps the digits it holds.
+          <span class="ex">Throws ArgumentException if precision &le; 0.</span>
         </div>
         <table class="mt">
           <tr>
-            <td><span class="mn">InfVal</span>(<span class="t">InfVal</span> value, <span class="t">int</span>? precision = null)</td>
+            <th scope="row"><span class="mn">InfVal</span>(<span class="kw">in</span> <span class="t">InfVal</span> value, <span class="t">int</span>? precision = null)</th>
             <td>From another InfVal.</td>
           </tr>
           <tr>
-            <td><span class="mn">InfVal</span>(<span class="t">BigInteger</span> value, <span class="t">int</span>? precision = null)</td>
+            <th scope="row"><span class="mn">InfVal</span>(<span class="kw">in</span> <span class="t">BigInteger</span> value, <span class="t">int</span>? precision = null)</th>
             <td>From a BigInteger.</td>
           </tr>
           <tr>
-            <td><span class="mn">InfVal</span>(<span class="t">string</span> valStr, <span class="t">int</span>? precision = null)</td>
+            <th scope="row"><span class="mn">InfVal</span>(<span class="t">string</span> valStr, <span class="t">int</span>? precision = null)</th>
             <td>Parsed from a string using the default formatter. Invalid input yields 0.</td>
           </tr>
           <tr>
-            <td><span class="mn">InfVal</span>(<span class="t">sbyte</span> value, <span class="t">int</span>? precision = null)</td>
+            <th scope="row"><span class="mn">InfVal</span>(<span class="t">sbyte</span> value, <span class="t">int</span>? precision = null)</th>
             <td>Default precision: 3.</td>
           </tr>
           <tr>
-            <td><span class="mn">InfVal</span>(<span class="t">byte</span> value, <span class="t">int</span>? precision = null)</td>
+            <th scope="row"><span class="mn">InfVal</span>(<span class="t">byte</span> value, <span class="t">int</span>? precision = null)</th>
             <td>Default precision: 3.</td>
           </tr>
           <tr>
-            <td><span class="mn">InfVal</span>(<span class="t">short</span> value, <span class="t">int</span>? precision = null)</td>
+            <th scope="row"><span class="mn">InfVal</span>(<span class="t">short</span> value, <span class="t">int</span>? precision = null)</th>
             <td>Default precision: 5.</td>
           </tr>
           <tr>
-            <td><span class="mn">InfVal</span>(<span class="t">ushort</span> value, <span class="t">int</span>? precision = null)</td>
+            <th scope="row"><span class="mn">InfVal</span>(<span class="t">ushort</span> value, <span class="t">int</span>? precision = null)</th>
             <td>Default precision: 5.</td>
           </tr>
           <tr>
-            <td><span class="mn">InfVal</span>(<span class="t">int</span> value, <span class="t">int</span>? precision = null)</td>
+            <th scope="row"><span class="mn">InfVal</span>(<span class="t">int</span> value, <span class="t">int</span>? precision = null)</th>
             <td>Default precision: 10.</td>
           </tr>
           <tr>
-            <td><span class="mn">InfVal</span>(<span class="t">uint</span> value, <span class="t">int</span>? precision = null)</td>
+            <th scope="row"><span class="mn">InfVal</span>(<span class="t">uint</span> value, <span class="t">int</span>? precision = null)</th>
             <td>Default precision: 10.</td>
           </tr>
           <tr>
-            <td><span class="mn">InfVal</span>(<span class="t">long</span> value, <span class="t">int</span>? precision = null)</td>
+            <th scope="row"><span class="mn">InfVal</span>(<span class="t">long</span> value, <span class="t">int</span>? precision = null)</th>
             <td>Default precision: 19.</td>
           </tr>
           <tr>
-            <td><span class="mn">InfVal</span>(<span class="t">ulong</span> value, <span class="t">int</span>? precision = null)</td>
+            <th scope="row"><span class="mn">InfVal</span>(<span class="t">ulong</span> value, <span class="t">int</span>? precision = null)</th>
             <td>Default precision: 20.</td>
           </tr>
           <tr>
-            <td><span class="mn">InfVal</span>(<span class="t">float</span> value, <span class="t">int</span>? precision = null)</td>
-            <td>Default precision: 9.</td>
+            <th scope="row"><span class="mn">InfVal</span>(<span class="t">float</span> value, <span class="t">int</span>? precision = null)</th>
+            <td>Default precision: 9. <span class="ex">Throws ArgumentException if value is NaN or infinity.</span></td>
           </tr>
           <tr>
-            <td><span class="mn">InfVal</span>(<span class="t">double</span> value, <span class="t">int</span>? precision = null)</td>
-            <td>Default precision: 17.</td>
+            <th scope="row"><span class="mn">InfVal</span>(<span class="t">double</span> value, <span class="t">int</span>? precision = null)</th>
+            <td>Default precision: 17. <span class="ex">Throws ArgumentException if value is NaN or infinity.</span></td>
           </tr>
           <tr>
-            <td><span class="mn">InfVal</span>(<span class="t">decimal</span> value, <span class="t">int</span>? precision = null)</td>
+            <th scope="row"><span class="mn">InfVal</span>(<span class="t">decimal</span> value, <span class="t">int</span>? precision = null)</th>
             <td>Default precision: 29.</td>
           </tr>
         </table>
@@ -128,23 +137,23 @@
         <div class="member-group-title">Static Methods</div>
         <table class="mt">
           <tr>
-            <td><span class="t">InfVal</span> <span class="mn">ManualFactory</span>(<span class="t">BigInteger</span> digits, <span class="t">int</span> exponent)</td>
+            <th scope="row"><span class="t">InfVal</span> <span class="mn">ManualFactory</span>(<span class="kw">in</span> <span class="t">BigInteger</span> digits, <span class="t">int</span> exponent)</th>
             <td>Create an InfVal by setting its internal fields directly, without the normalization that constructors apply. Use when you need exact control over digits and exponent.</td>
           </tr>
           <tr>
-            <td><span class="t">InfVal</span> <span class="mn">Parse</span>(<span class="t">string</span> str)</td>
+            <th scope="row"><span class="t">InfVal</span> <span class="mn">Parse</span>(<span class="t">string</span> str)</th>
             <td>Parse using the default formatter. <span class="ex">Throws FormatException if invalid, or InvalidOperationException if no default formatter is configured.</span></td>
           </tr>
           <tr>
-            <td><span class="t">InfVal</span> <span class="mn">Parse</span>(<span class="t">string</span> str, <span class="t">IInfValFormatter</span> formatter)</td>
+            <th scope="row"><span class="t">InfVal</span> <span class="mn">Parse</span>(<span class="t">string</span> str, <span class="t">IInfValFormatter</span> formatter)</th>
             <td>Parse using a specific formatter (null falls back to the Configuration default). <span class="ex">Throws FormatException if invalid, or InvalidOperationException if formatter is null and no default is configured.</span></td>
           </tr>
           <tr>
-            <td><span class="t">bool</span> <span class="mn">TryParse</span>(<span class="t">string</span> str, <span class="kw">out</span> <span class="t">InfVal</span> result)</td>
+            <th scope="row"><span class="t">bool</span> <span class="mn">TryParse</span>(<span class="t">string</span> str, <span class="kw">out</span> <span class="t">InfVal</span> result)</th>
             <td>Try parse using the default formatter. Returns false on failure; never throws.</td>
           </tr>
           <tr>
-            <td><span class="t">bool</span> <span class="mn">TryParse</span>(<span class="t">string</span> str, <span class="t">IInfValFormatter</span> formatter, <span class="kw">out</span> <span class="t">InfVal</span> result)</td>
+            <th scope="row"><span class="t">bool</span> <span class="mn">TryParse</span>(<span class="t">string</span> str, <span class="t">IInfValFormatter</span> formatter, <span class="kw">out</span> <span class="t">InfVal</span> result)</th>
             <td>Try parse using a specific formatter (null falls back to the Configuration default).</td>
           </tr>
         </table>
@@ -155,39 +164,39 @@
         <div class="member-group-title">Properties</div>
         <table class="mt">
           <tr>
-            <td><span class="t">BigInteger</span> <span class="mn">digits</span></td>
+            <th scope="row"><span class="t">BigInteger</span> <span class="mn">digits</span></th>
             <td>The full digit integer. Value = digits &times; 10<sup>exponent</sup>.</td>
           </tr>
           <tr>
-            <td><span class="t">int</span> <span class="mn">exponent</span></td>
+            <th scope="row"><span class="t">int</span> <span class="mn">exponent</span></th>
             <td>The exponent. Setting it adjusts digits to preserve the represented value; if the shift exceeds current precision, digits are zeroed.</td>
           </tr>
           <tr>
-            <td><span class="t">int</span> <span class="mn">precision</span></td>
+            <th scope="row"><span class="t">int</span> <span class="mn">precision</span></th>
             <td>Count of significant digits.</td>
           </tr>
           <tr>
-            <td><span class="t">bool</span> <span class="mn">isInteger</span></td>
+            <th scope="row"><span class="t">bool</span> <span class="mn">isInteger</span></th>
             <td>True if the value has no fractional part (can be true even with a negative exponent if all fractional digits are zero).</td>
           </tr>
           <tr>
-            <td><span class="t">bool</span> <span class="mn">isZero</span></td>
+            <th scope="row"><span class="t">bool</span> <span class="mn">isZero</span></th>
             <td>True if the value equals 0.</td>
           </tr>
           <tr>
-            <td><span class="t">bool</span> <span class="mn">isOne</span></td>
+            <th scope="row"><span class="t">bool</span> <span class="mn">isOne</span></th>
             <td>True if the value equals 1.</td>
           </tr>
           <tr>
-            <td><span class="t">bool</span> <span class="mn">isEven</span></td>
-            <td>True if the value is even. <span class="ex">Throws InvalidOperationException if exponent &lt; 0.</span></td>
+            <th scope="row"><span class="t">bool</span> <span class="mn">isEven</span></th>
+            <td>True if the value is even. <span class="ex">Throws InvalidOperationException if the value is not an integer.</span></td>
           </tr>
           <tr>
-            <td><span class="t">bool</span> <span class="mn">isPowerOfTwo</span></td>
+            <th scope="row"><span class="t">bool</span> <span class="mn">isPowerOfTwo</span></th>
             <td>True if the value is a power of two.</td>
           </tr>
           <tr>
-            <td><span class="t">int</span> <span class="mn">sign</span></td>
+            <th scope="row"><span class="t">int</span> <span class="mn">sign</span></th>
             <td>Sign of the value: 1 (positive), 0 (zero), or &minus;1 (negative).</td>
           </tr>
         </table>
@@ -198,72 +207,76 @@
         <div class="member-group-title">Methods</div>
         <table class="mt">
           <tr>
-            <td><span class="t">InfVal</span> <span class="mn">ToExponent</span>(<span class="t">int</span> exponent, <span class="t">bool</span> raw = false)</td>
+            <th scope="row"><span class="t">InfVal</span> <span class="mn">ToExponent</span>(<span class="t">int</span> exponent, <span class="t">bool</span> raw = false)</th>
             <td>Return with a different exponent. By default adjusts digits to preserve the value. If <code>raw = true</code>, sets the exponent directly (shifts the decimal point, changing the value). Equivalent to <code>MovePointLeft</code> / <code>MovePointRight</code>.</td>
           </tr>
           <tr>
-            <td><span class="t">InfVal</span> <span class="mn">ToDigits</span>(<span class="t">BigInteger</span> digits)</td>
+            <th scope="row"><span class="t">InfVal</span> <span class="mn">ToDigits</span>(<span class="kw">in</span> <span class="t">BigInteger</span> digits)</th>
             <td>Return with different digits, keeping the current exponent.</td>
           </tr>
           <tr>
-            <td><span class="t">InfVal</span> <span class="mn">ToPrecision</span>(<span class="t">int</span> precision)</td>
+            <th scope="row"><span class="t">InfVal</span> <span class="mn">ToPrecision</span>(<span class="t">int</span> precision)</th>
             <td>Return with a different precision by adjusting the exponent. <span class="ex">Throws ArgumentException if precision &le; 0.</span></td>
           </tr>
           <tr>
-            <td><span class="t">InfVal</span> <span class="mn">RemoveTrailingZeros</span>()</td>
+            <th scope="row"><span class="t">InfVal</span> <span class="mn">RemoveTrailingZeros</span>()</th>
             <td>Return with all trailing digit zeros removed. Does not change the value.</td>
           </tr>
           <tr>
-            <td><span class="t">InfVal</span> <span class="mn">MovePointLeft</span>(<span class="t">int</span> move)</td>
+            <th scope="row"><span class="t">InfVal</span> <span class="mn">MovePointLeft</span>(<span class="t">int</span> move)</th>
             <td>Shift the decimal point left by <code>move</code> places. Changes the value.</td>
           </tr>
           <tr>
-            <td><span class="t">InfVal</span> <span class="mn">MovePointRight</span>(<span class="t">int</span> move)</td>
+            <th scope="row"><span class="t">InfVal</span> <span class="mn">MovePointRight</span>(<span class="t">int</span> move)</th>
             <td>Shift the decimal point right by <code>move</code> places. Changes the value.</td>
           </tr>
           <tr>
-            <td><span class="t">void</span> <span class="mn">Deconstruct</span>(<span class="kw">out</span> <span class="t">BigInteger</span> digits, <span class="kw">out</span> <span class="t">int</span> exponent)</td>
+            <th scope="row"><span class="t">void</span> <span class="mn">Deconstruct</span>(<span class="kw">out</span> <span class="t">BigInteger</span> digits, <span class="kw">out</span> <span class="t">int</span> exponent)</th>
             <td>Deconstruct into digits and exponent. Supports tuple assignment: <code>(BigInteger d, int e) = iv;</code></td>
           </tr>
           <tr>
-            <td><span class="t">string</span> <span class="mn">ToString</span>(<span class="t">IInfValFormatter</span> formatter)</td>
-            <td>Format using a specific formatter (null falls back to the Configuration default).</td>
+            <th scope="row"><span class="t">string</span> <span class="mn">ToString</span>(<span class="t">IInfValFormatter</span> formatter)</th>
+            <td>Format using a specific formatter (null falls back to the Configuration default). Falls back to <code>ToDebugString()</code> if neither is set.</td>
           </tr>
           <tr>
-            <td><span class="t">void</span> <span class="mn">Format</span>(<span class="t">IInfValFormatter</span> formatter, <span class="t">List&lt;string&gt;</span> parts, <span class="t">int</span> partCount = 0)</td>
-            <td>Fill parts with the pieces of the formatted value (null formatter falls back to the Configuration default). Throws ArgumentNullException if parts is null.</td>
+            <th scope="row"><span class="t">void</span> <span class="mn">Format</span>(<span class="t">IInfValFormatter</span> formatter, <span class="t">List&lt;string&gt;</span> parts, <span class="t">int</span> partCount = 0)</th>
+            <td>Fill parts with the pieces of the formatted value (null formatter falls back to the Configuration default). <span class="ex">Throws ArgumentNullException if parts is null, or ArgumentOutOfRangeException if partCount is above 16.</span></td>
           </tr>
           <tr>
-            <td><span class="t">void</span> <span class="mn">Format</span>(<span class="t">List&lt;string&gt;</span> parts, <span class="t">int</span> partCount = 0)</td>
+            <th scope="row"><span class="t">void</span> <span class="mn">Format</span>(<span class="t">List&lt;string&gt;</span> parts, <span class="t">int</span> partCount = 0)</th>
             <td>Same, using the Configuration default formatter.</td>
           </tr>
           <tr>
-            <td><span class="t">string</span> <span class="mn">ToString</span>()</td>
+            <th scope="row"><span class="t">string</span> <span class="mn">ToString</span>()</th>
             <td>Format using the Configuration default formatter. Falls back to <code>ToDebugString()</code> if no default is configured.</td>
           </tr>
           <tr>
-            <td><span class="t">string</span> <span class="mn">ToDebugString</span>()</td>
-            <td>Returns <code>"(digits, exponent)"</code>: a raw representation useful for debugging.</td>
+            <th scope="row"><span class="t">string</span> <span class="mn">ToString</span>(<span class="t">IFormatProvider</span> provider)</th>
+            <td>Same as <code>ToString()</code>. The provider is ignored; pass a <a href="#CultureFormatter">CultureFormatter</a> to <code>ToString(IInfValFormatter)</code> for culture-aware output.</td>
           </tr>
           <tr>
-            <td><span class="t">bool</span> <span class="mn">Equals</span>(<span class="t">InfVal</span> other)</td>
+            <th scope="row"><span class="t">string</span> <span class="mn">ToDebugString</span>()</th>
+            <td>Returns <code>"(digits, exponent)"</code>, a raw representation useful for debugging.</td>
+          </tr>
+          <tr>
+            <th scope="row"><span class="t">bool</span> <span class="mn">Equals</span>(<span class="t">InfVal</span> other)</th>
             <td>Value equality.</td>
           </tr>
           <tr>
-            <td><span class="t">bool</span> <span class="mn">Equals</span>(<span class="t">object</span> obj)</td>
-            <td>Value equality with any object.</td>
+            <th scope="row"><span class="t">bool</span> <span class="mn">Equals</span>(<span class="t">object</span> obj)</th>
+            <td>Value equality. False if obj is not an InfVal.</td>
           </tr>
           <tr>
-            <td><span class="t">int</span> <span class="mn">GetHashCode</span>()</td>
-            <td>Hash code based on digits and exponent.</td>
+            <th scope="row"><span class="t">int</span> <span class="mn">GetHashCode</span>()</th>
+            <td>Hash code of the value: equal values stored at different precisions (5 and 5.0) hash the same.</td>
           </tr>
           <tr>
-            <td><span class="t">int</span> <span class="mn">CompareTo</span>(<span class="t">InfVal</span> other)</td>
+            <th scope="row"><span class="t">int</span> <span class="mn">CompareTo</span>(<span class="t">InfVal</span> other)</th>
             <td>Returns &minus;1, 0, or 1.</td>
           </tr>
           <tr>
-            <td><span class="t">int</span> <span class="mn">CompareTo</span>(<span class="t">object</span> obj)</td>
-            <td>Compares with any type castable to InfVal. <span class="ex">Throws ArgumentException for incompatible types.</span></td>
+            <th scope="row"><span class="t">int</span> <span class="mn">CompareTo</span>(<span class="t">object</span> obj)</th>
+            <td>Compares with an InfVal or any type castable to InfVal. <span class="ex">Throws ArgumentException for incompatible types.</span></td>
           </tr>
         </table>
       </div>
@@ -272,36 +285,36 @@
       <div class="member-group">
         <div class="member-group-title">Operators: Arithmetic</div>
         <table class="mt">
-          <tr><td>+<span class="mn">a</span></td><td>Identity.</td></tr>
-          <tr><td>-<span class="mn">a</span></td><td>Negation.</td></tr>
-          <tr><td><span class="mn">a</span> + <span class="mn">b</span></td><td>Addition. Result precision = max(a.precision, b.precision).</td></tr>
-          <tr><td><span class="mn">a</span> - <span class="mn">b</span></td><td>Subtraction. Result precision = max(a.precision, b.precision).</td></tr>
-          <tr><td><span class="mn">a</span> * <span class="mn">b</span></td><td>Multiplication. Result precision = max(a.precision, b.precision).</td></tr>
-          <tr><td><span class="mn">a</span> / <span class="mn">b</span></td><td>Division. <span class="ex">Throws DivideByZeroException if b is zero.</span></td></tr>
-          <tr><td><span class="mn">a</span> % <span class="mn">b</span></td><td>Modulo. <span class="ex">Throws DivideByZeroException if b is zero.</span></td></tr>
+          <tr><th scope="row">+<span class="mn">a</span></th><td>Identity.</td></tr>
+          <tr><th scope="row">-<span class="mn">a</span></th><td>Negation.</td></tr>
+          <tr><th scope="row"><span class="mn">a</span> + <span class="mn">b</span></th><td>Addition. Result precision = max(a.precision, b.precision).</td></tr>
+          <tr><th scope="row"><span class="mn">a</span> - <span class="mn">b</span></th><td>Subtraction. Result precision = max(a.precision, b.precision).</td></tr>
+          <tr><th scope="row"><span class="mn">a</span> * <span class="mn">b</span></th><td>Multiplication. Result precision = max(a.precision, b.precision).</td></tr>
+          <tr><th scope="row"><span class="mn">a</span> / <span class="mn">b</span></th><td>Division. Result precision = max(a.precision, b.precision). <span class="ex">Throws DivideByZeroException if b is zero.</span></td></tr>
+          <tr><th scope="row"><span class="mn">a</span> % <span class="mn">b</span></th><td>Modulo. Result precision = max(a.precision, b.precision). <span class="ex">Throws DivideByZeroException if b is zero.</span></td></tr>
         </table>
       </div>
       <div class="member-group">
         <div class="member-group-title">Operators: Bitwise</div>
-        <div class="note">Bitwise operators require exponent == 0. <span class="ex">Throws InvalidOperationException otherwise.</span></div>
+        <div class="note">Bitwise and shift operators require an integer value, whatever its exponent. The result keeps the precision of the more precise operand, or more when it has more digits. <span class="ex">Throws InvalidOperationException otherwise.</span></div>
         <table class="mt">
-          <tr><td>~<span class="mn">a</span></td><td>Bitwise NOT.</td></tr>
-          <tr><td><span class="mn">a</span> &amp; <span class="mn">b</span></td><td>Bitwise AND.</td></tr>
-          <tr><td><span class="mn">a</span> | <span class="mn">b</span></td><td>Bitwise OR.</td></tr>
-          <tr><td><span class="mn">a</span> ^ <span class="mn">b</span></td><td>Bitwise XOR.</td></tr>
-          <tr><td><span class="mn">a</span> &lt;&lt; <span class="mn">n</span></td><td>Left shift by n bits.</td></tr>
-          <tr><td><span class="mn">a</span> &gt;&gt; <span class="mn">n</span></td><td>Right shift by n bits.</td></tr>
+          <tr><th scope="row">~<span class="mn">a</span></th><td>Bitwise NOT.</td></tr>
+          <tr><th scope="row"><span class="mn">a</span> &amp; <span class="mn">b</span></th><td>Bitwise AND.</td></tr>
+          <tr><th scope="row"><span class="mn">a</span> | <span class="mn">b</span></th><td>Bitwise OR.</td></tr>
+          <tr><th scope="row"><span class="mn">a</span> ^ <span class="mn">b</span></th><td>Bitwise XOR.</td></tr>
+          <tr><th scope="row"><span class="mn">a</span> &lt;&lt; <span class="mn">n</span></th><td>Left shift by n bits.</td></tr>
+          <tr><th scope="row"><span class="mn">a</span> &gt;&gt; <span class="mn">n</span></th><td>Right shift by n bits.</td></tr>
         </table>
       </div>
       <div class="member-group">
         <div class="member-group-title">Operators: Comparison</div>
         <table class="mt">
-          <tr><td><span class="mn">a</span> == <span class="mn">b</span></td><td>Value equality.</td></tr>
-          <tr><td><span class="mn">a</span> != <span class="mn">b</span></td><td>Value inequality.</td></tr>
-          <tr><td><span class="mn">a</span> &lt; <span class="mn">b</span></td><td>Less than.</td></tr>
-          <tr><td><span class="mn">a</span> &gt; <span class="mn">b</span></td><td>Greater than.</td></tr>
-          <tr><td><span class="mn">a</span> &lt;= <span class="mn">b</span></td><td>Less than or equal.</td></tr>
-          <tr><td><span class="mn">a</span> &gt;= <span class="mn">b</span></td><td>Greater than or equal.</td></tr>
+          <tr><th scope="row"><span class="mn">a</span> == <span class="mn">b</span></th><td>Value equality.</td></tr>
+          <tr><th scope="row"><span class="mn">a</span> != <span class="mn">b</span></th><td>Value inequality.</td></tr>
+          <tr><th scope="row"><span class="mn">a</span> &lt; <span class="mn">b</span></th><td>Less than.</td></tr>
+          <tr><th scope="row"><span class="mn">a</span> &gt; <span class="mn">b</span></th><td>Greater than.</td></tr>
+          <tr><th scope="row"><span class="mn">a</span> &lt;= <span class="mn">b</span></th><td>Less than or equal.</td></tr>
+          <tr><th scope="row"><span class="mn">a</span> &gt;= <span class="mn">b</span></th><td>Greater than or equal.</td></tr>
         </table>
       </div>
 
@@ -310,36 +323,36 @@
         <div class="member-group-title">Implicit Casts: to InfVal</div>
         <div class="note">All numeric primitives, BigInteger, and InfVal itself convert implicitly. A <code>(value, precision)</code> tuple overload exists for every type below.</div>
         <table class="mt">
-          <tr><td><span class="t">sbyte</span>, <span class="t">byte</span>, <span class="t">short</span>, <span class="t">ushort</span></td><td>Small integer types.</td></tr>
-          <tr><td><span class="t">int</span>, <span class="t">uint</span>, <span class="t">long</span>, <span class="t">ulong</span></td><td>Standard integer types.</td></tr>
-          <tr><td><span class="t">float</span>, <span class="t">double</span>, <span class="t">decimal</span></td><td>Floating-point types.</td></tr>
-          <tr><td><span class="t">BigInteger</span></td><td>Arbitrary-precision integer.</td></tr>
-          <tr><td><span class="t">InfVal</span></td><td>Copy.</td></tr>
-          <tr><td>(<span class="t">T</span> value, <span class="t">int</span> precision)</td><td>Any of the above as a tuple, setting precision explicitly.</td></tr>
+          <tr><th scope="row"><span class="t">sbyte</span>, <span class="t">byte</span>, <span class="t">short</span>, <span class="t">ushort</span></th><td>Small integer types.</td></tr>
+          <tr><th scope="row"><span class="t">int</span>, <span class="t">uint</span>, <span class="t">long</span>, <span class="t">ulong</span></th><td>Standard integer types.</td></tr>
+          <tr><th scope="row"><span class="t">float</span>, <span class="t">double</span>, <span class="t">decimal</span></th><td>Floating-point types.</td></tr>
+          <tr><th scope="row"><span class="t">BigInteger</span></th><td>Arbitrary-precision integer.</td></tr>
+          <tr><th scope="row"><span class="t">InfVal</span></th><td>Copy.</td></tr>
+          <tr><th scope="row">(<span class="t">T</span> value, <span class="t">int</span> precision)</th><td>Any of the above as a tuple, setting precision explicitly.</td></tr>
         </table>
       </div>
       <div class="member-group">
         <div class="member-group-title">Explicit Casts: to InfVal</div>
         <table class="mt">
-          <tr><td>(<span class="t">InfVal</span>)<span class="t">string</span></td><td>Parse using the default formatter.</td></tr>
-          <tr><td>(<span class="t">InfVal</span>)(<span class="t">string</span>, <span class="t">int</span>)</td><td>Parse and set precision.</td></tr>
+          <tr><th scope="row">(<span class="t">InfVal</span>)<span class="t">string</span></th><td>Parse using the default formatter.</td></tr>
+          <tr><th scope="row">(<span class="t">InfVal</span>)(<span class="t">string</span>, <span class="t">int</span>)</th><td>Parse and set precision.</td></tr>
         </table>
       </div>
       <div class="member-group">
         <div class="member-group-title">Explicit Casts: from InfVal</div>
         <table class="mt">
-          <tr><td>(<span class="t">BigInteger</span>)<span class="mn">iv</span></td><td>Truncates to integer part (ToExponent(0).digits).</td></tr>
-          <tr><td>(<span class="t">sbyte</span>) (<span class="t">byte</span>) (<span class="t">short</span>) (<span class="t">ushort</span>)<br/>(<span class="t">int</span>) (<span class="t">uint</span>) (<span class="t">long</span>) (<span class="t">ulong</span>)</td><td>Cast through BigInteger. <span class="ex">Throws OverflowException on overflow.</span></td></tr>
-          <tr><td>(<span class="t">float</span>) (<span class="t">double</span>) (<span class="t">decimal</span>)</td><td>Convert via string representation. <span class="ex">Throws OverflowException on overflow.</span></td></tr>
+          <tr><th scope="row">(<span class="t">BigInteger</span>)<span class="mn">iv</span></th><td>Truncates to integer part (ToExponent(0).digits).</td></tr>
+          <tr><th scope="row">(<span class="t">sbyte</span>) (<span class="t">byte</span>) (<span class="t">short</span>) (<span class="t">ushort</span>)<br/>(<span class="t">int</span>) (<span class="t">uint</span>) (<span class="t">long</span>) (<span class="t">ulong</span>)</th><td>Cast through BigInteger. <span class="ex">Throws OverflowException on overflow.</span></td></tr>
+          <tr><th scope="row">(<span class="t">float</span>) (<span class="t">double</span>) (<span class="t">decimal</span>)</th><td>float and double: the nearest value, ties to even. decimal: rounded to its 28 or 29 digits. <span class="ex">Throws OverflowException on overflow.</span></td></tr>
         </table>
       </div>
     </div>
 
-
+    <h2 class="api-group">Formatting</h2>
     <!-- ═══════════════════════════════════ IInfValFormatter ═══ -->
     <div class="type-section" id="IInfValFormatter">
       <div class="type-header">
-        <h2>IInfValFormatter</h2>
+        <h3>IInfValFormatter</h3>
         <span class="badge badge-interface">interface</span>
       </div>
       <p class="type-desc">
@@ -351,30 +364,29 @@
         <div class="member-group-title">Methods</div>
         <table class="mt">
           <tr>
-            <td><span class="t">string</span> <span class="mn">Format</span>(<span class="kw">in</span> <span class="t">InfVal</span> value)</td>
+            <th scope="row"><span class="t">string</span> <span class="mn">Format</span>(<span class="kw">in</span> <span class="t">InfVal</span> value)</th>
             <td>Convert an InfVal to its string representation.</td>
           </tr>
           <tr>
-            <td><span class="t">void</span> <span class="mn">Format</span>(<span class="kw">in</span> <span class="t">InfVal</span> value, <span class="t">List&lt;string&gt;</span> parts, <span class="t">int</span> partCount = 0)</td>
-            <td>Fill parts with the pieces of the formatted value: the number first, then a unit, or an exponent marker and its digits. Concatenating them gives what Format returns. <code>partCount</code> of 0 or less asks for the natural split, a positive value for exactly that many pieces, up to <code>InfValFormatHelper.maxPartCount</code> (16). Has a default implementation putting the whole output in a single part, so implementing it is optional.</td>
+            <th scope="row"><span class="t">void</span> <span class="mn">Format</span>(<span class="kw">in</span> <span class="t">InfVal</span> value, <span class="t">List&lt;string&gt;</span> parts, <span class="t">int</span> partCount = 0)</th>
+            <td>Fill parts with the pieces of the formatted value: the number first, then a unit, or an exponent marker and its digits. Concatenating them gives what Format returns, except that a part merged from several never starts with a separator between the number and its unit, which is left out instead. <code>partCount</code> of 0 or less asks for the natural split, a positive value for exactly that many pieces, up to <code>InfValFormatHelper.maxPartCount</code> (16). Has a default implementation putting the whole output in a single part, so implementing it is optional. <span class="ex">Throws ArgumentNullException if parts is null, or ArgumentOutOfRangeException if partCount is above 16.</span></td>
           </tr>
           <tr>
-            <td><span class="t">bool</span> <span class="mn">TryParse</span>(<span class="t">string</span> text, <span class="kw">out</span> <span class="t">InfVal</span> result)</td>
+            <th scope="row"><span class="t">bool</span> <span class="mn">TryParse</span>(<span class="t">string</span> text, <span class="kw">out</span> <span class="t">InfVal</span> result)</th>
             <td>Try to convert a string to an InfVal. Return false (and set result to default) if the string is not a valid complete number.</td>
           </tr>
           <tr>
-            <td><span class="t">bool</span> <span class="mn">IsValidPartialInput</span>(<span class="t">string</span> text)</td>
+            <th scope="row"><span class="t">bool</span> <span class="mn">IsValidPartialInput</span>(<span class="t">string</span> text)</th>
             <td>Return true if the text is either fully valid or a valid partial input that could still become valid (e.g. "-", "1.", "1e+"). Used by <a href="#InfValInputField">InfValInputField</a> in <code>DisallowInvalid</code> mode.</td>
           </tr>
         </table>
       </div>
     </div>
 
-
     <!-- ═══════════════════════════════════ FormatterAsset ═══ -->
     <div class="type-section" id="FormatterAsset">
       <div class="type-header">
-        <h2>FormatterAsset</h2>
+        <h3>FormatterAsset</h3>
         <span class="badge badge-so">ScriptableObject</span>
       </div>
       <p class="type-desc">
@@ -386,98 +398,17 @@
         <div class="member-group-title">Properties</div>
         <table class="mt">
           <tr>
-            <td><span class="t">IInfValFormatter</span> <span class="mn">formatter</span></td>
+            <th scope="row"><span class="t">IInfValFormatter</span> <span class="mn">formatter</span></th>
             <td>The wrapped formatter instance.</td>
           </tr>
         </table>
       </div>
     </div>
 
-
-    <!-- ═══════════════════════════════════ ManualFormatter ═══ -->
-    <div class="type-section" id="ManualFormatter">
-      <div class="type-header">
-        <h2>ManualFormatter</h2>
-        <span class="badge badge-class">class</span>
-      </div>
-      <p class="type-desc">
-        Fully explicit <a href="#IInfValFormatter">IInfValFormatter</a>. Every formatting detail
-        is configurable. Use <code>[Serializable]</code> is already applied.
-      </p>
-      <div class="member-group">
-        <div class="member-group-title">Public Fields</div>
-        <table class="mt">
-          <tr><td><span class="t">int</span> <span class="mn">groupSize</span></td><td>Number of digits per unit level and group separator step. Default: 3 (k/M/G style). Use 4 for East Asian style (万/億/兆).</td></tr>
-          <tr><td><span class="t">string[]</span> <span class="mn">unitsList</span></td><td>Suffix list applied at each power step (default: k, M, G, T, P, E, Z, Y).</td></tr>
-          <tr><td><span class="t">int</span> <span class="mn">maxDisplayedDigits</span></td><td>Maximum digits to show, leading zeros of values below 1 included. The last displayed digit is rounded half away from zero. 0 = unlimited. Default: 8.</td></tr>
-          <tr><td><span class="t">string</span> <span class="mn">decimalSeparator</span></td><td>Decimal point character(s). Default: ".".</td></tr>
-          <tr><td><span class="t">string</span> <span class="mn">groupSeparator</span></td><td>Thousands separator character(s). Default: ",".</td></tr>
-          <tr><td><span class="t">string</span> <span class="mn">exponentMarker</span></td><td>Marker for scientific notation. Default: "e".</td></tr>
-          <tr><td><span class="t">bool</span> <span class="mn">addGroupSeparatorsBeforeDecimalPoint</span></td><td>Add thousands separators in the integer part. Default: true.</td></tr>
-          <tr><td><span class="t">bool</span> <span class="mn">addGroupSeparatorsAfterDecimalPoint</span></td><td>Add thousands separators in the fractional part. Default: false.</td></tr>
-          <tr><td><span class="t">bool</span> <span class="mn">forceAbbreviation</span></td><td>Always use a unit suffix or scientific notation. Default: false.</td></tr>
-          <tr><td><span class="t">bool</span> <span class="mn">limitDisplayedDecimals</span></td><td>Turn on the maxDisplayedDecimals limit. Default: false.</td></tr>
-          <tr><td><span class="t">int</span> <span class="mn">maxDisplayedDecimals</span></td><td>Maximum decimals to display, in the decimal part of the number or of the abbreviated mantissa, applied when limitDisplayedDecimals is true. Values needing more are rounded to fit, and values below 1 stay in fixed point instead of switching to a unit or scientific notation, as long as they fit in maxDisplayedDigits. 0 rounds to whole numbers. Default: 2.</td></tr>
-          <tr><td><span class="t">bool</span> <span class="mn">keepTrailingZeros</span></td><td>Keep the trailing zeros of the decimal part, padding it up to maxDisplayedDecimals when that limit is set. Default: false.</td></tr>
-        </table>
-      </div>
-    </div>
-
-
-    <!-- ═══════════════════════════════ ScientificFormatter ═══ -->
-    <div class="type-section" id="ScientificFormatter">
-      <div class="type-header">
-        <h2>ScientificFormatter</h2>
-        <span class="badge badge-class">class</span>
-      </div>
-      <p class="type-desc">
-        <a href="#IInfValFormatter">IInfValFormatter</a> that always produces scientific notation
-        (e.g. <code>1.23e+6</code>). No unit suffixes or group separators.
-      </p>
-      <div class="member-group">
-        <div class="member-group-title">Public Fields</div>
-        <table class="mt">
-          <tr><td><span class="t">string</span> <span class="mn">decimalSeparator</span></td><td>Default: ".".</td></tr>
-          <tr><td><span class="t">string</span> <span class="mn">exponentMarker</span></td><td>Default: "e".</td></tr>
-          <tr><td><span class="t">int</span> <span class="mn">maxDisplayedDigits</span></td><td>Default: 8.</td></tr>
-          <tr><td><span class="t">bool</span> <span class="mn">keepTrailingZeros</span></td><td>Default: false.</td></tr>
-        </table>
-      </div>
-    </div>
-
-
-    <!-- ══════════════════════════════ AlphabeticFormatter ═══ -->
-    <div class="type-section" id="AlphabeticFormatter">
-      <div class="type-header">
-        <h2>AlphabeticFormatter</h2>
-        <span class="badge badge-class">class</span>
-      </div>
-      <p class="type-desc">
-        <a href="#IInfValFormatter">IInfValFormatter</a> for idle-game style notation with letter
-        suffixes: <code>1.23a</code>, <code>4.56b</code>, ..., <code>1.00aa</code>, etc.
-        Suffixes are generated from a configurable alphabet and cached automatically.
-      </p>
-      <div class="member-group">
-        <div class="member-group-title">Public Fields</div>
-        <table class="mt">
-          <tr><td><span class="t">string</span> <span class="mn">alphabet</span></td><td>Source string for generating suffixes. Default: "abcdefghijklmnopqrstuvwxyz".</td></tr>
-          <tr><td><span class="t">int</span> <span class="mn">maxDisplayedDigits</span></td><td>Default: 4.</td></tr>
-          <tr><td><span class="t">string</span> <span class="mn">decimalSeparator</span></td><td>Default: ".".</td></tr>
-          <tr><td><span class="t">string</span> <span class="mn">groupSeparator</span></td><td>Default: ",".</td></tr>
-          <tr><td><span class="t">bool</span> <span class="mn">addGroupSeparatorsBeforeDecimalPoint</span></td><td>Default: false.</td></tr>
-          <tr><td><span class="t">bool</span> <span class="mn">addGroupSeparatorsAfterDecimalPoint</span></td><td>Default: false.</td></tr>
-          <tr><td><span class="t">bool</span> <span class="mn">limitDisplayedDecimals</span></td><td>Turn on the maxDisplayedDecimals limit. Default: false.</td></tr>
-          <tr><td><span class="t">int</span> <span class="mn">maxDisplayedDecimals</span></td><td>Maximum decimals to display, in the decimal part of the number or of the abbreviated mantissa, applied when limitDisplayedDecimals is true. Values needing more are rounded to fit, and values below 1 stay in fixed point instead of switching to a unit or scientific notation, as long as they fit in maxDisplayedDigits. 0 rounds to whole numbers. Default: 2.</td></tr>
-          <tr><td><span class="t">bool</span> <span class="mn">keepTrailingZeros</span></td><td>Default: false.</td></tr>
-        </table>
-      </div>
-    </div>
-
-
     <!-- ════════════════════════════════ CultureFormatter ═══ -->
     <div class="type-section" id="CultureFormatter">
       <div class="type-header">
-        <h2>CultureFormatter</h2>
+        <h3>CultureFormatter</h3>
         <span class="badge badge-class">class</span>
       </div>
       <p class="type-desc">
@@ -490,22 +421,183 @@
       <div class="member-group">
         <div class="member-group-title">Public Fields</div>
         <table class="mt">
-          <tr><td><span class="t">Culture</span> <span class="mn">culture</span></td><td>The culture. Default: CurrentCulture.</td></tr>
-          <tr><td><span class="t">int</span> <span class="mn">maxDisplayedDigits</span></td><td>Default: 8.</td></tr>
-          <tr><td><span class="t">bool</span> <span class="mn">addGroupSeparatorsBeforeDecimalPoint</span></td><td>Default: true.</td></tr>
-          <tr><td><span class="t">bool</span> <span class="mn">addGroupSeparatorsAfterDecimalPoint</span></td><td>Default: false.</td></tr>
-          <tr><td><span class="t">bool</span> <span class="mn">limitDisplayedDecimals</span></td><td>Turn on the maxDisplayedDecimals limit. Default: false.</td></tr>
-          <tr><td><span class="t">int</span> <span class="mn">maxDisplayedDecimals</span></td><td>Maximum decimals to display, in the decimal part of the number or of the abbreviated mantissa, applied when limitDisplayedDecimals is true. Values needing more are rounded to fit, and values below 1 stay in fixed point instead of switching to a unit or scientific notation, as long as they fit in maxDisplayedDigits. 0 rounds to whole numbers. Default: 2.</td></tr>
-          <tr><td><span class="t">bool</span> <span class="mn">keepTrailingZeros</span></td><td>Default: false.</td></tr>
+          <tr><th scope="row"><span class="t">Culture</span> <span class="mn">culture</span></th><td>The culture. Default: CurrentCulture.</td></tr>
+          <tr><th scope="row"><span class="t">int</span> <span class="mn">maxDisplayedDigits</span></th><td>Default: 8.</td></tr>
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">addGroupSeparatorsBeforeDecimalPoint</span></th><td>Default: true.</td></tr>
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">addGroupSeparatorsAfterDecimalPoint</span></th><td>Default: false.</td></tr>
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">limitDisplayedDecimals</span></th><td>Turn on the maxDisplayedDecimals limit. Default: false.</td></tr>
+          <tr><th scope="row"><span class="t">int</span> <span class="mn">maxDisplayedDecimals</span></th><td>Maximum decimals to display, in the decimal part of the number or of the abbreviated mantissa, applied when limitDisplayedDecimals is true. Values needing more are rounded to fit, and values below 1 stay in fixed point instead of switching to a unit or scientific notation, as long as they fit in maxDisplayedDigits. 0 rounds to whole numbers. Default: 2.</td></tr>
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">keepTrailingZeros</span></th><td>Default: false.</td></tr>
         </table>
       </div>
     </div>
 
+    <!-- ═══════════════════════════════════ ManualFormatter ═══ -->
+    <div class="type-section" id="ManualFormatter">
+      <div class="type-header">
+        <h3>ManualFormatter</h3>
+        <span class="badge badge-class">class</span>
+      </div>
+      <p class="type-desc">
+        Fully explicit <a href="#IInfValFormatter">IInfValFormatter</a>. Every formatting detail
+        is configurable. Marked <code>[Serializable]</code>.
+      </p>
+      <div class="member-group">
+        <div class="member-group-title">Public Fields</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t">int</span> <span class="mn">groupSize</span></th><td>Number of digits per unit level and group separator step. Default: 3 (k/M/G style). Use 4 for East Asian style (万/億/兆).</td></tr>
+          <tr><th scope="row"><span class="t">string[]</span> <span class="mn">unitsList</span></th><td>Suffix list applied at each power step (default: k, M, G, T, P, E, Z, Y). Null or empty falls back to scientific notation.</td></tr>
+          <tr><th scope="row"><span class="t">int</span> <span class="mn">maxDisplayedDigits</span></th><td>Maximum digits to show, leading zeros of values below 1 included. The last displayed digit is rounded half away from zero. 0 = unlimited. Default: 8.</td></tr>
+          <tr><th scope="row"><span class="t">string</span> <span class="mn">decimalSeparator</span></th><td>Decimal point character(s). Default: ".".</td></tr>
+          <tr><th scope="row"><span class="t">string</span> <span class="mn">groupSeparator</span></th><td>Thousands separator character(s). Default: ",".</td></tr>
+          <tr><th scope="row"><span class="t">string</span> <span class="mn">exponentMarker</span></th><td>Marker for scientific notation. Default: "e".</td></tr>
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">addGroupSeparatorsBeforeDecimalPoint</span></th><td>Add thousands separators in the integer part. Default: true.</td></tr>
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">addGroupSeparatorsAfterDecimalPoint</span></th><td>Add thousands separators in the fractional part. Default: false.</td></tr>
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">forceAbbreviation</span></th><td>Always use a unit suffix or scientific notation. Default: false.</td></tr>
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">limitDisplayedDecimals</span></th><td>Turn on the maxDisplayedDecimals limit. Default: false.</td></tr>
+          <tr><th scope="row"><span class="t">int</span> <span class="mn">maxDisplayedDecimals</span></th><td>Maximum decimals to display, in the decimal part of the number or of the abbreviated mantissa, applied when limitDisplayedDecimals is true. Values needing more are rounded to fit, and values below 1 stay in fixed point instead of switching to a unit or scientific notation, as long as they fit in maxDisplayedDigits. 0 rounds to whole numbers. Default: 2.</td></tr>
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">keepTrailingZeros</span></th><td>Keep the trailing zeros of the decimal part, padding it up to maxDisplayedDecimals when that limit is set. Default: false.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════ ScientificFormatter ═══ -->
+    <div class="type-section" id="ScientificFormatter">
+      <div class="type-header">
+        <h3>ScientificFormatter</h3>
+        <span class="badge badge-class">class</span>
+      </div>
+      <p class="type-desc">
+        <a href="#IInfValFormatter">IInfValFormatter</a> that always produces scientific notation
+        (e.g. <code>1.23e+6</code>). No unit suffixes or group separators.
+      </p>
+      <div class="member-group">
+        <div class="member-group-title">Public Fields</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t">string</span> <span class="mn">decimalSeparator</span></th><td>Default: ".".</td></tr>
+          <tr><th scope="row"><span class="t">string</span> <span class="mn">exponentMarker</span></th><td>Default: "e".</td></tr>
+          <tr><th scope="row"><span class="t">int</span> <span class="mn">maxDisplayedDigits</span></th><td>Default: 8.</td></tr>
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">keepTrailingZeros</span></th><td>Default: false.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════ AlphabeticFormatter ═══ -->
+    <div class="type-section" id="AlphabeticFormatter">
+      <div class="type-header">
+        <h3>AlphabeticFormatter</h3>
+        <span class="badge badge-class">class</span>
+      </div>
+      <p class="type-desc">
+        <a href="#IInfValFormatter">IInfValFormatter</a> for idle-game style notation with letter
+        suffixes: <code>12.35a</code>, <code>4.56b</code>, ..., <code>1aa</code>, <code>1.5ab</code>, etc.
+        Suffixes are generated from a configurable alphabet and cached automatically.
+      </p>
+      <div class="member-group">
+        <div class="member-group-title">Public Fields</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t">string</span> <span class="mn">alphabet</span></th><td>Source string for generating suffixes. Default: "abcdefghijklmnopqrstuvwxyz".</td></tr>
+          <tr><th scope="row"><span class="t">int</span> <span class="mn">maxDisplayedDigits</span></th><td>Default: 4.</td></tr>
+          <tr><th scope="row"><span class="t">string</span> <span class="mn">decimalSeparator</span></th><td>Default: ".".</td></tr>
+          <tr><th scope="row"><span class="t">string</span> <span class="mn">groupSeparator</span></th><td>Default: ",".</td></tr>
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">addGroupSeparatorsBeforeDecimalPoint</span></th><td>Default: false.</td></tr>
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">addGroupSeparatorsAfterDecimalPoint</span></th><td>Default: false.</td></tr>
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">limitDisplayedDecimals</span></th><td>Turn on the maxDisplayedDecimals limit. Default: false.</td></tr>
+          <tr><th scope="row"><span class="t">int</span> <span class="mn">maxDisplayedDecimals</span></th><td>Maximum decimals to display, in the decimal part of the number or of the abbreviated mantissa, applied when limitDisplayedDecimals is true. Values needing more are rounded to fit, and values below 1 stay in fixed point instead of switching to a unit or scientific notation, as long as they fit in maxDisplayedDigits. 0 rounds to whole numbers. Default: 2.</td></tr>
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">keepTrailingZeros</span></th><td>Default: false.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════ ConwayGuyFormatter ═══ -->
+    <div class="type-section" id="ConwayGuyFormatter">
+      <div class="type-header">
+        <h3>ConwayGuyFormatter</h3>
+        <span class="badge badge-class">class</span>
+      </div>
+      <p class="type-desc">
+        <a href="#IInfValFormatter">IInfValFormatter</a> that names each power of a thousand with the
+        Conway-Guy system: <code>1.5 Thousand</code>, <code>2.34 Quinquadecillion</code>,
+        <code>1 Millinillion</code> for 10<sup>3003</sup>, <code>150 Millionths</code> for 1.5e-4. Names are
+        generated for any magnitude, on the short or the long scale, and values that fit in maxDisplayedDigits
+        are written in full. In Format into parts, the space before a name is a part of its own, left out
+        when 2 parts are asked for: <code>["1.5", " ", "Million"]</code>, or <code>["1.5", "Million"]</code>.
+        Parsing ignores case and whitespace.
+      </p>
+      <div class="member-group">
+        <div class="member-group-title">Public Fields</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">longScale</span></th><td>Use the long scale, where each -illion is a million times the previous one and the powers between them are -illiard (10<sup>9</sup> Milliard, 10<sup>12</sup> Billion, 10<sup>15</sup> Billiard), instead of the short scale (10<sup>9</sup> Billion, 10<sup>12</sup> Trillion). Default: false.</td></tr>
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">capitalizeNames</span></th><td>Write the first letter of each name in upper case. Default: true.</td></tr>
+          <tr><th scope="row"><span class="t">int</span> <span class="mn">maxDisplayedDigits</span></th><td>Default: 4.</td></tr>
+          <tr><th scope="row"><span class="t">string</span> <span class="mn">decimalSeparator</span></th><td>Default: ".".</td></tr>
+          <tr><th scope="row"><span class="t">string</span> <span class="mn">groupSeparator</span></th><td>Default: ",".</td></tr>
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">addGroupSeparatorsBeforeDecimalPoint</span></th><td>Default: false.</td></tr>
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">addGroupSeparatorsAfterDecimalPoint</span></th><td>Default: false.</td></tr>
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">limitDisplayedDecimals</span></th><td>Turn on the maxDisplayedDecimals limit. Default: false.</td></tr>
+          <tr><th scope="row"><span class="t">int</span> <span class="mn">maxDisplayedDecimals</span></th><td>Maximum decimals to display, in the decimal part of the number or of the abbreviated mantissa, applied when limitDisplayedDecimals is true. Values needing more are rounded to fit, and values below 1 stay in fixed point instead of switching to a fraction name, as long as they fit in maxDisplayedDigits. 0 rounds to whole numbers. Default: 2.</td></tr>
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">keepTrailingZeros</span></th><td>Default: false.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════ Culture ═══ -->
+    <div class="type-section" id="Culture">
+      <div class="type-header">
+        <h3>Culture</h3>
+        <span class="badge badge-class">class</span>
+      </div>
+      <p class="type-desc">
+        Serializable wrapper around <code>CultureInfo</code> so it can be stored in the inspector
+        and serialized with the scene. Used by <a href="#CultureFormatter">CultureFormatter</a>.
+        Implicitly converts to <code>CultureInfo</code>.
+      </p>
+      <div class="member-group">
+        <div class="member-group-title">Enum</div>
+        <table class="mt">
+          <tr>
+            <th scope="row"><span class="mn">Type</span> { <span class="t">InvariantCulture</span>, <span class="t">CurrentCulture</span>, <span class="t">SpecificCulture</span> }</th>
+            <td>How the CultureInfo is determined.</td>
+          </tr>
+        </table>
+      </div>
+      <div class="member-group">
+        <div class="member-group-title">Constructors</div>
+        <table class="mt">
+          <tr>
+            <th scope="row"><span class="mn">Culture</span>(<span class="t">Type</span> type)</th>
+            <td>Create using InvariantCulture or CurrentCulture.</td>
+          </tr>
+          <tr>
+            <th scope="row"><span class="mn">Culture</span>(<span class="t">string</span> name)</th>
+            <td>Create a SpecificCulture by name (e.g. "fr-FR").</td>
+          </tr>
+        </table>
+      </div>
+      <div class="member-group">
+        <div class="member-group-title">Properties</div>
+        <table class="mt">
+          <tr>
+            <th scope="row"><span class="t">CultureInfo</span> <span class="mn">info</span></th>
+            <td>The underlying CultureInfo instance.</td>
+          </tr>
+        </table>
+      </div>
+      <div class="member-group">
+        <div class="member-group-title">Implicit Cast</div>
+        <table class="mt">
+          <tr>
+            <th scope="row">(<span class="t">CultureInfo</span>)<span class="mn">culture</span></th>
+            <td>Implicit conversion to CultureInfo via <code>.info</code>.</td>
+          </tr>
+        </table>
+      </div>
+    </div>
 
     <!-- ════════════════════════════════ InfValFormatHelper ═══ -->
     <div class="type-section" id="InfValFormatHelper">
       <div class="type-header">
-        <h2>InfValFormatHelper</h2>
+        <h3>InfValFormatHelper</h3>
         <span class="badge badge-static">static class</span>
       </div>
       <p class="type-desc">
@@ -517,11 +609,11 @@
         <div class="member-group-title">Static Fields</div>
         <table class="mt">
           <tr>
-            <td><span class="t">string[]</span> <span class="mn">defaultExponentMarkers</span></td>
+            <th scope="row"><span class="t">string[]</span> <span class="mn">defaultExponentMarkers</span></th>
             <td>Standard exponent markers accepted during parsing: <code>{ "e", "E" }</code>.</td>
           </tr>
           <tr>
-            <td><span class="t">const int</span> <span class="mn">maxPartCount</span></td>
+            <th scope="row"><span class="t">const int</span> <span class="mn">maxPartCount</span></th>
             <td>Highest part count the <code>Format</code> overloads filling a <code>List&lt;string&gt;</code> accept: <code>16</code>.</td>
           </tr>
         </table>
@@ -530,12 +622,12 @@
         <div class="member-group-title">Static Methods: Formatting</div>
         <table class="mt">
           <tr>
-            <td><span class="t">string</span> <span class="mn">Format</span>(<span class="kw">in</span> <span class="t">InfVal</span> value, <span class="t">int</span> maxDisplayedDigits, <span class="t">string[]</span> unitsList, <span class="t">string</span> decimalPoint, <span class="t">string</span> groupSeparator, <span class="t">string</span> exponentMarker, <span class="t">bool</span> addGroupSepBefore, <span class="t">bool</span> addGroupSepAfter, <span class="t">bool</span> forceAbbreviation, <span class="t">bool</span> keepTrailingZeros, <span class="t">int</span> unitStep = 3, <span class="t">int</span> maxDisplayedDecimals = -1)</td>
+            <th scope="row"><span class="t">string</span> <span class="mn">Format</span>(<span class="kw">in</span> <span class="t">InfVal</span> value, <span class="t">int</span> maxDisplayedDigits, <span class="t">string[]</span> unitsList, <span class="t">string</span> decimalPoint, <span class="t">string</span> groupSeparator, <span class="t">string</span> exponentMarker, <span class="t">bool</span> addGroupSeparatorsBeforeDecimalPoint, <span class="t">bool</span> addGroupSeparatorsAfterDecimalPoint, <span class="t">bool</span> forceAbbreviation, <span class="t">bool</span> keepTrailingZeros, <span class="t">int</span> unitStep = 3, <span class="t">int</span> maxDisplayedDecimals = -1)</th>
             <td>Convert an InfVal to a string with full control. <code>unitStep</code>: 3 for k/M/G (default), 4 for East Asian 万/億.</td>
           </tr>
           <tr>
-            <td><span class="t">void</span> <span class="mn">Format</span>(<span class="kw">in</span> <span class="t">InfVal</span> value, <span class="t">int</span> maxDisplayedDigits, <span class="t">string[]</span> unitsList, <span class="t">string</span> decimalPoint, <span class="t">string</span> groupSeparator, <span class="t">string</span> exponentMarker, <span class="t">bool</span> addGroupSepBefore, <span class="t">bool</span> addGroupSepAfter, <span class="t">bool</span> forceAbbreviation, <span class="t">bool</span> keepTrailingZeros, <span class="t">List&lt;string&gt;</span> parts, <span class="t">int</span> partCount = 0, <span class="t">int</span> unitStep = 3, <span class="t">int</span> maxDisplayedDecimals = -1)</td>
-            <td>Same, filling parts with the pieces instead of returning one string. Throws ArgumentNullException if parts is null.</td>
+            <th scope="row"><span class="t">void</span> <span class="mn">Format</span>(<span class="kw">in</span> <span class="t">InfVal</span> value, <span class="t">int</span> maxDisplayedDigits, <span class="t">string[]</span> unitsList, <span class="t">string</span> decimalPoint, <span class="t">string</span> groupSeparator, <span class="t">string</span> exponentMarker, <span class="t">bool</span> addGroupSeparatorsBeforeDecimalPoint, <span class="t">bool</span> addGroupSeparatorsAfterDecimalPoint, <span class="t">bool</span> forceAbbreviation, <span class="t">bool</span> keepTrailingZeros, <span class="t">List&lt;string&gt;</span> parts, <span class="t">int</span> partCount = 0, <span class="t">int</span> unitStep = 3, <span class="t">int</span> maxDisplayedDecimals = -1)</th>
+            <td>Same, filling parts with the pieces instead of returning one string. <span class="ex">Throws ArgumentNullException if parts is null, or ArgumentOutOfRangeException if partCount is above 16.</span></td>
           </tr>
         </table>
       </div>
@@ -543,15 +635,15 @@
         <div class="member-group-title">Static Methods: Parsing</div>
         <table class="mt">
           <tr>
-            <td><span class="t">bool</span> <span class="mn">TryParse</span>(<span class="t">string</span> text, <span class="t">string[]</span> unitsList, <span class="t">string</span> decimalPoint, <span class="t">string</span> groupSeparator, <span class="t">string[]</span> exponentMarkers, <span class="kw">out</span> <span class="t">InfVal</span> result, <span class="t">int</span> unitStep = 3)</td>
+            <th scope="row"><span class="t">bool</span> <span class="mn">TryParse</span>(<span class="t">string</span> text, <span class="t">string[]</span> unitsList, <span class="t">string</span> decimalPoint, <span class="t">string</span> groupSeparator, <span class="t">string[]</span> exponentMarkers, <span class="kw">out</span> <span class="t">InfVal</span> result, <span class="t">int</span> unitStep = 3)</th>
             <td>Try to parse a string. Returns false on failure.</td>
           </tr>
           <tr>
-            <td><span class="t">InfVal</span> <span class="mn">Parse</span>(<span class="t">string</span> text, <span class="t">string[]</span> unitsList, <span class="t">string</span> decimalPoint, <span class="t">string</span> groupSeparator, <span class="t">string[]</span> exponentMarkers, <span class="t">int</span> unitStep = 3)</td>
+            <th scope="row"><span class="t">InfVal</span> <span class="mn">Parse</span>(<span class="t">string</span> text, <span class="t">string[]</span> unitsList, <span class="t">string</span> decimalPoint, <span class="t">string</span> groupSeparator, <span class="t">string[]</span> exponentMarkers, <span class="t">int</span> unitStep = 3)</th>
             <td>Parse a string. <span class="ex">Throws FormatException on failure.</span></td>
           </tr>
           <tr>
-            <td><span class="t">bool</span> <span class="mn">IsValidPartialInput</span>(<span class="t">string</span> text, <span class="t">string[]</span> unitsList, <span class="t">string</span> decimalPoint, <span class="t">string</span> groupSeparator, <span class="t">string[]</span> exponentMarkers, <span class="t">int</span> unitStep = 3)</td>
+            <th scope="row"><span class="t">bool</span> <span class="mn">IsValidPartialInput</span>(<span class="t">string</span> text, <span class="t">string[]</span> unitsList, <span class="t">string</span> decimalPoint, <span class="t">string</span> groupSeparator, <span class="t">string[]</span> exponentMarkers, <span class="t">int</span> unitStep = 3)</th>
             <td>True if the text is fully valid or is a valid partial input (e.g. "-", "1.", "1e+").</td>
           </tr>
         </table>
@@ -560,26 +652,107 @@
         <div class="member-group-title">Static Methods: Culture &amp; Validation</div>
         <table class="mt">
           <tr>
-            <td><span class="t">string</span> <span class="mn">GetDecimalSeparator</span>(<span class="t">CultureInfo</span> culture)</td>
+            <th scope="row"><span class="t">string</span> <span class="mn">GetDecimalSeparator</span>(<span class="t">CultureInfo</span> culture)</th>
             <td>Returns the decimal separator for the culture. Falls back to "." if null.</td>
           </tr>
           <tr>
-            <td><span class="t">string</span> <span class="mn">GetGroupSeparator</span>(<span class="t">CultureInfo</span> culture)</td>
+            <th scope="row"><span class="t">string</span> <span class="mn">GetGroupSeparator</span>(<span class="t">CultureInfo</span> culture)</th>
             <td>Returns the group separator for the culture. Falls back to "," if null.</td>
           </tr>
           <tr>
-            <td><span class="t">bool</span> <span class="mn">AreUnitsValid</span>(<span class="t">string[]</span> unitsList)</td>
+            <th scope="row"><span class="t">bool</span> <span class="mn">AreUnitsValid</span>(<span class="t">string[]</span> unitsList)</th>
             <td>True if the array is a valid list of unit suffixes. Logs errors to the Unity console on invalid entries.</td>
           </tr>
         </table>
       </div>
     </div>
 
+    <h2 class="api-group">Math</h2>
+    <!-- ══════════════════════════════════════ MathInfVal ═══ -->
+    <div class="type-section" id="MathInfVal">
+      <div class="type-header">
+        <h3>MathInfVal</h3>
+        <span class="badge badge-static">static class</span>
+      </div>
+      <p class="type-desc">Math operations for InfVal, analogous to <code>Mathf</code>.</p>
+      <div class="member-group">
+        <div class="member-group-title">Static Methods</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t">InfVal</span> <span class="mn">Abs</span>(<span class="kw">in</span> <span class="t">InfVal</span> value)</th><td>Absolute value.</td></tr>
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">Approximately</span>(<span class="kw">in</span> <span class="t">InfVal</span> a, <span class="kw">in</span> <span class="t">InfVal</span> b, <span class="t">int</span> significantDigits)</th><td>True if a and b are equal when both rounded half away from zero to <code>significantDigits</code> significant digits. <span class="ex">Throws ArgumentException if significantDigits &lt;= 0.</span></td></tr>
+          <tr><th scope="row"><span class="t">InfVal</span> <span class="mn">Clamp</span>(<span class="kw">in</span> <span class="t">InfVal</span> value, <span class="kw">in</span> <span class="t">InfVal</span> min, <span class="kw">in</span> <span class="t">InfVal</span> max)</th><td>Clamp between min and max (both inclusive).</td></tr>
+          <tr><th scope="row"><span class="t">InfVal</span> <span class="mn">Clamp01</span>(<span class="kw">in</span> <span class="t">InfVal</span> value)</th><td>Clamp between 0 and 1.</td></tr>
+          <tr><th scope="row"><span class="t">InfVal</span> <span class="mn">ClosestPowerOfTwo</span>(<span class="kw">in</span> <span class="t">InfVal</span> value)</th><td>Nearest power of two.</td></tr>
+          <tr><th scope="row"><span class="t">InfVal</span> <span class="mn">NextPowerOfTwo</span>(<span class="kw">in</span> <span class="t">InfVal</span> value)</th><td>Next power of two &ge; value: 1 for a value up to 1, 0 for a negative value.</td></tr>
+          <tr><th scope="row"><span class="t">InfVal</span> <span class="mn">PreviousPowerOfTwo</span>(<span class="kw">in</span> <span class="t">InfVal</span> value)</th><td>Previous power of two &le; value: 0 for a value below 1.</td></tr>
+          <tr><th scope="row"><span class="t">InfVal</span> <span class="mn">Repeat</span>(<span class="kw">in</span> <span class="t">InfVal</span> value, <span class="kw">in</span> <span class="t">InfVal</span> length)</th><td>Loop value so it is never &lt; 0 or &ge; length. With a negative length, the result lies in (length, 0], as <code>Mathf.Repeat</code>. <span class="ex">Throws ArgumentException if length is zero.</span></td></tr>
+          <tr><th scope="row"><span class="t">InfVal</span> <span class="mn">PingPong</span>(<span class="kw">in</span> <span class="t">InfVal</span> value, <span class="kw">in</span> <span class="t">InfVal</span> length)</th><td>Oscillate between 0 and length. <span class="ex">Throws ArgumentException if length is zero.</span></td></tr>
+          <tr><th scope="row"><span class="t">InfVal</span> <span class="mn">DeltaAngle</span>(<span class="kw">in</span> <span class="t">InfVal</span> current, <span class="kw">in</span> <span class="t">InfVal</span> target)</th><td>Shortest difference between two angles (degrees), in (&minus;180, 180] as <code>Mathf.DeltaAngle</code>.</td></tr>
+          <tr><th scope="row"><span class="t">double</span> <span class="mn">Log</span>(<span class="kw">in</span> <span class="t">InfVal</span> value)</th><td>Natural logarithm.</td></tr>
+          <tr><th scope="row"><span class="t">double</span> <span class="mn">Log</span>(<span class="kw">in</span> <span class="t">InfVal</span> value, <span class="t">double</span> logBase)</th><td>Logarithm in a specified base.</td></tr>
+          <tr><th scope="row"><span class="t">double</span> <span class="mn">Log10</span>(<span class="kw">in</span> <span class="t">InfVal</span> value)</th><td>Base-10 logarithm.</td></tr>
+          <tr><th scope="row"><span class="t">InfVal</span> <span class="mn">Floor</span>(<span class="kw">in</span> <span class="t">InfVal</span> value)</th><td>Largest integer &le; value.</td></tr>
+          <tr><th scope="row"><span class="t">InfVal</span> <span class="mn">Ceil</span>(<span class="kw">in</span> <span class="t">InfVal</span> value)</th><td>Smallest integer &ge; value.</td></tr>
+          <tr><th scope="row"><span class="t">InfVal</span> <span class="mn">Round</span>(<span class="kw">in</span> <span class="t">InfVal</span> value)</th><td>Round to the nearest integer, halves away from zero. Result has the same exponent as the input.</td></tr>
+          <tr><th scope="row"><span class="t">InfVal</span> <span class="mn">Round</span>(<span class="kw">in</span> <span class="t">InfVal</span> value, <span class="t">int</span> decimals)</th><td>Round to a number of digits after the decimal point, halves away from zero. A negative <code>decimals</code> rounds to tens, hundreds, and so on. Result has the same exponent as the input.</td></tr>
+          <tr><th scope="row"><span class="t">InfVal</span> <span class="mn">Truncate</span>(<span class="kw">in</span> <span class="t">InfVal</span> value)</th><td>Integer part (truncates toward zero). Result has the same exponent as the input.</td></tr>
+          <tr><th scope="row"><span class="t">InfVal</span> <span class="mn">DecimalPart</span>(<span class="kw">in</span> <span class="t">InfVal</span> value)</th><td>Fractional part.</td></tr>
+          <tr><th scope="row"><span class="t">InfVal</span> <span class="mn">Max</span>(<span class="kw">in</span> <span class="t">InfVal</span> a, <span class="kw">in</span> <span class="t">InfVal</span> b)</th><td>Larger of two values.</td></tr>
+          <tr><th scope="row"><span class="t">InfVal</span> <span class="mn">Max</span>(<span class="kw">params</span> <span class="t">InfVal[]</span> values)</th><td>Largest of any number of values. <span class="ex">Throws ArgumentException if empty.</span></td></tr>
+          <tr><th scope="row"><span class="t">InfVal</span> <span class="mn">Min</span>(<span class="kw">in</span> <span class="t">InfVal</span> a, <span class="kw">in</span> <span class="t">InfVal</span> b)</th><td>Smaller of two values.</td></tr>
+          <tr><th scope="row"><span class="t">InfVal</span> <span class="mn">Min</span>(<span class="kw">params</span> <span class="t">InfVal[]</span> values)</th><td>Smallest of any number of values. <span class="ex">Throws ArgumentException if empty.</span></td></tr>
+          <tr><th scope="row"><span class="t">int</span> <span class="mn">MaxExponent</span>(<span class="kw">in</span> <span class="t">InfVal</span> a, <span class="kw">in</span> <span class="t">InfVal</span> b)</th><td>Higher exponent of the two.</td></tr>
+          <tr><th scope="row"><span class="t">int</span> <span class="mn">MaxExponent</span>(<span class="kw">params</span> <span class="t">InfVal[]</span> values)</th><td>Highest exponent among all values. <span class="ex">Throws ArgumentException if empty.</span></td></tr>
+          <tr><th scope="row"><span class="t">int</span> <span class="mn">MinExponent</span>(<span class="kw">in</span> <span class="t">InfVal</span> a, <span class="kw">in</span> <span class="t">InfVal</span> b)</th><td>Lower exponent of the two.</td></tr>
+          <tr><th scope="row"><span class="t">int</span> <span class="mn">MinExponent</span>(<span class="kw">params</span> <span class="t">InfVal[]</span> values)</th><td>Lowest exponent among all values. <span class="ex">Throws ArgumentException if empty.</span></td></tr>
+          <tr><th scope="row"><span class="t">int</span> <span class="mn">MaxPrecision</span>(<span class="kw">in</span> <span class="t">InfVal</span> a, <span class="kw">in</span> <span class="t">InfVal</span> b)</th><td>Higher precision of the two.</td></tr>
+          <tr><th scope="row"><span class="t">int</span> <span class="mn">MaxPrecision</span>(<span class="kw">params</span> <span class="t">InfVal[]</span> values)</th><td>Highest precision among all values. <span class="ex">Throws ArgumentException if empty.</span></td></tr>
+          <tr><th scope="row"><span class="t">int</span> <span class="mn">MinPrecision</span>(<span class="kw">in</span> <span class="t">InfVal</span> a, <span class="kw">in</span> <span class="t">InfVal</span> b)</th><td>Lower precision of the two.</td></tr>
+          <tr><th scope="row"><span class="t">int</span> <span class="mn">MinPrecision</span>(<span class="kw">params</span> <span class="t">InfVal[]</span> values)</th><td>Lowest precision among all values. <span class="ex">Throws ArgumentException if empty.</span></td></tr>
+          <tr><th scope="row"><span class="t">InfVal</span> <span class="mn">Pow</span>(<span class="kw">in</span> <span class="t">InfVal</span> value, <span class="t">int</span> power, <span class="t">bool</span> conservePrecision = true)</th><td>Raise to an integer power. Negative power computes 1/value^|power|. With <code>conservePrecision</code> false, a positive power returns the exact result. <span class="ex">Throws DivideByZeroException for a zero value and a negative power.</span></td></tr>
+          <tr><th scope="row"><span class="t">InfVal</span> <span class="mn">Sqrt</span>(<span class="kw">in</span> <span class="t">InfVal</span> value, <span class="t">bool</span> conservePrecision = true)</th><td>Square root. <span class="ex">Throws ArgumentException if value &lt; 0.</span></td></tr>
+          <tr><th scope="row"><span class="t">InfVal</span> <span class="mn">NthRoot</span>(<span class="kw">in</span> <span class="t">InfVal</span> value, <span class="t">int</span> n, <span class="t">bool</span> conservePrecision = true)</th><td>Nth root, truncated. A negative <code>n</code> gives the reciprocal of the root. <span class="ex">Throws ArgumentException if n = 0, or if value &lt; 0 and n is even. Throws DivideByZeroException for a zero value and a negative n.</span></td></tr>
+          <tr><th scope="row"><span class="t">InfVal</span> <span class="mn">GreatestCommonDivisor</span>(<span class="kw">in</span> <span class="t">InfVal</span> a, <span class="kw">in</span> <span class="t">InfVal</span> b)</th><td>GCD of two values.</td></tr>
+          <tr><th scope="row"><span class="t">InfVal</span> <span class="mn">RandomRange</span>(<span class="kw">in</span> <span class="t">InfVal</span> min, <span class="kw">in</span> <span class="t">InfVal</span> max)</th><td>Uniformly random value in [min, max], with as many decimals as the bound that has the most. A value built from an integer type is padded with decimals to its type's default precision. <span class="ex">Throws ArgumentException if min &gt; max.</span></td></tr>
+          <tr><th scope="row"><span class="t">InfVal</span> <span class="mn">RandomIntegerRange</span>(<span class="kw">in</span> <span class="t">InfVal</span> min, <span class="kw">in</span> <span class="t">InfVal</span> max)</th><td>Uniformly random integer in [min, max], with at least the precision of the more precise bound. <span class="ex">Throws ArgumentException if no integer lies between min and max.</span></td></tr>
+        </table>
+      </div>
+    </div>
 
+    <!-- ══════════════════════════════ InterpolateInfVal ═══ -->
+    <div class="type-section" id="InterpolateInfVal">
+      <div class="type-header">
+        <h3>InterpolateInfVal</h3>
+        <span class="badge badge-static">static class</span>
+      </div>
+      <p class="type-desc">
+        Interpolation methods for InfVal. The <code>clamped</code> parameter (default
+        <code>true</code>) clamps <code>t</code> to [0, 1]. The <code>Angle</code> variants
+        wrap correctly around 360 degrees using <code>MathInfVal.DeltaAngle</code>.
+      </p>
+      <div class="member-group">
+        <div class="member-group-title">Static Methods</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t">InfVal</span> <span class="mn">Linear</span>(<span class="kw">in</span> <span class="t">InfVal</span> min, <span class="kw">in</span> <span class="t">InfVal</span> max, <span class="t">float</span> t, <span class="t">bool</span> clamped = true)</th><td>Linear interpolation.</td></tr>
+          <tr><th scope="row"><span class="t">InfVal</span> <span class="mn">SmoothStep</span>(<span class="kw">in</span> <span class="t">InfVal</span> min, <span class="kw">in</span> <span class="t">InfVal</span> max, <span class="t">float</span> t, <span class="t">bool</span> clamped = true)</th><td>Smooth-step interpolation (ease in and out).</td></tr>
+          <tr><th scope="row"><span class="t">InfVal</span> <span class="mn">EaseIn</span>(<span class="kw">in</span> <span class="t">InfVal</span> min, <span class="kw">in</span> <span class="t">InfVal</span> max, <span class="t">float</span> t, <span class="t">float</span> easePower, <span class="t">bool</span> clamped = true)</th><td>Ease-in interpolation. <code>easePower</code> controls the curve strength.</td></tr>
+          <tr><th scope="row"><span class="t">InfVal</span> <span class="mn">EaseOut</span>(<span class="kw">in</span> <span class="t">InfVal</span> min, <span class="kw">in</span> <span class="t">InfVal</span> max, <span class="t">float</span> t, <span class="t">float</span> easePower, <span class="t">bool</span> clamped = true)</th><td>Ease-out interpolation.</td></tr>
+          <tr><th scope="row"><span class="t">InfVal</span> <span class="mn">EaseInAndOut</span>(<span class="kw">in</span> <span class="t">InfVal</span> min, <span class="kw">in</span> <span class="t">InfVal</span> max, <span class="t">float</span> t, <span class="t">float</span> easePower, <span class="t">bool</span> clamped = true)</th><td>Ease-in-and-out interpolation.</td></tr>
+          <tr><th scope="row"><span class="t">float</span> <span class="mn">InverseLinear</span>(<span class="kw">in</span> <span class="t">InfVal</span> min, <span class="kw">in</span> <span class="t">InfVal</span> max, <span class="kw">in</span> <span class="t">InfVal</span> value)</th><td>Inverse linear: returns the t that would produce <code>value</code>. <span class="ex">Throws ArgumentException if min == max.</span></td></tr>
+          <tr><th scope="row"><span class="t">InfVal</span> <span class="mn">LinearAngle</span>(<span class="kw">in</span> <span class="t">InfVal</span> minAngle, <span class="kw">in</span> <span class="t">InfVal</span> maxAngle, <span class="t">float</span> t, <span class="t">bool</span> clamped = true)</th><td>Linear interpolation that wraps around 360 degrees.</td></tr>
+          <tr><th scope="row"><span class="t">InfVal</span> <span class="mn">SmoothStepAngle</span>(<span class="kw">in</span> <span class="t">InfVal</span> minAngle, <span class="kw">in</span> <span class="t">InfVal</span> maxAngle, <span class="t">float</span> t, <span class="t">bool</span> clamped = true)</th><td>SmoothStep that wraps around 360 degrees.</td></tr>
+          <tr><th scope="row"><span class="t">InfVal</span> <span class="mn">EaseInAngle</span>(<span class="kw">in</span> <span class="t">InfVal</span> minAngle, <span class="kw">in</span> <span class="t">InfVal</span> maxAngle, <span class="t">float</span> t, <span class="t">float</span> easePower, <span class="t">bool</span> clamped = true)</th><td>EaseIn that wraps around 360 degrees.</td></tr>
+          <tr><th scope="row"><span class="t">InfVal</span> <span class="mn">EaseOutAngle</span>(<span class="kw">in</span> <span class="t">InfVal</span> minAngle, <span class="kw">in</span> <span class="t">InfVal</span> maxAngle, <span class="t">float</span> t, <span class="t">float</span> easePower, <span class="t">bool</span> clamped = true)</th><td>EaseOut that wraps around 360 degrees.</td></tr>
+          <tr><th scope="row"><span class="t">InfVal</span> <span class="mn">EaseInAndOutAngle</span>(<span class="kw">in</span> <span class="t">InfVal</span> minAngle, <span class="kw">in</span> <span class="t">InfVal</span> maxAngle, <span class="t">float</span> t, <span class="t">float</span> easePower, <span class="t">bool</span> clamped = true)</th><td>EaseInAndOut that wraps around 360 degrees.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <h2 class="api-group">Configuration</h2>
     <!-- ══════════════════════════════════ Configuration ═══ -->
     <div class="type-section" id="Configuration">
       <div class="type-header">
-        <h2>Configuration</h2>
+        <h3>Configuration</h3>
         <span class="badge badge-so">ScriptableObject</span>
       </div>
       <p class="type-desc">
@@ -592,30 +765,30 @@
         <div class="member-group-title">Static Properties</div>
         <table class="mt">
           <tr>
-            <td><span class="t">Configuration</span> <span class="mn">asset</span></td>
+            <th scope="row"><span class="t">Configuration</span> <span class="mn">asset</span></th>
             <td>The loaded Configuration asset instance.</td>
           </tr>
           <tr>
-            <td><span class="t">string</span> <span class="mn">folderPath</span></td>
-            <td>Absolute path to the Infinite Value package folder, derived automatically from the source file location.</td>
+            <th scope="row"><span class="t">string</span> <span class="mn">folderPath</span></th>
+            <td>Project-relative path to the Infinite Value folder (for example <code>Assets/Infinite Value</code>), derived from the source file location.</td>
           </tr>
           <tr>
-            <td><span class="t">IInfValFormatter</span> <span class="mn">defaultFormatter</span></td>
+            <th scope="row"><span class="t">IInfValFormatter</span> <span class="mn">defaultFormatter</span></th>
             <td>The formatter used by <code>InfVal.ToString()</code>, <code>Parse()</code>, and <code>TryParse()</code> when no formatter is specified explicitly.</td>
           </tr>
         </table>
       </div>
     </div>
 
-
+    <h2 class="api-group">UI</h2>
     <!-- ═══════════════════════════════ InfValInputField ═══ -->
     <div class="type-section" id="InfValInputField">
       <div class="type-header">
-        <h2>InfValInputField</h2>
+        <h3>InfValInputField</h3>
         <span class="badge badge-mb">MonoBehaviour</span>
       </div>
       <p class="type-desc">
-        Converts a <code>InputField</code> or <code>TMP_InputField</code> component on the same
+        Converts an <code>InputField</code> or <code>TMP_InputField</code> component on the same
         GameObject into an InfVal input field. Add via
         <strong>Add Component &gt; UI &gt; InfVal Input Field Converter</strong>.
       </p>
@@ -623,11 +796,11 @@
         <div class="member-group-title">Enums</div>
         <table class="mt">
           <tr>
-            <td><span class="mn">ValidateType</span> { <span class="t">None</span>, <span class="t">ChangeColor</span>, <span class="t">DisallowInvalid</span> }</td>
+            <th scope="row"><span class="mn">ValidateType</span> { <span class="t">None</span>, <span class="t">ChangeColor</span>, <span class="t">DisallowInvalid</span> }</th>
             <td>How invalid input is handled. <code>ChangeColor</code> tints the text; <code>DisallowInvalid</code> blocks characters that would make the input invalid.</td>
           </tr>
           <tr>
-            <td><span class="mn">ForceSign</span> { <span class="t">None</span>, <span class="t">Positive</span>, <span class="t">Negative</span> }</td>
+            <th scope="row"><span class="mn">ForceSign</span> { <span class="t">None</span>, <span class="t">Positive</span>, <span class="t">Negative</span> }</th>
             <td>Force the value to be positive, negative, or unconstrained.</td>
           </tr>
         </table>
@@ -635,42 +808,42 @@
       <div class="member-group">
         <div class="member-group-title">Public Fields</div>
         <table class="mt">
-          <tr><td><span class="t">FormatterAsset</span> <span class="mn">formatter</span></td><td>Formatter override. Null falls back to the Configuration default.</td></tr>
-          <tr><td><span class="t">ValidateType</span> <span class="mn">validateType</span></td><td>How invalid input is treated. Default: None.</td></tr>
-          <tr><td><span class="t">Color</span> <span class="mn">validColor</span></td><td>Text color when the input is valid. Default: black.</td></tr>
-          <tr><td><span class="t">Color</span> <span class="mn">invalidColor</span></td><td>Text color when the input is invalid. Default: red.</td></tr>
-          <tr><td><span class="t">bool</span> <span class="mn">integerOnly</span></td><td>Treat non-integer values as invalid. Default: false.</td></tr>
-          <tr><td><span class="t">ForceSign</span> <span class="mn">forceSign</span></td><td>Restrict to positive or negative values. Default: None.</td></tr>
-          <tr><td><span class="t">bool</span> <span class="mn">nonZero</span></td><td>Treat zero as invalid. Default: false.</td></tr>
-          <tr><td><span class="t">Selectable[]</span> <span class="mn">interactablesIfValid</span></td><td>UI Selectables enabled only when the input is valid.</td></tr>
-          <tr><td><span class="t">bool</span> <span class="mn">redrawOnEndEdit</span></td><td>Replace typed text with a clean formatted representation on end edit. Default: true.</td></tr>
+          <tr><th scope="row"><span class="t">FormatterAsset</span> <span class="mn">formatter</span></th><td>Formatter override. Null falls back to the Configuration default.</td></tr>
+          <tr><th scope="row"><span class="t">ValidateType</span> <span class="mn">validateType</span></th><td>How invalid input is treated. Default: None.</td></tr>
+          <tr><th scope="row"><span class="t">Color</span> <span class="mn">validColor</span></th><td>Text color when the input is valid. Default: black.</td></tr>
+          <tr><th scope="row"><span class="t">Color</span> <span class="mn">invalidColor</span></th><td>Text color when the input is invalid. Default: red.</td></tr>
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">integerOnly</span></th><td>Treat non-integer values as invalid. Default: false.</td></tr>
+          <tr><th scope="row"><span class="t">ForceSign</span> <span class="mn">forceSign</span></th><td>Restrict to positive or negative values. Default: None.</td></tr>
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">nonZero</span></th><td>Treat zero as invalid. Default: false.</td></tr>
+          <tr><th scope="row"><span class="t">Selectable[]</span> <span class="mn">interactablesIfValid</span></th><td>UI Selectables enabled only when the input is valid.</td></tr>
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">redrawOnEndEdit</span></th><td>Replace typed text with a clean formatted representation on end edit. Default: true.</td></tr>
         </table>
       </div>
       <div class="member-group">
         <div class="member-group-title">Properties</div>
         <table class="mt">
           <tr>
-            <td><span class="t">IInfValFormatter</span> <span class="mn">activeFormatter</span></td>
+            <th scope="row"><span class="t">IInfValFormatter</span> <span class="mn">activeFormatter</span></th>
             <td>The formatter in use: the assigned FormatterAsset's formatter if set, otherwise Configuration.defaultFormatter.</td>
           </tr>
           <tr>
-            <td><span class="t">InfVal</span> <span class="mn">value</span></td>
+            <th scope="row"><span class="t">InfVal</span> <span class="mn">value</span></th>
             <td>Get or set the current InfVal. Setting it updates the displayed text.</td>
           </tr>
           <tr>
-            <td><span class="t">bool</span> <span class="mn">isValid</span></td>
+            <th scope="row"><span class="t">bool</span> <span class="mn">isValid</span></th>
             <td>Whether the current value passes all validation constraints.</td>
           </tr>
           <tr>
-            <td><span class="t">Component</span> <span class="mn">target</span></td>
+            <th scope="row"><span class="t">Component</span> <span class="mn">target</span></th>
             <td>The underlying InputField or TMP_InputField component.</td>
           </tr>
           <tr>
-            <td><span class="t">InputField</span> <span class="mn">inputField</span></td>
+            <th scope="row"><span class="t">InputField</span> <span class="mn">inputField</span></th>
             <td>Target cast to InputField; null if target is a TMP_InputField.</td>
           </tr>
           <tr>
-            <td><span class="t">TMP_InputField</span> <span class="mn">TMP_inputField</span></td>
+            <th scope="row"><span class="t">TMP_InputField</span> <span class="mn">TMP_inputField</span></th>
             <td>Target cast to TMP_InputField; null if target is an InputField.</td>
           </tr>
         </table>
@@ -679,155 +852,22 @@
         <div class="member-group-title">Methods</div>
         <table class="mt">
           <tr>
-            <td><span class="t">T</span> <span class="mn">GetTarget</span>&lt;<span class="t">T</span>&gt;()</td>
+            <th scope="row"><span class="t">T</span> <span class="mn">GetTarget</span>&lt;<span class="t">T</span>&gt;()</th>
             <td>Return the target component cast to type T; null if the cast fails.</td>
           </tr>
           <tr>
-            <td><span class="t">void</span> <span class="mn">FindTargetComponent</span>()</td>
+            <th scope="row"><span class="t">void</span> <span class="mn">FindTargetComponent</span>()</th>
             <td>Search for an InputField or TMP_InputField on the same GameObject and initialize it. Called automatically on Reset and Awake.</td>
           </tr>
           <tr>
-            <td><span class="t">string</span> <span class="mn">FormatInfValToString</span>(<span class="kw">in</span> <span class="t">InfVal</span> value)</td>
+            <th scope="row"><span class="t">string</span> <span class="mn">FormatInfValToString</span>(<span class="kw">in</span> <span class="t">InfVal</span> value)</th>
             <td>Format an InfVal using this component's active formatter.</td>
           </tr>
         </table>
       </div>
     </div>
 
-
-    <!-- ══════════════════════════════════════ MathInfVal ═══ -->
-    <div class="type-section" id="MathInfVal">
-      <div class="type-header">
-        <h2>MathInfVal</h2>
-        <span class="badge badge-static">static class</span>
-      </div>
-      <p class="type-desc">Math operations for InfVal, analogous to <code>Mathf</code>.</p>
-      <div class="member-group">
-        <div class="member-group-title">Static Methods</div>
-        <table class="mt">
-          <tr><td><span class="t">InfVal</span> <span class="mn">Abs</span>(<span class="kw">in</span> <span class="t">InfVal</span> value)</td><td>Absolute value.</td></tr>
-          <tr><td><span class="t">bool</span> <span class="mn">Approximately</span>(<span class="kw">in</span> <span class="t">InfVal</span> a, <span class="kw">in</span> <span class="t">InfVal</span> b, <span class="t">int</span> significantDigits)</td><td>True if a and b are equal when both rounded to <code>significantDigits</code> significant digits.</td></tr>
-          <tr><td><span class="t">InfVal</span> <span class="mn">Clamp</span>(<span class="kw">in</span> <span class="t">InfVal</span> value, <span class="kw">in</span> <span class="t">InfVal</span> min, <span class="kw">in</span> <span class="t">InfVal</span> max)</td><td>Clamp between min and max (both inclusive).</td></tr>
-          <tr><td><span class="t">InfVal</span> <span class="mn">Clamp01</span>(<span class="kw">in</span> <span class="t">InfVal</span> value)</td><td>Clamp between 0 and 1.</td></tr>
-          <tr><td><span class="t">InfVal</span> <span class="mn">ClosestPowerOfTwo</span>(<span class="kw">in</span> <span class="t">InfVal</span> value)</td><td>Nearest power of two.</td></tr>
-          <tr><td><span class="t">InfVal</span> <span class="mn">NextPowerOfTwo</span>(<span class="kw">in</span> <span class="t">InfVal</span> value)</td><td>Next power of two &ge; value.</td></tr>
-          <tr><td><span class="t">InfVal</span> <span class="mn">PreviousPowerOfTwo</span>(<span class="kw">in</span> <span class="t">InfVal</span> value)</td><td>Previous power of two &le; value.</td></tr>
-          <tr><td><span class="t">InfVal</span> <span class="mn">Repeat</span>(<span class="kw">in</span> <span class="t">InfVal</span> value, <span class="kw">in</span> <span class="t">InfVal</span> length)</td><td>Loop value so it is never &lt; 0 or &ge; length. <span class="ex">Throws ArgumentException if length is zero.</span></td></tr>
-          <tr><td><span class="t">InfVal</span> <span class="mn">PingPong</span>(<span class="kw">in</span> <span class="t">InfVal</span> value, <span class="kw">in</span> <span class="t">InfVal</span> length)</td><td>Oscillate between 0 and length. <span class="ex">Throws ArgumentException if length is zero.</span></td></tr>
-          <tr><td><span class="t">InfVal</span> <span class="mn">DeltaAngle</span>(<span class="kw">in</span> <span class="t">InfVal</span> current, <span class="kw">in</span> <span class="t">InfVal</span> target)</td><td>Shortest difference between two angles (degrees).</td></tr>
-          <tr><td><span class="t">double</span> <span class="mn">Log</span>(<span class="kw">in</span> <span class="t">InfVal</span> value)</td><td>Natural logarithm.</td></tr>
-          <tr><td><span class="t">double</span> <span class="mn">Log</span>(<span class="kw">in</span> <span class="t">InfVal</span> value, <span class="t">double</span> logBase)</td><td>Logarithm in a specified base.</td></tr>
-          <tr><td><span class="t">double</span> <span class="mn">Log10</span>(<span class="kw">in</span> <span class="t">InfVal</span> value)</td><td>Base-10 logarithm.</td></tr>
-          <tr><td><span class="t">InfVal</span> <span class="mn">Floor</span>(<span class="kw">in</span> <span class="t">InfVal</span> value)</td><td>Largest integer &le; value.</td></tr>
-          <tr><td><span class="t">InfVal</span> <span class="mn">Ceil</span>(<span class="kw">in</span> <span class="t">InfVal</span> value)</td><td>Smallest integer &ge; value.</td></tr>
-          <tr><td><span class="t">InfVal</span> <span class="mn">Round</span>(<span class="kw">in</span> <span class="t">InfVal</span> value)</td><td>Round to the nearest integer.</td></tr>
-          <tr><td><span class="t">InfVal</span> <span class="mn">Round</span>(<span class="kw">in</span> <span class="t">InfVal</span> value, <span class="t">int</span> decimals)</td><td>Round to a number of digits after the decimal point. A negative <code>decimals</code> rounds to tens, hundreds, and so on. Result has the same exponent as the input.</td></tr>
-          <tr><td><span class="t">InfVal</span> <span class="mn">Truncate</span>(<span class="kw">in</span> <span class="t">InfVal</span> value)</td><td>Integer part (truncates toward zero). Result has the same exponent as the input.</td></tr>
-          <tr><td><span class="t">InfVal</span> <span class="mn">DecimalPart</span>(<span class="kw">in</span> <span class="t">InfVal</span> value)</td><td>Fractional part.</td></tr>
-          <tr><td><span class="t">InfVal</span> <span class="mn">Max</span>(<span class="kw">in</span> <span class="t">InfVal</span> a, <span class="kw">in</span> <span class="t">InfVal</span> b)</td><td>Larger of two values.</td></tr>
-          <tr><td><span class="t">InfVal</span> <span class="mn">Max</span>(<span class="kw">params</span> <span class="t">InfVal[]</span> values)</td><td>Largest of any number of values. <span class="ex">Throws ArgumentException if empty.</span></td></tr>
-          <tr><td><span class="t">InfVal</span> <span class="mn">Min</span>(<span class="kw">in</span> <span class="t">InfVal</span> a, <span class="kw">in</span> <span class="t">InfVal</span> b)</td><td>Smaller of two values.</td></tr>
-          <tr><td><span class="t">InfVal</span> <span class="mn">Min</span>(<span class="kw">params</span> <span class="t">InfVal[]</span> values)</td><td>Smallest of any number of values. <span class="ex">Throws ArgumentException if empty.</span></td></tr>
-          <tr><td><span class="t">int</span> <span class="mn">MaxExponent</span>(<span class="kw">in</span> <span class="t">InfVal</span> a, <span class="kw">in</span> <span class="t">InfVal</span> b)</td><td>Higher exponent of the two.</td></tr>
-          <tr><td><span class="t">int</span> <span class="mn">MaxExponent</span>(<span class="kw">params</span> <span class="t">InfVal[]</span> values)</td><td>Highest exponent among all values. <span class="ex">Throws ArgumentException if empty.</span></td></tr>
-          <tr><td><span class="t">int</span> <span class="mn">MinExponent</span>(<span class="kw">in</span> <span class="t">InfVal</span> a, <span class="kw">in</span> <span class="t">InfVal</span> b)</td><td>Lower exponent of the two.</td></tr>
-          <tr><td><span class="t">int</span> <span class="mn">MinExponent</span>(<span class="kw">params</span> <span class="t">InfVal[]</span> values)</td><td>Lowest exponent among all values. <span class="ex">Throws ArgumentException if empty.</span></td></tr>
-          <tr><td><span class="t">int</span> <span class="mn">MaxPrecision</span>(<span class="kw">in</span> <span class="t">InfVal</span> a, <span class="kw">in</span> <span class="t">InfVal</span> b)</td><td>Higher precision of the two.</td></tr>
-          <tr><td><span class="t">int</span> <span class="mn">MaxPrecision</span>(<span class="kw">params</span> <span class="t">InfVal[]</span> values)</td><td>Highest precision among all values. <span class="ex">Throws ArgumentException if empty.</span></td></tr>
-          <tr><td><span class="t">int</span> <span class="mn">MinPrecision</span>(<span class="kw">in</span> <span class="t">InfVal</span> a, <span class="kw">in</span> <span class="t">InfVal</span> b)</td><td>Lower precision of the two.</td></tr>
-          <tr><td><span class="t">int</span> <span class="mn">MinPrecision</span>(<span class="kw">params</span> <span class="t">InfVal[]</span> values)</td><td>Lowest precision among all values. <span class="ex">Throws ArgumentException if empty.</span></td></tr>
-          <tr><td><span class="t">InfVal</span> <span class="mn">Pow</span>(<span class="kw">in</span> <span class="t">InfVal</span> value, <span class="t">int</span> power, <span class="t">bool</span> conservePrecision = true)</td><td>Raise to an integer power. Negative power computes 1/value^|power|.</td></tr>
-          <tr><td><span class="t">InfVal</span> <span class="mn">Sqrt</span>(<span class="kw">in</span> <span class="t">InfVal</span> value, <span class="t">bool</span> conservePrecision = true)</td><td>Square root. <span class="ex">Throws ArgumentException if value &lt; 0.</span></td></tr>
-          <tr><td><span class="t">InfVal</span> <span class="mn">NthRoot</span>(<span class="kw">in</span> <span class="t">InfVal</span> value, <span class="t">int</span> n, <span class="t">bool</span> conservePrecision = true)</td><td>Nth root. <span class="ex">Throws ArgumentException if n = 0, or if value &lt; 0 and n is even.</span></td></tr>
-          <tr><td><span class="t">InfVal</span> <span class="mn">GreatestCommonDivisor</span>(<span class="kw">in</span> <span class="t">InfVal</span> a, <span class="kw">in</span> <span class="t">InfVal</span> b)</td><td>GCD of two values.</td></tr>
-          <tr><td><span class="t">InfVal</span> <span class="mn">RandomRange</span>(<span class="kw">in</span> <span class="t">InfVal</span> min, <span class="kw">in</span> <span class="t">InfVal</span> max)</td><td>Uniformly random value in [min, max]. <span class="ex">Throws ArgumentException if min &gt; max.</span></td></tr>
-        </table>
-      </div>
-    </div>
-
-
-    <!-- ══════════════════════════════ InterpolateInfVal ═══ -->
-    <div class="type-section" id="InterpolateInfVal">
-      <div class="type-header">
-        <h2>InterpolateInfVal</h2>
-        <span class="badge badge-static">static class</span>
-      </div>
-      <p class="type-desc">
-        Interpolation methods for InfVal. The <code>clamped</code> parameter (default
-        <code>true</code>) clamps <code>t</code> to [0, 1]. The <code>Angle</code> variants
-        wrap correctly around 360 degrees using <code>MathInfVal.DeltaAngle</code>.
-      </p>
-      <div class="member-group">
-        <div class="member-group-title">Static Methods</div>
-        <table class="mt">
-          <tr><td><span class="t">InfVal</span> <span class="mn">Linear</span>(<span class="kw">in</span> <span class="t">InfVal</span> min, <span class="kw">in</span> <span class="t">InfVal</span> max, <span class="t">float</span> t, <span class="t">bool</span> clamped = true)</td><td>Linear interpolation.</td></tr>
-          <tr><td><span class="t">InfVal</span> <span class="mn">SmoothStep</span>(<span class="kw">in</span> <span class="t">InfVal</span> min, <span class="kw">in</span> <span class="t">InfVal</span> max, <span class="t">float</span> t, <span class="t">bool</span> clamped = true)</td><td>Smooth-step interpolation (ease in and out).</td></tr>
-          <tr><td><span class="t">InfVal</span> <span class="mn">EaseIn</span>(<span class="kw">in</span> <span class="t">InfVal</span> min, <span class="kw">in</span> <span class="t">InfVal</span> max, <span class="t">float</span> t, <span class="t">float</span> easePower, <span class="t">bool</span> clamped = true)</td><td>Ease-in interpolation. <code>easePower</code> controls the curve strength.</td></tr>
-          <tr><td><span class="t">InfVal</span> <span class="mn">EaseOut</span>(<span class="kw">in</span> <span class="t">InfVal</span> min, <span class="kw">in</span> <span class="t">InfVal</span> max, <span class="t">float</span> t, <span class="t">float</span> easePower, <span class="t">bool</span> clamped = true)</td><td>Ease-out interpolation.</td></tr>
-          <tr><td><span class="t">InfVal</span> <span class="mn">EaseInAndOut</span>(<span class="kw">in</span> <span class="t">InfVal</span> min, <span class="kw">in</span> <span class="t">InfVal</span> max, <span class="t">float</span> t, <span class="t">float</span> easePower, <span class="t">bool</span> clamped = true)</td><td>Ease-in-and-out interpolation.</td></tr>
-          <tr><td><span class="t">float</span> <span class="mn">InverseLinear</span>(<span class="kw">in</span> <span class="t">InfVal</span> min, <span class="kw">in</span> <span class="t">InfVal</span> max, <span class="kw">in</span> <span class="t">InfVal</span> value)</td><td>Inverse linear: returns the t that would produce <code>value</code>. <span class="ex">Throws ArgumentException if min == max.</span></td></tr>
-          <tr><td><span class="t">InfVal</span> <span class="mn">LinearAngle</span>(<span class="kw">in</span> <span class="t">InfVal</span> minAngle, <span class="kw">in</span> <span class="t">InfVal</span> maxAngle, <span class="t">float</span> t, <span class="t">bool</span> clamped = true)</td><td>Linear interpolation that wraps around 360 degrees.</td></tr>
-          <tr><td><span class="t">InfVal</span> <span class="mn">SmoothStepAngle</span>(<span class="kw">in</span> <span class="t">InfVal</span> minAngle, <span class="kw">in</span> <span class="t">InfVal</span> maxAngle, <span class="t">float</span> t, <span class="t">bool</span> clamped = true)</td><td>SmoothStep that wraps around 360 degrees.</td></tr>
-          <tr><td><span class="t">InfVal</span> <span class="mn">EaseInAngle</span>(<span class="kw">in</span> <span class="t">InfVal</span> minAngle, <span class="kw">in</span> <span class="t">InfVal</span> maxAngle, <span class="t">float</span> t, <span class="t">float</span> easePower, <span class="t">bool</span> clamped = true)</td><td>EaseIn that wraps around 360 degrees.</td></tr>
-          <tr><td><span class="t">InfVal</span> <span class="mn">EaseOutAngle</span>(<span class="kw">in</span> <span class="t">InfVal</span> minAngle, <span class="kw">in</span> <span class="t">InfVal</span> maxAngle, <span class="t">float</span> t, <span class="t">float</span> easePower, <span class="t">bool</span> clamped = true)</td><td>EaseOut that wraps around 360 degrees.</td></tr>
-          <tr><td><span class="t">InfVal</span> <span class="mn">EaseInAndOutAngle</span>(<span class="kw">in</span> <span class="t">InfVal</span> minAngle, <span class="kw">in</span> <span class="t">InfVal</span> maxAngle, <span class="t">float</span> t, <span class="t">float</span> easePower, <span class="t">bool</span> clamped = true)</td><td>EaseInAndOut that wraps around 360 degrees.</td></tr>
-        </table>
-      </div>
-    </div>
-
-
-    <!-- ═══════════════════════════════════════ Culture ═══ -->
-    <div class="type-section" id="Culture">
-      <div class="type-header">
-        <h2>Culture</h2>
-        <span class="badge badge-class">class</span>
-      </div>
-      <p class="type-desc">
-        Serializable wrapper around <code>CultureInfo</code> so it can be stored in the inspector
-        and serialized with the scene. Used by <a href="#CultureFormatter">CultureFormatter</a>.
-        Implicitly converts to <code>CultureInfo</code>.
-      </p>
-      <div class="member-group">
-        <div class="member-group-title">Enum</div>
-        <table class="mt">
-          <tr>
-            <td><span class="mn">Type</span> { <span class="t">InvariantCulture</span>, <span class="t">CurrentCulture</span>, <span class="t">SpecificCulture</span> }</td>
-            <td>How the CultureInfo is determined.</td>
-          </tr>
-        </table>
-      </div>
-      <div class="member-group">
-        <div class="member-group-title">Constructors</div>
-        <table class="mt">
-          <tr>
-            <td><span class="mn">Culture</span>(<span class="t">Type</span> type)</td>
-            <td>Create using InvariantCulture or CurrentCulture.</td>
-          </tr>
-          <tr>
-            <td><span class="mn">Culture</span>(<span class="t">string</span> name)</td>
-            <td>Create a SpecificCulture by name (e.g. "fr-FR").</td>
-          </tr>
-        </table>
-      </div>
-      <div class="member-group">
-        <div class="member-group-title">Properties</div>
-        <table class="mt">
-          <tr>
-            <td><span class="t">CultureInfo</span> <span class="mn">info</span></td>
-            <td>The underlying CultureInfo instance.</td>
-          </tr>
-        </table>
-      </div>
-      <div class="member-group">
-        <div class="member-group-title">Implicit Cast</div>
-        <table class="mt">
-          <tr>
-            <td>(<span class="t">CultureInfo</span>)<span class="mn">culture</span></td>
-            <td>Implicit conversion to CultureInfo via <code>.info</code>.</td>
-          </tr>
-        </table>
-      </div>
-    </div>
+    <div class="doc-footer">Infinite Value v2.3</div>
 
   </main>
 </div>

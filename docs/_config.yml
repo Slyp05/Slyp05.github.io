@@ -39,6 +39,16 @@ defaults:
       path: "settings-kit"
     values:
       sitemap: false
+  # The manuals moved from /documentation/ to /user-manual/. The old tree only holds the
+  # redirect stubs the build scripts write, which have no place in the sitemap.
+  - scope:
+      path: "infinite-value/documentation"
+    values:
+      sitemap: false
+  - scope:
+      path: "settings-kit/documentation"
+    values:
+      sitemap: false
 
 # Build settings
 theme: minima

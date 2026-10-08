@@ -1,8 +1,8 @@
 <#
-  Build-SettingsKitDocs.ps1
+  Build-InfiniteValueDocs.ps1
 
-  Regenerates the published Settings Kit docs under docs/settings-kit/ from the authored
-  source under "Sources/Settings Kit/Documentation".
+  Regenerates the published Infinite Value docs under docs/infinite-value/ from the authored
+  source under "Sources/Infinite Value/Documentation".
 
   The source is a flat set of HTML pages: two home pages ("User Manual.html" and
   "Public API.html"), a pages/ folder holding the manual's content, img/, and
@@ -10,15 +10,15 @@
 
   The website splits that folder into one clean-URL tree per book:
 
-      docs/settings-kit/user-manual/    (index.html + pages/ + img/)
-      docs/settings-kit/public-api/     (index.html)
+      docs/infinite-value/user-manual/    (index.html + pages/ + img/)
+      docs/infinite-value/public-api/     (index.html)
 
-  The manual used to live at /documentation/, and the package itself links there (the demo
-  page's HelpUrl), so that tree holds redirect stubs: index.html and one per page, each
-  forwarding to the same page under /user-manual/ with its #anchor kept.
+  The manual used to live at /documentation/, so that tree holds redirect stubs: index.html
+  and one per page, each forwarding to the same page under /user-manual/ with its #anchor
+  kept.
 
   Transform applied to every page:
-    - stylesheet  shared/styles.css   -> /assets/css/doc-styles.css + settings-kit.css
+    - stylesheet  shared/styles.css   -> /assets/css/doc-styles.css + infinite-value.css
                   (+ the dark-mode sheet, phone menu, favicon <link>s and the goatcounter
                    analytics <script> the site injects, which the offline source docs
                    must not have)
@@ -27,9 +27,9 @@
     - cross-tree  pages/X.html written from the API home -> ../user-manual/pages/X.html
     - images      img/<name>          -> img/<name>.png
 
-  styles.css is the shared doc sheet plus a Settings Kit tail. The shared part is already
+  styles.css is the shared doc sheet plus an Infinite Value tail. The shared part is already
   published as docs/assets/css/doc-styles.css by Build-PersistentAssetDocs.ps1; the tail
-  becomes docs/assets/css/settings-kit.css.
+  becomes docs/assets/css/infinite-value.css.
 
   Every rewrite is asserted, and the generated trees are link-checked at the end.
 
@@ -40,10 +40,10 @@ $ErrorActionPreference = 'Stop'
 $utf8 = New-Object System.Text.UTF8Encoding($false)   # no BOM
 
 $root      = Split-Path $PSScriptRoot -Parent
-$src       = Join-Path $root 'Sources\Settings Kit\Documentation'
-$dst       = Join-Path $root 'docs\settings-kit'
+$src       = Join-Path $root 'Sources\Infinite Value\Documentation'
+$dst       = Join-Path $root 'docs\infinite-value'
 $sharedCss = Join-Path $root 'docs\assets\css\doc-styles.css'
-$skCss     = Join-Path $root 'docs\assets\css\settings-kit.css'
+$ivCss     = Join-Path $root 'docs\assets\css\infinite-value.css'
 
 if (-not (Test-Path $src)) { throw "Source docs not found: $src" }
 
@@ -60,7 +60,7 @@ $analytics = '  <script data-goatcounter="https://justetools.goatcounter.com/cou
 # light sheets to win on source order.
 $head = @(
     '  <link rel="stylesheet" href="/assets/css/doc-styles.css" />'
-    '  <link rel="stylesheet" href="/assets/css/settings-kit.css" />'
+    '  <link rel="stylesheet" href="/assets/css/infinite-value.css" />'
     '  <link rel="stylesheet" href="/assets/css/doc-dark.css" />'
     '  <script>(function(){try{var t=localStorage.getItem(''theme'');if(t===''dark''||t===''light''){document.documentElement.setAttribute(''data-theme'',t);}}catch(e){}})();</script>'
     '  <script src="/assets/js/theme.js" defer></script>'
@@ -94,7 +94,7 @@ Get-ChildItem (Join-Path $src 'img') -File | Where-Object { $_.Extension -ne '.m
         $fs = [IO.File]::OpenRead($_.FullName)
         try { [void]$fs.Read($bytes, 0, 4) } finally { $fs.Dispose() }
         if (($bytes[0] -ne 0x89) -or ($bytes[1] -ne 0x50) -or ($bytes[2] -ne 0x4E) -or ($bytes[3] -ne 0x47)) {
-            throw "img/$($_.Name) is not a PNG. The site serves every image as <name>.png; update Build-SettingsKitDocs.ps1 to carry the real format."
+            throw "img/$($_.Name) is not a PNG. The site serves every image as <name>.png; update Build-InfiniteValueDocs.ps1 to carry the real format."
         }
     }
     $imgFiles[$name] = $_
@@ -111,7 +111,7 @@ function Convert-HomeLinks([string]$text, [string]$tree, [string]$location) {
                 $text = [regex]::Replace($text, '(?<=href=")' + [regex]::Escape($from) + '(?=["#?])', $to)
             }
             if ($text -match '(?<=href=")(\.\./)?' + [regex]::Escape($variant) + '(?=["#?])') {
-                throw "A link to '$($book.home)' survived rewriting in a '$tree' page; update Build-SettingsKitDocs.ps1."
+                throw "A link to '$($book.home)' survived rewriting in a '$tree' page; update Build-InfiniteValueDocs.ps1."
             }
         }
     }
@@ -126,7 +126,7 @@ function Convert-CrossTreeLinks([string]$text, [string]$tree) {
 
 function Convert-Images([string]$text, [string]$tree) {
     if ($tree -eq 'api') {
-        if ($text -match 'src="(?:\.\./)?img/') { throw "The API page references an image; the public-api tree has no img/ folder. Update Build-SettingsKitDocs.ps1." }
+        if ($text -match 'src="(?:\.\./)?img/') { throw "The API page references an image; the public-api tree has no img/ folder. Update Build-InfiniteValueDocs.ps1." }
         return $text
     }
     foreach ($from in @('../img/', 'img/')) {
@@ -138,7 +138,7 @@ function Convert-Images([string]$text, [string]$tree) {
 function Convert-Html([string]$text, [string]$tree, [string]$location) {
     $before = $text
     $text = $text -replace '  <link rel="stylesheet" href="(?:\.\./)?shared/styles\.css" />', $head
-    if ($text -ceq $before) { throw "No shared/styles.css link to rewrite in a '$tree' page; update Build-SettingsKitDocs.ps1." }
+    if ($text -ceq $before) { throw "No shared/styles.css link to rewrite in a '$tree' page; update Build-InfiniteValueDocs.ps1." }
 
     $text = Convert-HomeLinks      $text $tree $location
     $text = Convert-CrossTreeLinks $text $tree
@@ -190,7 +190,7 @@ function Write-Redirect([string]$file, [string]$target) {
     ) -join "`n"
     Write-Text (Join-Path $dst ('documentation\' + $file)) $html
 }
-$manualUrl = '/settings-kit/user-manual/'
+$manualUrl = '/infinite-value/user-manual/'
 Write-Redirect 'index.html' $manualUrl
 Get-ChildItem (Join-Path $src 'pages') -Filter *.html | ForEach-Object {
     Write-Redirect ('pages\' + $_.Name) ($manualUrl + 'pages/' + [Uri]::EscapeDataString($_.Name))
@@ -204,13 +204,13 @@ foreach ($name in $imgFiles.Keys) {
 }
 
 # --- stylesheet: the shared part is published by the Persistent Asset build, the tail here ---
-$marker = '/* Settings Kit additions.'
+$marker = '/* Infinite Value additions.'
 $styles = (Read-Text (Join-Path $src 'shared\styles.css')) -replace "`r`n", "`n"
 $cut = $styles.IndexOf($marker)
-if ($cut -lt 0) { throw "shared/styles.css has no '$marker' line; update Build-SettingsKitDocs.ps1." }
+if ($cut -lt 0) { throw "shared/styles.css has no '$marker' line; update Build-InfiniteValueDocs.ps1." }
 $shared = ((Read-Text $sharedCss) -replace "`r`n", "`n").TrimEnd()
 if ($styles.Substring(0, $cut).TrimEnd() -cne $shared) {
-    Write-Warning "The shared part of the Settings Kit styles.css differs from docs/assets/css/doc-styles.css. The site serves doc-styles.css; copy the shared sheet across so the offline docs match."
+    Write-Warning "The shared part of the Infinite Value styles.css differs from docs/assets/css/doc-styles.css. The site serves doc-styles.css; copy the shared sheet across so the offline docs match."
 }
 # The marker line itself ("Everything above matches the shared file") is dropped: nothing is above it here.
 $tail = $styles.Substring($cut)
@@ -219,9 +219,9 @@ $tail = $tail.Substring($tail.IndexOf("`n") + 1).TrimStart("`n")
 # shared sheet sets it, so the zero offset only applies above the phone breakpoint.
 $before = $tail
 $tail = $tail -replace '(?m)^:root \{ --doc-top: 0px; \}$', '@media (min-width: 761px) { :root { --doc-top: 0px; } }'
-if ($tail -ceq $before) { throw "styles.css: the --doc-top override did not match; update Build-SettingsKitDocs.ps1." }
-$banner = "/* Generated by Tools/Build-SettingsKitDocs.ps1 from Sources/Settings Kit/Documentation/shared/styles.css.`n   Loaded after doc-styles.css on the Settings Kit doc pages. Edit the source, not this file. */`n`n"
-Write-Text $skCss ($banner + $tail)
+if ($tail -ceq $before) { throw "styles.css: the --doc-top override did not match; update Build-InfiniteValueDocs.ps1." }
+$banner = "/* Generated by Tools/Build-InfiniteValueDocs.ps1 from Sources/Infinite Value/Documentation/shared/styles.css.`n   Loaded after doc-styles.css on the Infinite Value doc pages. Edit the source, not this file. */`n`n"
+Write-Text $ivCss ($banner + $tail)
 
 # --- link check: every local href and src in the generated trees has to resolve ---
 $broken = New-Object System.Collections.Generic.List[string]
@@ -245,4 +245,4 @@ if ($broken.Count -gt 0) {
     throw ("Generated pages point at files that do not exist:`n  " + ($broken -join "`n  "))
 }
 
-Write-Host "Done. Regenerated user-manual, public-api, the documentation redirects and settings-kit.css."
+Write-Host "Done. Regenerated user-manual, public-api, the documentation redirects and infinite-value.css."

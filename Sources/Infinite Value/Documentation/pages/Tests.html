@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="The two testing tools shipped with the asset." />
+  <title>Infinite Value - Tests</title>
+  <link rel="stylesheet" href="../shared/styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <nav>
+    <div class="nav-title">Infinite Value</div>
+    <div class="nav-books"><a href="../User%20Manual.html" class="active" aria-current="true">User Manual</a><a href="../Public%20API.html">Public API</a></div>
+    <a href="../User%20Manual.html">Home</a>
+    <a href="InfVal.html">InfVal</a>
+    <a href="Formatters.html">Formatters</a>
+    <a href="Configuration.html">Configuration</a>
+    <a href="Input%20Field.html">Input Field</a>
+    <a href="Other%20Classes.html">Other Classes</a>
+    <a href="Tests.html" class="active" aria-current="page">Tests</a>
+    <a href="#bulk-tests" class="indent">Bulk Tests</a>
+    <a href="#unit-tests" class="indent">Unit tests</a>
+    <a href="Demo.html">Demo</a>
+  </nav>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Tests</h1>
+      <div class="sub">The two testing tools shipped with the asset.</div>
+
+    <div class="guide-index">
+      <a href="#bulk-tests">Bulk Tests</a>
+      <a href="#unit-tests">Unit tests</a>
+    </div>
+    </div>
+
+    <!-- ══════════════════════════════════════ bulk-tests ════ -->
+    <section id="bulk-tests">
+      <h2>Bulk Tests</h2>
+      <p>
+        Open the window via <strong>Tools &gt; Infinite Value &gt; Bulk Tests</strong>. It
+        runs randomized tests across casting, parsing, formatting, arithmetic, and
+        <strong>MathInfVal</strong> methods, comparing InfVal results against their
+        primitive-type equivalents to catch correctness regressions.
+      </p>
+
+      <div class="img-block">
+        <img src="../img/bulk_tests" alt="Bulk Tests window"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">🖼</span>
+          <span><strong>img/bulk_tests</strong><br/>Bulk Tests editor window</span>
+        </div>
+        <div class="img-caption">Bulk Tests window</div>
+      </div>
+
+      <p>
+        A primitive floating point type rounds where InfVal stays exact, so <code>float</code>,
+        <code>double</code>, and <code>decimal</code> results can differ from InfVal ones without either
+        being wrong. In the Arithmetic and Functions modes, <strong>Ignore System Type Limits</strong>
+        counts such a result as passed and reports how many there were. A result passes when the two
+        agree within the significant digits the type guarantees (6 for <code>float</code>, 15 for
+        <code>double</code>, 28 for <code>decimal</code>), widened by how far the result can move while
+        each primitive input stays within its own guaranteed digits. Any failure left points at InfVal.
+      </p>
+    </section>
+
+    <!-- ══════════════════════════════════════ unit-tests ════ -->
+    <section id="unit-tests">
+      <h2>Unit tests</h2>
+      <p>
+        A NUnit test suite is included and runs via Unity's built-in
+        <strong>Test Runner</strong> (<strong>Window &gt; General &gt; Test Runner</strong>,
+        Edit Mode tab). The suite covers:
+      </p>
+      <ul>
+        <li><strong>InfValPropertiesTests</strong>: <code>precision</code>, <code>isZero</code>, <code>isOne</code>, <code>isInteger</code>, <code>isEven</code>, <code>isPowerOfTwo</code>, <code>sign</code>, <code>digits</code>, <code>exponent</code>.</li>
+        <li><strong>InfValComparisonTests</strong>: All six comparison operators and <code>CompareTo</code>.</li>
+        <li><strong>InfValArithmeticTests</strong>: Every arithmetic, bitwise, and shift operator.</li>
+        <li><strong>InfValMethodsTests</strong>: <code>ToPrecision</code>, <code>ToExponent</code>, <code>RemoveTrailingZeros</code>, <code>MovePointLeft/Right</code>, <code>Deconstruct</code>.</li>
+        <li><strong>InfValCastTests</strong>: Round-trip casts for all integer types, <code>BigInteger</code>, <code>float</code>, and <code>double</code>.</li>
+        <li><strong>InfValParseTests</strong>: <code>InfValFormatHelper.TryParse</code> with known strings.</li>
+        <li><strong>FormatterTests</strong>: Formatting output for all built-in formatters.</li>
+        <li><strong>MathInfValTests</strong>: Most <code>MathInfVal</code> methods.</li>
+      </ul>
+      <p>Run both tools after modifying any scripts to catch regressions.</p>
+    </section>
+
+    <div class="pager">
+      <a class="prev" href="Other%20Classes.html">
+        <div class="dir">Back</div>
+        <div class="pg-title">Other Classes</div>
+      </a>
+      <a class="next" href="Demo.html">
+        <div class="dir">Next</div>
+        <div class="pg-title">Demo</div>
+      </a>
+    </div>
+
+    <div class="doc-footer">Infinite Value v2.3</div>
+
+  </main>
+</div>
+</body>
+</html>

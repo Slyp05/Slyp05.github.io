@@ -1,0 +1,1152 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* Scrolling hard past either end used to rubber-band and expose the canvas, as a pale band under the
+   sidebar. Stop the bounce, and paint the canvas the page colour for anything that still gets through. */
+html {
+  background: #f7f7f7;
+  overscroll-behavior-y: none;
+}
+
+/* The bar sticks to the top of the viewport, so an anchor jump has to stop that far short of its
+   target or the heading lands behind it. */
+:root { --doc-top: 50px; }
+html { scroll-padding-top: calc(var(--doc-top) + 16px); }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 14px;
+  line-height: 1.7;
+  color: #1a1a1a;
+  background: #f7f7f7;
+}
+
+/* Layout. The gradient paints the sidebar's column for the full height of the page, so a gap below the
+   sticky nav (a short page, or an overscroll) stays dark rather than showing the content background. */
+#layout {
+  display: grid;
+  grid-template-columns: 270px 1fr;
+  grid-template-rows: auto 1fr;
+  min-height: 100vh;
+  background: linear-gradient(to right, #1e1e2e 0 270px, #f7f7f7 270px);
+}
+#layout > .doc-top { grid-column: 1 / -1; }
+
+/* Navigation */
+nav {
+  width: 270px;
+  flex-shrink: 0;
+  background: #1e1e2e;
+  color: #cdd6f4;
+  padding: 18px 0 32px;
+  position: sticky;
+  top: var(--doc-top);
+  height: calc(100vh - var(--doc-top));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+nav .nav-title {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #89b4fa;
+  padding: 0 20px 16px;
+}
+nav a {
+  display: block;
+  padding: 5px 20px;
+  color: #cdd6f4;
+  text-decoration: none;
+  font-size: 13px;
+}
+nav a.indent,
+nav a[href^="#"] { padding-left: 36px; color: #a6adc8; font-size: 13px; }
+nav a:hover { color: #89b4fa; }
+
+/* Main content */
+main {
+  flex: 1;
+  padding: 48px 60px 80px;
+  max-width: 920px;
+}
+
+/* Page header */
+.page-header { margin-bottom: 48px; }
+.page-header h1 {
+  font-size: 36px;
+  font-weight: 700;
+  color: #1e1e2e;
+  margin-bottom: 6px;
+}
+.page-header .version,
+.page-header .sub { font-size: 13px; color: #888; }
+
+/* Sections */
+section,
+.type-section { margin-bottom: 56px; }
+section + section,
+.type-section + .type-section {
+  border-top: 1px solid #e0e0e0;
+  padding-top: 48px;
+}
+
+/* Headings */
+h2 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1e1e2e;
+  margin-bottom: 20px;
+}
+h3 {
+  font-size: 17px;
+  font-weight: 600;
+  color: #3a3a5c;
+  margin: 28px 0 10px;
+}
+h4 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #555;
+  margin: 20px 0 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Type header (API pages) */
+.type-header {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.type-header h2,
+.type-header h3 {
+  font-size: 22px;
+  font-family: "Cascadia Code", "Fira Code", Consolas, monospace;
+  margin-bottom: 0;
+}
+.type-header .ns { margin-left: auto; font-size: 12px; color: #888; font-family: "Cascadia Code", "Fira Code", Consolas, monospace; }
+
+/* Text */
+p { margin-bottom: 12px; }
+a { color: #5a8dee; text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* A type name that is also a link has to read as a link, not as inert code */
+a > code { color: inherit; background: #e8eeff; }
+a:hover > code { text-decoration: underline; }
+
+/* Lists */
+ul { margin: 10px 0 16px 20px; }
+ul li { margin-bottom: 6px; }
+
+/* Code */
+code {
+  font-family: "Cascadia Code", "Fira Code", Consolas, "Courier New", monospace;
+  font-size: 13px;
+  background: #ebebf0;
+  padding: 1px 5px;
+  border-radius: 4px;
+  color: #5a3e99;
+}
+pre {
+  background: #1e1e2e;
+  color: #cdd6f4;
+  border-radius: 8px;
+  padding: 18px 20px;
+  margin: 14px 0 18px;
+  overflow-x: auto;
+  font-family: "Cascadia Code", "Fira Code", Consolas, "Courier New", monospace;
+  font-size: 13px;
+  line-height: 1.6;
+}
+pre code { background: none; padding: 0; color: inherit; font-size: inherit; }
+
+/* Syntax highlighting inside pre blocks (dark background) */
+pre .kw { color: #cba6f7; }
+pre .ty { color: #89dceb; }
+pre .cm { color: #6c7086; font-style: italic; }
+pre .st { color: #a6e3a1; }
+pre .nu { color: #fab387; }
+
+/* Syntax highlighting in API tables (light background) */
+.t  { color: #1d4ed8; }
+.kw { color: #7c3aed; }
+.mn { font-weight: 700; color: #1a1a1a; }
+.rt { color: #888; }
+.ex { color: #dc2626; font-size: 12px; }
+.warn { display: inline-block; background: #fef2f2; border: 1px solid #fca5a5; color: #b91c1c; font-size: 11px; font-weight: 600; padding: 1px 7px; border-radius: 4px; margin-left: 8px; vertical-align: middle; }
+.badge-editor { background: #ede9fe; color: #6d28d9; }
+
+/* Note */
+.note {
+  background: #fffbeb;
+  border-left: 3px solid #f59e0b;
+  padding: 12px 16px;
+  border-radius: 0 6px 6px 0;
+  margin: 14px 0;
+  font-size: 14px;
+  color: #78350f;
+}
+
+/* A note whose trap costs data, drawn apart from the ordinary ones. */
+.note.warning {
+  background: #fef2f2;
+  border-left-color: #dc2626;
+  color: #7f1d1d;
+}
+
+/* Additional resources: the related-reading list every page closes on. */
+.resources {
+  border-top: 1px solid #e0e0e0;
+  padding-top: 32px;
+  margin-bottom: 40px;
+}
+.resources h2 {
+  font-size: 19px;
+  margin-bottom: 12px;
+}
+.resources ul {
+  margin: 0;
+  padding-left: 22px;
+}
+.resources li { margin-bottom: 5px; }
+
+/* Images */
+.img-block { margin: 18px 0; }
+.img-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ebebf0;
+  border: 2px dashed #c0c0d0;
+  border-radius: 8px;
+  padding: 32px 20px;
+  color: #888;
+  font-size: 13px;
+  text-align: center;
+  gap: 10px;
+}
+.img-placeholder .icon { font-size: 22px; }
+.img-block img {
+  max-width: 100%;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  display: block;
+}
+.img-caption {
+  font-size: 12px;
+  color: #888;
+  margin-top: 6px;
+}
+
+/* Badges */
+.badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+}
+.badge-struct    { background: #dbeafe; color: #1d4ed8; }
+.badge-interface { background: #fce7f3; color: #9d174d; }
+.badge-class     { background: #dcfce7; color: #15803d; }
+.badge-static    { background: #fef3c7; color: #92400e; }
+.badge-so        { background: #ede9fe; color: #6d28d9; }
+.badge-mb        { background: #ffedd5; color: #c2410c; }
+.badge-enum      { background: #ccfbf1; color: #0f766e; }
+.badge-pm        { background: #e0e7ff; color: #4338ca; }
+.badge-new       { background: #1d4ed8; color: #fff; }
+nav a .badge { display: inline-block; vertical-align: middle; margin-right: 7px; }
+nav a .badge-new { float: right; margin-right: 0; }
+
+/* Type metadata */
+.type-desc { color: #444; margin-bottom: 16px; max-width: 720px; }
+
+/* Member groups */
+.member-group { margin-bottom: 22px; }
+.member-group-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #888;
+  margin-bottom: 6px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+/* Member table */
+table.mt {
+  width: 100%;
+  border-collapse: collapse;
+}
+table.mt tr:hover td { background: #f0f4ff; }
+table.mt td {
+  padding: 7px 10px;
+  vertical-align: top;
+  border-bottom: 1px solid #f0f0f0;
+}
+table.mt td:first-child {
+  width: 52%;
+  font-family: "Cascadia Code", "Fira Code", Consolas, monospace;
+  font-size: 12.5px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+table.mt td:last-child {
+  color: #444;
+  font-size: 13px;
+}
+
+/* ════════════════════════════════════════════════════════════════════ */
+/* Persistent Asset additions (everything above is the shared base).      */
+/* Add-only: never edit the base so every package's docs stay in sync.    */
+/* ════════════════════════════════════════════════════════════════════ */
+
+/* Disable programming-font ligatures so !=, >=, => render as literal characters */
+code, pre, pre code, table.mt td:first-child {
+  font-variant-ligatures: none;
+  font-feature-settings: "liga" 0, "calt" 0;
+}
+
+/* Ordered lists (the base only styles ul) */
+ol { margin: 10px 0 16px 22px; }
+ol li { margin-bottom: 6px; }
+
+/* Active page in the sidebar */
+nav a.active { color: #89b4fa; font-weight: 700; }
+
+/* The link to the other book, identical in both sidebars. */
+nav a.nav-ext,
+nav a.nav-back { color: #89b4fa; font-weight: 600; }
+nav a.nav-ext:hover,
+nav a.nav-back:hover { color: #b4befe; }
+
+/* A group heading, in either book */
+nav .nav-group {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #6c7086;
+  padding: 16px 20px 4px;
+}
+
+nav .nav-group-body { padding-bottom: 4px; }
+
+/* Lead paragraph under a heading */
+.lead { font-size: 16px; color: #444; margin-bottom: 22px; max-width: 760px; }
+
+/* Hero (landing page) */
+.hero { margin-bottom: 40px; }
+.hero h1 { font-size: 42px; font-weight: 700; color: #1e1e2e; margin-bottom: 12px; }
+.hero .tagline { font-size: 19px; line-height: 1.5; color: #5a5a7a; max-width: 680px; }
+.inspector-mock {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 13px;
+  line-height: 1.7;
+  white-space: pre;
+  overflow-x: auto;
+  background: #fbfbfd;
+  border: 1px solid #dcdce8;
+  border-left: 3px solid #b9b9cf;
+  border-radius: 4px;
+  padding: 14px 16px;
+  color: #3c3c55;
+  margin: 16px 0;
+}
+/* Inline pill, distinct from API .badge */
+.tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 9px;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  vertical-align: middle;
+}
+
+/* Card grid (landing hub) */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+  margin: 24px 0 8px;
+}
+.card {
+  display: block;
+  background: #fff;
+  border: 1px solid #e3e3ec;
+  border-radius: 10px;
+  padding: 18px 20px;
+  color: inherit;
+  transition: border-color .12s, box-shadow .12s, transform .12s;
+}
+.card:hover {
+  border-color: #89b4fa;
+  box-shadow: 0 4px 16px rgba(40, 40, 80, .08);
+  text-decoration: none;
+  transform: translateY(-1px);
+}
+.card .num {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  color: #89b4fa;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.card h2 { margin: 0 0 6px; font-size: 20px; color: #1e1e2e; }
+.card h3 { margin: 0 0 6px; font-size: 16px; color: #1e1e2e; }
+.card p  { margin: 0; font-size: 13px; color: #666; }
+
+/* Numbered step block (quickstart) */
+.step { margin-bottom: 40px; }
+.step-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.step-num {
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #1e1e2e;
+  color: #89b4fa;
+  font-weight: 700;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.step-head h3 { margin: 0; }
+
+/* Prev / next pager between pages */
+.pager {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 56px;
+  padding-top: 24px;
+  border-top: 1px solid #e0e0e0;
+}
+.pager a {
+  flex: 1;
+  padding: 14px 18px;
+  border: 1px solid #e3e3ec;
+  border-radius: 10px;
+  background: #fff;
+}
+.pager a:hover { border-color: #89b4fa; text-decoration: none; }
+.pager a.next { text-align: right; }
+.pager .dir { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: #999; }
+.pager .pg-title { font-size: 15px; font-weight: 600; color: #1e1e2e; }
+
+/* Footer */
+.doc-footer {
+  margin-top: 64px;
+  padding-top: 20px;
+  border-top: 1px solid #e0e0e0;
+  font-size: 13px;
+  color: #888;
+}
+
+/* Group heading inside an API reference page, mirroring that page's sidebar groups */
+.api-group {
+  margin: 64px 0 20px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #e3e3ec;
+  font-size: 18px;
+  color: #6c7086;
+  text-transform: none;
+}
+.api-group:first-of-type { margin-top: 0; }
+.api-group + .type-section { border-top: none; padding-top: 0; }
+
+/* Module band: a top-level grouping banner over the API type-sections */
+.module-band {
+  margin: 80px 0 28px;
+  padding: 18px 24px;
+  background: linear-gradient(135deg, #1e1e2e, #2c2c47);
+  border-radius: 10px;
+  color: #fff;
+}
+.module-band.band-first { margin-top: 8px; }
+.module-band .band-name {
+  display: block;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+.module-band .band-desc {
+  display: block;
+  margin-top: 3px;
+  font-size: 13px;
+  font-weight: 400;
+  color: #a6adc8;
+}
+/* A type-section opening a band sits right under the banner, so drop its top divider */
+.module-band + .type-section { border-top: none; padding-top: 8px; }
+
+/* An API module link is a page link, like the manual's */
+nav a.nav-band:hover { color: #89b4fa; }
+
+/* The page you are on folds its own links away when clicked */
+nav [hidden] { display: none !important; }
+nav .nav-band.active { color: #89b4fa; }
+
+
+/* Public API summary: per-area index of type links into the sub-pages */
+.api-open { margin: 2px 0 6px; }
+.summary-index { display: flex; flex-wrap: wrap; gap: 6px 8px; margin: 6px 0 12px; }
+.summary-group {
+  width: 100%;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #6c7086;
+  margin-top: 8px;
+}
+.summary-index a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: #1e1e2e;
+  border: 1px solid #313244;
+  border-radius: 6px;
+  color: #cdd6f4;
+  text-decoration: none;
+  font-size: 13px;
+}
+.summary-index a:hover { border-color: #89b4fa; color: #89b4fa; }
+
+/* Inline hand-drawn SVG diagrams (replace screenshot placeholders for conceptual figures) */
+.img-block svg.diagram {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+.img-block svg.diagram text {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+/* A code name in a diagram that the API reference documents links to it. */
+.img-block svg.diagram a:hover text,
+.img-block svg.diagram a:hover tspan { text-decoration: underline; }
+
+/* Sidebar search box (rendered by nav.js) */
+.nav-search { padding: 0 20px 12px; }
+.nav-search input {
+  width: 100%;
+  background: #313244;
+  border: 1px solid #45475a;
+  border-radius: 6px;
+  color: #cdd6f4;
+  font-size: 13px;
+  padding: 5px 9px;
+  outline: none;
+}
+.nav-search input:focus { border-color: #89b4fa; }
+.nav-search input::placeholder { color: #6c7086; }
+
+/* Search results (replace the page links while typing) */
+#pa-results { padding: 0 8px; }
+#pa-results .sr {
+  display: block;
+  padding: 6px 12px;
+  border-radius: 6px;
+  text-decoration: none;
+}
+#pa-results .sr:hover { background: #313244; }
+#pa-results .sr .sr-page {
+  display: block;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #6c7086;
+}
+#pa-results .sr .sr-head { display: block; font-size: 13px; color: #cdd6f4; }
+#pa-results .sr:hover .sr-head { color: #89b4fa; }
+#pa-results .sr-none { padding: 6px 12px; font-size: 12.5px; color: #6c7086; }
+#pa-results .sr-group {
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #89b4fa;
+  padding: 10px 12px 4px;
+  border-top: 1px solid #313244;
+  margin-top: 6px;
+}
+#pa-results .sr-group:first-child { border-top: none; margin-top: 0; }
+
+/* Copy button on code blocks (added by nav.js) */
+pre { position: relative; }
+.copy-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: #313244;
+  border: 1px solid #45475a;
+  border-radius: 6px;
+  color: #a6adc8;
+  font-size: 11px;
+  padding: 3px 9px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.12s;
+}
+pre:hover .copy-btn, .copy-btn:focus { opacity: 1; }
+.copy-btn:hover { color: #cdd6f4; border-color: #89b4fa; }
+
+/* Section index chips at the top of a long page */
+.guide-index { display: flex; flex-wrap: wrap; gap: 8px; margin: 20px 0 8px; }
+.guide-index a {
+  padding: 4px 12px;
+  background: #fff;
+  border: 1px solid #e3e3ec;
+  border-radius: 999px;
+  font-size: 12.5px;
+  color: #3a3a5c;
+}
+.guide-index a:hover { border-color: #89b4fa; color: #1e1e2e; text-decoration: none; }
+
+/* Plain-text comparison table (unlike the monospace API member tables) */
+.table-scroll { overflow-x: auto; margin: 14px 0 18px; }
+table.cmp { width: 100%; border-collapse: collapse; min-width: 560px; }
+table.cmp th {
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #888;
+  padding: 6px 10px;
+  border-bottom: 1px solid #e0e0e0;
+}
+table.cmp td {
+  padding: 8px 10px;
+  vertical-align: top;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 13.5px;
+}
+table.cmp tr:hover td { background: #f0f4ff; }
+
+/* A comparison table whose first column names a thing rather than describing one: it takes the width
+   its longest name needs, on one line, and the remaining columns share the rest. */
+table.cmp.keycol td:first-child,
+table.cmp.keycol th:not([colspan]):first-child {
+  width: 1%;
+  white-space: nowrap;
+}
+/* A short reference table whose rows each fit on one line; phones still wrap them. */
+@media (min-width: 761px) { table.cmp.oneline td { white-space: nowrap; } }
+
+/* Responsive layout */
+@media (max-width: 1000px) {
+  main { padding: 36px 32px 64px; }
+}
+@media (max-width: 760px) {
+  /* The three links need the whole bar at this width, so the brand gives way to them. */
+  .doc-top { padding: 0 10px; }
+  .doc-top .doc-brand { display: none; }
+  .doc-top-links { width: 100%; justify-content: space-between; }
+
+  /* The sidebar becomes a plain list above the content. Where the site loads doc-nav.js, the list
+     moves into a drawer instead (the phone menu rules at the end of this file). */
+  #layout { display: block; background: none; }
+  nav {
+    position: static;
+    width: 100%;
+    height: auto;
+    top: auto;
+    padding: 12px 0 16px;
+  }
+  nav .nav-title { padding: 0 16px 10px; }
+  .nav-search { padding: 0 16px 10px; }
+  nav a { padding: 7px 16px; }
+  nav a.indent { display: none; }
+  nav a[href^="#"] { padding-left: 28px; }
+  nav .nav-group { padding: 14px 16px 4px; }
+  main { padding: 28px 16px 56px; max-width: none; min-width: 0; overflow-wrap: break-word; }
+  .page-header { margin-bottom: 32px; }
+  .page-header h1 { font-size: 28px; }
+  .hero h1 { font-size: 32px; }
+  .pager { flex-direction: column; }
+  .pager a.next { text-align: left; }
+  .member-group { overflow-x: auto; }
+
+  /* A namespace or a long generic name is one unbroken word, wider than the screen. */
+  :not(pre) > code { overflow-wrap: anywhere; }
+  .type-header { flex-wrap: wrap; }
+  .type-header .ns { margin-left: 0; flex-basis: 100%; overflow-wrap: anywhere; }
+  .type-header h2,
+  .type-header h3 { font-size: 19px; overflow-wrap: anywhere; }
+
+  pre { padding: 14px 14px; font-size: 12.5px; }
+  .note { padding: 10px 12px; }
+
+  /* The folds nest their body two indents deep, which a phone cannot spare. */
+  .fold > summary { padding: 12px 14px 12px 32px; }
+  .fold > summary::before { left: 13px; top: 12px; }
+  .fold-body { margin: 0 14px; padding-left: 0; }
+  .fold-tags { display: flex; margin: 6px 0 0; }
+  .module-band { padding: 14px 16px; }
+  .api-group { margin-top: 44px; }
+}
+
+/* No hover on a touch screen, so the copy button would never appear. */
+@media (hover: none) {
+  .copy-btn { opacity: 0.85; }
+}
+
+/* Android Chrome enlarges the text of some blocks and not others once it decides a page is not built
+   for phones. These pages are, so every block keeps the size the stylesheet gives it. */
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+
+/* Heading links: a "#" that appears on hover and copies the section's address */
+.heading-link {
+  margin-left: 8px;
+  color: #c3c3d4;
+  text-decoration: none;
+  font-weight: 400;
+  opacity: 0;
+  transition: opacity 0.12s, color 0.12s;
+}
+h2:hover .heading-link,
+h3:hover .heading-link,
+.heading-link:focus { opacity: 1; }
+.heading-link:hover { color: #5a5a7a; }
+.heading-link.copied {
+  opacity: 1;
+  color: #15803d;
+}
+.heading-link.copied::after {
+  content: " link copied";
+  font-size: 11px;
+  font-weight: 600;
+}
+.heading-link.copy-failed {
+  opacity: 1;
+  color: #b91c1c;
+}
+.heading-link.copy-failed::after {
+  content: " press Ctrl+C";
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* No hover to reveal it, so it would be an invisible tap target: drop it entirely there */
+@media (hover: none) {
+  .heading-link { display: none; }
+}
+
+/* Printing: the page only, with link targets spelled out */
+@media print {
+  nav,
+  .nav-search,
+  #pa-results,
+  .pager,
+  .copy-btn,
+  .heading-link { display: none !important; }
+
+  #layout { display: block; }
+  main {
+    max-width: none;
+    padding: 0;
+    color: #000;
+  }
+  body { background: #fff; }
+
+  a { color: #000; text-decoration: underline; }
+  main a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 10px; word-break: break-all; }
+
+  h1, h2, h3, h4 { page-break-after: avoid; color: #000; }
+  pre, table, .note, .img-block, .member-group { page-break-inside: avoid; }
+  pre {
+    background: #f4f4f6;
+    color: #000;
+    border: 1px solid #ccc;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  pre .t, pre .kw, pre .ty, pre .st, pre .nu, pre .cm { color: #000; }
+  .doc-footer { border-top: 1px solid #ccc; }
+}
+
+/* Reaching the content without a mouse: the sidebar is thirty links deep on every page, so the first
+   tab stop jumps past it. Off screen until it takes focus. */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100;
+  padding: 10px 16px;
+  background: #1e1e2e;
+  color: #cdd6f4;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 0 0 8px 0;
+}
+.skip-link:focus {
+  left: 0;
+  color: #cdd6f4;
+  text-decoration: none;
+}
+
+/* Where the keyboard is, on every control. */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible {
+  outline: 2px solid #89b4fa;
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+/* A numbered step is the page's own section, so its heading is an h2 and keeps the step look. */
+.step-head h2 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+  color: #3a3a5c;
+}
+
+@media print {
+  .skip-link, .guide-index { display: none !important; }
+}
+
+/* A member table's first cell names the row rather than holding data, so it is a row header.
+   These rules give a th exactly what the base gives td:first-child. */
+table.mt th[scope="row"] {
+  padding: 7px 10px;
+  vertical-align: top;
+  border-bottom: 1px solid #f0f0f0;
+  width: 52%;
+  font-family: "Cascadia Code", "Fira Code", Consolas, monospace;
+  font-size: 12.5px;
+  font-weight: 400;
+  text-align: left;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-variant-ligatures: none;
+  font-feature-settings: "liga" 0, "calt" 0;
+}
+table.mt tr:hover th[scope="row"] { background: #f0f4ff; }
+
+/* Column headers on a member table, so a two-column reference names its columns. */
+table.mt th[scope="col"] {
+  text-align: left;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #888;
+  padding: 6px 10px;
+  border-bottom: 2px solid #e0e0e0;
+  white-space: nowrap;
+}
+table.mt tr:hover th[scope="col"] { background: none; }
+
+/* Foldable block: one subject per fold, closed until the reader picks the one they came for. */
+.fold {
+  background: #fff;
+  border: 1px solid #e3e3ec;
+  border-radius: 10px;
+  margin: 10px 0;
+}
+.fold[open] { border-color: #c7d2fe; }
+.fold > summary {
+  position: relative;
+  cursor: pointer;
+  list-style: none;
+  padding: 13px 18px 13px 42px;
+  border-radius: 10px;
+}
+.fold > summary::-webkit-details-marker { display: none; }
+.fold > summary::before {
+  content: "\25B8";
+  position: absolute;
+  left: 20px;
+  top: 13px;
+  color: #8a8aa8;
+  transition: transform .15s ease;
+}
+.fold[open] > summary::before { transform: rotate(90deg); }
+.fold > summary:hover { background: #f5f7ff; }
+.fold > summary:hover h3 { color: #1e1e2e; }
+.fold > summary h3 { display: inline; margin: 0; font-size: 16px; }
+.fold .fold-sub { display: block; font-size: 13px; color: #777; margin-top: 4px; }
+.fold-body {
+  border-top: 1px solid #f0f0f5;
+  margin: 0 18px;
+  padding: 14px 0 4px 24px;
+}
+.fold-body > :last-child { margin-bottom: 12px; }
+
+@media print {
+  .fold-body { display: block !important; }
+  .fold > summary::before { content: none; }
+}
+
+/* The bar the three books share, written by nav.js on every page of all three. */
+.doc-top {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  height: var(--doc-top);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  background: #181825;
+  border-bottom: 1px solid #313244;
+  padding: 0 clamp(16px, 3vw, 28px);
+}
+.doc-top .doc-brand {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #89b4fa;
+  white-space: nowrap;
+}
+.doc-top-links { display: flex; gap: 6px; overflow-x: auto; }
+.doc-top-links a {
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #a6adc8;
+  white-space: nowrap;
+}
+.doc-top-links a:hover { color: #cdd6f4; background: #313244; text-decoration: none; }
+.doc-top-links a.active { color: #cdd6f4; background: #313244; }
+
+/* The guide has no sidebar, so its content centres under the bar. */
+main.guide-standalone { margin: 0 auto; }
+
+/* Who each way of saving suits, as pills beside the fold's title. */
+.fold-tags { display: inline-flex; flex-wrap: wrap; gap: 6px; margin-left: 10px; vertical-align: 2px; }
+.fold-tag {
+  padding: 2px 10px;
+  background: #f5f7ff;
+  border: 1px solid #c7d2fe;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #4338ca;
+}
+/* A pill split in two: who it suits, filled, then when to pick it, unfilled. */
+.fold-tag--split { display: inline-flex; padding: 0; background: transparent; overflow: hidden; }
+.fold-tag--split > span { padding: 2px 10px; }
+.fold-tag--split > span:first-child { background: #f5f7ff; }
+.fold-tag-hint { border-left: 1px solid #e3e3ec; font-weight: 400; color: #8a8aa3; }
+/* A code block with a bar above it that switches between call styles. Radio buttons rather
+   than script, so it works when the page is opened from disk. */
+.call-styles { display: flex; flex-wrap: wrap; margin: 14px 0 18px; background: #1e1e2e; border-radius: 8px; overflow: hidden; }
+.call-styles > input { position: absolute; opacity: 0; pointer-events: none; }
+.call-styles > label {
+  padding: 8px 14px;
+  font-size: 13px;
+  color: #a6adc8;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+}
+.call-styles > label:hover { color: #cdd6f4; }
+.call-styles > input:checked + label { color: #cdd6f4; border-bottom-color: #89b4fa; }
+.call-styles > input:focus-visible + label { outline: 2px solid #89b4fa; outline-offset: -4px; }
+.call-styles > pre { display: none; flex-basis: 100%; margin: 0; border-radius: 0; border-top: 1px solid #313244; }
+#cs-sync:checked ~ pre.cs-sync,
+#cs-callback:checked ~ pre.cs-callback,
+#cs-forget:checked ~ pre.cs-forget,
+#cs-routine:checked ~ pre.cs-routine,
+#cs-async:checked ~ pre.cs-async { display: block; }
+@media print {
+  .call-styles > label { display: none; }
+  .call-styles > pre { display: block; }
+}
+
+@media print {
+  .doc-top { display: none !important; }
+}
+
+/* A group heading inside a comparison table, spanning every column. A filled band rather than the
+   column header's plain label, so the two never read as the same kind of row. */
+table.cmp th:not([colspan]) { border-bottom-width: 2px; }
+table.cmp th[colspan] {
+  padding: 7px 10px;
+  background: #eceffb;
+  color: #4338ca;
+  font-size: 12px;
+  border-top: 1px solid #dde2f4;
+  border-bottom: 1px solid #dde2f4;
+}
+
+/* The link out of a fold, to the manual page that covers the same subject in full. */
+.fold-more { margin: 18px 0 0; }
+.fold-more a {
+  display: inline-block;
+  padding: 6px 15px;
+  background: #fff;
+  border: 1px solid #c7d2fe;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #4338ca;
+}
+.fold-more a:hover {
+  border-color: #89b4fa;
+  background: #f5f7ff;
+  text-decoration: none;
+}
+
+/* Phone menu. doc-nav.js puts a button at the right of the top bar (drawing a bar with the package
+   name where a page has none) and turns the sidebar into a drawer that slides over the page from the
+   right. Without the script, as in the docs opened from disk, the sidebar stays a list above the
+   content. These rules sit last so they win over the .doc-top base above. */
+.nav-menu-btn,
+.doc-top-phone,
+.nav-backdrop { display: none; }
+
+@media (max-width: 760px) {
+  .doc-top { padding: 0 6px 0 10px; gap: 6px; }
+  .doc-top-links { flex: 1; min-width: 0; gap: 2px; justify-content: space-between; }
+  .doc-top-links a { padding: 5px 8px; }
+  .doc-top-phone { display: flex; }
+  .doc-top-phone .doc-brand {
+    display: block;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .nav-menu-btn {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    margin-left: auto;
+    padding: 0;
+    background: none;
+    border: none;
+    border-radius: 8px;
+    color: #cdd6f4;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .nav-menu-btn:hover,
+  .nav-menu-btn[aria-expanded="true"] { background: #313244; }
+  .nav-menu-btn svg {
+    width: 22px;
+    height: 22px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+  }
+  .nav-menu-btn .icon-close,
+  .nav-menu-btn[aria-expanded="true"] .icon-open { display: none; }
+  .nav-menu-btn[aria-expanded="true"] .icon-close { display: block; }
+
+  nav.nav-drawer {
+    position: fixed;
+    top: var(--doc-top);
+    right: 0;
+    bottom: 0;
+    z-index: 30;
+    width: min(320px, 86vw);
+    height: auto;
+    padding: 14px 0 32px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    box-shadow: -8px 0 24px rgba(0, 0, 0, 0.3);
+    transform: translateX(100%);
+    visibility: hidden;
+    transition: transform .2s ease, visibility 0s linear .2s;
+  }
+  nav.nav-drawer.nav-open {
+    transform: none;
+    visibility: visible;
+    transition: transform .2s ease;
+  }
+  .nav-backdrop {
+    display: block;
+    position: fixed;
+    top: var(--doc-top);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 25;
+    background: rgba(10, 10, 20, 0.5);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .2s ease;
+  }
+  .nav-backdrop.nav-open { opacity: 1; pointer-events: auto; }
+
+  /* The page behind an open drawer stays put, so a swipe in the drawer never scrolls the page. Only
+     the root is locked: a locked body would clip the sticky top bar and scroll it out of view. */
+  html.nav-locked { overflow: hidden; }
+  html.nav-locked .theme-toggle { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  nav.nav-drawer,
+  nav.nav-drawer.nav-open,
+  .nav-backdrop { transition: none; }
+}
+
+@media print {
+  .nav-menu-btn, .nav-backdrop { display: none !important; }
+}
+
+/* Infinite Value additions. Everything above matches the shared file. */
+
+/* No top bar in these docs, so nothing to offset the sidebar or anchors by. */
+:root { --doc-top: 0px; }
+
+/* The two books, side by side at the top of both sidebars, the current one filled. */
+nav .nav-books { display: flex; gap: 6px; padding: 0 20px 16px; }
+nav .nav-books a {
+  flex: 1;
+  padding: 5px 0;
+  text-align: center;
+  border: 1px solid #45475a;
+  border-radius: 6px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #a6adc8;
+}
+nav .nav-books a:hover { color: #cdd6f4; border-color: #89b4fa; text-decoration: none; }
+nav .nav-books a.active { color: #1e1e2e; background: #89b4fa; border-color: #89b4fa; }
+
+/* The API sidebar lists the types themselves, not sections of a page, so they sit at the top level. */
+nav.api-nav a[href^="#"] { padding-left: 20px; color: #cdd6f4; }
+
+/* A group heading right under the switch would double the gap above it. */
+nav .nav-books + .nav-group { padding-top: 0; }
+
+/* A single-page manual: its top-level sections are anchors too, so they sit at the top level. */
+nav a.nav-section[href^="#"] { padding-left: 20px; color: #cdd6f4; }
+
+/* Formula */
+.formula {
+  text-align: center;
+  font-style: italic;
+  font-size: 16px;
+  margin: 18px 0;
+  color: #3a3a5c;
+}

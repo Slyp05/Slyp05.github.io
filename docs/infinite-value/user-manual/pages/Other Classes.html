@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="MathInfVal, InterpolateInfVal and Culture." />
+  <title>Infinite Value - Other Classes</title>
+  <link rel="stylesheet" href="/assets/css/doc-styles.css" />
+  <link rel="stylesheet" href="/assets/css/infinite-value.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <nav>
+    <div class="nav-title">Infinite Value</div>
+    <div class="nav-books"><a href="../index.html" class="active" aria-current="true">User Manual</a><a href="../../public-api/index.html">Public API</a></div>
+    <a href="../index.html">Home</a>
+    <a href="InfVal.html">InfVal</a>
+    <a href="Formatters.html">Formatters</a>
+    <a href="Configuration.html">Configuration</a>
+    <a href="Input%20Field.html">Input Field</a>
+    <a href="Other%20Classes.html" class="active" aria-current="page">Other Classes</a>
+    <a href="#mathinfval" class="indent">MathInfVal</a>
+    <a href="#interpolateinfval" class="indent">InterpolateInfVal</a>
+    <a href="#culture" class="indent">Culture</a>
+    <a href="Tests.html">Tests</a>
+    <a href="Demo.html">Demo</a>
+  </nav>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Other Classes</h1>
+      <div class="sub">MathInfVal, InterpolateInfVal and Culture.</div>
+
+    <div class="guide-index">
+      <a href="#mathinfval">MathInfVal</a>
+      <a href="#interpolateinfval">InterpolateInfVal</a>
+      <a href="#culture">Culture</a>
+    </div>
+    </div>
+
+    <!-- ══════════════════════════════════════ mathinfval ════ -->
+    <section id="mathinfval">
+      <h2>MathInfVal</h2>
+      <p>
+        A static class analogous to <code>Mathf</code>, dedicated to <strong>InfVal</strong>.
+        Contains more than 30 methods: <code>Abs</code>, <code>Pow</code>, <code>Sqrt</code>,
+        <code>Log</code>, <code>Min</code>, <code>Max</code>, <code>Clamp</code>,
+        <code>Approximately</code>, <code>RandomRange</code>, and more. See the
+        <strong>Public API</strong> for the full list.
+      </p>
+    </section>
+
+    <!-- ══════════════════════════════════════ interpolateinfval ════ -->
+    <section id="interpolateinfval">
+      <h2>InterpolateInfVal</h2>
+      <p>
+        A static class for interpolating <strong>InfVal</strong> values. Includes methods
+        equivalent to Unity's <code>Lerp</code> and <code>SmoothStep</code>, plus additional
+        interpolation modes. See the <strong>Public API</strong>.
+      </p>
+    </section>
+
+    <!-- ══════════════════════════════════════ culture ════ -->
+    <section id="culture">
+      <h2>Culture</h2>
+      <p>
+        A serializable wrapper around <code>CultureInfo</code>, used by
+        <strong>CultureFormatter</strong>. Use the <code>.info</code> property wherever a
+        raw <code>CultureInfo</code> is expected.
+      </p>
+      <pre><code><span class="ty">Culture</span> c = <span class="kw">new</span> <span class="ty">Culture</span>(<span class="ty">Culture</span>.Type.CurrentCulture);
+<span class="ty">CultureInfo</span> ci = c.info;</code></pre>
+    </section>
+
+    <div class="pager">
+      <a class="prev" href="Input%20Field.html">
+        <div class="dir">Back</div>
+        <div class="pg-title">Input Field</div>
+      </a>
+      <a class="next" href="Tests.html">
+        <div class="dir">Next</div>
+        <div class="pg-title">Tests</div>
+      </a>
+    </div>
+
+    <div class="doc-footer">Infinite Value v2.3</div>
+
+  </main>
+</div>
+</body>
+</html>

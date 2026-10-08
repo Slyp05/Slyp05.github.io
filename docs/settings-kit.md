@@ -52,7 +52,7 @@ Unity 6.0 or later (tested up to 6.6)
 
 ## Documentation
 
-<a href="/settings-kit/documentation/" class="asset-store-btn" target="_blank" rel="noopener">User Manual</a>
+<a href="/settings-kit/user-manual/" class="asset-store-btn" target="_blank" rel="noopener">User Manual</a>
 <a href="/settings-kit/public-api/" class="asset-store-btn" target="_blank" rel="noopener">Public API</a>
 
 ## Get It

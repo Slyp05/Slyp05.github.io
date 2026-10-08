@@ -23,7 +23,7 @@
 
   <nav class="api-nav">
     <div class="nav-title">Settings Kit</div>
-    <div class="nav-books"><a href="../documentation/index.html">User Manual</a><a href="index.html" class="active" aria-current="true">Public API</a></div>
+    <div class="nav-books"><a href="../user-manual/index.html">User Manual</a><a href="index.html" class="active" aria-current="true">Public API</a></div>
     <div class="nav-group">Declaring settings</div>
     <a href="#SettingsPage"><span class="badge badge-class">abstract</span>SettingsPage</a>
     <a href="#BuildSettingsEntryT"><span class="badge badge-class">abstract</span>BuildSettingsEntry</a>
@@ -54,7 +54,7 @@
         <span class="badge badge-class">abstract class</span>
       </div>
       <p class="type-desc">
-        Declares a settings page. It appears in Project Settings, Preferences, or both, depending on the settings attached to it. Title and order come from <a href="#SettingsDisplayAttribute">SettingsDisplayAttribute</a>. Explained in <a href="../documentation/pages/Declare%20settings.html#page">Declare settings</a>.
+        Declares a settings page. It appears in Project Settings, Preferences, or both, depending on the settings attached to it. Title and order come from <a href="#SettingsDisplayAttribute">SettingsDisplayAttribute</a>. Explained in <a href="../user-manual/pages/Declare%20settings.html#page">Declare settings</a>.
       </p>
 
       <div class="member-group">
@@ -71,7 +71,7 @@
         <span class="badge badge-class">abstract class</span>
       </div>
       <p class="type-desc">
-        Base for a build setting: shown in Project Settings, committed, and readable in builds. The class must be <code>[System.Serializable]</code> with a parameterless constructor; field initializers are the defaults. Explained in <a href="../documentation/pages/Declare%20settings.html#kinds">Declare settings</a>.
+        Base for a build setting: shown in Project Settings, committed, and readable in builds. The class must be <code>[System.Serializable]</code> with a parameterless constructor; field initializers are the defaults. Explained in <a href="../user-manual/pages/Declare%20settings.html#kinds">Declare settings</a>.
       </p>
     </div>
     <div class="type-section" id="PlatformSettingsEntryT">
@@ -80,7 +80,7 @@
         <span class="badge badge-class">abstract class</span>
       </div>
       <p class="type-desc">
-        Base for a per-platform build setting: like <a href="#BuildSettingsEntryT">BuildSettingsEntry&lt;TPage&gt;</a>, with different values per build target. Reads return the values for the current platform. Explained in <a href="../documentation/pages/Declare%20settings.html#platform">Declare settings</a>.
+        Base for a per-platform build setting: like <a href="#BuildSettingsEntryT">BuildSettingsEntry&lt;TPage&gt;</a>, with different values per build target. Reads return the values for the current platform. Explained in <a href="../user-manual/pages/Declare%20settings.html#platform">Declare settings</a>.
       </p>
     </div>
     <div class="type-section" id="EditorSettingsEntryT">
@@ -89,7 +89,7 @@
         <span class="badge badge-class">abstract class</span>
       </div>
       <p class="type-desc">
-        Base for an editor setting: shown in Project Settings and committed, but <strong>not included in builds</strong> (reads in a build return defaults). Explained in <a href="../documentation/pages/Declare%20settings.html#kinds">Declare settings</a>.
+        Base for an editor setting: shown in Project Settings and committed, but <strong>not included in builds</strong> (reads in a build return defaults). Explained in <a href="../user-manual/pages/Declare%20settings.html#kinds">Declare settings</a>.
       </p>
     </div>
     <div class="type-section" id="UserSettingsEntryT">
@@ -98,7 +98,7 @@
         <span class="badge badge-class">abstract class</span>
       </div>
       <p class="type-desc">
-        Base for a user setting: shown in Preferences, per developer, <strong>not included in builds</strong> (reads in a build return defaults). Explained in <a href="../documentation/pages/Declare%20settings.html#kinds">Declare settings</a>.
+        Base for a user setting: shown in Preferences, per developer, <strong>not included in builds</strong> (reads in a build return defaults). Explained in <a href="../user-manual/pages/Declare%20settings.html#kinds">Declare settings</a>.
       </p>
     </div>
     <div class="type-section" id="SettingsDisplayAttribute">
@@ -107,7 +107,7 @@
         <span class="badge badge-class">Attribute</span>
       </div>
       <p class="type-desc">
-        Optional title, tooltip and order for a <a href="#SettingsPage">page</a> or a settings class. Without it, a page uses the last segment of its path and a settings class its type name (<code>AudioDefaults</code> shows as "Audio Defaults"). Explained in <a href="../documentation/pages/Customize%20the%20window.html#titles">Customize the window</a>.
+        Optional title, tooltip and order for a <a href="#SettingsPage">page</a> or a settings class. Without it, a page uses the last segment of its path and a settings class its type name (<code>AudioDefaults</code> shows as "Audio Defaults"). Explained in <a href="../user-manual/pages/Customize%20the%20window.html#titles">Customize the window</a>.
       </p>
 
       <div class="member-group">
@@ -128,7 +128,7 @@
         <span class="badge badge-static">static class</span>
       </div>
       <p class="type-desc">
-        Load state, saving, page navigation and test overrides. Read values through <a href="#SettingsT">Settings&lt;T&gt;.Instance</a>. Explained in <a href="../documentation/pages/Read%20settings.html">Read settings</a>.
+        Load state, saving, page navigation and test overrides. Read values through <a href="#SettingsT">Settings&lt;T&gt;.Instance</a>. Explained in <a href="../user-manual/pages/Read%20settings.html">Read settings</a>.
       </p>
 
       <div class="member-group">
@@ -146,7 +146,7 @@
         <span class="badge badge-static">static class</span>
       </div>
       <p class="type-desc">
-        Reads one settings class. Don't cache <code>Instance</code>: builds already cache it, and in the editor your copy would miss later edits, undos and test overrides. <strong>Safe to read from any thread</strong> once settings are loaded. Explained in <a href="../documentation/pages/Read%20settings.html#read">Read settings</a>.
+        Reads one settings class. Don't cache <code>Instance</code>: builds already cache it, and in the editor your copy would miss later edits, undos and test overrides. <strong>Safe to read from any thread</strong> once settings are loaded. Explained in <a href="../user-manual/pages/Read%20settings.html#read">Read settings</a>.
       </p>
 
       <div class="member-group">
@@ -163,7 +163,7 @@
         <span class="badge badge-interface">interface</span>
       </div>
       <p class="type-desc">
-        Implement it on a settings class to check its values: <code>Validate</code> returns <code>false</code> with a message when they are invalid. The message shows under the section in the settings window, and an invalid build setting also stops the build. Explained in <a href="../documentation/pages/Customize%20the%20window.html#validation">Customize the window</a>.
+        Implement it on a settings class to check its values: <code>Validate</code> returns <code>false</code> with a message when they are invalid. The message shows under the section in the settings window, and an invalid build setting also stops the build. Explained in <a href="../user-manual/pages/Customize%20the%20window.html#validation">Customize the window</a>.
       </p>
 
       <div class="member-group">
@@ -178,7 +178,7 @@
         <span class="badge badge-interface">interface</span>
       </div>
       <p class="type-desc">
-        Implement it on a settings class whose saved values need converting when its data changes: raise <code>Version</code>, and convert the old values in <code>Migrate</code>. <strong>Runs in the editor</strong> when settings load. Explained in <a href="../documentation/pages/Update%20your%20settings.html#values">Update your settings</a>.
+        Implement it on a settings class whose saved values need converting when its data changes: raise <code>Version</code>, and convert the old values in <code>Migrate</code>. <strong>Runs in the editor</strong> when settings load. Explained in <a href="../user-manual/pages/Update%20your%20settings.html#values">Update your settings</a>.
       </p>
 
       <div class="member-group">
@@ -194,7 +194,7 @@
         <span class="badge badge-class">Attribute</span>
       </div>
       <p class="type-desc">
-        Put <code>[SettingsMigrator]</code> on a static method to recover the saved values of a settings class you deleted: the method receives the old data, and you copy it into your current settings. <strong>Runs in the editor</strong> when settings load, before the old data is deleted. Explained in <a href="../documentation/pages/Update%20your%20settings.html#deleted">Update your settings</a>.
+        Put <code>[SettingsMigrator]</code> on a static method to recover the saved values of a settings class you deleted: the method receives the old data, and you copy it into your current settings. <strong>Runs in the editor</strong> when settings load, before the old data is deleted. Explained in <a href="../user-manual/pages/Update%20your%20settings.html#deleted">Update your settings</a>.
       </p>
 
       <div class="member-group">
@@ -209,7 +209,7 @@
         <span class="badge badge-struct">readonly struct</span>
       </div>
       <p class="type-desc">
-        Saved data whose settings class no longer exists, passed to every <a href="#SettingsMigratorAttribute">[SettingsMigrator]</a> method. Explained in <a href="../documentation/pages/Update%20your%20settings.html#deleted">Update your settings</a>.
+        Saved data whose settings class no longer exists, passed to every <a href="#SettingsMigratorAttribute">[SettingsMigrator]</a> method. Explained in <a href="../user-manual/pages/Update%20your%20settings.html#deleted">Update your settings</a>.
       </p>
 
       <div class="member-group">

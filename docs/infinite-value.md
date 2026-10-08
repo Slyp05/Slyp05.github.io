@@ -3,23 +3,30 @@ layout: page
 title: Infinite Value
 permalink: /infinite-value/
 image: /assets/images/infinite-value-social.jpg
-description: "Arbitrary-precision number type for Unity that behaves like a primitive, works in real-time, and is fully configurable. Perfect for incremental games, RPGs, and monetary systems."
+description: "Numbers of any size and precision in Unity. Behaves like a primitive type, works in real-time, and is fully configurable. Perfect for incremental games, RPGs, and monetary systems."
 software:
   store_url: https://assetstore.unity.com/packages/tools/utilities/infinite-value-bigdecimal-194963
 ---
 
 <img src="/assets/images/infinite-value.jpg" alt="Infinite Value" class="package-image" width="1200" height="800" decoding="async">
 
-`InfVal` is an arbitrary-precision number type for Unity.  
-It stores any integer or decimal value and behaves like a primitive: full arithmetic, comparison, and bitwise operators, implicit casts from all numeric types, and direct inspector support.  
-Designed for real-time use and fully serializable.  
+**Numbers of any size and precision in Unity. Behaves like a primitive type, works in real-time, and is fully configurable. Perfect for incremental games, RPGs, and monetary systems.**
+
+## Description
+
+`InfVal` is an arbitrary-precision number type for Unity.
+
+It stores any integer or decimal value and behaves like a primitive: full arithmetic, comparison, and bitwise operators, implicit casts from all numeric types, and direct inspector support.
+
+Designed for real-time use and fully serializable.
+
 Perfect for incremental games, RPGs, or any system where standard numeric types overflow or lose precision.
 
 ## Features
 
 - **Arbitrary precision**: integer or decimal with any digit count; values up to ~±10^4,294,967,295 with precision down to 10^−2,147,483,648
 - **Primitive-like API**: arithmetic (`+`, `-`, `*`, `/`, `%`), bitwise, and comparison operators; implicit casts from all numeric primitives
-- **Formatter system**: 4 built-in formatters (Manual, Scientific, Alphabetic, Culture-aware with native East Asian units) and a custom formatter interface; assign formatters project-wide or per component
+- **Formatter system**: 5 built-in formatters (Manual, Scientific, Alphabetic, Culture-aware with native East Asian units, Conway-Guy number names) and a custom formatter interface; assign formatters project-wide or per component
 - **Inspector drawer**: edit values directly, access raw digits and exponent, call transform methods with one click, and view all read-only properties, all sections configurable
 - **Input field component**: `InfValInputField` turns any `InputField` or `TMP_InputField` into an `InfVal` field with validation modes, sign constraints, and per-component formatter override
 - **Math & interpolation**: 30+ methods in `MathInfVal` (Abs, Pow, Sqrt, Log, Clamp, RandomRange, ...) and 10+ interpolation modes in `InterpolateInfVal` including ease in/out and angle variants
@@ -29,18 +36,20 @@ Perfect for incremental games, RPGs, or any system where standard numeric types 
 ## Content
 
 - **Infinite value type**: the `InfVal` struct separated in multiple files
-- **Formatter system**: `IInfValFormatter`, `FormatterAsset`, 4 built-in formatters
+- **Formatter system**: `IInfValFormatter`, `FormatterAsset`, 5 built-in formatters
 - **Support classes**: `MathInfVal`, `InterpolateInfVal`, `InfValInputField` UI component
 - **Tests**: NUnit test suite and custom randomized bulk tests
 - **Demo**: a complete clicker-game demo with a save system, a scriptable-object database, and reusable UI scripts
 
 ## Requirements
 
-Unity 6.0 or later (tested up to 6.5)
+Unity 6.0 or later (tested up to 6.6).
+
+Need an older version? [Contact me](mailto:justetools@gmail.com), it can be easily backported.
 
 ## Documentation
 
-<a href="/infinite-value/documentation/" class="asset-store-btn" target="_blank" rel="noopener">Documentation</a>
+<a href="/infinite-value/user-manual/" class="asset-store-btn" target="_blank" rel="noopener">User Manual</a>
 <a href="/infinite-value/public-api/" class="asset-store-btn" target="_blank" rel="noopener">Public API</a>
 
 ## Get It
@@ -51,6 +60,33 @@ Unity 6.0 or later (tested up to 6.5)
 ## Patch Notes
 
 <details class="patch-note" open>
+<summary><strong>v2.3.0</strong> <span class="patch-date">October 8, 2026</span></summary>
+<div class="patch-note-body" markdown="1">
+
+A new Bulk Tests toggle to ignore the precision limits of system types revealed some mostly exotic bugs that are now fixed. Also added a Conway-Guy style formatter.
+
+New Features:
+- **`ConwayGuyFormatter`**: writes values with their names, at any size: `12.35 Thousand`, `1.5 Million`, `2.3 Quinquadecillion`, `150 Millionths`. Short or long scale, and parsing reads the names back.
+- **`MathInfVal.RandomIntegerRange`**: returns a whole number. `RandomRange` keeps the decimals of its most precise bound, so `RandomRange(0, 9)` can return `4.271093804`.
+- Bulk Tests: an **Ignore System Type Limits** toggle passes differences that come from the precision of `float`, `double`, or `decimal`.
+- Improved documentation format, matching the other Juste Tools packages.
+
+Breaking Changes:
+- `Pow(0, n)` and `NthRoot(0, n)` with a negative `n` throw `DivideByZeroException` instead of returning 0.
+- Converting a NaN or infinite `float` or `double` to an `InfVal` throws `ArgumentException` instead of giving 0.
+
+Bug Fixes:
+- Division fills the precision of the more precise operand: `new InfVal("1") / new InfVal(3)` gives `0.3333333333`, not `0.3000000000`.
+- Subtraction keeps the digits the result has room for: at a precision of 2, `10 - 0.5` gives `9.5`, not `10`.
+- Bitwise and shift operators and `isEven` work on values built from integers, and their results keep their precision.
+- More accurate `Log`, `Pow`, `NthRoot`, and casts to `float` and `double`.
+- Fixes to `Approximately`, `RandomRange`, `Repeat`, `PingPong`, `DeltaAngle`, `NextPowerOfTwo`, and `PreviousPowerOfTwo`.
+- The Bulk Tests window no longer freezes, and the input field rejects a second decimal point.
+
+</div>
+</details>
+
+<details class="patch-note">
 <summary><strong>v2.2.0</strong> <span class="patch-date">August 29, 2026</span></summary>
 <div class="patch-note-body" markdown="1">
 

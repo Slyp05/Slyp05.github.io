@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Convert an InfVal to a string and back." />
+  <title>Infinite Value - Formatters</title>
+  <link rel="stylesheet" href="../shared/styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <nav>
+    <div class="nav-title">Infinite Value</div>
+    <div class="nav-books"><a href="../User%20Manual.html" class="active" aria-current="true">User Manual</a><a href="../Public%20API.html">Public API</a></div>
+    <a href="../User%20Manual.html">Home</a>
+    <a href="InfVal.html">InfVal</a>
+    <a href="Formatters.html" class="active" aria-current="page">Formatters</a>
+    <a href="#formatter-asset" class="indent">FormatterAsset</a>
+    <a href="#builtin" class="indent">Built-in formatters</a>
+    <a href="#parts" class="indent">Formatting into parts</a>
+    <a href="#custom" class="indent">Custom formatters</a>
+    <a href="Configuration.html">Configuration</a>
+    <a href="Input%20Field.html">Input Field</a>
+    <a href="Other%20Classes.html">Other Classes</a>
+    <a href="Tests.html">Tests</a>
+    <a href="Demo.html">Demo</a>
+  </nav>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Formatters</h1>
+      <div class="sub">Convert an InfVal to a string and back.</div>
+
+    <div class="guide-index">
+      <a href="#formatter-asset">FormatterAsset</a>
+      <a href="#builtin">Built-in formatters</a>
+      <a href="#parts">Formatting into parts</a>
+      <a href="#custom">Custom formatters</a>
+    </div>
+    </div>
+
+    <section>
+      <p>
+        All formatting and parsing in <strong>Infinite Value</strong> goes through the
+        <code>IInfValFormatter</code> interface. A formatter converts an
+        <strong>InfVal</strong> to a string and back. The project-wide default is set in the
+        <strong>Configuration</strong> asset and can be overridden per call or per component.
+      </p>
+    </section>
+
+    <!-- ══════════════════════════════════════ formatter-asset ════ -->
+    <section id="formatter-asset">
+      <h2>FormatterAsset</h2>
+      <p>
+        A <code>FormatterAsset</code> is a <code>ScriptableObject</code> that wraps any
+        <code>IInfValFormatter</code> instance so it can be assigned in the inspector and
+        shared across components.
+      </p>
+      <p>
+        Create one via <strong>Assets &gt; Create &gt; Infinite Value &gt; Formatter</strong>,
+        then select a formatter type from the dropdown and configure its fields.
+      </p>
+
+      <div class="img-block">
+        <img src="../img/formatter_asset" alt="FormatterAsset inspector"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">🖼</span>
+          <span><strong>img/formatter_asset</strong><br/>FormatterAsset inspector with type dropdown</span>
+        </div>
+        <div class="img-caption">FormatterAsset: type dropdown and fields</div>
+      </div>
+
+      <p>
+        Assign a <code>FormatterAsset</code> to the <strong>Default Formatter</strong> field
+        in the <strong>Configuration</strong> asset, or directly to an
+        <strong>InfValInputField</strong> component to override the default for that field.
+      </p>
+    </section>
+
+    <!-- ══════════════════════════════════════ builtin ════ -->
+    <section id="builtin">
+      <h2>Built-in formatters</h2>
+      <p>Examples use default settings. Each formatter's fields are listed in the <a href="../Public%20API.html#IInfValFormatter">Public API</a>.</p>
+      <div class="table-scroll">
+        <table class="cmp keycol">
+          <tr><th scope="col">Formatter</th><th scope="col">Use it for</th><th scope="col">Examples</th></tr>
+          <tr><td><a href="../Public%20API.html#CultureFormatter"><code>CultureFormatter</code></a></td><td>Following the player's language: separators and units come from a culture. The default formatter.</td><td><code>1,234,567.5</code> (en-US), <code>1&nbsp;234&nbsp;567,5</code> (fr-FR), <code>1500兆</code> (ja-JP)</td></tr>
+          <tr><td><a href="../Public%20API.html#ManualFormatter"><code>ManualFormatter</code></a></td><td>Setting every detail yourself: units, separators, exponent marker.</td><td><code>1,234,567.5</code>, <code>1.5P</code></td></tr>
+          <tr><td><a href="../Public%20API.html#ScientificFormatter"><code>ScientificFormatter</code></a></td><td>Scientific notation.</td><td><code>1.2345675e+6</code>, <code>1.5e+15</code></td></tr>
+          <tr><td><a href="../Public%20API.html#AlphabeticFormatter"><code>AlphabeticFormatter</code></a></td><td>Idle games: short letter suffixes, <code>a</code> for thousands, <code>b</code> for millions, <code>aa</code> after <code>z</code>.</td><td><code>12.35a</code>, <code>1.5ab</code></td></tr>
+          <tr><td><a href="../Public%20API.html#ConwayGuyFormatter"><code>ConwayGuyFormatter</code></a></td><td>Numbers written as names, at any size.</td><td><code>1.235 Million</code>, <code>2.3 Quinquadecillion</code></td></tr>
+        </table>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════ parts ════ -->
+    <section id="parts">
+      <h2>Formatting into parts</h2>
+      <p>
+        <code>Format</code> can hand the pieces of a value back separately instead of as one string, for
+        laying the number and its unit out on their own.
+      </p>
+      <pre><code><span class="ty">List</span>&lt;<span class="kw">string</span>&gt; parts = <span class="kw">new</span> <span class="ty">List</span>&lt;<span class="kw">string</span>&gt;();
+
+value.Format(parts, <span class="nu">2</span>);
+numberLabel.text = parts[<span class="nu">0</span>];             <span class="cm">// "10.1"</span>
+unitLabel.text   = parts[<span class="nu">1</span>] + <span class="st">"Wh"</span>;      <span class="cm">// "kWh"</span></code></pre>
+      <p>
+        The first part is always the number; how the rest is grouped is up to the formatter. The built-in
+        formatters give <code>["10.1", "k"]</code> for a unit (<code>["1.5", " ", "Million"]</code> for
+        <code>ConwayGuyFormatter</code>), <code>["1.23", "e", "-6"]</code> for scientific
+        notation and <code>["999"]</code> for a plain value. Joined back together, the parts are the same string
+        <code>ToString()</code> returns, except that a part never starts with the space before a name: asked for
+        2 parts, <code>ConwayGuyFormatter</code> gives <code>["1.5", "Million"]</code>.
+      </p>
+      <p>
+        <code>partCount</code> of 0 or less asks for the formatter's natural split. A positive value asks for
+        exactly that many parts, up to <code>InfValFormatHelper.maxPartCount</code> (16), merging the tail or padding with empty strings, so a layout with a fixed number
+        of fields never has to check <code>Count</code>. The list is cleared and refilled, so the same one can be
+        reused across calls instead of allocating a new one.
+      </p>
+    </section>
+
+    <!-- ══════════════════════════════════════ custom ════ -->
+    <section id="custom">
+      <h2>Custom formatters</h2>
+      <p>
+        Implement <code>IInfValFormatter</code> to build a fully custom formatter. Mark the
+        class <code>[Serializable]</code> so it can be wrapped in a
+        <code>FormatterAsset</code> and edited in the inspector.
+      </p>
+      <pre><code><span class="kw">using</span> System;
+<span class="kw">using</span> InfiniteValue;
+
+[Serializable]
+<span class="kw">public class</span> <span class="ty">MyFormatter</span> : <span class="ty">IInfValFormatter</span>
+{
+    <span class="kw">public string</span> Format(<span class="kw">in</span> <span class="ty">InfVal</span> value)                    { ... }
+    <span class="kw">public bool</span> TryParse(<span class="kw">string</span> text, <span class="kw">out</span> <span class="ty">InfVal</span> result)     { ... }
+    <span class="kw">public bool</span> IsValidPartialInput(<span class="kw">string</span> text)             { ... }
+}</code></pre>
+      <p>
+        <code>Format(in InfVal, List&lt;string&gt;, int)</code> has a default implementation that puts the whole
+        output in one part. Implement it to support <a href="#parts">formatting into parts</a>.
+      </p>
+      <p>
+        Use the static <code>InfValFormatHelper</code> class for the heavy lifting. It
+        exposes <code>Format</code>, <code>TryParse</code>, <code>Parse</code>,
+        <code>IsValidPartialInput</code>, <code>GetDecimalSeparator</code>,
+        <code>GetGroupSeparator</code>, <code>AreUnitsValid</code>,
+        <code>defaultExponentMarkers</code>, and <code>maxPartCount</code>.
+      </p>
+    </section>
+
+    <div class="pager">
+      <a class="prev" href="InfVal.html">
+        <div class="dir">Back</div>
+        <div class="pg-title">InfVal</div>
+      </a>
+      <a class="next" href="Configuration.html">
+        <div class="dir">Next</div>
+        <div class="pg-title">Configuration</div>
+      </a>
+    </div>
+
+    <div class="doc-footer">Infinite Value v2.3</div>
+
+  </main>
+</div>
+</body>
+</html>

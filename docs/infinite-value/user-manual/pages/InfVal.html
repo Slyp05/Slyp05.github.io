@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="The core struct of the asset: an integer or floating-point number with arbitrary precision." />
+  <title>Infinite Value - InfVal</title>
+  <link rel="stylesheet" href="/assets/css/doc-styles.css" />
+  <link rel="stylesheet" href="/assets/css/infinite-value.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <nav>
+    <div class="nav-title">Infinite Value</div>
+    <div class="nav-books"><a href="../index.html" class="active" aria-current="true">User Manual</a><a href="../../public-api/index.html">Public API</a></div>
+    <a href="../index.html">Home</a>
+    <a href="InfVal.html" class="active" aria-current="page">InfVal</a>
+    <a href="#description" class="indent">Description</a>
+    <a href="#usage" class="indent">Usage</a>
+    <a href="#inspector" class="indent">Inspector</a>
+    <a href="#tostring" class="indent">String representation</a>
+    <a href="#parsing" class="indent">Parsing</a>
+    <a href="#troubleshoot" class="indent">Troubleshooting</a>
+    <a href="Formatters.html">Formatters</a>
+    <a href="Configuration.html">Configuration</a>
+    <a href="Input%20Field.html">Input Field</a>
+    <a href="Other%20Classes.html">Other Classes</a>
+    <a href="Tests.html">Tests</a>
+    <a href="Demo.html">Demo</a>
+  </nav>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>InfVal</h1>
+      <div class="sub">The core struct of the asset: an integer or floating-point number with arbitrary precision.</div>
+
+    <div class="guide-index">
+      <a href="#description">Description</a>
+      <a href="#usage">Usage</a>
+      <a href="#inspector">Inspector</a>
+      <a href="#tostring">String representation</a>
+      <a href="#parsing">Parsing</a>
+      <a href="#troubleshoot">Troubleshooting</a>
+    </div>
+    </div>
+
+    <!-- ══════════════════════════════════════ description ════ -->
+    <section id="description">
+      <h2>Description</h2>
+      <p>
+        <strong>InfVal</strong> is the core struct of the asset. It stores two private fields:
+        a <code>BigInteger</code> for the digits and an <code>int</code> for the exponent.
+      </p>
+      <div class="formula">value = digits &times; 10<sup>exponent</sup></div>
+      <p>
+        It is similar to a Java <code>BigDecimal</code>, with an exponent instead of a scale
+        (<code>exponent = -scale</code>). This lets it represent any integer or floating-point
+        number with arbitrary precision.
+      </p>
+    </section>
+
+    <!-- ══════════════════════════════════════ usage ════ -->
+    <section id="usage">
+      <h2>Usage</h2>
+      <p>
+        <strong>InfVal</strong> is in the <strong>InfiniteValue</strong> namespace.
+      </p>
+      <pre><code><span class="kw">using</span> InfiniteValue;</code></pre>
+      <p>
+        It is a value type (struct): assigning it copies the value, and operations never modify the original.
+      </p>
+      <pre><code><span class="ty">InfVal</span> a = 42;
+<span class="ty">InfVal</span> b = a;
+b = b + b;  <span class="cm">// a is unchanged, b is now 84</span></code></pre>
+      <p>
+        It is publicly immutable. You can safely pass it with the <code>in</code> keyword
+        to avoid a copy.
+      </p>
+      <pre><code><span class="kw">void</span> Method(<span class="kw">in</span> <span class="ty">InfVal</span> arg) { ... }</code></pre>
+      <p>
+        Every numeric primitive type implicitly converts to <strong>InfVal</strong>. An
+        <strong>InfVal</strong> can be explicitly cast back to any of them.
+      </p>
+      <pre><code><span class="ty">InfVal</span> iv = 1.23f;
+<span class="kw">float</span> f = (<span class="kw">float</span>)iv;</code></pre>
+      <div class="note">
+        NaN and infinity have no <strong>InfVal</strong> equivalent: converting a <code>float</code> or
+        <code>double</code> holding one throws an <code>ArgumentException</code>.
+      </div>
+      <p>For the full list of constructors, operators, methods, and properties, see the <strong>Public API</strong>.</p>
+    </section>
+
+    <!-- ══════════════════════════════════════ inspector ════ -->
+    <section id="inspector">
+      <h2>Inspector</h2>
+      <p>
+        <strong>InfVal</strong> is serializable. Declare it as a <code>public</code> field
+        or with <code>[SerializeField]</code> and it appears in the inspector.
+      </p>
+
+      <div class="img-block">
+        <img src="../img/inspector_folded.png" alt="Folded InfVal drawer"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">🖼</span>
+          <span><strong>img/inspector_folded</strong><br/>Folded InfVal drawer in the inspector</span>
+        </div>
+        <div class="img-caption">Folded InfVal drawer</div>
+      </div>
+
+      <p>Click the arrow or double-click the label to expand the drawer.</p>
+
+      <div class="img-block">
+        <img src="../img/inspector_expanded.png" alt="Expanded InfVal drawer"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">🖼</span>
+          <span><strong>img/inspector_expanded</strong><br/>Expanded InfVal drawer in the inspector</span>
+        </div>
+        <div class="img-caption">Expanded InfVal drawer</div>
+      </div>
+
+      <ul>
+        <li><strong>Value field</strong>: Shows the formatted value. Edit it and press Enter to set a new value; the text is parsed using the default formatter.</li>
+        <li><strong>Raw Edit</strong>: Edit the <code>digits</code> and <code>exponent</code> directly.</li>
+        <li><strong>Edit Methods</strong>: Call <code>ToPrecision</code>, <code>RemoveTrailingZeros</code>, <code>MovePointLeft</code>, or <code>MovePointRight</code> with one click.</li>
+        <li><strong>Properties</strong>: Read-only display of all public properties. "Undefined" means the property threw an exception (e.g. <code>isEven</code> on a non-integer value).</li>
+      </ul>
+      <p>Which sections appear and whether they show titles is configurable in the <strong>Configuration</strong> asset (see <a href="Configuration.html">Configuration</a>).</p>
+    </section>
+
+    <!-- ══════════════════════════════════════ tostring ════ -->
+    <section id="tostring">
+      <h2>String representation</h2>
+      <p>
+        Call <code>ToString()</code> with no arguments to format using the project-wide
+        default formatter from the <strong>Configuration</strong> asset. Pass a formatter
+        explicitly to override it for a single call.
+      </p>
+      <pre><code><span class="ty">InfVal</span> iv = 1234567f;
+
+<span class="kw">string</span> s1 = iv.ToString();                             <span class="cm">// uses Configuration default</span>
+<span class="kw">string</span> s2 = iv.ToString(myFormatterAsset.formatter);   <span class="cm">// explicit formatter</span></code></pre>
+      <p>
+        For a raw, unformatted representation useful for debugging, use
+        <code>ToDebugString()</code>. It returns a string in the form <code>(digits, exponent)</code>.
+      </p>
+      <pre><code><span class="ty">InfVal</span> iv = <span class="kw">new</span> <span class="ty">InfVal</span>(1234.5f, 6);
+Debug.Log(iv.ToDebugString());
+<span class="cm">// output: (123450, -2)</span></code></pre>
+    </section>
+
+    <!-- ══════════════════════════════════════ parsing ════ -->
+    <section id="parsing">
+      <h2>Parsing</h2>
+      <p>
+        Two static methods convert a string to an <strong>InfVal</strong>. Both accept an
+        optional <code>IInfValFormatter</code>; if omitted, they use the
+        <strong>Configuration</strong> default.
+      </p>
+      <ul>
+        <li><code>InfVal.Parse(string)</code>: Returns the parsed value; throws a <code>FormatException</code> if the string is invalid.</li>
+        <li><code>InfVal.TryParse(string, out InfVal)</code>: Returns <code>true</code> on success, <code>false</code> on failure; never throws.</li>
+      </ul>
+      <pre><code><span class="ty">InfVal</span> a = <span class="ty">InfVal</span>.Parse(<span class="st">"1.5k"</span>, myFormatter.formatter);
+
+<span class="kw">if</span> (<span class="ty">InfVal</span>.TryParse(<span class="st">"42"</span>, <span class="kw">out</span> <span class="ty">InfVal</span> b))
+    Debug.Log(b);  <span class="cm">// 42</span></code></pre>
+      <div class="note">
+        Adding trailing zeros after the decimal point increases precision. Parsing
+        <code>"123.00"</code> gives digits=12300, exponent=&minus;2, which is more precise
+        than <code>"123"</code>.
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════ troubleshoot ════ -->
+    <section id="troubleshoot">
+      <h2>Troubleshooting</h2>
+
+      <h3>Division result is imprecise</h3>
+      <p>
+        A division result holds as many digits as the more precise operand. If both
+        operands have a low precision, the result keeps only its first digits.
+      </p>
+      <pre><code><span class="cm">// "1" and "3" have 1 digit of precision: only 1 digit in the result</span>
+Debug.Log((<span class="kw">new</span> <span class="ty">InfVal</span>(<span class="st">"1"</span>) / <span class="kw">new</span> <span class="ty">InfVal</span>(<span class="st">"3"</span>)).ToDebugString());      <span class="cm">// (3, -1): 0.3</span>
+
+<span class="cm">// Specify precision explicitly to get the expected result</span>
+Debug.Log((<span class="kw">new</span> <span class="ty">InfVal</span>(<span class="st">"1"</span>, 9) / <span class="kw">new</span> <span class="ty">InfVal</span>(<span class="st">"3"</span>)).ToDebugString());   <span class="cm">// (333333333, -9): 0.333333333</span></code></pre>
+      <p>
+        Arithmetic returns an <strong>InfVal</strong> with the precision of the
+        higher-precision operand. All types default to their maximum digit count
+        (e.g. 9 for <code>float</code>, 17 for <code>double</code>, 29 for <code>decimal</code>,
+        10 for <code>int</code>, 19 for <code>long</code>, etc.).
+      </p>
+
+      <h3>Methods seem to have no effect</h3>
+      <p>
+        <strong>InfVal</strong> is immutable. Methods like <code>ToPrecision</code> return a
+        new value; they do not modify the original. Always assign the result.
+      </p>
+      <pre><code>iv.ToPrecision(3);       <span class="cm">// does nothing</span>
+iv = iv.ToPrecision(3);  <span class="cm">// correct</span></code></pre>
+
+      <h3>Limits</h3>
+      <p>
+        <strong>InfVal</strong> is not truly infinite. The practical bounds are approximately
+        &plusmn;10<sup>4&hairsp;294&hairsp;967&hairsp;295</sup>, with an epsilon of
+        10<sup>&minus;2&hairsp;147&hairsp;483&hairsp;648</sup> and a maximum precision of
+        2,147,483,647 digits (reaching it would require several GB of RAM for a single InfVal).
+      </p>
+
+      <h3>Performance</h3>
+      <p>For stable performance, keep precision constant. Set it when creating the value.</p>
+      <pre><code><span class="ty">InfVal</span> iv = <span class="kw">new</span> <span class="ty">InfVal</span>(0, 256);         <span class="cm">// 256-digit precision</span>
+iv = <span class="kw">new</span> <span class="ty">InfVal</span>(0).ToPrecision(256);   <span class="cm">// equivalent</span></code></pre>
+      <ul>
+        <li>Cache the <code>ToString()</code> result and refresh it only when the value changes.</li>
+        <li>Pass <strong>InfVal</strong> with the <code>in</code> keyword to avoid unnecessary copies.</li>
+        <li>Call <code>RemoveTrailingZeros()</code> to reduce digit count without changing the value.</li>
+      </ul>
+    </section>
+
+    <div class="pager">
+      <a class="prev" href="../index.html">
+        <div class="dir">Back</div>
+        <div class="pg-title">Home</div>
+      </a>
+      <a class="next" href="Formatters.html">
+        <div class="dir">Next</div>
+        <div class="pg-title">Formatters</div>
+      </a>
+    </div>
+
+    <div class="doc-footer">Infinite Value v2.3</div>
+
+  </main>
+</div>
+</body>
+</html>

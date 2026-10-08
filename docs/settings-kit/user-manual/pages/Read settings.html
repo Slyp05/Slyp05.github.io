@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Read settings from any script, link to your pages, test your code, and ship them in a build." />
+  <title>Settings Kit - Read settings</title>
+  <link rel="stylesheet" href="/assets/css/doc-styles.css" />
+  <link rel="stylesheet" href="/assets/css/settings-kit.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <nav>
+    <div class="nav-title">Settings Kit</div>
+    <div class="nav-books"><a href="../index.html" class="active" aria-current="true">User Manual</a><a href="../../public-api/index.html">Public API</a></div>
+    <a href="../index.html">Home</a>
+    <a href="Installation.html">Installation</a>
+    <a href="Get%20started.html">Get started</a>
+    <a href="Declare%20settings.html">Declare settings</a>
+    <a href="Read%20settings.html" class="active" aria-current="page">Read settings</a>
+    <a href="#read" class="indent">Read a setting</a>
+    <a href="#early" class="indent">Read before the first scene</a>
+    <a href="#change" class="indent">Change a setting from code</a>
+    <a href="#open" class="indent">Open a page from your tools</a>
+    <a href="#test" class="indent">Test code that reads settings</a>
+    <a href="#build" class="indent">Build with settings</a>
+    <a href="Customize%20the%20window.html">Customize the window</a>
+    <a href="Update%20your%20settings.html">Update your settings</a>
+  </nav>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Read settings</h1>
+      <div class="sub">Read settings from any script, link to your pages, test your code, and ship them in a build.</div>
+
+    <div class="guide-index">
+      <a href="#read">Read a setting</a>
+      <a href="#early">Read before the first scene</a>
+      <a href="#change">Change a setting from code</a>
+      <a href="#open">Open a page from your tools</a>
+      <a href="#test">Test code that reads settings</a>
+      <a href="#build">Build with settings</a>
+    </div>
+    </div>
+
+    <!-- ══════════════════════════════════════ read ════ -->
+    <section id="read">
+      <h2>Read a setting</h2>
+      <p>Read any setting through <code>Settings&lt;T&gt;.Instance</code>:</p>
+      <pre><code><span class="kw">float</span> volume = <span class="ty">Settings</span>&lt;<span class="ty">AudioDefaults</span>&gt;.Instance.MasterVolume;</code></pre>
+      <p>A per-platform setting returns the values for the platform the game runs on:</p>
+      <pre><code><span class="kw">string</span> url = <span class="ty">Settings</span>&lt;<span class="ty">BackendConfig</span>&gt;.Instance.ApiUrl;</code></pre>
+      <p>Don't cache <code>Instance</code> in a field of your own. Builds already cache it, and in the editor your copy
+        would miss later edits, undos and <a href="#test">test overrides</a>.</p>
+    </section>
+
+    <!-- ══════════════════════════════════════ early ════ -->
+    <section id="early">
+      <h2>Read before the first scene</h2>
+      <p>In a build, settings are loaded before the first scene's <code>Awake</code>, so all scene code can read them.
+        Code that runs earlier, in <code>RuntimeInitializeLoadType.BeforeSceneLoad</code> or before, checks
+        <code>Settings.Loaded</code> first; while it is <code>false</code>, reads return defaults.</p>
+      <pre><code><span class="kw">if</span> (<span class="ty">Settings</span>.Loaded)
+    Apply(<span class="ty">Settings</span>&lt;<span class="ty">AudioDefaults</span>&gt;.Instance);</code></pre>
+    </section>
+
+    <!-- ══════════════════════════════════════ change ════ -->
+    <section id="change">
+      <h2>Change a setting from code</h2>
+      <p>Edits made in the settings window are saved for you. When your own editor code changes a setting, call
+        <code>Settings.Save()</code> afterwards. It is safe to call from runtime code too, and <strong>does nothing in
+        builds</strong>.</p>
+      <div class="note warning"><strong>Warning:</strong> A change made from code behaves differently in the editor and in builds. In the editor, even in Play mode, it edits the stored settings, and the next save writes it to disk, whether you call <code>Settings.Save()</code> or another setting gets saved. In a build, it stays in memory and is lost when the app quits.</div>
+    </section>
+
+    <!-- ══════════════════════════════════════ open ════ -->
+    <section id="open">
+      <h2>Open a page from your tools</h2>
+      <p><code>Settings.OpenPage&lt;TPage&gt;()</code> opens Project Settings or Preferences on your page. Use it in a menu
+        item or a button in your own tools.</p>
+      <pre><code>[<span class="ty">MenuItem</span>(<span class="st">"Tools/My Game/Open Settings"</span>)]
+<span class="kw">static void</span> Open() =&gt; <span class="ty">Settings</span>.OpenPage&lt;<span class="ty">GamePage</span>&gt;();</code></pre>
+    </section>
+
+    <!-- ══════════════════════════════════════ test ════ -->
+    <section id="test">
+      <h2>Test code that reads settings</h2>
+      <p>In a unit test, <code>Settings.OverrideForTests</code> hands the code under test the values you choose. Until you
+        dispose the returned handle, <code>Settings&lt;T&gt;.Instance</code> returns your test instance, and the saved
+        settings are never touched.</p>
+      <pre><code>[<span class="ty">Test</span>]
+<span class="kw">public void</span> UsesConfiguredVolume()
+{
+    <span class="ty">AudioDefaults</span> stub = <span class="kw">new</span>() { <span class="cm">/* set up a test instance */</span> };
+
+    <span class="kw">using</span> (<span class="ty">Settings</span>.OverrideForTests(stub))
+    {
+        <span class="cm">// code under test reads Settings&lt;AudioDefaults&gt;.Instance and sees the stub</span>
+    }
+    <span class="cm">// substitution is reverted here</span>
+}</code></pre>
+      <div class="note"><strong>Note:</strong> The override works in the editor and in players built by the Test Runner, and has no effect in any other build.</div>
+    </section>
+
+    <!-- ══════════════════════════════════════ build ════ -->
+    <section id="build">
+      <h2>Build with settings</h2>
+      <p>Builds need no setup. For what each kind of setting contributes to a build, refer to
+        <a href="Declare%20settings.html#kinds">Choose a kind of setting</a>. For what stops a build,
+        refer to <a href="Customize%20the%20window.html#validation">Validate values</a>.</p>
+    </section>
+
+    <div class="pager">
+      <a class="prev" href="Declare%20settings.html">
+        <div class="dir">Back</div>
+        <div class="pg-title">Declare settings</div>
+      </a>
+      <a class="next" href="Customize%20the%20window.html">
+        <div class="dir">Next</div>
+        <div class="pg-title">Customize the window</div>
+      </a>
+    </div>
+
+    <div class="doc-footer">Settings Kit v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

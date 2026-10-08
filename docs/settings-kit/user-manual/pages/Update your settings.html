@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Keep your users' saved values when your settings classes change." />
+  <title>Settings Kit - Update your settings</title>
+  <link rel="stylesheet" href="/assets/css/doc-styles.css" />
+  <link rel="stylesheet" href="/assets/css/settings-kit.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <nav>
+    <div class="nav-title">Settings Kit</div>
+    <div class="nav-books"><a href="../index.html" class="active" aria-current="true">User Manual</a><a href="../../public-api/index.html">Public API</a></div>
+    <a href="../index.html">Home</a>
+    <a href="Installation.html">Installation</a>
+    <a href="Get%20started.html">Get started</a>
+    <a href="Declare%20settings.html">Declare settings</a>
+    <a href="Read%20settings.html">Read settings</a>
+    <a href="Customize%20the%20window.html">Customize the window</a>
+    <a href="Update%20your%20settings.html" class="active" aria-current="page">Update your settings</a>
+    <a href="#rename" class="indent">Rename a field or move a class</a>
+    <a href="#values" class="indent">Convert saved values</a>
+    <a href="#deleted" class="indent">Recover a deleted class</a>
+  </nav>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Update your settings</h1>
+      <div class="sub">Keep your users' saved values when your settings classes change.</div>
+
+    <div class="guide-index">
+      <a href="#rename">Rename a field or move a class</a>
+      <a href="#values">Convert saved values</a>
+      <a href="#deleted">Recover a deleted class</a>
+    </div>
+    </div>
+
+    <!-- ══════════════════════════════════════ rename ════ -->
+    <section id="rename">
+      <h2>Rename a field or move a class</h2>
+      <p>Use Unity's own <code>[FormerlySerializedAs]</code> and <code>[MovedFrom]</code> attributes; they work here as
+        everywhere else. For changes they can't express, Settings Kit has two hooks, described below. Both run in the
+        editor when settings load, so builds always get already-updated values.</p>
+    </section>
+
+    <!-- ══════════════════════════════════════ values ════ -->
+    <section id="values">
+      <h2>Convert saved values</h2>
+      <p>Say version 1 stored <code>int volume</code> from 0 to 100, and version 2 stores
+        <code>float masterVolume</code> from 0 to 1. Implement <code>IVersionedSettings</code>, keep the old field
+        under its old name so its saved value still loads, and raise <code>Version</code>:</p>
+      <pre><code>[<span class="ty">System.Serializable</span>]
+<span class="kw">public sealed class</span> <span class="ty">AudioDefaults</span> : <span class="ty">BuildSettingsEntry</span>&lt;<span class="ty">GamePage</span>&gt;, <span class="ty">IVersionedSettings</span>
+{
+    [<span class="ty">SerializeField</span>, <span class="ty">Range</span>(<span class="nu">0f</span>, <span class="nu">1f</span>)] <span class="kw">float</span> masterVolume = <span class="nu">0.8f</span>;
+
+    <span class="cm">// The version 1 field, under its old name so its saved value still loads.</span>
+    [<span class="ty">SerializeField</span>, <span class="ty">HideInInspector</span>] <span class="kw">int</span> volume = -<span class="nu">1</span>;
+
+    <span class="kw">public int</span> Version =&gt; <span class="nu">2</span>;</code></pre>
+      <p>Then convert the old value in <code>Migrate</code>:</p>
+      <pre><code>    <span class="kw">public void</span> Migrate(<span class="kw">int</span> fromVersion)
+    {
+        <span class="kw">if</span> (fromVersion &lt; <span class="nu">2</span> &amp;&amp; volume &gt;= <span class="nu">0</span>)
+        {
+            masterVolume = <span class="ty">Mathf</span>.Clamp01(volume / <span class="nu">100f</span>);
+            volume = -<span class="nu">1</span>;
+        }
+    }
+}</code></pre>
+      <div class="note"><strong>Note:</strong> <code>Migrate</code> runs once, the first time older data loads. Each time you raise <code>Version</code> again, add an <code>if (fromVersion &lt; n)</code> block below the previous ones.</div>
+    </section>
+
+    <!-- ══════════════════════════════════════ deleted ════ -->
+    <section id="deleted">
+      <h2>Recover a deleted class</h2>
+      <p>Say you replace a <code>NetworkSettings</code> class with <code>NetworkConfig</code>. In any class of your
+        project, declare a struct with the old fields you want back. It doesn't need all of them:</p>
+      <pre><code><span class="kw">public static class</span> <span class="ty">LegacySettingsMigrator</span>
+{
+    [<span class="ty">System.Serializable</span>]
+    <span class="kw">struct</span> <span class="ty">OldNetworkSettings</span>
+    {
+        <span class="kw">public string</span> address;
+        <span class="kw">public int</span> portNumber;
+    }</code></pre>
+      <p>Then add a static method marked <code>[SettingsMigrator]</code>. It receives every saved setting whose class no
+        longer exists: recognize yours by its name, read it with <code>TryRead</code>, and copy the values into your
+        current settings.</p>
+      <pre><code>    [<span class="ty">SettingsMigrator</span>]
+    <span class="kw">static void</span> RecoverNetworkSettings(<span class="ty">MissingSettings</span> missing)
+    {
+        <span class="kw">if</span> (missing.ClassName != <span class="st">"NetworkSettings"</span>
+            || missing.Namespace != <span class="kw">typeof</span>(<span class="ty">NetworkConfig</span>).Namespace
+            || missing.AssemblyName != <span class="kw">typeof</span>(<span class="ty">NetworkConfig</span>).Assembly.GetName().Name)
+            <span class="kw">return</span>;
+
+        <span class="kw">if</span> (missing.TryRead(<span class="kw">out</span> <span class="ty">OldNetworkSettings</span> old) == <span class="kw">false</span>)
+            <span class="kw">return</span>;
+
+        <span class="ty">NetworkConfig</span> current = <span class="ty">Settings</span>&lt;<span class="ty">NetworkConfig</span>&gt;.Instance;
+        <span class="cm">// ... copy old.address / old.portNumber into current ...</span>
+        <span class="ty">Settings</span>.Save();
+    }
+}</code></pre>
+      <div class="note"><strong>Note:</strong> The method must be <code>static void</code> with a single <code>MissingSettings</code> parameter, at any access level. A method with another signature is ignored, with an error in the console as soon as Unity compiles it.</div>
+      <div class="note warning"><strong>Warning:</strong> Saved data whose class no longer exists is deleted once the migrators have run. Write your <code>[SettingsMigrator]</code> method before you delete the old class, or its values are lost the next time settings load.</div>
+    </section>
+
+    <div class="pager">
+      <a class="prev" href="Customize%20the%20window.html">
+        <div class="dir">Back</div>
+        <div class="pg-title">Customize the window</div>
+      </a>
+    </div>
+
+    <div class="doc-footer">Settings Kit v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Turn a Unity InputField or TMP_InputField into an InfVal input field." />
+  <title>Infinite Value - Input Field</title>
+  <link rel="stylesheet" href="/assets/css/doc-styles.css" />
+  <link rel="stylesheet" href="/assets/css/infinite-value.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <nav>
+    <div class="nav-title">Infinite Value</div>
+    <div class="nav-books"><a href="../index.html" class="active" aria-current="true">User Manual</a><a href="../../public-api/index.html">Public API</a></div>
+    <a href="../index.html">Home</a>
+    <a href="InfVal.html">InfVal</a>
+    <a href="Formatters.html">Formatters</a>
+    <a href="Configuration.html">Configuration</a>
+    <a href="Input%20Field.html" class="active" aria-current="page">Input Field</a>
+    <a href="Other%20Classes.html">Other Classes</a>
+    <a href="Tests.html">Tests</a>
+    <a href="Demo.html">Demo</a>
+  </nav>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Input Field</h1>
+      <div class="sub">Turn a Unity InputField or TMP_InputField into an InfVal input field.</div>
+    </div>
+
+    <section>
+      <p>
+        <strong>InfValInputField</strong> is a MonoBehaviour that converts a standard Unity
+        <code>InputField</code> or <code>TMP_InputField</code> into an
+        <strong>InfVal</strong> input field.
+      </p>
+      <p>
+        Create an input field GameObject (<strong>right-click &gt; UI &gt; InputField</strong>
+        or <strong>TextMeshPro - InputField</strong>), then attach the component
+        (<strong>Add Component &gt; UI &gt; InfVal Input Field Converter</strong>).
+      </p>
+
+      <div class="img-block">
+        <img src="../img/input_field.png" alt="InfValInputField component"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">🖼</span>
+          <span><strong>img/input_field</strong><br/>InfValInputField component in the inspector</span>
+        </div>
+        <div class="img-caption">InfValInputField component</div>
+      </div>
+
+      <ul>
+        <li><strong>Formatter</strong>: Optional override. If empty, the Configuration default is used.</li>
+        <li><strong>Validate Type</strong>: How invalid input is handled: <code>None</code>, <code>ChangeColor</code>, or <code>DisallowInvalid</code> (blocks characters that would make the input invalid).</li>
+        <li><strong>Valid / Invalid Color</strong>: Colors applied to the text when Validate Type is ChangeColor.</li>
+        <li><strong>Integer Only</strong>: Treat non-integer values as invalid.</li>
+        <li><strong>Force Sign</strong>: Restrict to positive or negative values only.</li>
+        <li><strong>Non Zero</strong>: Treat zero as invalid.</li>
+        <li><strong>Interactables If Valid</strong>: UI Selectables that are only enabled while the input is valid.</li>
+        <li><strong>Redraw On End Edit</strong>: Replace the typed text with a clean formatted representation when the user finishes typing.</li>
+      </ul>
+
+      <p>Scripting members:</p>
+      <ul>
+        <li><code>value</code>: Get or set the current <strong>InfVal</strong>.</li>
+        <li><code>isValid</code>: Whether the current value passes all validation constraints.</li>
+        <li><code>activeFormatter</code>: The formatter in use (assigned or Configuration default).</li>
+        <li><code>target</code>: The underlying <code>InputField</code> or <code>TMP_InputField</code>.</li>
+      </ul>
+    </section>
+
+    <div class="pager">
+      <a class="prev" href="Configuration.html">
+        <div class="dir">Back</div>
+        <div class="pg-title">Configuration</div>
+      </a>
+      <a class="next" href="Other%20Classes.html">
+        <div class="dir">Next</div>
+        <div class="pg-title">Other Classes</div>
+      </a>
+    </div>
+
+    <div class="doc-footer">Infinite Value v2.3</div>
+
+  </main>
+</div>
+</body>
+</html>
