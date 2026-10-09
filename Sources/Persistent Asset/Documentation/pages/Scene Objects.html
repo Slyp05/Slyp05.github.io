@@ -71,7 +71,9 @@
             <tr><td>Rigidbody, Rigidbody2D</td><td>Take their position from the restored transform, so tick Transform as well.</td></tr>
             <tr><td>NavMeshAgent</td><td>Needs Unity's AI module.</td></tr>
             <tr><td>Animator</td><td>A transition in flight is not restored, and triggers are never re-fired.</td></tr>
+            <tr><td>Animation</td><td>The legacy component. Which clips were playing, how far in, and their speed and weight. A crossfade in flight resumes from the weights it had.</td></tr>
             <tr><td>AudioSource</td><td>Whether it was playing and how far in, its volume, pitch and looping, so music resumes where it left off.</td></tr>
+            <tr><td>VideoPlayer</td><td>The video, how far in, whether it was playing or paused, its speed and looping. A video clip travels as an <a href="Asset%20references.html">asset reference</a>. A URL under StreamingAssets or the persistent data folder is saved relative to that folder, so it still points at the video after an app update or on another device. Any other URL is saved as it is; a local file the loading device doesn't have is skipped, and the player keeps the URL your game sets. Needs Unity's Video module.</td></tr>
             <tr><td>Camera</td><td>Field of view, projection, background and culling mask.</td></tr>
             <tr><td>Light</td><td>Type, color, intensity, range, cone and shadows.</td></tr>
             <tr><td>MeshFilter</td><td>The mesh, as an <a href="Asset%20references.html">asset reference</a>.</td></tr>
@@ -162,7 +164,7 @@ gameState.lastCheckpoint = <span class="kw">new</span>(checkpointObject);   <spa
       </a>
     </div>
 
-    <div class="doc-footer">Persistent Asset v2.0.0</div>
+    <div class="doc-footer">Persistent Asset v2.1.0</div>
 
   </main>
 </div>

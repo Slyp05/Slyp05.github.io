@@ -17,9 +17,11 @@ software:
 
 **Persistent data should feel like a native Unity object, not a separate save system you have to architect around.**
 
-Persistent Asset lets you create project assets whose content persists between play sessions. Each one comes with a manager you can configure to fit your game's needs.
+Persistent Asset lets you create project assets whose content persists between play sessions.<br>
+By default, they load and save on their own: you don't write a single line of save code.<br>
+Each one comes with a manager you can configure to fit your game's needs.
 
-***No save code required:*** all the complex machinery is hidden away. Access advanced features with just a few clicks in the Inspector, letting you focus on building your game.
+***No save architecture to build:*** all the complex machinery is hidden away. Access advanced features with just a few clicks in the Inspector, letting you focus on building your game.
 
 ***You keep full control:*** trigger or monitor any operation through a clean C# API, directly from the Editor, from a debug menu, from components, and more. The package is designed to be extensible, so you can take over as much as you like.
 
@@ -34,7 +36,9 @@ Persistent Asset lets you create project assets whose content persists between p
 <div class="patch-note-body" markdown="1">
 
 - **Saved data:** your classes, scene objects and references to them, spawned prefabs, asset references.
-- **Scene objects:** 17 Unity components (Transform, Rigidbody, Animator...) and 7 uGUI and TextMeshPro controls built in, plus your own components.
+- **Scene objects:** 19 Unity components (Transform, Rigidbody, Animator...) and 7 uGUI and TextMeshPro controls built in, plus your own components.
+- **Scene changes:** destroyed objects stay destroyed, parenting between saved objects is restored, and objects that outlive scene loads are saved too.
+- **Runtime components:** a component added or removed during play comes back the way it was.
 - **Existing ScriptableObjects:** keep their base class, add one attribute.
 - **Persistent Variables:** values authored in the Inspector, no code. 44 built-in types, enums, asset references, input bindings, languages, or your own.
 - **Lists and maps:** a variable can also be a list or a keyed map.
@@ -42,6 +46,7 @@ Persistent Asset lets you create project assets whose content persists between p
 - **Prefs:** variables from any script with a static API, PlayerPrefs style.
 - **No-code setup:** save menus, buttons and feedback panels, pre-wired from the GameObject menu. Drop a variable on a GameObject to bind it.
 - **UnityEvents:** every operation is callable from one.
+- **Act on everything:** one call saves, loads or clears every persistent asset in scope.
 - **Code hooks:** before/after every save, load and clear, per manager or game-wide, with a veto. Interfaces for fresh start values, serialization callbacks and scope changes.
 - **Class policies:** a class can force auto load, auto save, slots or global scope.
 - **Extensible:** add managers, backends, serializers, scene component codecs, variable types and settings sections.
@@ -58,6 +63,8 @@ Persistent Asset lets you create project assets whose content persists between p
 <div class="patch-note-body" markdown="1">
 
 - **Per platform:** a storage per platform or store distribution, set up in one click.
+- **Folder tokens:** on desktop, save under each player's Documents or AppData folder.
+- **Steam Auto-Cloud:** supported with no plugin, alongside the Steam Cloud manager.
 - **Autosave:** on focus loss, pause, quit and slot change, plus an optional timer, or off.
 - **Save slots:** opt-in per asset, listed without loading them, with a thumbnail and chosen values.
 - **Slot operations:** create, copy, rename, delete, load from, save to.
@@ -69,6 +76,7 @@ Persistent Asset lets you create project assets whose content persists between p
 - **Snapshots:** capture values, restore them later.
 - **Reset:** some or all fields back to your authored values.
 - **Offline play:** remote saves cached locally, pushed when back online.
+- **Offline first launch:** wait for the server so a reinstall restores its save, or let a new player start offline.
 - **Save conflicts:** merge both saves, ask the player, or keep the newest.
 - **Player data requests:** export any slot as portable text, erase everything a player saved.
 
@@ -144,6 +152,7 @@ Persistent Asset lets you create project assets whose content persists between p
 - **Fresh start:** Delete Local Data from the menu, or before every Play with one toggle.
 - **Separate Editor saves:** Play mode never touches an installed build's saves.
 - **Enter Play Mode Options:** supported with Domain Reload off.
+- **One-click conversion:** turn a manager into a per-platform router, or switch a shipped one to another storage, its saves kept.
 - **No bloat:** nothing unrelated to saving.
 
 </div>
@@ -223,7 +232,7 @@ The package integrates the serializer already in your project and improves on it
 The guide, manual and API reference ship as offline HTML, opened from Tools > Persistent Asset.
 
 - **Quick Usage Guide:** your first save, step by step.
-- **User Manual:** 18 pages, from how saving works to backends, secure saves, slots and troubleshooting.
+- **User Manual:** 20 pages, from how saving works to backends, secure saves, slots and troubleshooting.
 - **Public API:** every module and the editor extension, plus XML docs on every public member.
 - **AI skills:** 8, covering setup, save data, slots and save menus, storage and protection, cloud and remote, No-Code, Scene Objects and troubleshooting.
 - **Demo:** a 4-scene sample game (main menu, profile select, level select, game) with profiles, slots, options, achievements and migration.
@@ -253,7 +262,7 @@ Desktop, mobile and WebGL are supported out of the box. Consoles gate saving beh
 
 ## Learn More
 
-<a href="/persistent-asset/comparison/" class="asset-store-btn asset-store-btn--featured" target="_blank" rel="noopener">How It Compares</a>
+<a href="/persistent-asset/comparison/" class="asset-store-btn asset-store-btn--featured">How It Compares</a>
 <a href="/persistent-asset/quick-usage-guide/" class="asset-store-btn" target="_blank" rel="noopener">Quick Usage Guide</a>
 <a href="/persistent-asset/user-manual/" class="asset-store-btn" target="_blank" rel="noopener">User Manual</a>
 <a href="/persistent-asset/public-api/" class="asset-store-btn" target="_blank" rel="noopener">Public API</a>
@@ -266,6 +275,20 @@ Desktop, mobile and WebGL are supported out of the box. Consoles gate saving beh
 ## Patch Notes
 
 <details class="patch-note" open>
+<summary><strong>v2.1.0</strong> <span class="patch-date">October 9, 2026</span></summary>
+<div class="patch-note-body" markdown="1">
+
+New Features:
+- Added a `VideoPlayer` scene codec: a video resumes where it was, playing or paused, after a load.
+- Added a legacy `Animation` scene codec: the clips that were playing resume at the same time, speed and weight.
+
+Bug Fixes:
+- Save files now stage under a much shorter temp name, which keeps deep save folders under the Windows path limit.
+
+</div>
+</details>
+
+<details class="patch-note">
 <summary><strong>v2.0.0</strong> <span class="patch-date">September 28, 2026</span></summary>
 <div class="patch-note-body" markdown="1">
 

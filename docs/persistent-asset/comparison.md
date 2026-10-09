@@ -62,9 +62,9 @@ description: "Persistent Asset checked against every feature Easy Save 3, Crysta
 }
 .cmp-tab-score span { white-space: nowrap; margin-right: 7px; }
 .cmp-tabs--cards .cmp-tab--ours { box-shadow: inset 0 0 0 1px var(--cmp-band-fg); }
-/* the last card sizes to its longer name on one line, the other three share the rest */
+/* the first card sizes to its longer name on one line, the other three share the rest */
 @media (min-width: 701px) {
-  .cmp-tabs--cards { grid-template-columns: repeat(3, 1fr) auto; }
+  .cmp-tabs--cards { grid-template-columns: auto repeat(3, 1fr); }
   .cmp-tabs--cards .cmp-tab--ours { white-space: nowrap; }
 }
 .cmp-back { display: inline-block; margin-top: 1em; font-size: 14px; }
@@ -115,14 +115,50 @@ description: "Persistent Asset checked against every feature Easy Save 3, Crysta
 
 Every feature that [Easy Save 3](https://assetstore.unity.com/packages/tools/utilities/easy-save-the-complete-save-game-data-serializer-system-768), [Crystal Save Pro](https://assetstore.unity.com/packages/tools/utilities/crystal-save-professional-save-system-save-migration-319719) and [Bayat Save System](https://assetstore.unity.com/packages/tools/input-management/bayat-save-system-108890) list for themselves, checked against [Persistent Asset](/persistent-asset/). Their features were read in September 2026 from their store pages and docs. Some of it may be wrong: email [justetools@gmail.com](mailto:justetools@gmail.com) and I'll fix it.
 
-**Legend:** ⭐ yes, and more · ✅ yes · 🟠 partly · ❌ no
+**Legend:** ⭐ yes, and more · ✅ yes · 🟠 partly, or solved differently · ❌ no
 
 <nav class="cmp-tabs" role="tablist" aria-label="Comparisons">
+  <a class="cmp-tab cmp-tab--ours" role="tab" id="tab-only-persistent-asset" href="#only-persistent-asset" aria-controls="only-persistent-asset">⭐ Only in Persistent Asset</a>
   <a class="cmp-tab" role="tab" id="tab-easy-save" href="#easy-save" aria-controls="easy-save">Easy Save 3</a>
   <a class="cmp-tab" role="tab" id="tab-crystal-save" href="#crystal-save" aria-controls="crystal-save">Crystal Save Pro</a>
   <a class="cmp-tab" role="tab" id="tab-bayat" href="#bayat" aria-controls="bayat">Bayat Save System</a>
-  <a class="cmp-tab cmp-tab--ours" role="tab" id="tab-only-persistent-asset" href="#only-persistent-asset" aria-controls="only-persistent-asset">⭐ Only in Persistent Asset</a>
 </nav>
+
+<section class="cmp-panel cmp-vs" id="only-persistent-asset" role="tabpanel" aria-labelledby="tab-only-persistent-asset" markdown="1">
+
+## ⭐ Only in Persistent Asset
+
+| Feature | Persistent Asset | How |
+|---|---|---|
+| Your class is the save | ⭐ | Write the class; it loads and saves itself, no keys |
+| Loads only what the game uses | ⭐ | Automatic: loads on first use, saves on unload and pause |
+| Knows when the data is safe to use | ⭐ | One bool you can trust: `IsReady` |
+| Saving blocked after a failed load | ⭐ | If the load could still succeed later, saves wait for it |
+| Storage per platform | ⭐ | Same save, stored differently on each platform |
+| Storage per store build | ⭐ | Different storage for Steam, itch or other store builds |
+| Settings lock once shipped | ⭐ | Settings that would break players' saves turn read-only |
+| Settings changes migrate saves | ⭐ | Each player's save migrates once, automatically |
+| Tamper mark | ⭐ | Readable save; hand-edited saves are flagged for good |
+| Anchor a save to the machine | ⭐ | A save copied to another computer won't load |
+| Anchor a save to its location | ⭐ | A save moved elsewhere won't load |
+| Any REST or GraphQL backend | ⭐ | Set up in the Inspector, no code |
+| Four serializers, chosen per save file | ⭐ | Unity JSON, Newtonsoft, Odin, MemoryPack |
+| Checkpoints and resets | ⭐ | Snapshot, restore, or reset to starting values |
+| Offline saves upload on their own | ⭐ | Retried in the background once back online |
+| Failure simulation | ⭐ | Force any failure or delay to test your game |
+| Build-time checks | ⭐ | A broken setup stops the build |
+| Clashing saves flagged | ⭐ | Warns when two saves write to the same place |
+| Project-wide save overview | ⭐ | Every save in one list, broken ones flagged |
+| Build cost of saved asset references | ⭐ | Build and load cost shown per asset |
+| Operation log | ⭐ | Every load and save, its result and duration |
+| On-device debug overlay | ⭐ | Save status, logs and data in the running build |
+| Quitting waits for unfinished saves | ⭐ | Up to a timeout you set |
+| Every operation as a UnityEvent | ⭐ | Ready-made components, no code |
+| UI binders | ⭐ | Show saved values in UI, no code |
+| Change events, no code | ⭐ | A value change raises a UnityEvent |
+| AI agent skills | ⭐ | Eight skills for AI coding agents included |
+
+</section>
 
 <section class="cmp-panel cmp-vs" id="easy-save" role="tabpanel" aria-labelledby="tab-easy-save" markdown="1">
 
@@ -310,42 +346,6 @@ Every feature that [Easy Save 3](https://assetstore.unity.com/packages/tools/uti
 | Full documentation | ✅ | Quick Usage Guide, User Manual, Public API, XML summaries |
 | Try before purchase | 🟠 | Playable demo game, no trial package |
 | Unity 2018.4 or newer | ❌ | Built for Unity 6 and newer |
-
-</section>
-
-<section class="cmp-panel cmp-vs" id="only-persistent-asset" role="tabpanel" aria-labelledby="tab-only-persistent-asset" markdown="1">
-
-## ⭐ Only in Persistent Asset
-
-| Feature | Persistent Asset | How |
-|---|---|---|
-| Your class is the save | ⭐ | Write the class; it loads and saves itself, no keys |
-| Loads only what the game uses | ⭐ | Automatic: loads on first use, saves on unload and pause |
-| Knows when the data is safe to use | ⭐ | One bool you can trust: `IsReady` |
-| Saving blocked after a failed load | ⭐ | If the load could still succeed later, saves wait for it |
-| Storage per platform | ⭐ | Same save, stored differently on each platform |
-| Storage per store build | ⭐ | Different storage for Steam, itch or other store builds |
-| Settings lock once shipped | ⭐ | Settings that would break players' saves turn read-only |
-| Settings changes migrate saves | ⭐ | Each player's save migrates once, automatically |
-| Tamper mark | ⭐ | Readable save; hand-edited saves are flagged for good |
-| Anchor a save to the machine | ⭐ | A save copied to another computer won't load |
-| Anchor a save to its location | ⭐ | A save moved elsewhere won't load |
-| Any REST or GraphQL backend | ⭐ | Set up in the Inspector, no code |
-| Four serializers, chosen per save file | ⭐ | Unity JSON, Newtonsoft, Odin, MemoryPack |
-| Checkpoints and resets | ⭐ | Snapshot, restore, or reset to starting values |
-| Offline saves upload on their own | ⭐ | Retried in the background once back online |
-| Failure simulation | ⭐ | Force any failure or delay to test your game |
-| Build-time checks | ⭐ | A broken setup stops the build |
-| Clashing saves flagged | ⭐ | Warns when two saves write to the same place |
-| Project-wide save overview | ⭐ | Every save in one list, broken ones flagged |
-| Build cost of saved asset references | ⭐ | Build and load cost shown per asset |
-| Operation log | ⭐ | Every load and save, its result and duration |
-| On-device debug overlay | ⭐ | Save status, logs and data in the running build |
-| Quitting waits for unfinished saves | ⭐ | Up to a timeout you set |
-| Every operation as a UnityEvent | ⭐ | Ready-made components, no code |
-| UI binders | ⭐ | Show saved values in UI, no code |
-| Change events, no code | ⭐ | A value change raises a UnityEvent |
-| AI agent skills | ⭐ | Eight skills for AI coding agents included |
 
 </section>
 
