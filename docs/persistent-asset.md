@@ -5,7 +5,7 @@ permalink: /persistent-asset/
 image: /assets/images/persistent-asset-social.jpg
 description: "Make persistent data a native part of your Unity project! Save your way, anywhere, anything, safely."
 software:
-  name: "Persistent Asset - Integrated Save System & Data Persistence"
+  name: "Persistent Asset: Inspector-Driven Save Framework"
   store_url: https://assetstore.unity.com/packages/slug/389310
 ---
 
@@ -15,19 +15,22 @@ software:
 
 ## Description
 
-**Persistent data should feel like a native Unity object, not a separate save system you have to architect around.**
+**Persistent data should feel like a native Unity object, not a separate save system you have to design around.**
 
 Persistent Asset lets you create project assets whose content persists between play sessions.<br>
-By default, they load and save on their own: you don't write a single line of save code.<br>
-Each one comes with a manager you can configure to fit your game's needs.
+They load and save on their own by default, and each one comes with a manager you can configure to fit your game's needs.
 
-***No save architecture to build:*** all the complex machinery is hidden away. Access advanced features with just a few clicks in the Inspector, letting you focus on building your game.
+***No save logic to write***<br>
+All the complex machinery is hidden away. Access advanced features with just a few clicks in the Inspector, letting you focus on your game.
 
-***You keep full control:*** trigger or monitor any operation through a clean C# API, directly from the Editor, from a debug menu, from components, and more. The package is designed to be extensible, so you can take over as much as you like.
+***You keep full control***<br>
+Trigger or monitor any operation through a clean C# API, directly from the Editor, from a debug menu, from components, and more. The package is designed to be extensible, so you can take over as much as you like.
 
-***No forced workflow:*** designers tweak values, programmers read them in code, and tool engineers extend the system. Everyone can work the way they prefer on the same objects. Because Persistent Asset is deeply integrated into Unity, no visual scripting is required.
+***No forced workflow***<br>
+Designers tweak values, programmers read them in code, and tool engineers extend the system. Everyone can work the way they prefer on the same objects. Because Persistent Asset is deeply integrated into Unity, no visual scripting is required.
 
-***Built to scale with your project:*** get set up in no time and add features as you need them. It comes with everything you need to support a full release and beyond, so you won't outgrow it.
+***Built to scale with your project***<br>
+Get set up in no time and add features as you need them. It comes with everything you need to support a full release and beyond, so you won't outgrow it.
 
 ## Features
 
@@ -263,14 +266,14 @@ Desktop, mobile and WebGL are supported out of the box. Consoles gate saving beh
 ## Learn More
 
 <a href="/persistent-asset/comparison/" class="asset-store-btn asset-store-btn--featured">How It Compares</a>
-<a href="/persistent-asset/quick-usage-guide/" class="asset-store-btn" target="_blank" rel="noopener">Quick Usage Guide</a>
-<a href="/persistent-asset/user-manual/" class="asset-store-btn" target="_blank" rel="noopener">User Manual</a>
-<a href="/persistent-asset/public-api/" class="asset-store-btn" target="_blank" rel="noopener">Public API</a>
+<a href="/persistent-asset/quick-usage-guide/" class="asset-store-btn">Quick Usage Guide</a>
+<a href="/persistent-asset/user-manual/" class="asset-store-btn">User Manual</a>
+<a href="/persistent-asset/public-api/" class="asset-store-btn">Public API</a>
 
 ## Get It
 
-<a href="https://assetstore.unity.com/packages/slug/389310" class="asset-store-btn">View on Unity Asset Store (Paid)</a>
-<a href="https://justetools.itch.io/persistent-asset" class="asset-store-btn" target="_blank" rel="noopener">Play Demo</a>
+<a href="https://assetstore.unity.com/packages/slug/389310" class="asset-store-btn">View on Unity Asset Store</a>
+<a href="https://justetools.itch.io/persistent-asset" class="asset-store-btn new-tab" target="_blank" rel="noopener">Play Demo<span class="visually-hidden"> (opens in a new tab)</span></a>
 
 ## Patch Notes
 

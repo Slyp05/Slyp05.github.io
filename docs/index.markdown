@@ -60,7 +60,7 @@ layout: home
   <p>You can also donate on Ko-fi.</p>
 </div>
 
-<a href="https://ko-fi.com/justetools" class="asset-store-btn" target="_blank" rel="noopener">Buy me a coffee ☕</a>
+<a href="https://ko-fi.com/justetools" class="asset-store-btn">Buy me a coffee ☕</a>
 
 ## Contact
 

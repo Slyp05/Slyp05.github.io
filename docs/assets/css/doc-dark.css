@@ -507,3 +507,16 @@ pre {
 .call-styles { background: var(--d-pre-bg); box-shadow: inset 0 0 0 1px var(--d-pre-ring); }
 .call-styles > pre { box-shadow: none; border-top-color: var(--d-pre-ring); }
 .module-band { background: linear-gradient(135deg, var(--d-band-a), var(--d-band-b)); }
+
+/* Package title linked to its product page by doc-nav.js: looks exactly like the plain title until hovered. */
+nav .nav-title a.title-link,
+.doc-top .doc-brand a.title-link {
+  display: inline;
+  padding: 0;
+  font: inherit;
+  letter-spacing: inherit;
+  color: inherit;
+  text-decoration: none;
+}
+nav .nav-title a.title-link:hover,
+.doc-top .doc-brand a.title-link:hover { color: inherit; text-decoration: underline; }

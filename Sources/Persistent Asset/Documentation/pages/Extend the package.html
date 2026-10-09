@@ -135,8 +135,9 @@
       <h2>Add a component codec</h2>
       <p>To save a component <a href="Scene%20Objects.html">Scene Objects</a> doesn't cover, or to replace one it
         ships, inherit <a href="API%20-%20Scene%20Objects.html#SceneComponentCodec"><code>SceneComponentCodec</code></a>.</p>
-      <p>Restoring runs in three phases: switch off anything that would overwrite the value, write it, then
-        switch that back on.</p>
+      <p>Restoring runs in four phases: switch off anything that would overwrite the value, write it, switch that
+        back on, then, once the load has switched every object on or off, start what has to run live, such as a
+        video resuming.</p>
     </section>
 
     <!-- ══════════════════════════════════════ codecs ════ -->

@@ -36,12 +36,12 @@ Unity 6.0 or later (tested up to 6.5)
 
 ## Documentation
 
-<a href="/auto-singleton/documentation/" class="asset-store-btn" target="_blank" rel="noopener">Documentation</a>
-<a href="/auto-singleton/public-api/" class="asset-store-btn" target="_blank" rel="noopener">Public API</a>
+<a href="/auto-singleton/documentation/" class="asset-store-btn">Documentation</a>
+<a href="/auto-singleton/public-api/" class="asset-store-btn">Public API</a>
 
 ## Get It
 
-<a href="https://assetstore.unity.com/packages/tools/utilities/auto-singleton-264895" class="asset-store-btn">View on Unity Asset Store (Free)</a>
+<a href="https://assetstore.unity.com/packages/tools/utilities/auto-singleton-264895" class="asset-store-btn">View on Unity Asset Store</a>
 
 ## Patch Notes
 

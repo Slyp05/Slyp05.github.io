@@ -52,13 +52,13 @@ Unity 6.0 or later (tested up to 6.6)
 
 ## Documentation
 
-<a href="/settings-kit/user-manual/" class="asset-store-btn" target="_blank" rel="noopener">User Manual</a>
-<a href="/settings-kit/public-api/" class="asset-store-btn" target="_blank" rel="noopener">Public API</a>
+<a href="/settings-kit/user-manual/" class="asset-store-btn">User Manual</a>
+<a href="/settings-kit/public-api/" class="asset-store-btn">Public API</a>
 
 ## Get It
 
 <!-- TODO: unreleased; replace href="#" with the Unity Asset Store URL on release, then set store_url in the front matter above and remove `sitemap: false` (here and the settings-kit scope in _config.yml). -->
-<a href="#" class="asset-store-btn">View on Unity Asset Store (Free)</a>
+<a href="#" class="asset-store-btn">View on Unity Asset Store</a>
 
 ## Patch Notes
 

@@ -49,13 +49,13 @@ Need an older version? [Contact me](mailto:justetools@gmail.com), it can be easi
 
 ## Documentation
 
-<a href="/infinite-value/user-manual/" class="asset-store-btn" target="_blank" rel="noopener">User Manual</a>
-<a href="/infinite-value/public-api/" class="asset-store-btn" target="_blank" rel="noopener">Public API</a>
+<a href="/infinite-value/user-manual/" class="asset-store-btn">User Manual</a>
+<a href="/infinite-value/public-api/" class="asset-store-btn">Public API</a>
 
 ## Get It
 
-<a href="https://assetstore.unity.com/packages/tools/utilities/infinite-value-bigdecimal-194963" class="asset-store-btn">View on Unity Asset Store (Paid)</a>
-<a href="https://justetools.itch.io/infinite-value" class="asset-store-btn" target="_blank" rel="noopener">Play Demo</a>
+<a href="https://assetstore.unity.com/packages/tools/utilities/infinite-value-bigdecimal-194963" class="asset-store-btn">View on Unity Asset Store</a>
+<a href="https://justetools.itch.io/infinite-value" class="asset-store-btn new-tab" target="_blank" rel="noopener">Play Demo<span class="visually-hidden"> (opens in a new tab)</span></a>
 
 ## Patch Notes
 

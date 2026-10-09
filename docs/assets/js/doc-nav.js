@@ -114,6 +114,25 @@
     }
   }
 
-  if (document.readyState === 'complete') init();
-  else document.addEventListener('DOMContentLoaded', init);
+  // The package name at the top left (sidebar title, book bar or phone bar) links to the package's
+  // product page, the first folder of the path. The link keeps the title's look; see .title-link.
+  function linkTitles() {
+    var pkg = location.pathname.split('/')[1];
+    if (!pkg) return;
+    var titles = document.querySelectorAll('#layout > nav .nav-title, .doc-top .doc-brand');
+    for (var i = 0; i < titles.length; i++) {
+      var el = titles[i];
+      if (el.querySelector('a')) continue;
+      var a = document.createElement('a');
+      a.className = 'title-link';
+      a.href = '/' + pkg + '/';
+      while (el.firstChild) a.appendChild(el.firstChild);
+      el.appendChild(a);
+    }
+  }
+
+  function start() { init(); linkTitles(); }
+
+  if (document.readyState === 'complete') start();
+  else document.addEventListener('DOMContentLoaded', start);
 })();
