@@ -19,12 +19,14 @@ body_class: about-page
 
 <div class="about-text">
   <p>I use Claude Code during development. How I use it matters to me.</p>
-  <p><strong>Against alienation.</strong><br>
-  A lot of AI use pulls programmers away from their craft. I think using it to build tools does the opposite: it frees developers up to work on their games.</p>
-  <p><strong>The effort is spent once.</strong><br>
-  A tool gets written and reviewed once, carefully, and everyone who uses it afterwards leans on AI less themselves.</p>
+  <p><strong>Experience came first.</strong><br>
+  I was building complex systems long before AI coding tools existed. My earlier tools were written without any AI, after years of in-house tools and SDKs.</p>
+  <p><strong>Never forced on you.</strong><br>
+  You never have to touch AI to use my tools, and none of them call an AI service. The inspector, the documentation and the demos cover everything; the AI skills some of my tools ship with are there only if you already work with an assistant.</p>
+  <p><strong>AI stays in the tooling.</strong><br>
+  A lot of AI use alienates programmers from their craft. I keep mine in one place: building the tool. Everyone who uses it afterwards gets a finished, reviewed system and works on their game without needing AI themselves.</p>
   <p><strong>The surface is mine.</strong><br>
-  The public APIs, the workflows, the documentation phrasing: those decide how a tool feels to use, and I write them. AI helps me move faster underneath.</p>
+  The public APIs, the workflows, the documentation phrasing: those decide how a tool feels to use, and I write them. The manuals are written for people, and any AI skills are drawn from them. AI helps me move faster underneath.</p>
 </div>
 
 ## About Me {#about-me}
