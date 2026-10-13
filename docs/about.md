@@ -27,6 +27,8 @@ body_class: about-page
   A lot of AI use alienates programmers from their craft. I keep mine in one place: building the tool. Everyone who uses it afterwards gets a finished, reviewed system and works on their game without needing AI themselves.</p>
   <p><strong>The surface is mine.</strong><br>
   The public APIs, the workflows, the documentation phrasing: those decide how a tool feels to use, and I write them. The manuals are written for people, and any AI skills are drawn from them. AI helps me move faster underneath.</p>
+  <p><strong>I test more because I use AI.</strong><br>
+  Every package goes through repeated independent code reviews, a large suite of unit tests, a sweep across every Unity minor version, and a manual check of every inspector and the API.</p>
 </div>
 
 ## About Me {#about-me}
