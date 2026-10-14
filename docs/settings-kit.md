@@ -3,10 +3,9 @@ layout: page
 title: Settings Kit
 permalink: /settings-kit/
 image: /assets/images/settings-kit-social.jpg
-sitemap: false
 description: "Project Settings & Preferences pages from one small class. No boilerplate, no Resources folder, and readable at runtime."
 software:
-  store_url: ""
+  store_url: https://assetstore.unity.com/packages/slug/392788
 ---
 
 <img src="/assets/images/settings-kit.jpg" alt="Settings Kit" class="package-image" width="1200" height="800" decoding="async">
@@ -57,13 +56,12 @@ Unity 6.0 or later (tested up to 6.6)
 
 ## Get It
 
-<!-- TODO: unreleased; replace href="#" with the Unity Asset Store URL on release, then set store_url in the front matter above and remove `sitemap: false` (here and the settings-kit scope in _config.yml). -->
-<a href="#" class="asset-store-btn">View on Unity Asset Store</a>
+<a href="https://assetstore.unity.com/packages/slug/392788" class="asset-store-btn">View on Unity Asset Store</a>
 
 ## Patch Notes
 
 <details class="patch-note" open>
-<summary><strong>v1.0.0</strong> <span class="patch-date">Initial release</span></summary>
+<summary><strong>v1.0.0</strong> <span class="patch-date">October 14, 2026</span></summary>
 <div class="patch-note-body" markdown="1">
 
 Initial release.

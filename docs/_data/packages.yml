@@ -44,6 +44,18 @@
     Numbers of any size and precision in Unity. Behaves like a primitive type, works in
     real-time, and is fully configurable. Perfect for incremental games, RPGs, and monetary systems.
 
+- title: Settings Kit
+  url: /settings-kit/
+  released: true
+  free: true
+  meta: Released October 2026
+  card: /assets/images/settings-kit-card.jpg
+  icon: /assets/images/SK.png
+  blurb: >-
+    Add your own pages to Project Settings and Preferences from a small class, and read
+    their values anywhere, in the editor or in a build. No editor code, nothing under
+    Resources/.
+
 - title: Generic Arithmetic
   url: /generic-arithmetic/
   released: true
@@ -65,17 +77,3 @@
   blurb: >-
     Add <code>[Singleton]</code> to any class and the asset handles everything: asset
     generation, cleanup, polymorphic access, and inspector integration.
-
-# Unreleased: hidden from the home page and the nav until `released` is true.
-# Artwork is in place, exported from Sources/Settings Kit/Media Exports/.
-- title: Settings Kit
-  url: /settings-kit/
-  released: false
-  free: true
-  meta: Coming soon
-  card: /assets/images/settings-kit-card.jpg
-  icon: /assets/images/SK.png
-  blurb: >-
-    Add your own pages to Project Settings and Preferences from a small class, and read
-    their values anywhere, in the editor or in a build. No editor code, nothing under
-    Resources/.

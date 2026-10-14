@@ -33,12 +33,6 @@ defaults:
       path: ""
     values:
       image: /assets/images/home.jpg
-  # Settings Kit is unreleased: keep its whole doc tree out of the sitemap.
-  # Remove this entry (and `sitemap: false` in settings-kit.md) on release.
-  - scope:
-      path: "settings-kit"
-    values:
-      sitemap: false
   # The manuals moved from /documentation/ to /user-manual/. The old tree only holds the
   # redirect stubs the build scripts write, which have no place in the sitemap.
   - scope:
