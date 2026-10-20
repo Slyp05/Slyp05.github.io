@@ -63,6 +63,7 @@ $content-width: 880px;
   --badge-paid-fg:   #1a56db;
   --badge-free-bg:   #edfaf1;
   --badge-free-fg:   #057a55;
+  --error:           #c62828;   // contact form validation and send errors
   --btn-bg:          #222222;
   --btn-fg:          #93c5fd;
   --btn-bg-hover:    #444444;
@@ -125,6 +126,7 @@ $content-width: 880px;
   --badge-paid-fg:   #9ec5ff;
   --badge-free-bg:   #2a332c;
   --badge-free-fg:   #86d6a0;
+  --error:           #ff8a80;
   --btn-bg:          #2e2e2e;
   --btn-fg:          #9ecbff;
   --btn-bg-hover:    #3d3d3d;
@@ -769,3 +771,127 @@ table td { border-color: var(--border-soft); }
 .nav-dropdown-link,
 .nav-dropdown-link:visited { color: var(--text); }
 .nav-dropdown-link:hover { background: var(--bg-subtle); }
+
+// --- Contact form (contact.md) ----------------------------------------------
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  margin: 1.5rem 0 1rem;
+}
+
+.contact-row {
+  display: flex;
+  gap: 1rem;
+
+  > .contact-field { flex: 1; min-width: 0; }
+
+  @media (max-width: 560px) {
+    flex-direction: column;
+    gap: 1.1rem;
+  }
+}
+
+// The display rules below would otherwise beat the browser's own [hidden] style.
+.contact-form [hidden] { display: none; }
+
+.contact-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+
+  label {
+    font-size: 0.9em;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  input,
+  select,
+  textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.55rem 0.7rem;
+    font: inherit;
+    font-size: 0.95em;
+    color: var(--text);
+    background-color: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+
+    &:focus {
+      outline: 2px solid var(--tt-focus);
+      outline-offset: -1px;
+      border-color: transparent;
+    }
+
+    &::placeholder { color: var(--text-fainter); }
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 9rem;
+    line-height: 1.5;
+  }
+
+  select {
+    appearance: none;
+    padding-right: 2rem;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23999999' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.8rem center;
+  }
+
+  // Only flag a field once the visitor has typed in it and left it wrong.
+  input:user-invalid,
+  textarea:user-invalid { border-color: var(--error); }
+}
+
+.contact-optional {
+  font-weight: 400;
+  font-size: 0.85em;
+  color: var(--text-faint);
+}
+
+.contact-hint,
+.contact-privacy,
+.contact-fallback {
+  margin: 0;
+  font-size: 0.85em;
+  color: var(--text-faint);
+}
+
+.contact-fallback { margin-bottom: 1.5rem; }
+
+.contact-honeypot {
+  position: absolute !important;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.contact-submit {
+  align-self: flex-start;
+  margin-top: 0;
+  border: none;
+  font: inherit;
+  cursor: pointer;
+
+  &:disabled { opacity: 0.6; cursor: wait; }
+}
+
+.contact-status {
+  margin: 0;
+  padding: 0.7rem 1rem;
+  border-radius: 4px;
+  font-size: 0.95em;
+  border: 1px solid var(--border);
+  background: var(--bg-elevated);
+  color: var(--text-body);
+
+  &--success { border-color: var(--badge-free-fg); background: var(--badge-free-bg); color: var(--badge-free-fg); }
+  &--error   { border-color: var(--error); color: var(--error); }
+}

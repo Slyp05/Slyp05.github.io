@@ -57,6 +57,11 @@ Need an older version? [Contact me](mailto:justetools@gmail.com), it can be easi
 <a href="https://assetstore.unity.com/packages/tools/utilities/infinite-value-bigdecimal-194963" class="asset-store-btn">View on Unity Asset Store</a>
 <a href="https://justetools.itch.io/infinite-value" class="asset-store-btn new-tab" target="_blank" rel="noopener">Play Demo<span class="visually-hidden"> (opens in a new tab)</span></a>
 
+## Support
+
+<a href="/contact/?package=infinite-value&amp;category=bug" class="asset-store-btn">Report a bug</a>
+<a href="/contact/?package=infinite-value&amp;category=question" class="asset-store-btn">Ask a question</a>
+
 ## Patch Notes
 
 <details class="patch-note" open>

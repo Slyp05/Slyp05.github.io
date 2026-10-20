@@ -58,6 +58,11 @@ Unity 6.0 or later (tested up to 6.6)
 
 <a href="https://assetstore.unity.com/packages/slug/392788" class="asset-store-btn">View on Unity Asset Store</a>
 
+## Support
+
+<a href="/contact/?package=settings-kit&amp;category=bug" class="asset-store-btn">Report a bug</a>
+<a href="/contact/?package=settings-kit&amp;category=question" class="asset-store-btn">Ask a question</a>
+
 ## Patch Notes
 
 <details class="patch-note" open>

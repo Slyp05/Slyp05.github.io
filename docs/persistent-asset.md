@@ -275,6 +275,11 @@ Desktop, mobile and WebGL are supported out of the box. Consoles gate saving beh
 <a href="https://assetstore.unity.com/packages/slug/389310" class="asset-store-btn">View on Unity Asset Store</a>
 <a href="https://justetools.itch.io/persistent-asset" class="asset-store-btn new-tab" target="_blank" rel="noopener">Play Demo<span class="visually-hidden"> (opens in a new tab)</span></a>
 
+## Support
+
+<a href="/contact/?package=persistent-asset&amp;category=bug" class="asset-store-btn">Report a bug</a>
+<a href="/contact/?package=persistent-asset&amp;category=question" class="asset-store-btn">Ask a question</a>
+
 ## Patch Notes
 
 <details class="patch-note" open>

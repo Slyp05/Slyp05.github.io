@@ -46,6 +46,11 @@ Unity 6.0 or later (tested up to 6.5)
 
 <a href="https://assetstore.unity.com/packages/tools/utilities/generic-arithmetic-c-template-extension-265011" class="asset-store-btn">View on Unity Asset Store</a>
 
+## Support
+
+<a href="/contact/?package=generic-arithmetic&amp;category=bug" class="asset-store-btn">Report a bug</a>
+<a href="/contact/?package=generic-arithmetic&amp;category=question" class="asset-store-btn">Ask a question</a>
+
 ## Patch Notes
 
 <details class="patch-note" open>

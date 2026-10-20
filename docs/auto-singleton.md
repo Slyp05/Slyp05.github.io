@@ -43,6 +43,11 @@ Unity 6.0 or later (tested up to 6.5)
 
 <a href="https://assetstore.unity.com/packages/tools/utilities/auto-singleton-264895" class="asset-store-btn">View on Unity Asset Store</a>
 
+## Support
+
+<a href="/contact/?package=auto-singleton&amp;category=bug" class="asset-store-btn">Report a bug</a>
+<a href="/contact/?package=auto-singleton&amp;category=question" class="asset-store-btn">Ask a question</a>
+
 ## Patch Notes
 
 <details class="patch-note" open>

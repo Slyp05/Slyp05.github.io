@@ -54,6 +54,11 @@ plugins:
 # dropdown is generated from _data/packages.yml by _includes/header.html.
 header_pages:
   - about.md
+  - contact.md
+
+# Web3Forms access key for the contact form (contact.md). Public by design: it can
+# only deliver to the inbox it was created with. Create one at https://web3forms.com.
+web3forms_key: "cbb08140-d2e2-4250-bf27-da401c6d3e4f"
 
 # Exclude from processing.
 # The following items will not be processed, by default.
