@@ -37,6 +37,7 @@ is how the Support buttons on each package page link here.
     <div class="contact-field">
       <label for="contact-category">Category</label>
       <select id="contact-category" name="category" required>
+        <option value="" disabled selected>Choose a category</option>
         <option value="Bug report">Bug report</option>
         <option value="Question">Question</option>
         <option value="Feature request">Feature request</option>
@@ -47,6 +48,7 @@ is how the Support buttons on each package page link here.
     <div class="contact-field">
       <label for="contact-package">Package</label>
       <select id="contact-package" name="package" required>
+        <option value="" disabled selected>Choose a package</option>
         {%- for pkg in live %}
         <option value="{{ pkg.title | escape }}" data-slug="{{ pkg.url | remove: '/' }}">{{ pkg.title | escape }}</option>
         {%- endfor %}
