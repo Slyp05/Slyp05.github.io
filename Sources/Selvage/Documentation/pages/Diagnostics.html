@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Every SLV code analysis message, what it means, and how to fix it." />
+  <title>Selvage - Code analysis reference</title>
+  <link rel="stylesheet" href="../shared/styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Selvage</div><a href="../User%20Manual.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Code analysis reference</h1>
+      <div class="sub">Every SLV code analysis message, what it means, and how to fix it.</div>
+    </div>
+
+<!-- ====================================== reading ==== -->
+<section id="reading">
+  <h2>Diagnostic codes</h2>
+<p>Selvage includes code analysis that runs on every compilation and reports mistakes in the Console window and in
+  your IDE. Each message links to its entry on this page. The code's first digits indicate its severity:</p>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Codes</th><th scope="col">Severity</th></tr>
+    <tr><td><strong>SLV00xx</strong></td><td>Error: the code can't work.</td></tr>
+    <tr><td><strong>SLV01xx</strong></td><td>Warning: the code doesn't do what it appears to.</td></tr>
+    <tr><td><strong>SLV02xx</strong></td><td>Hint: information, displayed in your IDE only.</td></tr>
+  </table>
+</div>
+
+</section>
+
+<!-- ====================================== errors ==== -->
+<section id="errors">
+  <h2>Errors</h2>
+  <h3 id="slv0001">SLV0001: [Inject] member must be assignable</h3>
+<p>A <code>readonly</code> field, a <code>const</code>, or a property without a setter has <code>[Inject]</code>.
+  Selvage injects after the constructor, so it can't assign such a member. Make the member writable.</p>
+
+  <h3 id="slv0002">SLV0002: Injection context must be a reference type</h3>
+<p>A struct is passed as the context to <code>Manual</code> or <code>Context</code>. Pass an instance of a class, or
+  <code>typeof(T)</code> for the static members of a class.</p>
+
+  <h3 id="slv0003">SLV0003: [Inject] member must be a reference type</h3>
+<p>A member whose type is a struct has <code>[Inject]</code>. Change its type to a class or an interface, or remove
+  the attribute.</p>
+
+  <h3 id="slv0004">SLV0004: A provider overrides the wrong set of supply or teardown methods</h3>
+<p>A provider must override exactly one of <code>Provide</code> and <code>ProvideAsync</code>, and at most one of
+  <code>TearDown</code> and <code>TearDownAsync</code>.</p>
+
+  <h3 id="slv0005">SLV0005: A provider names another class as itself</h3>
+<p>A registry passes another class to its base, such as <code>class Impostor : RegistryProvider&lt;Cheats&gt;</code>.
+  Pass the class itself: <code>RegistryProvider&lt;Impostor&gt;</code>.</p>
+
+  <h3 id="slv0007">SLV0007: [Provide] is on a class Selvage cannot construct</h3>
+<p>The class is a Unity object, is abstract or static, or has no constructor without parameters. For more
+  information, refer to <a href="Provide%20your%20own%20classes.html#rules">Class requirements</a>.</p>
+
+  <h3 id="slv0008">SLV0008: A preference's MemberAttribute is not an attribute class</h3>
+<p><code>MemberAttribute</code> names a class that doesn't derive from <code>System.Attribute</code>. Name an
+  attribute class.</p>
+
+</section>
+
+<!-- ====================================== warnings ==== -->
+<section id="warnings">
+  <h2>Warnings</h2>
+  <h3 id="slv0101">SLV0101: [Inject] and [DontInject] contradict</h3>
+<p>A member, class or assembly has both attributes. <code>[Inject]</code> wins. Remove <code>[DontInject]</code>.</p>
+
+  <h3 id="slv0102">SLV0102: Member name matches no member</h3>
+<p>A member name passed to a <code>Manual</code> method doesn't exist on the context's class. Use
+  <code>nameof(member)</code>.</p>
+
+  <h3 id="slv0106">SLV0106: [Inject] member is never injected</h3>
+<p>The member's initializer assigns a value, so Selvage never injects it. Add <code>Overwrite = true</code>, or remove
+  the initializer.</p>
+
+  <h3 id="slv0107">SLV0107: [Inject] member's type parameter may be a value type</h3>
+<p>The member's type is a type parameter that could be a struct. Add the <code>where T : class</code> constraint.</p>
+
+  <h3 id="slv0108">SLV0108: [DynamicChannel] names nothing readable</h3>
+<p>The name passed to <code>[DynamicChannel]</code> isn't a field or property of the class, or of a base class,
+  readable without arguments, so the member uses its <code>[Channel]</code> instead. Write the name with
+  <code>nameof</code>. To use a value from another class, read it through a property of this one.</p>
+
+</section>
+
+<!-- ====================================== suggestions ==== -->
+<section id="suggestions">
+  <h2>Hints</h2>
+  <h3 id="slv0208">SLV0208: Injected through an enclosing scope</h3>
+<p>Displays the options a member receives from the <code>[Inject]</code> of its class or assembly, or from the Inject by Default setting. The quick fix writes them
+  on the member.</p>
+
+  <h3 id="injected-fields">Unassigned field warnings</h3>
+<p>Unity and your IDE don't report CS0649, IDE0044 or, from Unity 6.5, UAC1001 on injected fields, because Selvage assigns them.</p>
+
+</section>
+
+<!-- ====================================== suppressing ==== -->
+<section id="suppressing">
+  <h2>Suppress a diagnostic</h2>
+<p>To suppress a diagnostic in an assembly, add an assembly-level <code>SuppressMessage</code> attribute to any file of
+  the assembly:</p>
+<pre><code>[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage(<span class="st">"Selvage"</span>, <span class="st">"SLV0106"</span>, Justification = <span class="st">"..."</span>)]</code></pre>
+<p>Unity doesn't apply <code>.editorconfig</code> severities when it compiles, so they only affect your IDE.</p>
+
+</section>
+
+<div class="pager">
+  <a class="prev" href="Provide%20Tuning%20reference.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Provide Tuning reference</div>
+  </a>
+  <a class="next" href="Glossary.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Glossary</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Selvage v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

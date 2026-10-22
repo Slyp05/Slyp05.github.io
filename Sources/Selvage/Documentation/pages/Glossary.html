@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="The terms the Selvage documentation uses." />
+  <title>Selvage - Glossary</title>
+  <link rel="stylesheet" href="../shared/styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Selvage</div><a href="../User%20Manual.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Glossary</h1>
+      <div class="sub">The terms the Selvage documentation uses.</div>
+    </div>
+
+<!-- ====================================== terms ==== -->
+<section id="terms">
+  <h2>Terms</h2>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Term</th><th scope="col">Definition</th></tr>
+    <tr id="word-candidate"><td>Candidate</td><td>An object that could be injected into a member. For more information, refer to <a href="Choose%20between%20several%20candidates.html">Choose between several candidates</a>.</td></tr>
+    <tr id="word-change"><td>Change, revoke</td><td>What a provider announces about a dependency it gave: a change when a newer one exists and the old one is still usable, a revoke when it must not be used any more. For more information, refer to <a href="Options.html#reactive">Reactive</a>.</td></tr>
+    <tr id="word-channel"><td>Channel</td><td>A value on a member, set with <code>[Channel]</code>, that picks the candidate whose preference has the same value.</td></tr>
+    <tr id="word-context"><td>Context</td><td>An object whose members Selvage injects: a MonoBehaviour, a ScriptableObject, an instance of a plain C# class, or a class, for its static members.</td></tr>
+    <tr id="word-default"><td>Default</td><td>What a member holds when nothing is injected: its initializer, or <code>null</code>.</td></tr>
+    <tr id="word-dependency"><td>Dependency</td><td>The object a member holds.</td></tr>
+    <tr id="word-fail"><td>Fail</td><td>What a required member does when its dependency is missing: it keeps its default, and the Console window displays an error.</td></tr>
+    <tr id="word-ibd"><td>Inject by Default</td><td>The setting that injects every class of the project. For more information, refer to <a href="Inject%20with%20scopes.html#project">Inject every class of the project</a>.</td></tr>
+    <tr id="word-inject"><td>Inject, reinject, release</td><td>Give a member its dependency, give it a new one, and take it back.</td></tr>
+    <tr id="word-lifetime"><td>Lifetime</td><td>Whether members share one provided object (Shared), each receive their own (Separate), or borrow one from a pool (Pooled). For more information, refer to <a href="Lifetimes.html">Lifetimes</a>.</td></tr>
+    <tr id="word-local"><td>Local block</td><td>A <code>using (Injector.Local(...))</code> block that gives objects to what you create inside it.</td></tr>
+    <tr id="word-member"><td>Member</td><td>A field or property marked <code>[Inject]</code>, or covered by a scope.</td></tr>
+    <tr id="word-missing"><td>Missing</td><td>No provider had a dependency for the member.</td></tr>
+    <tr id="word-option"><td>Option</td><td>A property of <code>[Inject]</code> that changes how a member is injected, such as <code>Optional</code>. For more information, refer to <a href="Options.html">Options</a>.</td></tr>
+    <tr id="word-preference"><td>Preference</td><td>Settings on a candidate that say which members it's for.</td></tr>
+    <tr id="word-provide-definition"><td>Provide Definition</td><td>An asset that makes Selvage provide the assets of its folder, or a list of assets.</td></tr>
+    <tr id="word-provide-tuning"><td>Provide Tuning</td><td>A component that changes how the Scene Provider provides the GameObject it's on.</td></tr>
+    <tr id="word-provider"><td>Provider</td><td>A class that gives dependencies from one source, such as the Scene Provider, which gives components from the loaded scenes.</td></tr>
+    <tr id="word-list"><td>Provider list</td><td>The ordered providers on the <strong>Selvage</strong> page of the Project Settings window. Selvage tries them from top to bottom.</td></tr>
+    <tr id="word-ready"><td>Ready</td><td>A context is ready once all its members are injected, including its <code>Async</code> members.</td></tr>
+    <tr id="word-registry"><td>Registry</td><td>A provider that gives the objects your code adds to it.</td></tr>
+    <tr id="word-scope"><td>Scope</td><td>A class, an assembly or the project in which Selvage injects every field and property that can hold a dependency, without <code>[Inject]</code> on each.</td></tr>
+    <tr id="word-setup"><td>Setup</td><td>Everything on the <strong>Selvage</strong> page of the Project Settings window, saved to reuse in other projects.</td></tr>
+    <tr id="word-shipped"><td>Shipped provider</td><td>A provider that ships with Selvage: the Registry Provider, the Scene Provider, the Attribute Provider and the Asset Provider.</td></tr>
+    <tr id="word-watched"><td>Watched</td><td>A scene object whose Provide Tuning component announces when it appears and when it leaves, so members follow it. For more information, refer to <a href="Provide%20scene%20components.html#watch">Follow a scene object</a>.</td></tr>
+  </table>
+</div>
+
+</section>
+
+<div class="pager">
+  <a class="prev" href="Diagnostics.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Code analysis reference</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Selvage v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Provide components, instances of your classes, assets and objects your code creates." />
+  <title>Selvage - Provide dependencies</title>
+  <link rel="stylesheet" href="../shared/styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Selvage</div><a href="../User%20Manual.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Provide dependencies</h1>
+      <div class="sub">Provide components, instances of your classes, assets and objects your code creates.</div>
+    </div>
+
+<p>Each provider in the provider list gives dependencies from one source. By default, the list holds the four
+  providers that ship with Selvage.</p>
+<p>Every object you provide has a lifetime, which decides whether members share one object, each receive their
+  own, or borrow one from a pool.</p>
+
+<!-- ====================================== topics ==== -->
+<section id="topics">
+  <h2>Topics</h2>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Topic</th><th scope="col">Description</th></tr>
+    <tr><td><a href="Provide%20scene%20components.html">Provide scene components</a></td><td>Provide components from the same GameObject or from the loaded scenes.</td></tr>
+    <tr><td><a href="Provide%20your%20own%20classes.html">Provide your own classes</a></td><td>Provide instances of plain C# classes marked <code>[Provide]</code>.</td></tr>
+    <tr><td><a href="Provide%20assets.html">Provide assets</a></td><td>Provide ScriptableObjects, prefabs and other assets with a Provide Definition.</td></tr>
+    <tr><td><a href="Provide%20objects%20your%20code%20creates.html">Provide objects your code creates</a></td><td>Provide objects your code creates, with the registry or a local block.</td></tr>
+    <tr><td><a href="Choose%20between%20several%20candidates.html">Choose between several candidates</a></td><td>Decide which member receives which object when several could fit.</td></tr>
+    <tr><td><a href="Lifetimes.html">Lifetimes</a></td><td>Decide whether members share an object, each receive their own, or borrow one from a pool.</td></tr>
+  </table>
+</div>
+
+</section>
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="Manage%20the%20provider%20list.html">Manage the provider list</a></li>
+    <li><a href="Write%20a%20custom%20provider.html">Write a custom provider</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="Explore%20the%20demo.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Explore the demo</div>
+  </a>
+  <a class="next" href="Provide%20scene%20components.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Provide scene components</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Selvage v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="frame.css">
+<style>
+  .stage { display: flex; align-items: center; justify-content: space-between; }
+  .code { flex: none; }
+  .code pre { font-size: 24px; }
+  .list { position: relative; width: 620px; }
+  .list .crop { width: 620px; }
+</style>
+</head>
+<body>
+<div class="head">
+  <h1>Extend it for your own needs</h1>
+  <p>Write a provider for any source: save files, servers, platform services.</p>
+</div>
+<div class="stage">
+  <div class="code">
+<pre class="cs">
+[Serializable]
+public sealed class MainCameraProvider : Provider
+{
+    protected override Verdict Evaluate(Request request) { ... }
+    protected override Supply Provide(Request request, ...) { ... }
+}
+</pre>
+  </div>
+  <div class="list">
+    <img class="crop" src="Captures/provider-list-cam.png">
+    <div class="ring teal" style="left: 21px; top: 148px; width: 380px; height: 56px;"></div>
+  </div>
+</div>
+<img class="hem" src="selvage.svg">
+<script src="highlight.js"></script>
+</body>
+</html>

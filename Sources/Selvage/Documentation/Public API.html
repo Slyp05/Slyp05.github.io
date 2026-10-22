@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Selvage v1.0.0 · namespaces Selvage, Selvage.Providers, Selvage.Extensions and Selvage.Compatibility" />
+  <title>Selvage - Public API</title>
+  <link rel="stylesheet" href="shared/styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <!-- Sidebar: the API overview lists the four reference pages -->
+  <script src="shared/nav.js"></script>
+  <nav>
+    <a href="Public%20API.html" class="active">Overview</a>
+    <a class="nav-band" href="pages/API%20-%20Consuming.html">Consuming</a>
+    <a class="nav-band" href="pages/API%20-%20Providing.html">Providing</a>
+    <a class="nav-band" href="pages/API%20-%20Extending.html">Extending</a>
+    <a class="nav-band" href="pages/API%20-%20Compatibility.html">Compatibility</a>
+  </nav>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Public API</h1>
+      <div class="sub">Selvage v1.0.0 &nbsp;&middot;&nbsp; namespaces <code>Selvage</code>, <code>Selvage.Providers</code>, <code>Selvage.Extensions</code> and <code>Selvage.Compatibility</code></div>
+    </div>
+
+
+    <div class="module-band band-first"><span class="band-name">Consuming</span><span class="band-desc">What a script that receives dependencies uses (<code>Selvage</code>).</span></div>
+    <p class="api-open"><a class="nav-ext" href="pages/API%20-%20Consuming.html">Open the Consuming reference &rarr;</a></p>
+    <div class="summary-index">
+    <div class="summary-group">Injecting</div>
+    <a href="pages/API%20-%20Consuming.html#InjectAttribute"><span class="badge badge-class">attr</span>InjectAttribute</a>
+    <a href="pages/API%20-%20Consuming.html#DontInjectAttribute"><span class="badge badge-class">attr</span>DontInjectAttribute</a>
+    <a href="pages/API%20-%20Consuming.html#Manual"><span class="badge badge-static">static</span>Manual</a>
+    <a href="pages/API%20-%20Consuming.html#Context"><span class="badge badge-static">static</span>Context</a>
+
+    <div class="summary-group">Operations</div>
+    <a href="pages/API%20-%20Consuming.html#SelvageOperation"><span class="badge badge-class">sealed</span>SelvageOperation</a>
+    <a href="pages/API%20-%20Consuming.html#OperationStatus"><span class="badge badge-enum">enum</span>OperationStatus</a>
+
+    <div class="summary-group">Channels</div>
+    <a href="pages/API%20-%20Consuming.html#ChannelAttribute"><span class="badge badge-class">attr</span>ChannelAttribute</a>
+    <a href="pages/API%20-%20Consuming.html#DynamicChannelAttribute"><span class="badge badge-class">attr</span>DynamicChannelAttribute</a>
+
+    </div>
+
+    <div class="module-band"><span class="band-name">Providing</span><span class="band-desc">The four providers that ship with Selvage, and what you write to use them (<code>Selvage.Providers</code>).</span></div>
+    <p class="api-open"><a class="nav-ext" href="pages/API%20-%20Providing.html">Open the Providing reference &rarr;</a></p>
+    <div class="summary-index">
+    <div class="summary-group">Common</div>
+    <a href="pages/API%20-%20Providing.html#Injector"><span class="badge badge-static">static</span>Injector</a>
+    <a href="pages/API%20-%20Providing.html#LocalDependencies"><span class="badge badge-struct">struct</span>LocalDependencies</a>
+    <a href="pages/API%20-%20Providing.html#Lifetime"><span class="badge badge-enum">enum</span>Lifetime</a>
+    <a href="pages/API%20-%20Providing.html#IPreference"><span class="badge badge-interface">iface</span>IPreference</a>
+
+    <div class="summary-group">Scene</div>
+    <a href="pages/API%20-%20Providing.html#SceneProvider"><span class="badge badge-class">sealed</span>SceneProvider</a>
+    <a href="pages/API%20-%20Providing.html#Reach"><span class="badge badge-enum">enum</span>Reach</a>
+    <a href="pages/API%20-%20Providing.html#ProvideTuning"><span class="badge badge-mb">MB</span>ProvideTuning</a>
+    <a href="pages/API%20-%20Providing.html#WhenDeactivated"><span class="badge badge-enum">enum</span>WhenDeactivated</a>
+
+    <div class="summary-group">Attributes</div>
+    <a href="pages/API%20-%20Providing.html#AttributeProvider"><span class="badge badge-class">sealed</span>AttributeProvider</a>
+    <a href="pages/API%20-%20Providing.html#ProvideAttribute"><span class="badge badge-class">attr</span>ProvideAttribute</a>
+    <a href="pages/API%20-%20Providing.html#PreferenceAttribute"><span class="badge badge-class">attr</span>PreferenceAttribute</a>
+
+    <div class="summary-group">Registry</div>
+    <a href="pages/API%20-%20Providing.html#RegistryProvider"><span class="badge badge-class">sealed</span>RegistryProvider</a>
+    <a href="pages/API%20-%20Providing.html#RegistryProviderOfT"><span class="badge badge-class">abstract</span>RegistryProvider&lt;TSelf&gt;</a>
+    <a href="pages/API%20-%20Providing.html#Preference"><span class="badge badge-class">sealed</span>Preference</a>
+
+    <div class="summary-group">Assets</div>
+    <a href="pages/API%20-%20Providing.html#AssetProvider"><span class="badge badge-class">sealed</span>AssetProvider</a>
+    <a href="pages/API%20-%20Providing.html#ProvideDefinition"><span class="badge badge-class">sealed</span>ProvideDefinition</a>
+    <a href="pages/API%20-%20Providing.html#AssetSelection"><span class="badge badge-enum">enum</span>AssetSelection</a>
+
+    <div class="summary-group">Other</div>
+    <a href="pages/API%20-%20Providing.html#IResettable"><span class="badge badge-interface">iface</span>IResettable</a>
+    </div>
+
+    <div class="module-band"><span class="band-name">Extending</span><span class="band-desc">Writing your own provider (<code>Selvage.Extensions</code>).</span></div>
+    <p class="api-open"><a class="nav-ext" href="pages/API%20-%20Extending.html">Open the Extending reference &rarr;</a></p>
+    <div class="summary-index">
+    <div class="summary-group">Writing a provider</div>
+    <a href="pages/API%20-%20Extending.html#Provider"><span class="badge badge-class">abstract</span>Provider</a>
+    <a href="pages/API%20-%20Extending.html#Verdict"><span class="badge badge-struct">struct</span>Verdict</a>
+    <a href="pages/API%20-%20Extending.html#Supply"><span class="badge badge-struct">struct</span>Supply</a>
+    <a href="pages/API%20-%20Extending.html#Request"><span class="badge badge-struct">struct</span>Request</a>
+
+    <div class="summary-group">Utility</div>
+    <a href="pages/API%20-%20Extending.html#OnePerListAttribute"><span class="badge badge-class">attr</span>OnePerListAttribute</a>
+
+    </div>
+
+    <div class="module-band"><span class="band-name">Compatibility</span><span class="band-desc">Running Selvage beside Zenject or VContainer, one assembly per container (<code>Selvage.Compatibility</code>).</span></div>
+    <p class="api-open"><a class="nav-ext" href="pages/API%20-%20Compatibility.html">Open the Compatibility reference &rarr;</a></p>
+    <div class="summary-index">
+    <div class="summary-group">Zenject</div>
+    <a href="pages/API%20-%20Compatibility.html#ZenjectProvider"><span class="badge badge-class">sealed</span>ZenjectProvider</a>
+    <a href="pages/API%20-%20Compatibility.html#SelvageBinderExtensions"><span class="badge badge-static">static</span>SelvageBinderExtensions</a>
+
+    <div class="summary-group">VContainer</div>
+    <a href="pages/API%20-%20Compatibility.html#VContainerProvider"><span class="badge badge-class">sealed</span>VContainerProvider</a>
+    <a href="pages/API%20-%20Compatibility.html#SelvageRegistrationExtensions"><span class="badge badge-static">static</span>SelvageRegistrationExtensions</a>
+
+    </div>
+
+    <div class="doc-footer">Selvage v1.0.0 &nbsp;&middot;&nbsp; For full signatures and remarks, refer to the XML doc comments in the source.</div>
+
+  </main>
+</div>
+</body>
+</html>

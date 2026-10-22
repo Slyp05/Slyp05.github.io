@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Decide whether members share an object, each receive their own, or borrow one from a pool." />
+  <title>Selvage - Lifetimes</title>
+  <link rel="stylesheet" href="../shared/styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Selvage</div><a href="../User%20Manual.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Lifetimes</h1>
+      <div class="sub">Decide whether members share an object, each receive their own, or borrow one from a pool.</div>
+    </div>
+
+<!-- ====================================== types ==== -->
+<section id="types">
+  <h2>Lifetime types</h2>
+<p>Every object you provide has a <strong>lifetime</strong>. The lifetime decides how many objects members receive,
+  and what happens to an object when its member releases it:</p>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Lifetime</th><th scope="col">Each member receives</th><th scope="col">When the member releases it</th></tr>
+    <tr id="shared"><td><strong>Shared</strong> (default)</td><td>The same object as every other member.</td><td>The object ends one frame after no member holds it, so a member of a newly loaded scene can still take it over.</td></tr>
+    <tr id="separate"><td><strong>Separate</strong></td><td>Its own object.</td><td>The object ends.</td></tr>
+    <tr id="pooled"><td><strong>Pooled</strong></td><td>Its own object, borrowed from a pool.</td><td>The object returns to the pool, to be lent again.</td></tr>
+  </table>
+</div>
+<p>When an object ends, Selvage destroys it if it's a Unity object, and disposes it if it implements
+  <code>IDisposable</code>. Selvage only ends the objects it created, copies included. It never ends an original scene
+  component or asset, or an object you add to a registry.</p>
+<p>A Shared object doesn't last for the whole application: after it ends, the next member that needs one receives a
+  new one. To keep one object for the whole application, hold it from an object that lasts,
+  such as a static member.</p>
+
+</section>
+
+<!-- ====================================== set ==== -->
+<section id="set">
+  <h2>Set a lifetime</h2>
+<p>Where you set the lifetime depends on what you provide:</p>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Provided object</th><th scope="col">Lifetime</th></tr>
+    <tr><td><code>[Provide]</code> class</td><td><code>[Provide(Lifetime.Pooled)]</code></td></tr>
+    <tr><td>Registry entry</td><td><code>Add(..., Lifetime.Pooled)</code></td></tr>
+    <tr><td>Asset</td><td>The <strong>Lifetime</strong> property of its <a href="Provide%20Definition%20reference.html">Provide Definition</a>.</td></tr>
+    <tr><td>Scene component</td><td>The <strong>Lifetime</strong> property of a <a href="Provide%20Tuning%20reference.html">Provide Tuning</a> component on its GameObject.</td></tr>
+  </table>
+</div>
+<p>To make an object for each member, Selvage creates your class with <code>new</code>, calls the function you added
+  to a registry, copies a Unity object with <code>Instantiate</code>, or calls <code>Clone()</code> on an object that
+  implements <code>ICloneable</code>. A Separate object is made each time its member is injected or reinjected.</p>
+<p>A member holds one Separate object at a time, and <code>Manual.Reinject</code> replaces it. To hold several, create several
+  instances of a small class whose only member is that one: each instance receives its own object, which ends when the
+  instance is released.</p>
+<p>A copy made with <code>Instantiate</code> holds what Unity serializes, as with any <code>Instantiate</code>, and a
+  copy of a scene component duplicates its whole GameObject beside the original. A copy's own members are injected
+  again, never copied.</p>
+<p>Members that receive the same Shared <code>[Provide]</code> class, registry entry, asset or scene component share
+  one object. To give some members their own Shared object of a <code>[Provide]</code> class, add a second
+  <code>[Preference]</code> that matches them: each preference on the class has its own object. For more information, refer to
+  <a href="Choose%20between%20several%20candidates.html">Choose between several candidates</a>.</p>
+
+</section>
+
+<!-- ====================================== pools ==== -->
+<section id="pools">
+  <h2>Pools</h2>
+<p>A pool grows as needed, so a member never misses an object because of its pool. A pool of a scene component holds
+  copies of it, and never lends the original. A pooled GameObject is inactive while it waits in the pool, and active
+  again when it's lent, so its <code>OnDisable</code> and <code>OnEnable</code> methods run. Selvage injects a lent
+  object again before the member receives it.</p>
+<p>To reset an object when it returns to the pool, implement <code>IResettable</code>. Selvage calls
+  <code>TryReset</code> when the member releases the object, while the object's own dependencies are still there. If
+  <code>TryReset</code> returns <code>false</code> or throws an exception, Selvage ends the object instead of reusing
+  it, and logs the exception:</p>
+<pre><code>[Provide(<span class="ty">Lifetime</span>.Pooled)]
+<span class="kw">public</span> <span class="kw">sealed</span> <span class="kw">class</span> <span class="ty">Projectile</span> : <span class="ty">IResettable</span>
+{
+    <span class="kw">int</span> hits;
+
+    <span class="kw">public</span> <span class="kw">bool</span> TryReset()
+    {
+        hits = <span class="nu">0</span>;
+        <span class="kw">return</span> <span class="kw">true</span>;   <span class="cm">// return false to end the object instead of reusing it</span>
+    }
+}</code></pre>
+<p>A member borrows an object when it's injected, and gives it back when it's released or its context is destroyed.
+  With the <a href="Options.html#manual"><code>Manual</code></a> option, a script borrows an object only while it
+  needs one:</p>
+<pre><code>[Inject(<span class="ty">Manual</span> = <span class="kw">true</span>)] <span class="ty">Projectile</span> projectile;
+
+<span class="kw">void</span> Fire() =&gt; <span class="ty">Manual</span>.Inject(<span class="kw">this</span>, <span class="kw">nameof</span>(projectile));     <span class="cm">// borrows one from the pool</span>
+<span class="kw">void</span> OnHit() =&gt; <span class="ty">Manual</span>.Release(<span class="kw">this</span>, <span class="kw">nameof</span>(projectile));   <span class="cm">// TryReset, then back to the pool</span></code></pre>
+<p>A pool belongs to one <code>[Provide]</code> class, registry entry, asset or scene object, and empties when that
+  source changes, such as when you edit its Provide Definition or remove its registry entry. Objects waiting in a pool
+  are destroyed when you enter or exit Play mode. Objects Selvage creates in Edit mode are never saved into your
+  scenes.</p>
+
+</section>
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="Injection%20lifecycle.html#ends">When Selvage releases members</a></li>
+    <li><a href="API%20-%20Providing.html#Lifetime">Lifetime API reference</a></li>
+    <li><a href="API%20-%20Providing.html#IResettable">IResettable API reference</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="Choose%20between%20several%20candidates.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Choose between several candidates</div>
+  </a>
+  <a class="next" href="Configure%20members.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Configure members</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Selvage v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="frame.css">
+<style>
+  .stage { display: flex; align-items: center; justify-content: space-between; }
+  .left { width: 820px; display: flex; flex-direction: column; gap: 26px; }
+  .code pre { font-size: 27px; }
+  .ways { display: flex; flex-direction: column; gap: 10px; padding-left: 4px; }
+  .ways div { font-family: "Cascadia Code", Consolas, monospace; font-size: 23px; color: var(--ink); }
+  .ways span { font-family: "Segoe UI Variable Display", "Segoe UI", sans-serif; color: var(--dim); margin-left: 14px; }
+  .right { width: 780px; display: flex; flex-direction: column; gap: 24px; }
+  .right .crop { width: 780px; }
+</style>
+</head>
+<body>
+<div class="head">
+  <h1>Loading is part of injection</h1>
+  <p>A member marked Async waits for what takes time: an Addressables asset, a cloud save, a web request.</p>
+</div>
+<div class="stage">
+  <div class="left">
+    <div class="code">
+<pre class="cs">
+[Inject(Async = true)] SaveData save;
+
+async void Start()
+{
+    await Context.WhenReady(this);
+    best.text = $"Best {save.Best}";
+}
+</pre>
+    </div>
+    <div class="ways">
+      <div>yield return Context.WhenReady(this);<span>in a coroutine</span></div>
+      <div>Context.IsReady(this)<span>in code that runs every frame</span></div>
+    </div>
+  </div>
+  <div class="right">
+    <img class="crop" src="Captures/live-save-waiting.png">
+    <div class="cap">The Live tab shows <b>what a field waits on</b>.</div>
+  </div>
+</div>
+<img class="hem" src="selvage.svg">
+<script src="highlight.js"></script>
+</body>
+</html>

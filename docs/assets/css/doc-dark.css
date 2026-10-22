@@ -290,7 +290,7 @@
 /* ---------------------------------------------------------------------------
    Re-point doc-styles.css's content-area colours at the tokens above.
    <pre>, .module-band and .step-num are dark in both modes and keep their own
-   plate; the sidebar, the book bar, .nav-search, #pa-results and .copy-btn are
+   plate; the sidebar, the book bar, .nav-search, #pa-results, #sv-results and .copy-btn are
    dark by design in light mode and are re-pointed at the --d-nav-* tokens at the
    bottom of this file so they follow the theme rather than staying blue-black.
    --------------------------------------------------------------------------- */
@@ -483,10 +483,10 @@ nav a .badge-new { background: var(--d-badge-new-bg); color: var(--d-badge-new-f
 .nav-search input::placeholder { color: var(--d-nav-faint); }
 .copy-btn { background: var(--d-surface); border-color: var(--d-nav-rule); color: var(--d-nav-dim); }
 .copy-btn:hover { color: var(--d-nav-fg); border-color: var(--d-nav-accent); }
-#pa-results .sr:hover { background: var(--d-surface); }
-#pa-results .sr .sr-head { color: var(--d-nav-fg); }
-#pa-results .sr .sr-page, #pa-results .sr-none { color: var(--d-nav-faint); }
-#pa-results .sr-group { color: var(--d-nav-accent); border-top-color: var(--d-nav-rule); }
+#pa-results .sr:hover, #sv-results .sr:hover { background: var(--d-surface); }
+#pa-results .sr .sr-head, #sv-results .sr .sr-head { color: var(--d-nav-fg); }
+#pa-results .sr .sr-page, #pa-results .sr-none, #sv-results .sr .sr-page, #sv-results .sr-none { color: var(--d-nav-faint); }
+#pa-results .sr-group, #sv-results .sr-group { color: var(--d-nav-accent); border-top-color: var(--d-nav-rule); }
 .summary-index a { background: var(--d-nav-bg); border-color: var(--d-nav-rule); color: var(--d-nav-fg); }
 .summary-index a:hover { border-color: var(--d-nav-accent); color: var(--d-nav-accent); }
 .step-num { background: var(--d-nav-bg); color: var(--d-nav-accent); }

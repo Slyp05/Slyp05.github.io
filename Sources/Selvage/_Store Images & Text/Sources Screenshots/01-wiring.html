@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="frame.css">
+<style>
+  .stage { display: flex; align-items: center; gap: 0; }
+  .before { width: 900px; }
+  .before pre { font-size: 25px; }
+  .arrow { flex: 1; display: flex; justify-content: center; }
+  .after { width: 700px; padding: 30px 34px; }
+  .after .line { display: flex; flex-direction: column; gap: 6px; margin-bottom: 22px; }
+  .after .line:last-child { margin-bottom: 0; }
+  .after pre { font-size: 29px; }
+  .after .chip { align-self: flex-start; margin-left: 2px; }
+</style>
+</head>
+<body>
+<div class="head">
+  <h1>Delete your wiring code</h1>
+  <p>Declare what a script needs. Selvage finds it where it already lives.</p>
+</div>
+<div class="stage">
+  <div class="code before">
+    <div class="label">Before</div>
+<pre class="cs">
+Rigidbody body;
+ITargeting targeting;
+TurretSettings settings;
+IScoreBoard scores;
+
+void Awake()
+{
+    ~~body = GetComponent&lt;Rigidbody&gt;();~~
+    ~~targeting = TargetingSystem.Instance;~~
+    ~~settings = Resources.Load&lt;TurretSettings&gt;("Turret");~~
+    ~~scores = GameManager.Instance.Scores;~~
+}
+</pre>
+  </div>
+  <div class="arrow">
+    <svg width="64" height="64" viewBox="0 0 64 64"><path d="M10 32 H50 M36 16 L52 32 L36 48" fill="none" stroke="#89b4fa" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </div>
+  <div class="code after">
+    <div class="label">With Selvage</div>
+    <div class="line"><pre class="cs">[Inject] Rigidbody body;</pre><span class="chip scene">on this GameObject</span></div>
+    <div class="line"><pre class="cs">[Inject] ITargeting targeting;</pre><span class="chip class">a class marked [Provide]</span></div>
+    <div class="line"><pre class="cs">[Inject] TurretSettings settings;</pre><span class="chip asset">an asset in your project</span></div>
+    <div class="line"><pre class="cs">[Inject] IScoreBoard scores;</pre><span class="chip code">an object your code adds</span></div>
+  </div>
+</div>
+<img class="hem" src="selvage.svg">
+<script src="highlight.js"></script>
+</body>
+</html>

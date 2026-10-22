@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="frame.css">
+<style>
+  .stage { display: flex; flex-direction: column; justify-content: center; gap: 30px; }
+  .row { display: flex; gap: 30px; align-items: stretch; height: auto; }
+  .row .code { flex: 1; padding: 22px 30px; }
+  .code pre { font-size: 24px; }
+  .note { font-size: 23px; color: var(--muted); margin-top: 12px; }
+  .mix { padding: 26px 34px; }
+  .mix pre { font-size: 27px; }
+  .all { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; padding-left: 4px; }
+  .all .cap { margin-right: 6px; }
+  .all code { font-family: "Cascadia Code", Consolas, monospace; font-size: 23px; color: var(--ink); border: 2px solid var(--border); background: rgba(20, 34, 62, 0.9); border-radius: 999px; padding: 6px 18px; }
+</style>
+</head>
+<body>
+<div class="head">
+  <h1>Options that combine</h1>
+  <p>Each option changes one thing about a member. Use any of them together.</p>
+</div>
+<div class="stage">
+  <div class="row">
+    <div class="code"><div class="label">Optional</div>
+<pre class="cs">[Inject(Optional = true)] IAnalytics analytics;</pre>
+      <div class="note">null, without an error, when nothing provides it</div></div>
+    <div class="code"><div class="label">Overwrite</div>
+<pre class="cs">[Inject(Overwrite = true)] IAudio audio = new SilentAudio();</pre>
+      <div class="note">your value, until a dependency replaces it</div></div>
+  </div>
+  <div class="code mix"><div class="label">Together</div>
+<pre class="cs">[Inject(Optional = true, EditMode = true)] IAnalytics analytics;</pre></div>
+  <div class="all"><span class="cap">All of them:</span><code>Optional</code><code>Manual</code><code>EditMode</code><code>Overwrite</code><code>Async</code><code>Reactive</code><code>Warm</code><code>Weak</code></div>
+</div>
+<img class="hem" src="selvage.svg">
+<script src="highlight.js"></script>
+</body>
+</html>

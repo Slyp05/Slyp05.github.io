@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="The properties of a Provide Definition asset." />
+  <title>Selvage - Provide Definition reference</title>
+  <link rel="stylesheet" href="../shared/styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Selvage</div><a href="../User%20Manual.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Provide Definition reference</h1>
+      <div class="sub">The properties of a Provide Definition asset.</div>
+    </div>
+
+<p>A Provide Definition is an asset that makes the Asset Provider provide the assets of its folder, or a list of
+  assets. To create one, go to <strong>Assets</strong> &gt; <strong>Create</strong> &gt; <strong>Selvage</strong>
+  &gt; <strong>Provide Definition</strong>. For more information, refer to <a href="Provide%20assets.html">Provide
+  assets</a>.</p>
+
+<!-- ====================================== properties ==== -->
+<section id="properties">
+  <h2>Properties</h2>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Property</th><th scope="col">Description</th></tr>
+    <tr><td><strong>Provides</strong></td><td>Which assets the definition provides:<ul>
+      <li><strong>This Folder</strong>: the assets in its folder. This is the default.</li>
+      <li><strong>This Folder and Subfolders</strong>: also the assets in the folders inside it.</li>
+      <li><strong>List</strong>: the assets in its list, wherever they are.</li></ul></td></tr>
+    <tr><td><strong>Assets</strong></td><td>The assets the definition provides. Appears when <strong>Provides</strong> is <strong>List</strong>.</td></tr>
+    <tr><td><strong>Lifetime</strong></td><td><strong>Shared</strong>: every member receives the same asset. <strong>Separate</strong> and <strong>Pooled</strong>: each member receives its own instance of a prefab, or its own copy of any other asset. For more information, refer to <a href="Lifetimes.html">Lifetimes</a>.</td></tr>
+    <tr><td><strong>Runtime Copy</strong></td><td>With the <strong>Shared</strong> lifetime, gives every member one copy of an asset instead of the asset itself, so changes made in Play mode never reach the asset. A prefab is always given as an instance.</td></tr>
+    <tr><td><strong>Has Preference</strong></td><td>Gives the assets a preference, which decides which members receive them when several assets could fit. Shows the preference settings.</td></tr>
+  </table>
+</div>
+<p>Under the properties, the Inspector window lists every asset the definition provides.</p>
+
+</section>
+
+<!-- ====================================== preference ==== -->
+<section id="preference">
+  <h2>Preference settings</h2>
+<p><strong>Has Preference</strong> shows the preference settings, grouped under <strong>Member</strong>,
+  <strong>Context Class</strong> and <strong>Context GameObject</strong>. For a description of each setting, refer to
+  <a href="Choose%20between%20several%20candidates.html#settings">Preference settings</a>.</p>
+
+</section>
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="Provide%20assets.html">Provide assets</a></li>
+    <li><a href="API%20-%20Providing.html#ProvideDefinition">ProvideDefinition API reference</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="Dependencies%20window%20reference.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Dependencies window reference</div>
+  </a>
+  <a class="next" href="Provide%20Tuning%20reference.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Provide Tuning reference</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Selvage v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

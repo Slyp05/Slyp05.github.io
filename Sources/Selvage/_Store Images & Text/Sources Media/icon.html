@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<!-- Asset Store icon, 160x160 (shown at 80x80). No text allowed. Drawn on a 320x320 canvas and
+     rendered at half size by render.sh. -->
+<style>
+  html, body { margin: 0; padding: 0; background: #14223d; }
+  svg { display: block; }
+</style>
+</head>
+<body>
+<svg width="160" height="160" viewBox="0 0 320 320" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Indigo, lighter where the fabric is worn at the centre, deep at the edges. -->
+    <radialGradient id="bg" cx="0.5" cy="0.45" r="0.9">
+      <stop offset="0" stop-color="#34557f"/>
+      <stop offset="0.5" stop-color="#22395e"/>
+      <stop offset="1" stop-color="#121e36"/>
+    </radialGradient>
+    <!-- 3x1 twill: the diagonal ribs of denim. -->
+    <pattern id="twill" width="28" height="28" patternUnits="userSpaceOnUse" patternTransform="rotate(-62)">
+      <rect width="28" height="10" fill="#9fb6d6"/>
+    </pattern>
+    <!-- Slub and fade: irregular light flecks of the white weft showing through. -->
+    <filter id="heather" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.28 0.04" numOctaves="3" seed="7" result="n"/>
+      <feColorMatrix in="n" type="matrix" values="0 0 0 0 0.85  0 0 0 0 0.9  0 0 0 0 1  0 0 0 1.6 -0.9"/>
+    </filter>
+    <!-- The weft's own outline (casing and fill), so the over-patches keep its rounded ends. -->
+    <mask id="weftCasing" maskUnits="userSpaceOnUse" x="0" y="0" width="320" height="320">
+      <path d="M66 84 H254 M66 160 H254 M66 236 H254" stroke="#fff" stroke-width="64" stroke-linecap="round" fill="none"/>
+    </mask>
+    <mask id="weftFill" maskUnits="userSpaceOnUse" x="0" y="0" width="320" height="320">
+      <path d="M66 84 H254 M66 160 H254 M66 236 H254" stroke="#fff" stroke-width="52" stroke-linecap="round" fill="none"/>
+    </mask>
+  </defs>
+
+    <rect width="320" height="320" fill="url(#bg)"/>
+  <rect width="320" height="320" fill="url(#twill)" opacity="0.10"/>
+  <rect width="320" height="320" filter="url(#heather)" opacity="0.22"/>
+
+  <!-- A 3x3 basket weave: warp in three provider colours, weft in three warm colours, every crossing
+     alternating over and under. Weft first, then warp, then patches where the weft lies on top. -->
+  <g stroke-linecap="round" fill="none">
+    <path d="M66 84 H254" stroke="#142440" stroke-width="64"/>
+    <path d="M66 84 H254" stroke="#fab387" stroke-width="52"/>
+    <path d="M66 160 H254" stroke="#142440" stroke-width="64"/>
+    <path d="M66 160 H254" stroke="#f9e2af" stroke-width="52"/>
+    <path d="M66 236 H254" stroke="#142440" stroke-width="64"/>
+    <path d="M66 236 H254" stroke="#f5c2e7" stroke-width="52"/>
+    <path d="M84 66 V254" stroke="#142440" stroke-width="64"/>
+    <path d="M84 66 V254" stroke="#89b4fa" stroke-width="52"/>
+    <path d="M160 66 V254" stroke="#142440" stroke-width="64"/>
+    <path d="M160 66 V254" stroke="#cba6f7" stroke-width="52"/>
+    <path d="M236 66 V254" stroke="#142440" stroke-width="64"/>
+    <path d="M236 66 V254" stroke="#94e2d5" stroke-width="52"/>
+  </g>
+  <rect x="48" y="128" width="72" height="64" fill="#142440" mask="url(#weftCasing)"/>
+  <rect x="48" y="134" width="72" height="52" fill="#f9e2af" mask="url(#weftFill)"/>
+  <rect x="124" y="52" width="72" height="64" fill="#142440" mask="url(#weftCasing)"/>
+  <rect x="124" y="58" width="72" height="52" fill="#fab387" mask="url(#weftFill)"/>
+  <rect x="124" y="204" width="72" height="64" fill="#142440" mask="url(#weftCasing)"/>
+  <rect x="124" y="210" width="72" height="52" fill="#f5c2e7" mask="url(#weftFill)"/>
+  <rect x="200" y="128" width="72" height="64" fill="#142440" mask="url(#weftCasing)"/>
+  <rect x="200" y="134" width="72" height="52" fill="#f9e2af" mask="url(#weftFill)"/>
+</svg>
+</body>
+</html>

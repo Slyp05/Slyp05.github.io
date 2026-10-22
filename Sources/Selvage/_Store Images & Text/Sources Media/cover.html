@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<!-- Asset Store cover image, 1950x1300. Rendered to PNG by render.sh (headless Chrome). -->
+<style>
+  html, body { margin: 0; padding: 0; background: #14223d; }
+  svg { display: block; }
+  .title   { font-family: "Segoe UI Variable Display", "Segoe UI", sans-serif; font-weight: 700; }
+  .tagline { font-family: "Segoe UI Variable Display", "Segoe UI", sans-serif; font-weight: 400; }
+</style>
+</head>
+<body>
+<svg width="1950" height="1300" viewBox="0 0 1950 1300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Indigo, lighter where the fabric is worn at the centre, deep at the edges. -->
+    <radialGradient id="bg" cx="0.62" cy="0.45" r="0.9">
+      <stop offset="0" stop-color="#34557f"/>
+      <stop offset="0.5" stop-color="#22395e"/>
+      <stop offset="1" stop-color="#121e36"/>
+    </radialGradient>
+
+    <!-- 3x1 twill: the diagonal ribs of denim. -->
+    <pattern id="twill" width="14" height="14" patternUnits="userSpaceOnUse" patternTransform="rotate(-62)">
+      <rect width="14" height="5" fill="#9fb6d6"/>
+    </pattern>
+
+    <!-- Slub and fade: irregular light flecks of the white weft showing through. -->
+    <filter id="heather" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.55 0.08" numOctaves="3" seed="7" result="n"/>
+      <feColorMatrix in="n" type="matrix" values="0 0 0 0 0.85  0 0 0 0 0.9  0 0 0 0 1  0 0 0 1.6 -0.9"/>
+    </filter>
+
+    <linearGradient id="titleGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#f2efe6"/>
+      <stop offset="1" stop-color="#d6e2f5"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1950" height="1300" fill="url(#bg)"/>
+  <rect width="1950" height="1300" fill="url(#twill)" opacity="0.10"/>
+  <rect width="1950" height="1300" filter="url(#heather)" opacity="0.22"/>
+
+  <!-- Text block: title and tagline only, per Asset Store cover rules. -->
+  <text class="title" x="111" y="640" font-size="210" fill="url(#titleGrad)" letter-spacing="-4">Selvage</text>
+  <text class="tagline" x="121" y="748" font-size="50" fill="#e8ecf4">Native dependency injection for Unity</text>
+  <text class="tagline" x="121" y="830" font-size="38" fill="#b9c6db">Adapts to your project, not the other way around.</text>
+
+  <!-- Illustration at 0.78 scale. Text and context card both sit 121 px from their edge of the canvas. -->
+  <image href="illustration.svg" x="1113" y="308" width="749" height="624"/>
+
+  <image href="selvage.svg" x="0" y="1196" width="1950" height="104"/>
+</svg>
+</body>
+</html>

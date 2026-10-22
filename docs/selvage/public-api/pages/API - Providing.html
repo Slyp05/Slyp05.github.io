@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Namespace Selvage.Providers, assembly Selvage. Explained in Provide dependencies." />
+  <title>Selvage - Public API - Providing</title>
+  <link rel="stylesheet" href="/assets/css/doc-styles.css" />
+  <link rel="stylesheet" href="/assets/css/selvage.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <nav>
+    <a href="../index.html">Overview</a>
+    <a class="nav-band" href="API%20-%20Consuming.html">Consuming</a>
+    <a class="nav-band active" href="API%20-%20Providing.html" aria-current="page">Providing</a>
+    <div class="nav-group">Common</div>
+    <div class="nav-group-body">
+      <a href="#Injector"><span class="badge badge-static">static</span>Injector</a>
+      <a href="#LocalDependencies"><span class="badge badge-struct">struct</span>LocalDependencies</a>
+      <a href="#Lifetime"><span class="badge badge-enum">enum</span>Lifetime</a>
+      <a href="#IPreference"><span class="badge badge-interface">iface</span>IPreference</a>
+    </div>
+    <div class="nav-group">Scene</div>
+    <div class="nav-group-body">
+      <a href="#SceneProvider"><span class="badge badge-class">sealed</span>SceneProvider</a>
+      <a href="#Reach"><span class="badge badge-enum">enum</span>Reach</a>
+      <a href="#ProvideTuning"><span class="badge badge-mb">MB</span>ProvideTuning</a>
+      <a href="#WhenDeactivated"><span class="badge badge-enum">enum</span>WhenDeactivated</a>
+    </div>
+    <div class="nav-group">Attributes</div>
+    <div class="nav-group-body">
+      <a href="#AttributeProvider"><span class="badge badge-class">sealed</span>AttributeProvider</a>
+      <a href="#ProvideAttribute"><span class="badge badge-class">attr</span>ProvideAttribute</a>
+      <a href="#PreferenceAttribute"><span class="badge badge-class">attr</span>PreferenceAttribute</a>
+    </div>
+    <div class="nav-group">Registry</div>
+    <div class="nav-group-body">
+      <a href="#RegistryProvider"><span class="badge badge-class">sealed</span>RegistryProvider</a>
+      <a href="#RegistryProviderOfT"><span class="badge badge-class">abstract</span>RegistryProvider&lt;TSelf&gt;</a>
+      <a href="#Preference"><span class="badge badge-class">sealed</span>Preference</a>
+    </div>
+    <div class="nav-group">Assets</div>
+    <div class="nav-group-body">
+      <a href="#AssetProvider"><span class="badge badge-class">sealed</span>AssetProvider</a>
+      <a href="#ProvideDefinition"><span class="badge badge-class">sealed</span>ProvideDefinition</a>
+      <a href="#AssetSelection"><span class="badge badge-enum">enum</span>AssetSelection</a>
+    </div>
+    <div class="nav-group">Other</div>
+    <div class="nav-group-body">
+      <a href="#IResettable"><span class="badge badge-interface">iface</span>IResettable</a>
+    </div>
+    <a class="nav-band" href="API%20-%20Extending.html">Extending</a>
+    <a class="nav-band" href="API%20-%20Compatibility.html">Compatibility</a>
+  </nav>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Public API <span class="tag">Providing</span></h1>
+      <div class="sub">Namespace <code>Selvage.Providers</code>, assembly <code>Selvage</code>. Explained in <a href="../../user-manual/pages/Provide%20dependencies.html">Provide dependencies</a>.</div>
+    </div>
+
+    <div class="module-band band-first"><span class="band-name">Providing</span><span class="band-desc">The four providers that ship with Selvage, one for each place a dependency can live, and the types you write to use them.</span></div>
+
+    <h2 class="api-group">Common</h2>
+
+    <!-- Injector -->
+    <div class="type-section" id="Injector">
+      <div class="type-header"><h3>Injector</h3><span class="badge badge-static">static</span></div>
+      <p class="type-desc">Access to the provider list from code, and to the dependencies its providers supply. Call it on the Unity main thread.</p>
+      <div class="member-group">
+        <div class="member-group-title">Static properties</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t">IReadOnlyList</span>&lt;<span class="t">Provider</span>&gt; <span class="mn">Providers</span> { get; }</th><td>Every provider in the list, in the order they are tried, disabled ones included.</td></tr>
+        </table>
+      </div>
+      <div class="member-group">
+        <div class="member-group-title">Static methods</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="kw">void</span> <span class="mn">AddFirst</span>(<span class="t">Provider</span> provider)</th><td>Adds a provider at the front of the list, so it is tried before every other; the provider added most recently is tried first. Use it for a provider that must win, such as a test double. A provider added in Edit mode stays until it is removed, one added in Play mode is removed when you exit Play mode, and one added during a test is removed when the test ends. <span class="ex">Throws ArgumentNullException when the provider is null. Throws ArgumentException when it is already added, when its class does not override exactly one of Provide and ProvideAsync, or when it overrides both TearDown and TearDownAsync.</span></td></tr>
+          <tr><th scope="row"><span class="kw">void</span> <span class="mn">AddLast</span>(<span class="t">Provider</span> provider)</th><td>Adds a provider at the end of the list, so it is tried only after every other declined. It is removed under the same rules as one added with <code>AddFirst</code>. <span class="ex">Throws the same exceptions as AddFirst.</span></td></tr>
+          <tr><th scope="row"><span class="kw">void</span> <span class="mn">Remove</span>(<span class="t">Provider</span> provider)</th><td>Removes a provider added with <code>AddFirst</code> or <code>AddLast</code>. Does nothing for a provider that was not added. <span class="ex">Throws ArgumentNullException when the provider is null.</span></td></tr>
+          <tr><th scope="row"><span class="t">LocalDependencies</span> <span class="mn">Local</span>&lt;<span class="t">T</span>&gt;(<span class="t">T</span> dependency)<br><span class="t">LocalDependencies</span> <span class="mn">Local</span>&lt;<span class="t">T1</span>, ..., <span class="t">T8</span>&gt;(<span class="t">T1</span> first, ..., <span class="t">T8</span> eighth)</th><td>Opens a local block that gives one to eight objects to everything created inside it, by <code>new</code> or <code>Instantiate</code>: <code>using (Injector.Local(shot)) Instantiate(bulletPrefab);</code>. What a block gives is tried before the provider list, and matches members like any other dependency. The Validation tab shows a member that a block with an object of that type could supply as <strong>May Be Supplied</strong>. Returns the open block; dispose it to end the block. <span class="ex">Throws ArgumentNullException when one of the objects is null.</span></td></tr>
+          <tr><th scope="row"><span class="t">LocalDependencies</span> <span class="mn">Local</span>(<span class="kw">params</span> <span class="t">object</span>[] dependencies)</th><td>Opens a local block that gives any number of objects, as the typed overloads do. <span class="ex">Throws ArgumentNullException when the array or one of the objects is null.</span></td></tr>
+        </table>
+      </div>
+      <div class="member-group">
+        <div class="member-group-title">Static events</div>
+        <div class="note">Raised for every provider, on the Unity main thread, with the dependency and the provider that supplied it. A dependency a provider creates goes through all four, in this order: <code>Created</code>, <code>FirstInjected</code>, <code>LastReleased</code>, <code>TornDown</code>. A handler that throws is logged, and the other handlers still run.</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="kw">event</span> <span class="t">Action</span>&lt;<span class="t">object</span>, <span class="t">Provider</span>&gt; <span class="mn">Created</span></th><td>Raised when a provider creates a dependency (<code>Supply.Owned</code>), before any member receives it.</td></tr>
+          <tr><th scope="row"><span class="kw">event</span> <span class="t">Action</span>&lt;<span class="t">object</span>, <span class="t">Provider</span>&gt; <span class="mn">FirstInjected</span></th><td>Raised when a dependency is injected into a member while no other member holds it. Raised for every dependency, created or borrowed.</td></tr>
+          <tr><th scope="row"><span class="kw">event</span> <span class="t">Action</span>&lt;<span class="t">object</span>, <span class="t">Provider</span>&gt; <span class="mn">LastReleased</span></th><td>Raised when the last member holding a dependency releases it. Raised for every dependency, created or borrowed. A created one is still intact and is torn down next; a borrowed <code>UnityEngine.Object</code> may already have been destroyed by its owner.</td></tr>
+          <tr><th scope="row"><span class="kw">event</span> <span class="t">Action</span>&lt;<span class="t">object</span>, <span class="t">Provider</span>&gt; <span class="mn">TornDown</span></th><td>Raised when Selvage ends an owned dependency, by destroying or disposing it.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- LocalDependencies -->
+    <div class="type-section" id="LocalDependencies">
+      <div class="type-header"><h3>LocalDependencies</h3><span class="badge badge-struct">struct</span></div>
+      <p class="type-desc">An open local block, returned by <a href="#Injector"><code>Injector.Local</code></a>. Everything that runs inside the block gets its dependencies: code that awaits, coroutines started or yielding inside it, threads started inside it, and an object instantiated inside it while inactive, once it is turned on. A context keeps what it got after the block ends, and gets the same objects again when it is reinjected. An object lent from a <code>Lifetime.Pooled</code> pool inside the block also gets them, and so does one reinjected inside it with <code>Manual.Reinject</code>, such as an object reused from your own <code>ObjectPool&lt;T&gt;</code>; any other context that already existed does not. In nested blocks, the inner block's dependencies win. Selvage never destroys what you give a block.</p>
+      <div class="member-group">
+        <div class="member-group-title">Public methods</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="kw">void</span> <span class="mn">Dispose</span>()</th><td>Ends the block. A block that is never ended is logged as an error and ended at the end of the frame.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- Lifetime -->
+    <div class="type-section" id="Lifetime">
+      <div class="type-header"><h3>Lifetime</h3><span class="badge badge-enum">enum</span></div>
+      <p class="type-desc">How many objects something you provide gives. To give each member its own, Selvage constructs your class, calls the function you added to a registry, copies a Unity object with <code>Instantiate</code>, or calls <code>Clone()</code> on an object that implements <code>ICloneable</code>.</p>
+      <div class="member-group"><table class="mt">
+        <tr><th scope="row"><span class="mn">Shared</span></th><td>Every member gets the same object. This is the default.</td></tr>
+        <tr><th scope="row"><span class="mn">Separate</span></th><td>Each member gets its own object, made each time the member is injected or reinjected, and destroyed or disposed when the member releases it.</td></tr>
+        <tr><th scope="row"><span class="mn">Pooled</span></th><td>Each member gets its own object, lent from a pool that grows as needed and given back to it when the member releases it. A lent object is injected again before the member gets it. A GameObject is turned off while it waits in the pool. Implement <a href="#IResettable"><code>IResettable</code></a> to reset an object between uses.</td></tr>
+      </table></div>
+    </div>
+
+    <!-- IPreference -->
+    <div class="type-section" id="IPreference">
+      <div class="type-header"><h3>IPreference</h3><span class="badge badge-interface">iface</span></div>
+      <p class="type-desc">Settings that say which members get something when several things could be injected into them, such as which of two cameras the <code>Hud</code> gets. Each provider takes a preference in its own form: <a href="#ProvideTuning"><code>ProvideTuning</code></a> on a scene object, <a href="#PreferenceAttribute"><code>PreferenceAttribute</code></a> on a class, <a href="#Preference"><code>Preference</code></a> for a registration, and <a href="#ProvideDefinition"><code>ProvideDefinition</code></a> for assets.</p>
+      <p class="type-desc">Set only the settings you need: a member matches when every setting set matches it. In a text setting, <code>*</code> stands for any text: <code>"*Camera"</code>, <code>"Enemy*"</code>. A member with only one possible dependency gets it whatever the preferences say, so a preference never takes a dependency away. When several preferences match, the one that says everything the others say and more wins: a derived <code>ContextType</code> or <code>MemberAttribute</code>, an inner <code>Namespace</code> or <code>Under</code> path, or a value another's pattern matches says more. When none wins, an error names them. A preference with no settings matches every member. Without a match, something with no preference is chosen before something whose preference doesn't match.</p>
+      <div class="member-group">
+        <div class="member-group-title">Properties</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t">Type</span> <span class="mn">ContextType</span> { get; }</th><td>Matches members of a context of this type, or of a type deriving from it or implementing it. An open generic type such as <code>typeof(Repository&lt;&gt;)</code> stands for every type made from it.</td></tr>
+          <tr><th scope="row"><span class="t">Type</span> <span class="mn">AskedAs</span> { get; }</th><td>Matches members that ask for exactly this type, such as <code>IAudio</code> for a class that is both an <code>IAudio</code> and an <code>IMusic</code>. An open generic type stands for every type made from it.</td></tr>
+          <tr><th scope="row"><span class="t">string</span> <span class="mn">MemberName</span> { get; }</th><td>Matches members with this name. Case and a leading <code>m_</code> or <code>_</code> are ignored, in the name and in the setting alike, so no pattern tells <code>_music</code> from <code>music</code>.</td></tr>
+          <tr><th scope="row"><span class="t">Type</span> <span class="mn">MemberAttribute</span> { get; }</th><td>Matches members that carry an attribute of this class, or of a class deriving from it, such as <code>typeof(SerializeField)</code> or one of your own. Only the attribute's class counts, not its arguments.</td></tr>
+          <tr><th scope="row"><span class="t">object</span> <span class="mn">Channel</span> { get; }</th><td>Matches members whose channel is this value.</td></tr>
+          <tr><th scope="row"><span class="t">string</span> <span class="mn">Namespace</span> { get; }</th><td>Matches contexts whose class is in this namespace, or in a namespace inside it.</td></tr>
+          <tr><th scope="row"><span class="t">string</span> <span class="mn">Assembly</span> { get; }</th><td>Matches contexts whose class is in the assembly with this name.</td></tr>
+          <tr><th scope="row"><span class="t">string</span> <span class="mn">Tag</span> { get; }</th><td>Matches contexts whose GameObject has this tag.</td></tr>
+          <tr><th scope="row"><span class="t">string</span> <span class="mn">Layer</span> { get; }</th><td>Matches contexts whose GameObject is on this layer.</td></tr>
+          <tr><th scope="row"><span class="t">string</span> <span class="mn">Scene</span> { get; }</th><td>Matches contexts whose GameObject is in the scene with this name.</td></tr>
+          <tr><th scope="row"><span class="t">string</span> <span class="mn">Under</span> { get; }</th><td>Matches contexts whose GameObject is at this path from its scene's root, or below it: <code>"UI/HUD"</code>. A <code>/</code> inside a GameObject's name counts as a level of the path.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <h2 class="api-group">Scene</h2>
+
+    <!-- SceneProvider -->
+    <div class="type-section" id="SceneProvider">
+      <div class="type-header"><h3>SceneProvider</h3><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">Shipped provider that gives members the objects already in a loaded scene: a component, or any object of the requested type. A found object is shared and never destroyed by Selvage, unless a <a href="#ProvideTuning"><code>ProvideTuning</code></a> on it sets another lifetime. When several objects could be injected into a member, a <code>ProvideTuning</code> preference on one of them decides first; otherwise the object closest to the context wins, and two objects equally close are an error that names both.</p>
+      <div class="member-group">
+        <div class="member-group-title">Properties</div>
+        <table class="mt">
+          <tr><th scope="row"><a href="#Reach"><span class="t">Reach</span></a> <span class="mn">Reach</span> { get; set; }</th><td>How far from the context the provider looks.</td></tr>
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">ParentsFirst</span> { get; set; }</th><td>Whether parents are checked before children, when the reach includes the hierarchy. On by default. On each side, the closest object wins.</td></tr>
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">IncludeInactive</span> { get; set; }</th><td>Whether objects that are turned off can be found.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- Reach -->
+    <div class="type-section" id="Reach">
+      <div class="type-header"><h3>Reach</h3><span class="badge badge-enum">enum</span></div>
+      <p class="type-desc">How far <a href="#SceneProvider"><code>SceneProvider</code></a> looks from the context. Each step also covers the steps before it.</p>
+      <div class="member-group"><table class="mt">
+        <tr><th scope="row"><span class="mn">Self</span></th><td>The context's own GameObject.</td></tr>
+        <tr><th scope="row"><span class="mn">Hierarchy</span></th><td>Also its parents and children.</td></tr>
+        <tr><th scope="row"><span class="mn">Scene</span></th><td>Also the rest of its scene.</td></tr>
+        <tr><th scope="row"><span class="mn">AllScenes</span></th><td>Also every other loaded scene. A plain C# class is not on a GameObject or in a scene, so this is the only step that finds anything for it.</td></tr>
+      </table></div>
+    </div>
+
+    <!-- ProvideTuning -->
+    <div class="type-section" id="ProvideTuning">
+      <div class="type-header"><h3>ProvideTuning</h3><span class="badge badge-mb">MB</span><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">Component that sets how <a href="#SceneProvider"><code>SceneProvider</code></a> provides the scene object it is on. Add it with <strong>Add Component</strong> &gt; <strong>Selvage</strong> &gt; <strong>Provide Tuning</strong>; a GameObject holds at most one. Without it, the object is shared and not watched. With <code>HasPreference</code> on, it also says which members get this object when several objects could be injected into them. Implements <a href="#IPreference"><code>IPreference</code></a>, which lists its preference settings; the <code>Channel</code> setting is stored as text, and matches a member's channel written as text, such as the name of an enum value.</p>
+      <div class="member-group">
+        <div class="member-group-title">Properties</div>
+        <table class="mt">
+          <tr><th scope="row"><a href="#Lifetime"><span class="t">Lifetime</span></a> <span class="mn">Lifetime</span> { get; set; }</th><td>The object's lifetime, Shared by default. Separate and Pooled give each member a copy of this object: its whole GameObject, duplicated beside it.</td></tr>
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">Watched</span> { get; set; }</th><td>Whether members follow this object appearing and leaving, in Play mode. Off by default. When it is destroyed, every member holding it drops it on the next frame: a <code>Reactive</code> member receives a replacement when one exists, and any other member returns to its default. When it is enabled, <code>Reactive</code> members are injected again, and may move to it. When its GameObject is deactivated, <code>WhenDeactivated</code> applies. Turning this component off announces nothing.</td></tr>
+          <tr><th scope="row"><a href="#WhenDeactivated"><span class="t">WhenDeactivated</span></a> <span class="mn">WhenDeactivated</span> { get; set; }</th><td>What a watched object does to the members holding it when its GameObject is deactivated. <code>WhenDeactivated.Keep</code> by default.</td></tr>
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">HasPreference</span> { get; set; }</th><td>Whether the object has a preference. Off by default: the preference settings are then ignored, and hidden in the Inspector window.</td></tr>
+        </table>
+      </div>
+      <div class="note"><span class="ex">Setting <code>MemberAttribute</code> to a class that is not an attribute class throws ArgumentException.</span></div>
+    </div>
+
+    <!-- WhenDeactivated -->
+    <div class="type-section" id="WhenDeactivated">
+      <div class="type-header"><h3>WhenDeactivated</h3><span class="badge badge-enum">enum</span></div>
+      <p class="type-desc">What a watched scene object does to the members holding it when its GameObject is deactivated, set on its <a href="#ProvideTuning"><code>ProvideTuning</code></a>.</p>
+      <div class="member-group"><table class="mt">
+        <tr><th scope="row"><span class="mn">Keep</span></th><td>Members keep it: a <code>Reactive</code> member is injected again from the whole provider list, and any other member keeps the object.</td></tr>
+        <tr><th scope="row"><span class="mn">Revoke</span></th><td>Every member drops it on the next frame, as when the object is destroyed: a <code>Reactive</code> member receives a replacement when one exists, and any other member returns to its default.</td></tr>
+      </table></div>
+    </div>
+
+    <h2 class="api-group">Attributes</h2>
+
+    <!-- AttributeProvider -->
+    <div class="type-section" id="AttributeProvider">
+      <div class="type-header"><h3>AttributeProvider</h3><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">Shipped provider that gives members an instance of each class marked <a href="#ProvideAttribute"><code>[Provide]</code></a>, for every type the class is: the class itself, its base classes and its interfaces. What it gives is known before you enter Play mode, so the Editor can confirm these members will be injected. A class in a test assembly, an Editor assembly, or an assembly limited to some platforms replaces one from your main code while that assembly applies. The provider list holds at most one.</p>
+    </div>
+
+    <!-- ProvideAttribute -->
+    <div class="type-section" id="ProvideAttribute">
+      <div class="type-header"><h3>ProvideAttribute</h3><span class="badge badge-class">attr</span><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">Marks a plain C# class to be provided by <a href="#AttributeProvider"><code>AttributeProvider</code></a>: <code>[Provide]</code>, or <code>[Provide(Lifetime.Pooled)]</code>. A shared instance is created the first time a member needs it, and ended once no member holds it. A generic class is provided for every closed type it can become, as in <code>[Provide] class Repository&lt;T&gt; : IRepository&lt;T&gt;</code>; a non-generic class for the same type wins over it.</p>
+      <p class="type-desc">The class must not be abstract or static, and needs a constructor without parameters, which may be private. A Unity object (a component, a <code>ScriptableObject</code>, any asset) cannot be marked: put a component in a scene, and an asset in a folder with a <a href="#ProvideDefinition"><code>ProvideDefinition</code></a>. Code analysis reports a class that breaks these rules (<a href="../../user-manual/pages/Diagnostics.html#slv0007">SLV0007</a>).</p>
+      <div class="member-group">
+        <div class="member-group-title">Constructors</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="mn">ProvideAttribute</span>(<span class="t">Lifetime</span> lifetime = <span class="t">Lifetime</span>.Shared)</th><td>Marks the class to be provided, with the lifetime of its instances.</td></tr>
+        </table>
+      </div>
+      <div class="member-group">
+        <div class="member-group-title">Properties</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t">Lifetime</span> <span class="mn">Lifetime</span> { get; }</th><td>The lifetime of the class's instances.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- PreferenceAttribute -->
+    <div class="type-section" id="PreferenceAttribute">
+      <div class="type-header"><h3>PreferenceAttribute</h3><span class="badge badge-class">attr</span><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">Says which members get a class marked <code>[Provide]</code> when several classes could be injected into them: <code>[Provide, Preference(ContextType = typeof(Hud))]</code>. Several on one class give one instance for each. Implements <a href="#IPreference"><code>IPreference</code></a>, which lists its settings.</p>
+    </div>
+
+    <h2 class="api-group">Registry</h2>
+
+    <!-- RegistryProvider -->
+    <div class="type-section" id="RegistryProvider">
+      <div class="type-header"><h3>RegistryProvider</h3><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">Shipped provider that gives members what your code adds to it. Reach the one in the provider list with <code>RegistryProvider.Listed</code>: <code>RegistryProvider.Listed.Add&lt;IAudio&gt;(() =&gt; new Audio());</code>, for example from a <code>[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]</code> method. What you add is given to members of its type, its base classes and its interfaces. Nothing you add is saved, and what you add in Play mode is removed when you exit Play mode. Its members are those of <a href="#RegistryProviderOfT"><code>RegistryProvider&lt;TSelf&gt;</code></a>.</p>
+    </div>
+
+    <!-- RegistryProvider<TSelf> -->
+    <div class="type-section" id="RegistryProviderOfT">
+      <div class="type-header"><h3>RegistryProvider&lt;TSelf&gt;</h3><span class="badge badge-class">abstract</span></div>
+      <p class="type-desc">Base class of every registry. For a registry of your own, derive a class from it with itself as <code>TSelf</code>, mark it <code>[Serializable]</code>, and add it to the provider list where it should be tried: <code>[Serializable] public sealed class Cheats : RegistryProvider&lt;Cheats&gt; { }</code>, then <code>Cheats.Listed.Add&lt;IDamage&gt;(new GodMode());</code>. The list holds at most one of each registry class. A registry created with <code>new</code> and added with <code>Injector.AddFirst</code> or <code>Injector.AddLast</code> is never <code>Listed</code>. Code analysis reports a class that passes another class as <code>TSelf</code> (<a href="../../user-manual/pages/Diagnostics.html#slv0005">SLV0005</a>), and the provider list leaves it out.</p>
+      <div class="member-group">
+        <div class="member-group-title">Static properties</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t">TSelf</span> <span class="mn">Listed</span> { get; }</th><td>The <code>TSelf</code> in the provider list, enabled or not. It stays the same object until scripts are reloaded. In a build, the provider list loads before the first scene, so read it from <code>RuntimeInitializeLoadType.BeforeSceneLoad</code> on. <span class="ex">Throws InvalidOperationException when the provider list has no TSelf or, in a build, when read before the list has loaded.</span></td></tr>
+        </table>
+      </div>
+      <div class="member-group">
+        <div class="member-group-title">Public methods</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="kw">void</span> <span class="mn">Add</span>&lt;<span class="t">T</span>&gt;(<span class="t">T</span> dependency, <span class="t">Lifetime</span> lifetime = <span class="t">Lifetime</span>.Shared, <span class="t">Preference</span> preference = <span class="kw">null</span>, <span class="t">bool</span> canRevoke = <span class="kw">false</span>)</th><td>Adds an object you already have, given to members of <code>T</code> and of every base class and interface of <code>T</code>. A Unity object destroyed later is removed, with a warning. Shared, the object is never destroyed for you; Separate or Pooled, members get copies of it: a Unity object is copied with <code>Instantiate</code>, a plain object with its <code>Clone()</code>, so it must implement <code>ICloneable</code>. <code>canRevoke</code> lets a removal with <code>revoked: true</code> revoke what this entry gave, from every member holding it; each injection of it into a member that is not <code>Reactive</code> then costs a little more. <span class="ex">Throws ArgumentNullException when the dependency is null, and ArgumentException when the lifetime asks for copies of an object that cannot be copied.</span></td></tr>
+          <tr><th scope="row"><span class="kw">void</span> <span class="mn">Add</span>&lt;<span class="t">T</span>&gt;(<span class="t">Func</span>&lt;<span class="t">T</span>&gt; create, <span class="t">Lifetime</span> lifetime = <span class="t">Lifetime</span>.Shared, <span class="t">Preference</span> preference = <span class="kw">null</span>, <span class="t">bool</span> canRevoke = <span class="kw">false</span>)</th><td>Adds what <code>create</code> makes, given to members of <code>T</code> and of every base class and interface of <code>T</code>. <code>create</code> is called once for a shared object, or for each member that needs its own. Selvage ends what it makes once no member holds it, so return a new object, never one that exists elsewhere. Returning null declines, and the next provider is tried. <code>canRevoke</code> is as for the other overload. <span class="ex">Throws ArgumentNullException when create is null.</span></td></tr>
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">Remove</span>(<span class="t">object</span> dependency, <span class="t">bool</span> revoked = <span class="kw">false</span>)</th><td>Removes what was added with <code>dependency</code>, the same object, and ends the objects waiting in its pool. A <code>Reactive</code> member holding what it gave is injected again from the whole provider list, and any other member keeps it. With <code>revoked</code>, for an entry added with <code>canRevoke: true</code>, every member holding what it gave drops it on the next frame: a <code>Reactive</code> one receives a replacement when one exists, and any other returns to its default. For an entry added without it, Selvage logs a warning and doesn't revoke: members are reached as after any removal. Returns whether anything was removed. <span class="ex">Throws ArgumentNullException when the dependency is null.</span></td></tr>
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">Remove</span>&lt;<span class="t">T</span>&gt;(<span class="t">Func</span>&lt;<span class="t">T</span>&gt; create, <span class="t">bool</span> revoked = <span class="kw">false</span>)</th><td>Removes what was added with <code>create</code>: the same method, or the delegate passed to <code>Add</code>. A function written inline in the <code>Add</code> call cannot be passed again, so only <code>Clear</code> removes it. Otherwise as <code>Remove(dependency)</code>. <span class="ex">Throws ArgumentNullException when create is null.</span></td></tr>
+          <tr><th scope="row"><span class="kw">void</span> <span class="mn">Clear</span>(<span class="t">bool</span> revoked = <span class="kw">false</span>)</th><td>Removes everything added to this registry, as <code>Remove</code> does for each entry.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- Preference -->
+    <div class="type-section" id="Preference">
+      <div class="type-header"><h3>Preference</h3><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">Says which members get what you add to a registry when several things could be injected into them. Pass one to <code>RegistryProvider.Add</code>: <code>registry.Add(hudCamera, preference: new Preference { ContextType = typeof(Hud) });</code>. Implements <a href="#IPreference"><code>IPreference</code></a>, which lists its settings. <span class="ex">Setting MemberAttribute to a class that is not an attribute class throws ArgumentException.</span></p>
+    </div>
+
+    <h2 class="api-group">Assets</h2>
+
+    <!-- AssetProvider -->
+    <div class="type-section" id="AssetProvider">
+      <div class="type-header"><h3>AssetProvider</h3><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">Shipped provider that gives members the assets the project's <a href="#ProvideDefinition"><code>ProvideDefinition</code></a>s provide. A <code>ScriptableObject</code>, a material or any other asset is given as itself, so changes made to it in Play mode stay; turn on a definition's <code>RuntimeCopy</code> to share a copy instead. A prefab is instantiated, and members get that instance, or the component they ask for on it. What it gives is known before you enter Play mode, so the Editor can confirm these members will be injected.</p>
+      <p class="type-desc">An asset in a <code>Resources</code> folder loads the first time a member needs it. An addressable asset does too, for the members that can wait for it. Any other asset loads when the game starts. The provider list holds at most one.</p>
+    </div>
+
+    <!-- ProvideDefinition -->
+    <div class="type-section" id="ProvideDefinition">
+      <div class="type-header"><h3>ProvideDefinition</h3><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">Asset that provides its folder's assets, or the assets in its list, through the <a href="#AssetProvider"><code>AssetProvider</code></a>. Create one in a folder with <strong>Assets</strong> &gt; <strong>Create</strong> &gt; <strong>Selvage</strong> &gt; <strong>Provide Definition</strong>. Its settings apply to every asset it provides. When two definitions could provide the same asset, the closer one provides it: a definition with the asset in its list, then the one in the deepest folder. Its settings are set in the Inspector. Implements <a href="#IPreference"><code>IPreference</code></a>, which lists its preference settings; the <code>Channel</code> setting is stored as text, and matches a member's channel written as text, such as the name of an enum value.</p>
+      <div class="member-group">
+        <div class="member-group-title">Properties</div>
+        <table class="mt">
+          <tr><th scope="row"><a href="#AssetSelection"><span class="t">AssetSelection</span></a> <span class="mn">Provides</span> { get; }</th><td>Which assets the definition provides. <code>AssetSelection.Folder</code> by default.</td></tr>
+          <tr><th scope="row"><span class="t">IReadOnlyList</span>&lt;<span class="t">Object</span>&gt; <span class="mn">Assets</span> { get; }</th><td>The assets the definition provides when <code>Provides</code> is <code>AssetSelection.List</code>.</td></tr>
+          <tr><th scope="row"><a href="#Lifetime"><span class="t">Lifetime</span></a> <span class="mn">Lifetime</span> { get; }</th><td>The lifetime of the provided assets, Shared by default: the asset itself, or one instance of a prefab. Separate and Pooled give each member its own instance of a prefab, or its own runtime copy of any other asset, never saved into the asset.</td></tr>
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">RuntimeCopy</span> { get; }</th><td>Whether, with the Shared lifetime, every member gets one copy of an asset instead of the asset itself, so changes made in Play mode never reach the asset. Off by default. A prefab is always given as an instance.</td></tr>
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">HasPreference</span> { get; }</th><td>Whether the provided assets have a preference. Off by default: the preference settings are then ignored, and hidden in the Inspector window.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- AssetSelection -->
+    <div class="type-section" id="AssetSelection">
+      <div class="type-header"><h3>AssetSelection</h3><span class="badge badge-enum">enum</span></div>
+      <p class="type-desc">Which assets a <a href="#ProvideDefinition"><code>ProvideDefinition</code></a> provides.</p>
+      <div class="member-group"><table class="mt">
+        <tr><th scope="row"><span class="mn">Folder</span></th><td>Every asset in the folder that holds the definition. This is the default.</td></tr>
+        <tr><th scope="row"><span class="mn">FolderAndSubfolders</span></th><td>Every asset in the folder that holds the definition, and in the folders inside it.</td></tr>
+        <tr><th scope="row"><span class="mn">List</span></th><td>The assets in the definition's <code>Assets</code> list, wherever they are.</td></tr>
+      </table></div>
+    </div>
+
+    <h2 class="api-group">Other</h2>
+
+    <!-- IResettable -->
+    <div class="type-section" id="IResettable">
+      <div class="type-header"><h3>IResettable</h3><span class="badge badge-interface">iface</span></div>
+      <p class="type-desc">Interface for a <code>Lifetime.Pooled</code> object that resets itself between uses. Implementing it is optional: a pooled GameObject is also turned off when given back and on when lent, so its <code>OnDisable</code> and <code>OnEnable</code> run.</p>
+      <div class="member-group">
+        <div class="member-group-title">Public methods</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">TryReset</span>()</th><td>Called when the member holding the object releases it, before the object goes back in the pool; its dependencies are still there. Put the object back in the state it had when first made, and return true. Return false when it cannot be reset: it is then destroyed or disposed instead of reused.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="doc-footer">Selvage v1.0.0 &nbsp;&middot;&nbsp; For full signatures and remarks, refer to the XML doc comments in the source.</div>
+
+  </main>
+</div>
+</body>
+</html>

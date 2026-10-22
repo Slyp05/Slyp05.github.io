@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Accept a missing dependency, wait for one that loads, follow replacements, and choose when a member is injected." />
+  <title>Selvage - Options</title>
+  <link rel="stylesheet" href="/assets/css/doc-styles.css" />
+  <link rel="stylesheet" href="/assets/css/selvage.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Selvage</div><a href="../index.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Options</h1>
+      <div class="sub">Accept a missing dependency, wait for one that loads, follow replacements, and choose when a member is injected.</div>
+      <div class="guide-index">
+        <a href="#questions">Choose an option</a>
+        <a href="#optional">Optional</a>
+        <a href="#manual">Manual</a>
+        <a href="#editmode">EditMode</a>
+        <a href="#overwrite">Overwrite</a>
+        <a href="#async">Async</a>
+        <a href="#reactive">Reactive</a>
+        <a href="#warm">Warm</a>
+        <a href="#weak">Weak</a>
+      </div>
+    </div>
+
+<!-- ====================================== questions ==== -->
+<section id="questions">
+  <h2>Choose an option</h2>
+<p>Options are properties of the <code>[Inject]</code> attribute. To set several, separate them with commas:
+  <code>[Inject(Optional = true, Reactive = true)]</code>. To choose an option, answer the question in its row:</p>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Option</th><th scope="col">Ask yourself</th><th scope="col">What changes in your code</th></tr>
+    <tr><td><a href="#optional"><code>Optional</code></a></td><td>Can my script work without the dependency?</td><td>Check the member for <code>null</code> before you use it.</td></tr>
+    <tr><td><a href="#manual"><code>Manual</code></a></td><td>Do I want to choose when the member is injected?</td><td>Call <code>Manual.Inject</code> when you want it.</td></tr>
+    <tr><td><a href="#editmode"><code>EditMode</code></a></td><td>Do I need the dependency outside Play mode?</td><td>The member is also injected in Edit mode.</td></tr>
+    <tr><td><a href="#overwrite"><code>Overwrite</code></a></td><td>Should a dependency replace the value I assigned?</td><td>Your value comes back when the dependency goes away.</td></tr>
+    <tr><td><a href="#async"><code>Async</code></a></td><td>Can my script wait for the dependency to arrive?</td><td>Wait until the context is ready before you use the member.</td></tr>
+    <tr><td><a href="#reactive"><code>Reactive</code></a></td><td>Should my script follow when the providers give another dependency?</td><td>The member can receive another dependency later. React to the change in the property's <code>set</code> accessor.</td></tr>
+    <tr><td><a href="#warm"><code>Warm</code></a></td><td>Should my script use what's available now, and receive a better dependency later without waiting?</td><td>The member holds what's ready now. Add <code>Reactive</code>, or call <code>Manual.Reinject</code>, to receive the better one once it's prepared.</td></tr>
+    <tr><td><a href="#weak"><code>Weak</code></a></td><td>Should my script hold the dependency without keeping it alive?</td><td>The member returns to its default when nothing else holds the dependency.</td></tr>
+  </table>
+</div>
+<p>To set an option for every member of a class or an assembly, refer to <a href="Inject%20with%20scopes.html#layering">Set
+  options for several members</a>.</p>
+
+</section>
+
+<!-- ====================================== optional ==== -->
+<section id="optional">
+  <h2>Optional</h2>
+<p>A member is required by default: when its dependency is missing, the member fails, and the Console window displays
+  an error. An <code>Optional</code> member keeps its default instead, without an error:</p>
+<pre><code>[Inject(Optional = <span class="kw">true</span>)] <span class="ty">IAnalytics</span> analytics;
+
+<span class="kw">void</span> Start() =&gt; analytics?.Track(<span class="st">"start"</span>);   <span class="cm">// null when no provider gives IAnalytics</span></code></pre>
+<p>To hold a stand-in object instead of <code>null</code>, use <a href="#overwrite"><code>Overwrite</code></a>.</p>
+
+</section>
+
+<!-- ====================================== manual ==== -->
+<section id="manual">
+  <h2>Manual</h2>
+<p>A <code>Manual</code> member is injected only when you call <code>Manual.Inject</code>, such as when you take an
+  object from a pool:</p>
+<pre><code>[Inject(<span class="ty">Manual</span> = <span class="kw">true</span>)] <span class="ty">Player</span> target;
+
+<span class="kw">public</span> <span class="kw">void</span> OnSpawn() =&gt; <span class="ty">Manual</span>.Inject(<span class="kw">this</span>, <span class="kw">nameof</span>(target));
+<span class="kw">public</span> <span class="kw">void</span> OnDespawn() =&gt; <span class="ty">Manual</span>.Release(<span class="kw">this</span>, <span class="kw">nameof</span>(target));</code></pre>
+<p>The <code>Manual</code> class works on any member, not only <code>Manual</code> members:</p>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Method</th><th scope="col">Description</th></tr>
+    <tr><td><code>Manual.Inject(context)</code></td><td>Injects the members that aren't injected yet. Called in <code>Awake</code>, it injects them early.</td></tr>
+    <tr><td><code>Manual.Reinject(context)</code></td><td>Replaces the dependency of each injected member with what the providers give now.</td></tr>
+    <tr><td><code>Manual.Release(context)</code></td><td>Releases the members. The context stays alive, and is no longer ready.</td></tr>
+  </table>
+</div>
+<p>To act on the static members of a class, pass the class's <code>Type</code> as the context. To act on one
+  member only, pass its name, with <code>nameof</code>. A call with nothing to do does nothing. A name
+  that matches no member throws an exception, and code analysis reports it as
+  <a href="Diagnostics.html#slv0102">SLV0102</a>.</p>
+<p>Outside Play mode, <code>Manual.Inject</code> injects only <a href="#editmode"><code>EditMode</code></a> members,
+  and the others wait for Play mode. Passing the name of a required member that isn't <code>EditMode</code> returns
+  a <a href="Wait%20until%20a%20context%20is%20ready.html#operation">failed operation</a>.</p>
+
+</section>
+
+<!-- ====================================== editmode ==== -->
+<section id="editmode">
+  <h2>EditMode</h2>
+<p>Selvage injects members in Play mode and in builds. An <code>EditMode</code> member is also injected in Edit mode,
+  for use in <code>[ExecuteAlways]</code> scripts, ScriptableObjects and Editor tools. A dependency injected in Edit
+  mode stays when you enter Play mode.</p>
+<p>Every provider that ships with Selvage gives dependencies in Edit mode. An object Selvage creates for an
+  <code>EditMode</code> member, such as an instance of a provided prefab, is never saved into your scenes or your
+  project. An object you add to a registry in Edit mode stays until you remove it. An addressable asset loads at once
+  in Edit mode, because Addressables only progresses in Play mode.</p>
+<p>The Live tab of the Dependencies window lists the contexts with <code>EditMode</code> members while you edit. For
+  more information, refer to <a href="Inspect%20injected%20members.html">Inspect injected members</a>.</p>
+
+</section>
+
+<!-- ====================================== overwrite ==== -->
+<section id="overwrite">
+  <h2>Overwrite</h2>
+<p>Selvage injects only a member that holds <code>null</code>. With <code>Overwrite</code>, the dependency replaces
+  the member's value, and the value comes back when the dependency goes away. A member with a value of its own
+  therefore never fails:</p>
+<pre><code>[Inject(Overwrite = <span class="kw">true</span>)] <span class="ty">IAudio</span> audio = <span class="kw">new</span> <span class="ty">SilentAudio</span>();   <span class="cm">// SilentAudio when no provider gives IAudio</span></code></pre>
+
+</section>
+
+<!-- ====================================== async ==== -->
+<section id="async">
+  <h2>Async</h2>
+<p>Some dependencies take time to arrive, such as an Addressables asset. A member can't
+  wait for them unless it's <code>Async</code>: without this option, the member skips such a dependency and receives
+  one from a provider below, or none. An <code>Async</code> member keeps its default until the dependency arrives. To
+  receive one later without waiting, refer to <a href="#warm"><code>Warm</code></a>.</p>
+<p>A context is <strong>ready</strong> once all its members are injected, including its <code>Async</code> members.
+  Before you use an <code>Async</code> member, wait until its context is ready.</p>
+<p>The <code>Context</code> class tells you when a context is ready. The following example waits in
+  <code>Start</code>, which is a coroutine:</p>
+<pre><code>[Inject(Async = <span class="kw">true</span>)] <span class="ty">ISaveData</span> save;
+
+<span class="ty">IEnumerator</span> Start()
+{
+    <span class="kw">yield</span> <span class="kw">return</span> <span class="ty">Context</span>.WhenReady(<span class="kw">this</span>);
+    ShowBest(save.BestScore);
+}</code></pre>
+<p>Unity keeps calling <code>Update</code> while <code>Start</code> waits, so code in <code>Update</code> must check
+  <code>Context.IsReady</code>.</p>
+<p>To wait in an <code>async</code> method, an event handler or code that runs every frame, and to handle a failed
+  wait or set a timeout, refer to <a href="Wait%20until%20a%20context%20is%20ready.html">Wait until a context is
+  ready</a>.</p>
+
+</section>
+
+<!-- ====================================== reactive ==== -->
+<section id="reactive">
+  <h2>Reactive</h2>
+<p>By default, a member keeps the dependency it received until it's released or reinjected. A <code>Reactive</code>
+  member is reinjected by Selvage when what the providers give may have changed. For a property, the <code>set</code>
+  accessor runs with each new dependency, so you can react there:</p>
+<pre><code>[Inject(Reactive = <span class="kw">true</span>)]
+<span class="ty">ICharacter</span> Character
+{
+    <span class="kw">get</span> =&gt; character;
+    <span class="kw">set</span> { character = value; RefreshPortrait(); }
+}
+<span class="ty">ICharacter</span> character;</code></pre>
+<p>Selvage reinjects a <code>Reactive</code> member, on the next frame, in the following cases:</p>
+<div class="table-scroll">
+  <table class="cmp">
+    <tr><th scope="col">What happens</th><th scope="col">What the member receives</th></tr>
+    <tr><td>The provider that gave its dependency announces a change: the registry when you add or remove an object, a <a href="Provide%20scene%20components.html#watch">watched scene object</a> that appears or leaves, or a <a href="Write%20a%20custom%20provider.html#change">custom provider</a>.</td><td>What the whole provider list gives now. If nothing gives it anything, it keeps its dependency, unless that dependency was revoked: it then returns to its default.</td></tr>
+    <tr><td>A provider is added, removed or turned off, or the provider list is edited.</td><td>A dependency from a provider above the one that gave its current dependency, if one has it. Otherwise it keeps its dependency.</td></tr>
+  </table>
+</div>
+<p>A <code>Reactive</code> member that holds nothing receives a dependency as soon as a provider announces a change
+  and has one for it.</p>
+<p>The Scene Provider looks for components only when a member is injected, so a <code>Reactive</code> member doesn't
+  follow a component that's created or destroyed, unless that object is watched. A destroyed component reads as
+  <code>null</code>, like any reference to a destroyed object. To give a member what the providers give now, call
+  <code>Manual.Reinject</code>, which asks every provider again.</p>
+<p>If a new dependency can't be injected, Selvage logs an error, and the member keeps its current dependency.</p>
+
+</section>
+
+<!-- ====================================== warm ==== -->
+<section id="warm">
+  <h2>Warm</h2>
+<p>A provider that takes time, such as one that loads an Addressables asset, gives its dependency only to members
+  that can receive it later. Other members skip it and receive a dependency from a provider below. A member receives
+  the dependency of a provider that takes time in the following ways:</p>
+<ul>
+  <li>It waits for it, with <a href="#async"><code>Async</code></a>. The member's injection, and its context's
+    readiness, end when the dependency arrives.</li>
+  <li>It has it prepared, with <code>Warm</code>. The member's injection doesn't wait: the member receives the best
+    dependency that's ready now, and Selvage prepares the dependencies of the providers above it in the background. The
+    member receives a prepared dependency on the next <code>Manual.Reinject</code> call.</li>
+</ul>
+<p>The two combine: a member that's both <code>Async</code> and <code>Warm</code> waits like an <code>Async</code>
+  member, and holds the dependency that's ready below while it waits.</p>
+<p>For example, the demo's <code>CloudSave</code> provider, first in the provider list, gives a save from a simulated
+  cloud after a second, and the Registry Provider below it holds the save on this device, ready at once. The following
+  diagram shows what a <code>SaveData</code> member holds over time, depending on its options:</p>
+<div class="img-block">
+  <svg class="diagram" viewBox="0 0 760 290" role="img"
+       aria-label="No option: the device save for good, because the member skips CloudSave. Async: null while the member waits, then the cloud save when it arrives. Warm: the device save while the cloud save is prepared, then the cloud save once Manual.Reinject is called. Async and Warm: the device save while the member waits, then the cloud save when it arrives.">
+    <text x="20" y="62" font-size="13" font-weight="600" fill="#333">No option</text>
+    <rect x="170" y="40" width="574" height="36" rx="6" fill="#e0e7ff" stroke="#a5b4fc"/>
+    <text x="457" y="63" text-anchor="middle" font-size="12" fill="#3730a3">Device save (Registry Provider): the member skips CloudSave</text>
+
+    <text x="20" y="112" font-size="13" font-weight="600" fill="#333">Async</text>
+    <rect x="170" y="90" width="250" height="36" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-dasharray="4 3"/>
+    <text x="295" y="113" text-anchor="middle" font-size="12" fill="#64748b">null: the member waits</text>
+    <rect x="424" y="90" width="320" height="36" rx="6" fill="#dcfce7" stroke="#86efac"/>
+    <text x="584" y="113" text-anchor="middle" font-size="12" fill="#166534">Cloud save (CloudSave)</text>
+
+    <text x="20" y="162" font-size="13" font-weight="600" fill="#333">Warm</text>
+    <rect x="170" y="140" width="430" height="36" rx="6" fill="#e0e7ff" stroke="#a5b4fc"/>
+    <text x="385" y="163" text-anchor="middle" font-size="12" fill="#3730a3">Device save: the cloud save is prepared, then held ready</text>
+    <rect x="604" y="140" width="140" height="36" rx="6" fill="#dcfce7" stroke="#86efac"/>
+    <text x="674" y="163" text-anchor="middle" font-size="12" fill="#166534">Cloud save</text>
+
+    <text x="20" y="212" font-size="13" font-weight="600" fill="#333">Async, Warm</text>
+    <rect x="170" y="190" width="250" height="36" rx="6" fill="#e0e7ff" stroke="#a5b4fc"/>
+    <text x="295" y="213" text-anchor="middle" font-size="12" fill="#3730a3">Device save: the member waits</text>
+    <rect x="424" y="190" width="320" height="36" rx="6" fill="#dcfce7" stroke="#86efac"/>
+    <text x="584" y="213" text-anchor="middle" font-size="12" fill="#166534">Cloud save (CloudSave)</text>
+
+    <path d="M170 248 L744 248" stroke="#9aa0b5" stroke-width="1.5"/>
+    <path d="M170 242 L170 254 M422 242 L422 254 M602 242 L602 254" stroke="#9aa0b5" stroke-width="1.5"/>
+    <text x="170" y="272" text-anchor="middle" font-size="12" fill="#555">Injection</text>
+    <text x="422" y="272" text-anchor="middle" font-size="12" fill="#555">The cloud save is ready</text>
+    <text x="602" y="272" text-anchor="middle" font-size="12" fill="#555">Manual.Reinject</text>
+  </svg>
+</div>
+<p>The <code>Async</code> members receive the cloud save when it arrives, because their injection waits for it: their
+  context is ready only then. The <code>Warm</code> member's injection ends at once, with the device save, so its
+  context is ready at once. The cloud save is then held ready, and reaches the member when you call
+  <code>Manual.Reinject</code>. To have it delivered as soon as it's ready instead, also make the member
+  <a href="#reactive"><code>Reactive</code></a>. The demo's <code>Hud</code> uses <code>Async</code>,
+  <code>Warm</code> and <code>Reactive</code>.</p>
+<p>Selvage also prepares dependencies from the providers below the one that gave the member's dependency, down to
+  the first provider whose dependencies can't change. When the provider that gave the dependency
+  <a href="Write%20a%20custom%20provider.html#change">revokes</a> it, a <code>Reactive</code> <code>Warm</code> member
+  receives a ready dependency from a provider below at once, instead of returning to its default while a replacement
+  loads.</p>
+<p>A prepared dependency is held, and a provider that takes time keeps loading in the background, so a
+  <code>Warm</code> member costs memory and work even before it receives what was prepared. A <code>Warm</code>
+  member that's also <a href="#weak"><code>Weak</code></a> receives the best dependency that's ready, and nothing is
+  prepared for it.</p>
+<div class="note"><strong>Note:</strong> Without <code>Async</code>, a <code>Warm</code> member never waits. When no
+  provider has a dependency ready, a required one fails on its first injection, and an optional one keeps its default,
+  until a prepared dependency reaches it.</div>
+
+</section>
+
+<!-- ====================================== weak ==== -->
+<section id="weak">
+  <h2>Weak</h2>
+<p>An object Selvage created, such as an instance of a <code>[Provide]</code> class, ends once no member holds it. A
+  <code>Weak</code> member holds its dependency without keeping it alive. Use it when something else keeps the
+  dependency alive, or to break a loop: when two objects Selvage created hold each other, each keeps the other alive,
+  so neither ever ends. Make one of the two members <code>Weak</code>:</p>
+<pre><code>[Provide]
+<span class="kw">public</span> <span class="kw">class</span> <span class="ty">Session</span> : <span class="ty">ISession</span>
+{
+    [Inject] <span class="ty">IMatchmaker</span> matchmaker;          <span class="cm">// keeps the matchmaker alive</span>
+}
+
+[Provide]
+<span class="kw">public</span> <span class="kw">class</span> <span class="ty">Matchmaker</span> : <span class="ty">IMatchmaker</span>
+{
+    [Inject(Weak = <span class="kw">true</span>)] <span class="ty">ISession</span> session;   <span class="cm">// doesn't keep the session alive</span>
+}</code></pre>
+<p>The session then ends once no other member holds it, and releases the matchmaker as it ends.</p>
+<p>An object that only <code>Weak</code> members hold ends one frame later, unless a member that isn't
+  <code>Weak</code> takes it by then. When the dependency ends, the member returns to its default, and a required
+  member fails. With <code>Reactive</code>, the member receives a replacement when a provider has one.</p>
+<p><code>Weak</code> only changes something for the objects Selvage creates. Selvage never ends a scene component,
+  an asset or an object you add to a registry, so a <code>Weak</code> member holds those like any other member.</p>
+
+</section>
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="../../public-api/pages/API%20-%20Consuming.html#InjectAttribute">InjectAttribute API reference</a></li>
+    <li><a href="../../public-api/pages/API%20-%20Consuming.html#Context">Context API reference</a></li>
+    <li><a href="../../public-api/pages/API%20-%20Consuming.html#Manual">Manual API reference</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="Configure%20members.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Configure members</div>
+  </a>
+  <a class="next" href="Wait%20until%20a%20context%20is%20ready.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Wait until a context is ready</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Selvage v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

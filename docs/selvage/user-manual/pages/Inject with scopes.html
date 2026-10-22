@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Inject every member of a class, an assembly or the project, and set options for all of them." />
+  <title>Selvage - Inject with scopes</title>
+  <link rel="stylesheet" href="/assets/css/doc-styles.css" />
+  <link rel="stylesheet" href="/assets/css/selvage.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Selvage</div><a href="../index.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Inject with scopes</h1>
+      <div class="sub">Inject every member of a class, an assembly or the project, and set options for all of them.</div>
+    </div>
+
+<!-- ====================================== class ==== -->
+<section id="class">
+  <h2>Inject every member of a class</h2>
+<p>A <strong>scope</strong> is a class, an assembly or the project in which Selvage injects every field and property
+  that can hold a dependency. When you add <code>[Inject]</code> to a class, each of them becomes a member, without
+  an <code>[Inject]</code> of its own:</p>
+<pre><code>[Inject]
+<span class="kw">public</span> <span class="kw">class</span> <span class="ty">Player</span> : <span class="ty">MonoBehaviour</span>
+{
+    <span class="ty">Rigidbody</span> body;               <span class="cm">// injected</span>
+    [DontInject] <span class="ty">Camera</span> view;     <span class="cm">// not injected</span>
+}</code></pre>
+<p>A scope covers each field and property that meets the following conditions:</p>
+<ul>
+  <li>Its type is a reference type: a class, an interface, an array or a delegate. This includes <code>string</code>
+    and <code>GameObject</code>.</li>
+  <li>A field isn't <code>readonly</code> or <code>const</code>, and a property has a <code>set</code> or
+    <code>init</code> accessor and no parameters.</li>
+</ul>
+<p>Static, private and serialized fields are covered too. A field that already holds a value, such as a reference you
+  assign in the Inspector window, keeps it. For more information, refer to
+  <a href="Injection%20lifecycle.html#yours">Values you assign yourself</a>.</p>
+<p>A field that isn't a dependency, such as a <code>string</code> or a <code>List&lt;int&gt;</code>, fails as a missing
+  dependency if it still holds <code>null</code> when Selvage injects the context. To keep it out of injection, do one
+  of the following:</p>
+<ul>
+  <li>Assign it before Selvage injects it: in its initializer, in the constructor, or in <code>Awake</code>, since
+    Selvage injects a MonoBehaviour at the end of <code>Awake</code>.</li>
+  <li>Add <code>[DontInject]</code> to it, if you assign it later, such as in <code>Start</code>.</li>
+  <li>Set <a href="Options.html#optional"><code>Optional</code></a> on the scope, so that a member left
+    <code>null</code> keeps its default without an error.</li>
+</ul>
+<p>A subclass doesn't inherit <code>[Inject]</code> from its base class. Add the attribute to the subclass too.</p>
+
+</section>
+
+<!-- ====================================== assembly ==== -->
+<section id="assembly">
+  <h2>Inject every class of an assembly</h2>
+<p>To inject every class of an assembly, add the following line to any file of the assembly:</p>
+<pre><code>[assembly: Inject]</code></pre>
+
+</section>
+
+<!-- ====================================== project ==== -->
+<section id="project">
+  <h2>Inject every class of the project</h2>
+<p>The <strong>Inject by Default</strong> setting injects every class of every assembly that references Selvage, as
+  if each assembly had <code>[assembly: Inject]</code>. The scripts of a new project are in such an assembly
+  (<code>Assembly-CSharp</code>), even when they never mention Selvage. To enable it, perform the following steps:</p>
+<ol>
+  <li>Go to <strong>Edit</strong> &gt; <strong>Project Settings</strong> &gt; <strong>Selvage</strong>.</li>
+  <li>In the <strong>Inject by Default</strong> section, enable <strong>Enabled</strong>, then enable the options every member receives.</li>
+  <li>Select <strong>Apply and Recompile</strong>.</li>
+</ol>
+<div class="img-block">
+  <img src="../img/settings_inject_by_default.png" alt="The Inject by Default section of Project Settings, with a change that Apply and Recompile saves" />
+</div>
+<p>The <strong>Optional</strong> option is enabled by default. A project holds many fields that aren't dependencies,
+  so this lets a field that no provider serves keep its value instead of failing.</p>
+<p>The setting doesn't reach a precompiled DLL, or an assembly that doesn't reference Selvage, such as a Unity
+  package's. Unity recompiles your scripts after you apply the setting. For more information about the setting, refer to
+  <a href="Project%20Settings%20reference.html#ambient">Project Settings reference</a>.</p>
+
+</section>
+
+<!-- ====================================== exclude ==== -->
+<section id="exclude">
+  <h2>Exclude a member, class or assembly</h2>
+<p>To exclude a member, a class or an assembly from a scope, add <code>[DontInject]</code> to it:</p>
+<pre><code>[assembly: DontInject]   <span class="cm">// no class of this assembly is injected through a scope</span></code></pre>
+<p>An <code>[Inject]</code> inside an excluded class or assembly includes that class or member again. Options set on the scopes around an excluded class or assembly don't apply inside it. When <code>[Inject]</code> and
+  <code>[DontInject]</code> are on the same member, class or assembly, <code>[Inject]</code> wins, and code analysis
+  reports <a href="Diagnostics.html#slv0101">SLV0101</a>.</p>
+
+</section>
+
+<!-- ====================================== layering ==== -->
+<section id="layering">
+  <h2>Set options for several members</h2>
+<p>Options set on a scope apply to every member in it. For each option, a member uses the value from its own
+  <code>[Inject]</code>, else from its class, else from its assembly, else from the Inject by Default setting while
+  that setting is enabled. An option nothing sets is off. To turn off an option a scope enables, set it to
+  <code>false</code>:</p>
+<pre><code>[assembly: Inject(EditMode = <span class="kw">true</span>)]
+
+[Inject(Reactive = <span class="kw">true</span>)]
+<span class="kw">public</span> <span class="kw">class</span> <span class="ty">Hud</span> : <span class="ty">MonoBehaviour</span>
+{
+    <span class="ty">IScore</span> score;                          <span class="cm">// Reactive and EditMode</span>
+    [Inject(Reactive = <span class="kw">false</span>)] <span class="ty">ILog</span> log;   <span class="cm">// EditMode only</span>
+}</code></pre>
+<p>Your IDE displays the options a member receives from its scopes. For more information, refer to
+  <a href="Diagnostics.html#slv0208">SLV0208</a>.</p>
+
+</section>
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="Options.html">Options</a></li>
+    <li><a href="../../public-api/pages/API%20-%20Consuming.html#DontInjectAttribute">DontInjectAttribute API reference</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="Wait%20until%20a%20context%20is%20ready.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Wait until a context is ready</div>
+  </a>
+  <a class="next" href="Inspect%20and%20debug.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Inspect and debug</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Selvage v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

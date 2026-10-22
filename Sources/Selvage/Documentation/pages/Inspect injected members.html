@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Display what each injected member holds, and what it waits for." />
+  <title>Selvage - Inspect injected members</title>
+  <link rel="stylesheet" href="../shared/styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Selvage</div><a href="../User%20Manual.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Inspect injected members</h1>
+      <div class="sub">Display what each injected member holds, and what it waits for.</div>
+    </div>
+
+<!-- ====================================== inspector ==== -->
+<section id="inspector">
+  <h2>Display the state of each member</h2>
+<p>In Play mode, the <strong>Selvage</strong> section at the top of the Inspector window of a GameObject or an asset
+  displays the state of each member and the provider that gave its dependency. Select the section to expand it. While
+  editing, it does so for the members with the <a href="Options.html#editmode"><code>EditMode</code></a> option.</p>
+<div class="img-block">
+  <img src="../img/inspector_selvage_section_play" alt="The Selvage section of the Player GameObject in Play mode: its four members are Injected, settings by the Asset Provider and the others by the Scene Provider" />
+</div>
+
+</section>
+
+<!-- ====================================== live ==== -->
+<section id="live">
+  <h2>Display what a member holds</h2>
+<p>The <strong>Live</strong> tab of the Dependencies window displays what injected members hold. To open it on a
+  GameObject or an asset, select the Selvage button at the right of its Selvage section, then select
+  <strong>Live</strong>. To open it from the menu, perform the following steps:</p>
+<ol>
+  <li>Go to <strong>Tools</strong> &gt; <strong>Selvage</strong> &gt; <strong>Dependencies</strong>.</li>
+  <li>Select <strong>Live</strong>.</li>
+  <li>In the <strong>Live Contexts</strong> list, select a context, or select its GameObject in the Hierarchy
+    window.</li>
+</ol>
+<p>The <strong>Live Contexts</strong> list holds the contexts with injected members, grouped by scene. In Play mode,
+  it holds every such context. In Edit mode, it holds the contexts with
+  <a href="Options.html#editmode"><code>EditMode</code></a> members.</p>
+<div class="img-block">
+  <img src="../img/dependencies_window_live" alt="The Live tab of the Dependencies window, with the Live Contexts list on the left and the members of the selected context on the right" />
+</div>
+<p>For each member of the selected context, the tab displays the following:</p>
+<ul>
+  <li>The value it holds. Select the value to ping the object.</li>
+  <li>The provider that gave it, after <strong>Supplied by</strong>.</li>
+  <li>Its state: <strong>Injected</strong>, <strong>Waiting</strong>, <strong>Missing</strong> or
+    <strong>Failed</strong>. For a description of each, refer to <a href="Dependencies%20window%20reference.html#live">Live
+    tab</a>.</li>
+</ul>
+<p>To select several contexts, hold Ctrl or Shift.</p>
+
+</section>
+
+<!-- ====================================== waiting ==== -->
+<section id="waiting">
+  <h2>Find out what a member waits for</h2>
+<p>A member that waits displays <strong>Waiting on</strong>, followed by the chain of what it waits for: the dependency
+  it waits for, then what that dependency waits for, down to what holds up the chain, such as a provider that's still
+  loading, or a script on an inactive GameObject that isn't injected yet. Each step links to its context or
+  provider.</p>
+<div class="img-block">
+  <img src="../img/live_waiting_on" alt="A member of the demo that displays Waiting on Cloud Save while it holds the save from the Registry Provider" />
+</div>
+
+</section>
+
+<!-- ====================================== usedby ==== -->
+<section id="usedby">
+  <h2>Find every member that holds an object</h2>
+<p>A dependency that several members hold displays <strong>Used by</strong>, followed by the number of members. Select
+  it to list each member that holds the dependency.</p>
+
+</section>
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="Validate%20members.html">Validate members</a></li>
+    <li><a href="Dependencies%20window%20reference.html">Dependencies window reference</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="Validate%20members.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Validate members</div>
+  </a>
+  <a class="next" href="Troubleshooting.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Troubleshooting</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Selvage v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

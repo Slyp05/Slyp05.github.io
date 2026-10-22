@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Wait for Async members in a coroutine, an async method or a callback, and read or control the wait." />
+  <title>Selvage - Wait until a context is ready</title>
+  <link rel="stylesheet" href="/assets/css/doc-styles.css" />
+  <link rel="stylesheet" href="/assets/css/selvage.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Selvage</div><a href="../index.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Wait until a context is ready</h1>
+      <div class="sub">Wait for Async members in a coroutine, an async method or a callback, and read or control the wait.</div>
+    </div>
+
+<!-- ====================================== ways ==== -->
+<section id="ways">
+  <h2>Wait for a context</h2>
+<p>A context is <strong>ready</strong> once all its members are injected, including its
+  <a href="Options.html#async"><code>Async</code></a> members. To wait until a context is ready, use the form that fits your
+  code:</p>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Where</th><th scope="col">Code</th></tr>
+    <tr><td>A coroutine</td><td><code>yield return Context.WhenReady(this);</code></td></tr>
+    <tr><td>An <code>async</code> method</td><td><code>await Context.WhenReady(this);</code></td></tr>
+    <tr><td>An event handler</td><td><code>Context.WhenReady(this).Completed += operation =&gt; ...;</code></td></tr>
+    <tr><td>Callbacks</td><td><code>Context.WhenReady(this).Subscribe(onSucceeded: ..., onFailed: ...);</code></td></tr>
+    <tr><td>Code that runs every frame</td><td><code>if (Context.IsReady(this) == false) return;</code></td></tr>
+  </table>
+</div>
+<p>If a required member fails, the wait fails too: <code>await</code> throws the exception, <code>Subscribe</code>
+  calls <code>onFailed</code>, and after <code>yield return</code>, <code>ThrowIfNotSucceeded()</code> throws it.
+  <code>Context.IsReady</code> stays <code>false</code> for a context whose injection failed.</p>
+<div class="note"><strong>Note:</strong> If the GameObject is destroyed before its context is ready, a coroutine
+  stops, and <code>await</code> throws an exception.</div>
+<p>In a ScriptableObject, subscribe to <code>Completed</code> in <code>OnEnable</code>. In a plain C# class, subscribe
+  in the constructor. A handler you add after the operation completed runs at once.</p>
+<p>To wait for another context, pass it instead of <code>this</code>. For the static members of a class, pass the class's
+  <code>Type</code>. If the context is released or destroyed before it's
+  ready, the wait completes as <code>CanceledOrDetached</code>. If it's never injected, such as an object of a class
+  from a precompiled DLL that nothing passes to <code>Manual.Inject</code>, the wait fails with a
+  <code>TimeoutException</code> after two minutes.</p>
+
+</section>
+
+<!-- ====================================== operation ==== -->
+<section id="operation">
+  <h2>Read and control the wait</h2>
+<p><code>Context.WhenReady</code> returns a <code>SelvageOperation</code>. So do <code>Manual.Inject</code>,
+  <code>Manual.Reinject</code> and <code>Manual.Release</code>, which complete once their work is done. An operation
+  has the following members:</p>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Member</th><th scope="col">Description</th></tr>
+    <tr><td><code>Status</code></td><td><code>Running</code>, <code>Succeeded</code>, <code>CanceledOrDetached</code> or <code>Failed</code>.</td></tr>
+    <tr><td><code>Exception</code></td><td>The failure of a failed operation, otherwise <code>null</code>.</td></tr>
+    <tr><td><code>IsComplete</code></td><td>Whether the operation has finished, whatever its outcome.</td></tr>
+    <tr><td><code>Detach()</code></td><td>Stops waiting now. The operation completes as <code>CanceledOrDetached</code>, but the injection keeps running. To stop the injection, call <code>Manual.Release</code>.</td></tr>
+    <tr><td><code>DetachAfter(seconds)</code></td><td>Stops waiting after a delay, in seconds or as a <code>TimeSpan</code>, to set a timeout: <code>await Context.WhenReady(this).DetachAfter(5);</code></td></tr>
+    <tr><td><code>Completed</code>, <code>Subscribe(...)</code></td><td>Run code when the operation completes. <code>Subscribe</code> takes one callback per outcome, and returns an action that unsubscribes them.</td></tr>
+    <tr><td><code>ThrowIfNotSucceeded()</code></td><td>Throws the failure of a failed operation, or an <code>OperationCanceledException</code> for a canceled one.</td></tr>
+    <tr><td><code>AsTask()</code></td><td>The operation as a <code>Task</code>, such as for <code>Task.WhenAll</code>.</td></tr>
+    <tr><td><code>SelvageOperation.Combine(...)</code></td><td>One operation that succeeds when all the given operations succeed.</td></tr>
+  </table>
+</div>
+<p>The following script waits at most 10 seconds for an <code>Async</code> member. A wait that ends without the
+  context being ready, after the timeout or because the context was released, throws an
+  <code>OperationCanceledException</code>:</p>
+<pre><code>[Inject(Async = <span class="kw">true</span>)] <span class="ty">ISaveData</span> save;
+
+<span class="kw">async</span> <span class="kw">void</span> Start()
+{
+    <span class="kw">try</span>
+    {
+        <span class="kw">await</span> <span class="ty">Context</span>.WhenReady(<span class="kw">this</span>).DetachAfter(<span class="nu">10</span>);
+        ShowBest(save.BestScore);
+    }
+    <span class="kw">catch</span> (<span class="ty">OperationCanceledException</span>)
+    {
+        ShowOffline();   <span class="cm">// not ready after 10 seconds, or released</span>
+    }
+}</code></pre>
+<p>A failed member's exception isn't caught here, so Unity logs it.</p>
+<p>When an operation fails and no code reads its outcome (by waiting for it, reading <code>Status</code> or
+  <code>Exception</code>, or with <code>Subscribe</code>), Selvage logs the failure, so a failure is never silent.</p>
+
+</section>
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="Options.html#async">Async option</a></li>
+    <li><a href="../../public-api/pages/API%20-%20Consuming.html#SelvageOperation">SelvageOperation API reference</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="Options.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Options</div>
+  </a>
+  <a class="next" href="Inject%20with%20scopes.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Inject with scopes</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Selvage v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="frame.css">
+<style>
+  .stage { display: flex; align-items: center; justify-content: space-between; }
+  .left { width: 700px; display: flex; flex-direction: column; gap: 24px; }
+  .code pre { font-size: 25px; }
+  .gone { color: #7f8bab; text-decoration: line-through; text-decoration-color: var(--red); text-decoration-thickness: 3px; }
+  .right { width: 860px; display: flex; flex-direction: column; gap: 16px; }
+  .right .crop { width: 860px; }
+  .right .label { font-size: 22px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--dim); }
+</style>
+</head>
+<body>
+<div class="head">
+  <h1>Not even an attribute</h1>
+  <p>With Inject by Default, plain fields are injected in scripts that never mention Selvage.</p>
+</div>
+<div class="stage">
+  <div class="left">
+    <div class="code">
+<pre><span class="gone">using Selvage;</span>
+<span class="k">using</span> <span class="t">UnityEngine</span>;
+
+<span class="k">public class</span> <span class="t">Cannon</span> : <span class="t">MonoBehaviour</span>
+{
+    <span class="gone">[Inject]</span> <span class="t">Rigidbody</span> body;
+    <span class="gone">[Inject]</span> <span class="t">ITargeting</span> targeting;
+    <span class="gone">[Inject]</span> <span class="t">AudioClip</span> fireSound;
+}</pre>
+    </div>
+    <div class="cap">Fields you assign yourself <b>keep their value</b>.</div>
+  </div>
+  <div class="right">
+    <div class="label">Project Settings &gt; Selvage</div>
+    <img class="crop" src="Captures/inject-by-default.png">
+    <div class="cap">Pick the options every field receives. They combine freely.</div>
+  </div>
+</div>
+<img class="hem" src="selvage.svg">
+</body>
+</html>

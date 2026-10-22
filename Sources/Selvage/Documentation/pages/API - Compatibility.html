@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Namespace Selvage.Compatibility, assembly Selvage.Zenject and Selvage.VContainer. Explained in Run both in one project." />
+  <title>Selvage - Public API - Compatibility</title>
+  <link rel="stylesheet" href="../shared/styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <nav>
+    <a href="../Public%20API.html">Overview</a>
+    <a class="nav-band" href="API%20-%20Consuming.html">Consuming</a>
+    <a class="nav-band" href="API%20-%20Providing.html">Providing</a>
+    <a class="nav-band" href="API%20-%20Extending.html">Extending</a>
+    <a class="nav-band active" href="API%20-%20Compatibility.html" aria-current="page">Compatibility</a>
+    <div class="nav-group">Zenject</div>
+    <div class="nav-group-body">
+      <a href="#ZenjectProvider"><span class="badge badge-class">sealed</span>ZenjectProvider</a>
+      <a href="#SelvageBinderExtensions"><span class="badge badge-static">static</span>SelvageBinderExtensions</a>
+    </div>
+    <div class="nav-group">VContainer</div>
+    <div class="nav-group-body">
+      <a href="#VContainerProvider"><span class="badge badge-class">sealed</span>VContainerProvider</a>
+      <a href="#SelvageRegistrationExtensions"><span class="badge badge-static">static</span>SelvageRegistrationExtensions</a>
+    </div>
+  </nav>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Public API <span class="tag">Compatibility</span></h1>
+      <div class="sub">Namespace <code>Selvage.Compatibility</code>, assemblies <code>Selvage.Zenject</code> and <code>Selvage.VContainer</code>. Explained in <a href="Migrate%20from%20Zenject%20or%20VContainer.html#running">Run both in one project</a>.</div>
+    </div>
+
+    <div class="module-band band-first"><span class="band-name">Compatibility</span><span class="band-desc">Running Selvage beside Zenject or VContainer. Each module compiles only when its container is in the project.</span></div>
+
+    <h2 class="api-group">Zenject</h2>
+
+    <!-- ZenjectProvider -->
+    <div class="type-section" id="ZenjectProvider">
+      <div class="type-header"><h3>ZenjectProvider</h3><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">Provider that supplies what a Zenject container has bound. It asks the container nearest the context: the <code>GameObjectContext</code> in its parents, else its scene's <code>SceneContext</code>, else the <code>ProjectContext</code>. A member's channel is tried first as the binding identifier, then without one, and a collection member receives every binding of its element type. What it supplies is borrowed: the container owns it. Bindings exist only once installers run in Play mode, so the Validation tab shows a member only this provider may supply as <strong>May Be Supplied</strong>. The provider list holds at most one, reached with <code>ZenjectProvider.Listed</code>.</p>
+      <div class="member-group">
+        <div class="member-group-title">Static properties</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t">ZenjectProvider</span> <span class="mn">Listed</span> { get; }</th><td>The <code>ZenjectProvider</code> in the provider list, enabled or not. It stays the same object until scripts are reloaded. In a build, the provider list loads before the first scene, so read it from <code>RuntimeInitializeLoadType.BeforeSceneLoad</code> on. <span class="ex">Throws InvalidOperationException when the provider list has no ZenjectProvider or, in a build, when read before the list has loaded.</span></td></tr>
+        </table>
+      </div>
+      <div class="member-group">
+        <div class="member-group-title">Properties</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t">Zenject.Context</span> <span class="mn">ZenjectContext</span> { get; set; }</th><td>The Zenject context whose container is asked for every member, or null (the default) for the container nearest each context. Set it from code: Project Settings cannot reference a scene object.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- SelvageBinderExtensions -->
+    <div class="type-section" id="SelvageBinderExtensions">
+      <div class="type-header"><h3>SelvageBinderExtensions</h3><span class="badge badge-static">static</span></div>
+      <p class="type-desc">Zenject bindings whose instances come from Selvage.</p>
+      <div class="member-group">
+        <div class="member-group-title">Static methods</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t">ScopeConcreteIdArgConditionCopyNonLazyBinder</span> <span class="mn">FromSelvage</span>(<span class="kw">this</span> <span class="t">FromBinder</span> binder)</th><td>Takes the bound type's instances from Selvage, for a constructor parameter, an <code>[Inject]</code> method, or code that cannot use a Selvage member: <code>Container.Bind&lt;IAudio&gt;().FromSelvage().AsCached();</code>. Selvage is asked on every resolution of a transient binding, and once for a cached one. The binding's identifier is the channel, and a type named with <code>To&lt;T&gt;()</code> is the type Selvage is asked for. What Selvage supplies is held until the container holding the binding is disposed. Only an answer ready at once counts. <span class="ex">Throws ZenjectException when Selvage supplies nothing for an injection that is not optional.</span></td></tr>
+        </table>
+      </div>
+    </div>
+
+    <h2 class="api-group">VContainer</h2>
+
+    <!-- VContainerProvider -->
+    <div class="type-section" id="VContainerProvider">
+      <div class="type-header"><h3>VContainerProvider</h3><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">Provider that supplies what a VContainer scope has registered. It asks the scope nearest the context: the <code>LifetimeScope</code> in its parents, else the first one in its scene, else the root scope. A member's channel is tried first as the registration key, then without one, and a collection member receives every registration of its element type. What it supplies is borrowed: the container owns it. Registrations exist only once scopes are built in Play mode, so the Validation tab shows a member only this provider may supply as <strong>May Be Supplied</strong>. The provider list holds at most one, reached with <code>VContainerProvider.Listed</code>.</p>
+      <div class="member-group">
+        <div class="member-group-title">Static properties</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t">VContainerProvider</span> <span class="mn">Listed</span> { get; }</th><td>The <code>VContainerProvider</code> in the provider list, enabled or not. It stays the same object until scripts are reloaded. In a build, the provider list loads before the first scene, so read it from <code>RuntimeInitializeLoadType.BeforeSceneLoad</code> on. <span class="ex">Throws InvalidOperationException when the provider list has no VContainerProvider or, in a build, when read before the list has loaded.</span></td></tr>
+        </table>
+      </div>
+      <div class="member-group">
+        <div class="member-group-title">Properties</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t">LifetimeScope</span> <span class="mn">Scope</span> { get; set; }</th><td>The scope whose container is asked for every member, or null (the default) for the scope nearest each context. Set it from code: Project Settings cannot reference a scene object.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- SelvageRegistrationExtensions -->
+    <div class="type-section" id="SelvageRegistrationExtensions">
+      <div class="type-header"><h3>SelvageRegistrationExtensions</h3><span class="badge badge-static">static</span></div>
+      <p class="type-desc">VContainer registrations whose instances come from Selvage.</p>
+      <div class="member-group">
+        <div class="member-group-title">Static methods</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t">RegistrationBuilder</span> <span class="mn">RegisterFromSelvage&lt;T&gt;</span>(<span class="kw">this</span> <span class="t">IContainerBuilder</span> builder, <span class="t">object</span> channel = <span class="kw">null</span>, <span class="t">Lifetime</span> lifetime = <span class="t">Lifetime</span>.Singleton)</th><td>Registers <code>T</code> with its instances taken from Selvage, for a constructor parameter, an <code>[Inject]</code> method, or code that cannot use a Selvage member: <code>builder.RegisterFromSelvage&lt;IAudio&gt;();</code>. <code>channel</code> is the channel Selvage receives, for example the key given with <code>.Keyed(...)</code>. <code>lifetime</code> is VContainer's: Selvage is asked once with <code>Singleton</code>, and on every resolution with <code>Transient</code>. What Selvage supplies is held until the scope is disposed, and Selvage, not VContainer, ends it. Only an answer ready at once counts. <span class="ex">Throws ArgumentException for Lifetime.Scoped, and VContainerException on resolution when Selvage supplies nothing.</span></td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="doc-footer">Selvage v1.0.0 &nbsp;&middot;&nbsp; For full signatures and remarks, refer to the XML doc comments in the source.</div>
+
+  </main>
+</div>
+</body>
+</html>

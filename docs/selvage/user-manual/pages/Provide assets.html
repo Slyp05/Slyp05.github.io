@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Provide ScriptableObjects, prefabs and other assets with a Provide Definition." />
+  <title>Selvage - Provide assets</title>
+  <link rel="stylesheet" href="/assets/css/doc-styles.css" />
+  <link rel="stylesheet" href="/assets/css/selvage.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Selvage</div><a href="../index.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Provide assets</h1>
+      <div class="sub">Provide ScriptableObjects, prefabs and other assets with a Provide Definition.</div>
+    </div>
+
+<!-- ====================================== definition ==== -->
+<section id="definition">
+  <h2>Create a Provide Definition</h2>
+<p>A <strong>Provide Definition</strong> is an asset that makes Selvage provide other assets: the assets of its
+  folder, or a list of assets you choose. Members of an asset's type then receive the asset, without a reference to
+  assign in the Inspector window.</p>
+<p>To provide the assets of a folder, perform the following steps:</p>
+<ol>
+  <li>In the Project window, select the folder that holds your assets.</li>
+  <li>Go to <strong>Assets</strong> &gt; <strong>Create</strong> &gt; <strong>Selvage</strong> &gt;
+    <strong>Provide Definition</strong>.</li>
+  <li>Add a member of an asset's type to a script.</li>
+</ol>
+<pre><code>[Inject] <span class="ty">GameSettings</span> settings;   <span class="cm">// 3. A GameSettings asset in that folder</span></code></pre>
+<p>The Inspector window of the Provide Definition lists every asset it provides.</p>
+<div class="img-block">
+  <img src="../img/provide_definition_inspector.png" alt="A Provide Definition in the Inspector window, providing the Game Settings asset of its folder" />
+</div>
+<p>To provide assets from several folders, or only some assets of a folder, set <strong>Provides</strong> to
+  <strong>List</strong>, and add the assets to the list. For a description of each property, refer to
+  <a href="Provide%20Definition%20reference.html">Provide Definition reference</a>.</p>
+<p>The properties of a Provide Definition apply to every asset it provides. To give some assets other properties, put
+  them in another folder with its own Provide Definition.</p>
+<p>A folder provides its main assets only: not its sub-assets, such as a sprite inside a texture, other Provide
+  Definitions, or Editor-only assets, such as scripts, scenes and assembly definitions. A list provides whatever you
+  add to it, sub-assets included.</p>
+<p>With the Shared lifetime, Selvage gives the asset itself, so changes made to it in Play mode stay, as with any
+  asset. To give every member one copy instead, enable <strong>Runtime Copy</strong>. With the Separate or Pooled
+  lifetime, each member receives its own copy, which is never saved into the asset.</p>
+
+</section>
+
+<!-- ====================================== prefab ==== -->
+<section id="prefab">
+  <h2>Provide a prefab</h2>
+<p>Selvage instantiates a provided prefab, and never gives the prefab itself. A member receives the instance, or the
+  component it asks for on the root of the instance:</p>
+<pre><code>[Inject] <span class="ty">ParticleSystem</span> explosion;   <span class="cm">// the ParticleSystem on an instance of a provided prefab</span></code></pre>
+<p>With the Shared lifetime, every member receives the same instance, which Selvage destroys once no member holds it.
+  In Play mode, Selvage keeps that instance under <code>DontDestroyOnLoad</code>, so a scene load doesn't destroy it
+  while a member holds it. With Separate or Pooled, each member receives its own instance.</p>
+
+</section>
+
+<!-- ====================================== closest ==== -->
+<section id="closest">
+  <h2>Nested Provide Definitions</h2>
+<p>When several Provide Definitions cover an asset, the closest one wins, as with assembly definitions. A subfolder's
+  Provide Definition wins over its parent folder's, and a Provide Definition that lists the asset wins over any
+  folder. If two are at the same distance, such as two lists that hold the same asset, Selvage displays an error in
+  the Console window and in the Inspector window of both, and the Provide Definition whose path comes first
+  alphabetically provides the asset.</p>
+<p>To see every asset your project provides, expand <strong>Asset Provider</strong> in the provider list.</p>
+
+</section>
+
+<!-- ====================================== loading ==== -->
+<section id="loading">
+  <h2>When Selvage loads an asset</h2>
+<p>When Selvage loads an asset depends on where the asset is:</p>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Asset location</th><th scope="col">Loads</th></tr>
+    <tr><td>A <code>Resources</code> folder</td><td>When a member first needs it, with <code>Resources.Load</code>.</td></tr>
+    <tr><td>An Addressables entry, or a folder that is one</td><td>When an <a href="Options.html#async"><code>Async</code></a> or <a href="Options.html#warm"><code>Warm</code></a> member first needs it, because loading takes time. Other members don't receive it.</td></tr>
+    <tr><td>Any other folder</td><td>When the application starts. The build references the asset from the Selvage settings, which Unity preloads.</td></tr>
+  </table>
+</div>
+<p>Selvage loads an asset once, and keeps it while anything it gave from the asset is held, such as the asset, a copy
+  or a prefab instance. A build stores the path of a <code>Resources</code> asset and the GUID of an addressable asset,
+  so neither loads before a member needs it.</p>
+<div class="note"><strong>Note:</strong> Selvage loads an addressable asset by its GUID. Keep <strong>Include GUIDs in
+  Catalog</strong> enabled in the settings of the asset's Addressables group, which is the default.</div>
+
+</section>
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="Provide%20Definition%20reference.html">Provide Definition reference</a></li>
+    <li><a href="../../public-api/pages/API%20-%20Providing.html#ProvideDefinition">ProvideDefinition API reference</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="Provide%20your%20own%20classes.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Provide your own classes</div>
+  </a>
+  <a class="next" href="Provide%20objects%20your%20code%20creates.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Provide objects your code creates</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Selvage v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

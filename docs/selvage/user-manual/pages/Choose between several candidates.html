@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Decide which member receives which object when several could fit." />
+  <title>Selvage - Choose between several candidates</title>
+  <link rel="stylesheet" href="/assets/css/doc-styles.css" />
+  <link rel="stylesheet" href="/assets/css/selvage.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Selvage</div><a href="../index.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Choose between several candidates</h1>
+      <div class="sub">Decide which member receives which object when several could fit.</div>
+    </div>
+
+<!-- ====================================== how ==== -->
+<section id="how">
+  <h2>How Selvage chooses a candidate</h2>
+<p>An object that could be injected into a member is a <strong>candidate</strong>. A member can have several
+  candidates, such as when a scene contains two cameras. Selvage chooses among them in the following order:</p>
+<ol>
+  <li>The first provider in the provider list that has a candidate gives it. Selvage doesn't consider candidates from
+    the providers below it.</li>
+  <li>The candidates' preferences decide: first the candidates whose preference matches the member, then the
+    candidates without a preference, then the candidates whose preference doesn't match.</li>
+  <li>Within the Scene Provider, among the candidates the preferences leave tied, the
+    <a href="Provide%20scene%20components.html#closest">closest</a> component wins.</li>
+</ol>
+<p>Preferences don't apply to an object in a <a href="Provide%20objects%20your%20code%20creates.html#local">local
+  block</a>, which is tried before the provider list and matches by type only, or to a collection member, which
+  receives every candidate of the first provider that has one.</p>
+<p>If nothing tells two candidates apart, the member receives nothing, and Selvage displays an error that names the
+  candidates and how to fix it. A required member then fails. For classes marked <code>[Provide]</code> and for assets,
+  the Validation tab reports the tie before you enter Play mode.</p>
+
+</section>
+
+<!-- ====================================== preference ==== -->
+<section id="preference">
+  <h2>Add a preference</h2>
+<p>A <strong>preference</strong> on a candidate indicates which members the candidate is for:</p>
+<pre><code>[Provide, <span class="ty">Preference</span>]                                 <span class="cm">// for every member</span>
+<span class="kw">public</span> <span class="kw">class</span> <span class="ty">GameAudio</span> : <span class="ty">IAudio</span> { ... }
+
+[Provide, <span class="ty">Preference</span>(ContextType = <span class="kw">typeof</span>(<span class="ty">Menu</span>))]    <span class="cm">// for the members of Menu</span>
+<span class="kw">public</span> <span class="kw">class</span> <span class="ty">MenuAudio</span> : <span class="ty">IAudio</span> { ... }</code></pre>
+<p>In this example, the members of the <code>Menu</code> class receive <code>MenuAudio</code>, and every other
+  <code>IAudio</code> member receives <code>GameAudio</code>.</p>
+<p>Where you add a preference depends on the candidate:</p>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Candidate</th><th scope="col">Where to add the preference</th></tr>
+    <tr><td>Scene component</td><td>A <a href="Provide%20Tuning%20reference.html">Provide Tuning</a> component on its GameObject, with <strong>Has Preference</strong> enabled.</td></tr>
+    <tr><td><code>[Provide]</code> class</td><td>A <code>[Preference(...)]</code> attribute next to <code>[Provide]</code>.</td></tr>
+    <tr><td>Registry entry</td><td>The <code>preference</code> argument: <code>Add(obj, preference: new Preference { ... })</code>.</td></tr>
+    <tr><td>Asset</td><td>Its <a href="Provide%20Definition%20reference.html">Provide Definition</a>, with <strong>Has Preference</strong> enabled.</td></tr>
+  </table>
+</div>
+<div class="img-block">
+  <img src="../img/provide_tuning_preference.png" alt="A Provide Tuning component on the Main Camera, with Has Preference enabled and Type, under Context Class, set to Player" />
+</div>
+<p>The Attribute Provider leaves out a class that has <code>[Preference]</code> without <code>[Provide]</code>.</p>
+
+</section>
+
+<!-- ====================================== settings ==== -->
+<section id="settings">
+  <h2>Preference settings</h2>
+<p>A preference matches a member when every setting you set matches the member. Leave the other settings empty.</p>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Setting</th><th scope="col">In the Inspector window</th><th scope="col">Matches a member</th></tr>
+    <tr><td><code>AskedAs</code></td><td><strong>Member</strong> &gt; <strong>Asked As</strong></td><td>That asks for exactly this type.</td></tr>
+    <tr><td><code>MemberName</code></td><td><strong>Member</strong> &gt; <strong>Member Name</strong></td><td>With this name. Case and a leading <code>m_</code> or <code>_</code> are ignored.</td></tr>
+    <tr><td><code>MemberAttribute</code></td><td><strong>Member</strong> &gt; <strong>Member Attribute</strong></td><td>That has an attribute of this class, or of a class that derives from it, such as <code>SerializeField</code>.</td></tr>
+    <tr><td><code>Channel</code></td><td><strong>Member</strong> &gt; <strong>Channel</strong></td><td>With this <a href="#channels">channel</a>. The Inspector window takes it as text: a string, or the name of an enum value.</td></tr>
+    <tr><td><code>ContextType</code></td><td><strong>Context Class</strong> &gt; <strong>Type</strong></td><td>Whose context is of this class, or of a class that derives from it or implements it.</td></tr>
+    <tr><td><code>Namespace</code></td><td><strong>Context Class</strong> &gt; <strong>Namespace</strong></td><td>Whose context's class is in this namespace, or in one inside it.</td></tr>
+    <tr><td><code>Assembly</code></td><td><strong>Context Class</strong> &gt; <strong>Assembly</strong></td><td>Whose context's class is in the assembly with this name.</td></tr>
+    <tr><td><code>Tag</code>, <code>Layer</code>, <code>Scene</code></td><td><strong>Context GameObject</strong> &gt; <strong>Tag</strong>, <strong>Layer</strong>, <strong>Scene</strong></td><td>Whose context's GameObject has this tag, is on this layer, or is in the scene with this name.</td></tr>
+    <tr><td><code>Under</code></td><td><strong>Context GameObject</strong> &gt; <strong>Under</strong></td><td>Whose context's GameObject is at this path from its scene's root, or below it, such as <code>"UI/HUD"</code>.</td></tr>
+  </table>
+</div>
+<p>In a text setting, <code>*</code> matches any text, anywhere and any number of times, such as
+  <code>"Level*"</code>. No other pattern syntax exists. A type setting accepts an open generic type, such as
+  <code>typeof(Repository&lt;&gt;)</code>, to match every type made from it.</p>
+<p>The settings that read the context's GameObject (<code>Tag</code>, <code>Layer</code>, <code>Scene</code> and
+  <code>Under</code>) never match a context that isn't on a GameObject, and are only known when the member is
+  injected, so the Validation tab can't use them.</p>
+<p>An empty preference matches every member, so its candidate wins wherever no more precise preference
+  matches.</p>
+
+</section>
+
+<!-- ====================================== ties ==== -->
+<section id="ties">
+  <h2>When several preferences match</h2>
+<p>When several preferences match a member, the most precise one wins: the one that matches everything the others
+  match, and more. For example, <code>"UI/HUD"</code> wins over <code>"UI"</code>, and an exact value wins over a
+  pattern that matches it. If no preference is more precise, Selvage displays an error. The Dependencies window reports
+  it before you enter Play mode when it can.</p>
+<p>A preference never removes a candidate: when there's only one candidate, a member receives it, whatever its
+  preference. Selvage never reports a preference or a channel that matches nothing, so a script copied into another
+  project keeps working there.</p>
+
+</section>
+
+<!-- ====================================== channels ==== -->
+<section id="channels">
+  <h2>Channels</h2>
+<p>A preference lets the candidate choose its members. A <strong>channel</strong> lets the member choose its
+  candidate: the candidate whose preference has the same <code>Channel</code> value wins for that member.</p>
+<pre><code>[Inject, Channel(<span class="st">"Music"</span>)] <span class="ty">IAudioBus</span> bus;
+
+[Provide, <span class="ty">Preference</span>(Channel = <span class="st">"Music"</span>)]
+<span class="kw">public</span> <span class="kw">class</span> <span class="ty">MusicBus</span> : <span class="ty">IAudioBus</span> { ... }</code></pre>
+<p>A channel can be any value, such as a string, an enum value or a number. A member has one channel at most, and a channel doesn't apply to an object in a local block. A
+  channel is a hint: with one candidate, the member receives it whatever its channel.</p>
+<p>To read the channel from a field or property of the context's class each time the member is injected or
+  reinjected, use <code>[DynamicChannel]</code>. When it's combined with <code>[Channel]</code>, the written channel
+  applies while the field or property holds <code>null</code>:</p>
+<pre><code>[SerializeField] <span class="kw">string</span> language;
+
+[Inject, DynamicChannel(<span class="kw">nameof</span>(language))] <span class="ty">AudioClip</span> greeting;              <span class="cm">// the channel is the value of language</span>
+[Inject, Channel(<span class="st">"en"</span>), DynamicChannel(<span class="kw">nameof</span>(language))] <span class="ty">AudioClip</span> intro;  <span class="cm">// "en" while language is null</span></code></pre>
+<p>The field or property can be static. To use a value from another class, read it through a property of this one.
+  Code analysis reports a name that isn't a readable field or property as <a href="Diagnostics.html#slv0108">SLV0108</a>.
+  A <code>[DynamicChannel]</code> is only known when the member is injected, so the Validation tab can't use it.</p>
+
+</section>
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="../../public-api/pages/API%20-%20Providing.html#PreferenceAttribute">PreferenceAttribute API reference</a></li>
+    <li><a href="../../public-api/pages/API%20-%20Consuming.html#ChannelAttribute">ChannelAttribute API reference</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="Provide%20objects%20your%20code%20creates.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Provide objects your code creates</div>
+  </a>
+  <a class="next" href="Lifetimes.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Lifetimes</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Selvage v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

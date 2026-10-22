@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="frame.css">
+<style>
+  .stage { display: flex; align-items: center; justify-content: space-between; }
+  .left { width: 860px; display: flex; flex-direction: column; gap: 22px; }
+  .code { padding: 22px 32px; }
+  .code pre { font-size: 25px; }
+  .code .label { text-transform: none; letter-spacing: 0; font-family: "Cascadia Code", Consolas, monospace; font-size: 21px; margin-bottom: 10px; }
+  .right { width: 720px; display: flex; flex-direction: column; gap: 22px; align-self: center; }
+  .right .crop.tree { width: 460px; }
+  .right .crop.live { width: 720px; }
+  .ranks { font-size: 24px; color: var(--muted); line-height: 1.5; }
+  .ranks b { color: var(--ink); font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="head">
+  <h1>Swap for tests and platforms, without #if</h1>
+  <p>Put the stand-in in an Editor or test assembly. That's it.</p>
+</div>
+<div class="stage">
+  <div class="left">
+    <div class="code">
+      <div class="label">Assets/Store/SteamStore.cs</div>
+<pre class="cs">
+[Provide]
+public class SteamStore : IStore { ... }
+</pre>
+    </div>
+    <div class="code">
+      <div class="label">Assets/Store/Editor/MockStore.cs</div>
+<pre class="cs">
+[Provide]
+public class MockStore : IStore { ... }
+</pre>
+    </div>
+  </div>
+  <div class="right">
+    <img class="crop tree" src="Captures/project-mockstore.png">
+    <img class="crop live" src="Captures/live-shop.png">
+    <div class="cap">Editor: <b>MockStore</b>. Build: <b>SteamStore</b>.</div>
+  </div>
+</div>
+<img class="hem" src="selvage.svg">
+<script src="highlight.js"></script>
+</body>
+</html>

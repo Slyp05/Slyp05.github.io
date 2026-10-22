@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<!-- Asset Store social media image, 1200x630. No text allowed. Rendered by render.sh. -->
+<style>
+  html, body { margin: 0; padding: 0; background: #14223d; }
+  svg { display: block; }
+</style>
+</head>
+<body>
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Indigo, lighter where the fabric is worn at the centre, deep at the edges. -->
+    <radialGradient id="bg" cx="0.5" cy="0.45" r="0.9">
+      <stop offset="0" stop-color="#34557f"/>
+      <stop offset="0.5" stop-color="#22395e"/>
+      <stop offset="1" stop-color="#121e36"/>
+    </radialGradient>
+    <!-- 3x1 twill: the diagonal ribs of denim. -->
+    <pattern id="twill" width="14" height="14" patternUnits="userSpaceOnUse" patternTransform="rotate(-62)">
+      <rect width="14" height="5" fill="#9fb6d6"/>
+    </pattern>
+    <!-- Slub and fade: irregular light flecks of the white weft showing through. -->
+    <filter id="heather" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.6 0.14" numOctaves="3" seed="7" result="n"/>
+      <feColorMatrix in="n" type="matrix" values="0 0 0 0 0.85  0 0 0 0 0.9  0 0 0 0 1  0 0 0 1.6 -0.9"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#twill)" opacity="0.10"/>
+  <rect width="1200" height="630" filter="url(#heather)" opacity="0.14"/>
+
+  <!-- The cover's illustration, centred above the selvage at 0.66 scale. -->
+  <image href="illustration.svg" x="283" y="24" width="634" height="528"/>
+
+  <image href="selvage.svg" x="0" y="566" width="1200" height="64"/>
+</svg>
+</body>
+</html>

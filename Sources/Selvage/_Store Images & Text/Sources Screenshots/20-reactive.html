@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="frame.css">
+<style>
+  .stage { display: flex; align-items: center; justify-content: space-between; }
+  .code { width: 820px; }
+  .code pre { font-size: 28px; }
+  .flow { width: 680px; display: flex; flex-direction: column; align-items: flex-start; gap: 18px; }
+  .val { width: 520px; height: 82px; box-sizing: border-box; border-radius: 14px; display: flex; align-items: center; padding: 0 28px; font-size: 30px; font-weight: 600; }
+  .val.old { background: rgba(137, 180, 250, 0.10); border: 2px solid #5d7196; color: var(--muted); }
+  .val.new { background: rgba(137, 180, 250, 0.16); border: 2px solid var(--blue); color: var(--blue); }
+  .event { display: flex; align-items: center; gap: 16px; font-size: 26px; color: var(--teal); font-weight: 600; padding-left: 20px; }
+</style>
+</head>
+<body>
+<div class="head">
+  <h1>Reinjected automatically when it changes</h1>
+  <p>A member marked Reactive receives each newer dependency. No polling, no events to wire.</p>
+</div>
+<div class="stage">
+  <div class="code">
+<pre class="cs">
+[Inject(Reactive = true)]
+IInputDevice Input
+{
+    get => input;
+    set { input = value; ShowButtonPrompts(); }
+}
+</pre>
+  </div>
+  <div class="flow">
+    <div class="val old">Keyboard</div>
+    <div class="event"><svg width="34" height="34" viewBox="0 0 64 64"><path d="M32 10 V50 M16 36 L32 52 L48 36" fill="none" stroke="#94e2d5" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>a gamepad is plugged in</div>
+    <div class="val new">Gamepad, prompts updated</div>
+  </div>
+</div>
+<img class="hem" src="selvage.svg">
+<script src="highlight.js"></script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="frame.css">
+<style>
+  .stage { display: flex; flex-direction: column; gap: 34px; justify-content: center; }
+  .row { display: flex; align-items: center; justify-content: space-between; gap: 0; height: auto; width: 1680px; }
+  .code pre { font-size: 23px; }
+  .gun { flex: none; }
+  .bullet { flex: none; }
+  .arrow { width: 70px; flex: none; display: flex; justify-content: center; }
+  .plain { width: 1680px; justify-content: flex-start; display: flex; align-items: center; gap: 34px; }
+  .plain .code { padding: 22px 34px; flex: 1; }
+  .plain pre { font-size: 26px; }
+</style>
+</head>
+<body>
+<div class="head">
+  <h1>Spawn without factories</h1>
+  <p><code style="font-family: Cascadia Code, Consolas, monospace">new</code> and <code style="font-family: Cascadia Code, Consolas, monospace">Instantiate</code> inject what they create. A local block passes data to what you spawn inside it.</p>
+</div>
+<div class="stage">
+  <div class="plain">
+    <div class="code">
+<pre class="cs">
+Enemy enemy = Instantiate(enemyPrefab);   // its [Inject] fields are filled as it is created
+</pre>
+    </div>
+  </div>
+  <div class="row">
+    <div class="code gun">
+      <div class="label">Gun</div>
+<pre class="cs">
+public void Fire(Vector3 direction)
+{
+    using (Injector.Local(new BulletShot(direction), this))
+        Instantiate(bulletPrefab);
+}
+</pre>
+    </div>
+    <div class="arrow">
+      <svg width="64" height="64" viewBox="0 0 64 64"><path d="M10 32 H50 M36 16 L52 32 L36 48" fill="none" stroke="#89b4fa" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <div class="code bullet">
+      <div class="label">Bullet</div>
+<pre class="cs">
+[Inject] BulletShot shot;    // its direction
+[Inject] Gun gun;            // its gun
+[Inject] IScoreBoard scores; // as usual
+</pre>
+    </div>
+  </div>
+</div>
+<img class="hem" src="selvage.svg">
+<script src="highlight.js"></script>
+</body>
+</html>

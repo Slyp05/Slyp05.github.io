@@ -33,6 +33,12 @@ defaults:
       path: ""
     values:
       image: /assets/images/home.jpg
+  # Selvage is unreleased: keep its whole doc tree out of the sitemap.
+  # Remove this entry (and `sitemap: false` in selvage.md) on release.
+  - scope:
+      path: "selvage"
+    values:
+      sitemap: false
   # The manuals moved from /documentation/ to /user-manual/. The old tree only holds the
   # redirect stubs the build scripts write, which have no place in the sitemap.
   - scope:

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="frame.css">
+<style>
+  .stage { display: flex; align-items: center; }
+  table { width: 100%; border-collapse: separate; border-spacing: 0 12px; }
+  th { text-align: left; font-size: 24px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--dim); padding: 0 28px 4px; }
+  td { font-size: 28px; padding: 16px 28px; line-height: 1.3; vertical-align: middle; }
+  td.them { width: 46%; color: #95a3bd; background: rgba(14, 24, 44, 0.75); border-radius: 14px 0 0 14px; border: 2px solid #33476a; border-right: none; }
+  td.us { color: var(--ink); background: rgba(20, 34, 62, 0.95); border-radius: 0 14px 14px 0; border: 2px solid var(--border); border-left: 2px solid #4a5f86; }
+  td .x { color: var(--red); font-weight: 700; margin-right: 14px; }
+  td .v { color: var(--green); font-weight: 700; margin-right: 14px; }
+  td code { font-family: "Cascadia Code", Consolas, monospace; font-size: 0.9em; color: #ffffff; font-weight: 700; }
+</style>
+</head>
+<body>
+<div class="head">
+  <h1>Dependency injection, without the container</h1>
+  <p>Designed around how Unity works, not ported from .NET.</p>
+</div>
+<div class="stage">
+  <table>
+    <tr><th>A container</th><th>Selvage</th></tr>
+    <tr><td class="them"><span class="x">✕</span>An installer that registers every class</td><td class="us"><span class="v">✓</span><code>[Provide]</code> on the class; scene objects and assets need nothing</td></tr>
+    <tr><td class="them"><span class="x">✕</span>A context object in each scene to run them</td><td class="us"><span class="v">✓</span>Works as soon as it is imported</td></tr>
+    <tr><td class="them"><span class="x">✕</span>Constructors, inject methods and factories</td><td class="us"><span class="v">✓</span>Fields or properties, in any object; <code>new</code> and <code>Instantiate</code> inject</td></tr>
+    <tr><td class="them"><span class="x">✕</span>Keys written on both sides</td><td class="us"><span class="v">✓</span>Preferences read names, classes, tags and paths you already have</td></tr>
+    <tr><td class="them"><span class="x">✕</span>Scopes declared per scene and prefab</td><td class="us"><span class="v">✓</span>Lifetimes follow your scenes and objects</td></tr>
+  </table>
+</div>
+<img class="hem" src="selvage.svg">
+</body>
+</html>

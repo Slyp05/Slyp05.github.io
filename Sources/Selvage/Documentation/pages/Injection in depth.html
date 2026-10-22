@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Understand how Selvage handles base and generic classes, exiting Play mode, script reloads, dependency cycles and precompiled DLLs, and monitor dependencies." />
+  <title>Selvage - Injection in depth</title>
+  <link rel="stylesheet" href="../shared/styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Selvage</div><a href="../User%20Manual.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Injection in depth</h1>
+      <div class="sub">Understand how Selvage handles base and generic classes, exiting Play mode, script reloads, dependency cycles and precompiled DLLs, and monitor dependencies.</div>
+      <div class="guide-index">
+        <a href="#classes">Base and generic classes</a>
+        <a href="#play">When you exit Play mode</a>
+        <a href="#reload">When scripts reload</a>
+        <a href="#cycles">Dependency cycles</a>
+        <a href="#dll">Types from precompiled DLLs</a>
+        <a href="#events">Monitor dependencies</a>
+      </div>
+    </div>
+
+<!-- ====================================== classes ==== -->
+<section id="classes">
+  <h2>Base and generic classes</h2>
+<p>A plain C# class is injected at the end of its most derived constructor. A subclass in an assembly that doesn't reference
+  Selvage is injected at the end of the constructor of its nearest base class that does. The members an abstract base
+  class declares are injected too.</p>
+<p>A generic class is a context like any other: each closed type, such as <code>Inventory&lt;Sword&gt;</code>, has its
+  own members. A member whose type is a type parameter needs the <code>where T : class</code> constraint (refer to
+  <a href="Diagnostics.html#slv0107">SLV0107</a>).</p>
+<p>The Validation tab validates every closed type your code names. A type closed at runtime from a <code>Type</code>
+  value isn't validated.</p>
+
+</section>
+
+<!-- ====================================== play ==== -->
+<section id="play">
+  <h2>When you exit Play mode</h2>
+<p>When you exit Play mode, Selvage releases what the contexts created in Play mode still hold, and ends the objects
+  it created for them. The following contexts outlive Play mode, and are handled as follows:</p>
+<ul>
+  <li>The static members of a class: they're released, except the
+    <a href="Options.html#editmode"><code>EditMode</code></a> ones, which keep their dependency. The others are
+    injected again the next time you enter Play mode.</li>
+  <li>A ScriptableObject saved in the project and first injected in Play mode: its members are released, as for a
+    context created in Play mode.</li>
+</ul>
+
+</section>
+
+<!-- ====================================== reload ==== -->
+<section id="reload">
+  <h2>When scripts reload</h2>
+<p>Before scripts reload in the Editor, Selvage releases every context, and ends the objects it created for them. Each
+  member returns to its default, so after the reload no member holds a dependency Selvage no longer tracks. A component
+  or ScriptableObject that declares <code>OnDisable</code> is released when its <code>OnDisable</code> ends, so the
+  method can still use its members.</p>
+<p>After the reload, Selvage injects every member again: a ScriptableObject at the end of its <code>OnEnable</code>,
+  and a component whose <code>Awake</code> had already run before its <code>OnEnable</code>, because Unity doesn't call
+  <code>Awake</code> again. In Edit mode, these are the components Unity runs there, such as the ones marked
+  <code>[ExecuteAlways]</code>. A static member is injected again when its class is first used.</p>
+<p>What your code injected, such as a <a href="Options.html#manual"><code>Manual</code></a> member, stays at its default
+  until your code injects it again, like any other state a script reload ends. To have it injected after every reload,
+  inject it from <code>OnEnable</code>, which Unity calls again after the reload on every ScriptableObject and on the
+  components it runs.</p>
+
+</section>
+
+<!-- ====================================== cycles ==== -->
+<section id="cycles">
+  <h2>Dependency cycles</h2>
+<p>A <strong>dependency cycle</strong> is a loop of members: <code>A</code> has a member of type <code>B</code>, and
+  <code>B</code> has a member of type <code>A</code>. Selvage closes the loop when it comes back to an object it's
+  still injecting, such as a Shared instance: that object is given as it is, and its members finish injecting
+  afterwards.</p>
+<p>A cycle that never comes back to such an object, such as two classes that each create a new instance of the other
+  with the Separate lifetime, would never end. Selvage stops it with an error that names the cycle, such as
+  <code>Dependency cycle: A.b &#8250; B.a &#8250; A</code>, and the member fails. The Validation tab of the Dependencies
+  window reports such a cycle on each of its members, and on each member that leads into it, when the classes are
+  known before you enter Play mode. To fix the cycle, make one of the classes Shared, or make one of the members
+  <a href="Options.html#manual"><code>Manual</code></a>. Two Shared objects that hold each other keep each other
+  alive: to let them end, make one of the members <a href="Options.html#weak"><code>Weak</code></a>.</p>
+<p>When required <a href="Options.html#async"><code>Async</code></a> members wait for each other's contexts in a loop, the contexts become ready
+  together, once everything they wait for outside the loop is ready.</p>
+
+</section>
+
+<!-- ====================================== dll ==== -->
+<section id="dll">
+  <h2>Types from precompiled DLLs</h2>
+<p>Selvage doesn't process precompiled DLLs, so an object whose class comes from one isn't injected or released on
+  its own. To inject it, call <code>Manual.Inject(obj)</code> after you create it. To return its members to their
+  defaults, call <code>Manual.Release(obj)</code>. Under IL2CPP, these members need the <code>[Preserve]</code>
+  attribute or a <code>link.xml</code> entry.</p>
+<p>A class you write that derives from a class of a precompiled DLL is processed, and the members of its base class
+  are injected too.</p>
+
+</section>
+
+<!-- ====================================== events ==== -->
+<section id="events">
+  <h2>Monitor dependencies</h2>
+<p>To log dependencies or find a leak, use the events that <code>Injector</code> and <code>Context</code> raise:</p>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Event</th><th scope="col">Raised when</th></tr>
+    <tr><td><code>Injector.Created</code></td><td>A provider creates a dependency.</td></tr>
+    <tr><td><code>Injector.FirstInjected</code></td><td>A dependency that no member held is injected.</td></tr>
+    <tr><td><code>Injector.LastReleased</code></td><td>The last member that holds a dependency releases it.</td></tr>
+    <tr><td><code>Injector.TornDown</code></td><td>Selvage ends a dependency it created.</td></tr>
+    <tr><td><code>Context.Injected</code></td><td>A context's members are injected, automatically or with <code>Manual.Inject</code>. It passes an operation that completes when the context is ready.</td></tr>
+    <tr><td><code>Context.Released</code></td><td>A context is released.</td></tr>
+  </table>
+</div>
+<p>A dependency a provider creates raises the four <code>Injector</code> events in the order of the table. A
+  dependency a provider finds, such as a scene component, raises only <code>FirstInjected</code> and
+  <code>LastReleased</code>. Every event is raised on the main thread. A handler that throws an exception is logged,
+  and the other handlers still run.</p>
+
+</section>
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="Injection%20lifecycle.html">Injection lifecycle</a></li>
+    <li><a href="Troubleshooting.html">Troubleshooting</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="Advanced%20topics.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Advanced topics</div>
+  </a>
+  <a class="next" href="Technical%20QA.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Technical Q&amp;A</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Selvage v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

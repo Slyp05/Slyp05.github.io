@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="frame.css">
+<style>
+  .stage { display: flex; flex-direction: column; justify-content: center; gap: 30px; }
+  .stage > .crop { width: 1680px; }
+  .ide { display: flex; gap: 30px; align-items: stretch; }
+  .ide .code { flex: 1; padding: 22px 30px; }
+  .ide .left { flex: 1; display: flex; flex-direction: column; gap: 24px; }
+  .err { text-decoration: underline wavy var(--red); text-decoration-thickness: 2px; text-underline-offset: 7px; }
+  .ide pre { font-size: 25px; }
+  .ide .label { margin-bottom: 12px; }
+  .info { text-decoration: underline dotted #8796b0; text-decoration-thickness: 3px; text-underline-offset: 7px; }
+  .tip { font-size: 20px; margin-top: 14px; }
+  .qa { margin-top: 22px; display: flex; flex-direction: column; gap: 10px; }
+  .menu { background: #10192e; border: 2px solid #4a5f86; border-radius: 10px; padding: 6px; font-size: 23px; color: #cdd6f4; width: fit-content; box-shadow: 0 26px 24px -24px rgba(0, 0, 0, 0.7); }
+  .menu div { padding: 8px 16px; border-radius: 6px; display: flex; align-items: center; gap: 12px; background: rgba(137, 180, 250, 0.22); }
+</style>
+</head>
+<body>
+<div class="head">
+  <h1>Mistakes caught as you compile</h1>
+  <p>Code analysis ships with Selvage, in your IDE and the Console.</p>
+</div>
+<div class="stage">
+  <div class="ide">
+    <div class="left">
+    <div class="code">
+      <div class="label">Error</div>
+<pre>
+<span style="color: #cdd6f4">[</span><span class="a">Inject</span><span style="color: #cdd6f4">]</span> <span class="k">readonly</span> <span class="t">Camera</span> <span class="err">view</span>;
+</pre>
+      <div class="tip"><span class="id" style="color: var(--red)">SLV0001</span>'view' is marked [Inject] but is not assignable outside a constructor; injection needs a settable field or a property with a set or init accessor</div>
+    </div>
+    <div class="code">
+      <div class="label">Warning</div>
+<pre>
+<span style="color: #cdd6f4">[</span><span class="a">Inject</span><span style="color: #cdd6f4">]</span> <span class="t">IAudio</span> <span class="squiggle">sound</span> = <span class="k">new</span> <span class="t">NullAudio</span>();
+</pre>
+      <div class="tip"><span class="id">SLV0106</span>'sound' always holds a value before injection and does not set Overwrite, so it is never injected</div>
+    </div>
+    </div>
+    <div class="code">
+      <div class="label">Hint</div>
+<pre>
+<span style="color: #cdd6f4">[</span><span class="a">Inject</span>(<span class="t">EditMode</span> = <span class="k">true</span>)<span style="color: #cdd6f4">]</span> <span class="k">class</span> <span class="t">Hud</span>
+{
+    <span class="t">Camera</span> <span class="info">view</span>;
+</pre>
+      <div class="tip" style="color: #8796b0"><span class="id" style="color: #94e2d5">SLV0208</span>'view' is injected through [Inject] on class 'Hud' (EditMode)</div>
+      <div class="qa"><div class="label">Quick action</div><div class="menu"><div><svg width="22" height="22" viewBox="0 0 24 24"><path d="M9 21h6M10 18h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2V16h5v-.1c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z" fill="#f9e2af"/></svg>Inject 'view' explicitly</div></div></div>
+    </div>
+  </div>
+</div>
+<img class="hem" src="selvage.svg">
+</body>
+</html>

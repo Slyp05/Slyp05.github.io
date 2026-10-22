@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Find the Selvage equivalent of your bindings, and run both during a migration." />
+  <title>Selvage - Migrate from Zenject or VContainer</title>
+  <link rel="stylesheet" href="../shared/styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Selvage</div><a href="../User%20Manual.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Migrate from Zenject or VContainer</h1>
+      <div class="sub">Find the Selvage equivalent of your bindings, and run both during a migration.</div>
+      <div class="guide-index">
+        <a href="#model">Concepts</a>
+        <a href="#bindings">Bindings</a>
+        <a href="#scopes">Container scopes</a>
+        <a href="#receiving">Injection</a>
+        <a href="#running">Run both in one project</a>
+        <a href="#moving">Migrate step by step</a>
+      </div>
+    </div>
+
+<!-- ====================================== model ==== -->
+<section id="model">
+  <h2>Concepts</h2>
+<p>Selvage has no container, no installers and no scopes to declare. The following table lists the Selvage
+  equivalent of each container concept:</p>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Zenject, VContainer</th><th scope="col">Selvage</th></tr>
+    <tr><td>Container and installers</td><td>The provider list, <code>[Provide]</code> classes, and the registry.</td></tr>
+    <tr><td>Contexts and child scopes</td><td>Nothing to declare. What members share per scene, per GameObject or per spawned object follows from where objects are and which members hold them. For more information, refer to <a href="#scopes">Container scopes</a>.</td></tr>
+    <tr><td>Constructor injection</td><td>Members only, injected at the end of <code>Awake</code>, <code>OnEnable</code>, or the constructor.</td></tr>
+    <tr><td>Validation when the container builds</td><td>Validation in the Dependencies window, without entering Play mode.</td></tr>
+  </table>
+</div>
+
+</section>
+
+<!-- ====================================== bindings ==== -->
+<section id="bindings">
+  <h2>Bindings</h2>
+<div class="table-scroll">
+  <table class="cmp">
+    <tr><th scope="col">Zenject</th><th scope="col">VContainer</th><th scope="col">Selvage</th></tr>
+    <tr><td><code>Bind&lt;IFoo&gt;().To&lt;Foo&gt;().AsSingle()</code></td><td><code>Register&lt;IFoo, Foo&gt;(Lifetime.Singleton)</code></td><td><code>[Provide]</code> on <code>Foo</code></td></tr>
+    <tr><td><code>.AsTransient()</code></td><td><code>Lifetime.Transient</code></td><td><code>[Provide(Lifetime.Separate)]</code></td></tr>
+    <tr><td><code>FromInstance(foo)</code></td><td><code>RegisterInstance(foo)</code></td><td><code>registry.Add&lt;IFoo&gt;(foo)</code></td></tr>
+    <tr><td><code>FromMethod(...)</code></td><td><code>Register&lt;IFoo&gt;(resolver =&gt; ...)</code></td><td><code>registry.Add&lt;IFoo&gt;(() =&gt; ...)</code></td></tr>
+    <tr><td><code>FromComponentSibling()</code>, <code>FromComponentInHierarchy()</code></td><td><code>RegisterComponentInHierarchy&lt;Foo&gt;()</code></td><td>No code: the Scene Provider</td></tr>
+    <tr><td><code>FromResource(path)</code>, <code>FromComponentInNewPrefab(prefab)</code></td><td><code>RegisterComponentInNewPrefab(prefab)</code></td><td>A Provide Definition</td></tr>
+    <tr><td><code>WithId("main")</code></td><td>A key</td><td>A <a href="Choose%20between%20several%20candidates.html">preference</a> or a <a href="Choose%20between%20several%20candidates.html#channels">channel</a></td></tr>
+  </table>
+</div>
+<p>In this table, <code>registry</code> stands for <code>RegistryProvider.Listed</code>. Unlike a container singleton,
+  a Shared instance ends one frame after no member holds it.</p>
+
+  <h3 id="example">Move an installer</h3>
+<p>The following Zenject installer binds a class to its interface and a camera from the scene. A
+  <code>SceneContext</code> in the scene runs it:</p>
+<pre><code><span class="kw">using</span> Zenject;
+
+<span class="kw">public</span> <span class="kw">class</span> <span class="ty">GameInstaller</span> : <span class="ty">MonoInstaller</span>
+{
+    [<span class="ty">SerializeField</span>] <span class="ty">Camera</span> view;
+
+    <span class="kw">public</span> <span class="kw">override</span> <span class="kw">void</span> InstallBindings()
+    {
+        <span class="ty">Container</span>.Bind&lt;<span class="ty">IInventory</span>&gt;().To&lt;<span class="ty">Inventory</span>&gt;().AsSingle();
+        <span class="ty">Container</span>.Bind&lt;<span class="ty">Camera</span>&gt;().FromInstance(view);
+    }
+}
+
+<span class="kw">public</span> <span class="kw">class</span> <span class="ty">Player</span> : <span class="ty">MonoBehaviour</span>
+{
+    [Inject] <span class="ty">IInventory</span> inventory;
+    [Inject] <span class="ty">Camera</span> view;
+}</code></pre>
+<p>The VContainer equivalent is a <code>LifetimeScope</code> in the scene, which also registers the
+  <code>Player</code> so that VContainer injects it:</p>
+<pre><code><span class="kw">using</span> VContainer;
+<span class="kw">using</span> VContainer.Unity;
+
+<span class="kw">public</span> <span class="kw">class</span> <span class="ty">GameScope</span> : <span class="ty">LifetimeScope</span>
+{
+    [<span class="ty">SerializeField</span>] <span class="ty">Camera</span> view;
+
+    <span class="kw">protected</span> <span class="kw">override</span> <span class="kw">void</span> Configure(<span class="ty">IContainerBuilder</span> builder)
+    {
+        builder.Register&lt;<span class="ty">IInventory</span>, <span class="ty">Inventory</span>&gt;(<span class="ty">Lifetime</span>.Singleton);
+        builder.RegisterComponent(view);
+        builder.RegisterComponentInHierarchy&lt;<span class="ty">Player</span>&gt;();
+    }
+}</code></pre>
+<p>With Selvage, the installer or scope, its GameObject and the camera reference go away. The <code>[Provide]</code>
+  attribute replaces the binding, and the Scene Provider finds the camera:</p>
+<pre><code><span class="kw">using</span> Selvage;
+<span class="kw">using</span> Selvage.Providers;
+
+[Provide]
+<span class="kw">public</span> <span class="kw">class</span> <span class="ty">Inventory</span> : <span class="ty">IInventory</span> { ... }
+
+<span class="kw">public</span> <span class="kw">class</span> <span class="ty">Player</span> : <span class="ty">MonoBehaviour</span>
+{
+    [Inject] <span class="ty">IInventory</span> inventory;   <span class="cm">// an Inventory, from the Attribute Provider</span>
+    [Inject] <span class="ty">Camera</span> view;            <span class="cm">// the Camera in the scene, from the Scene Provider</span>
+}</code></pre>
+<p>The <code>Player</code> class keeps its members. Only its <code>using</code> directive changes.</p>
+
+</section>
+
+<!-- ====================================== scopes ==== -->
+<section id="scopes">
+  <h2>Container scopes</h2>
+<p>A container shares objects within the scopes you declare, such as a <code>SceneContext</code> or a child
+  <code>LifetimeScope</code>. Selvage has no scopes to declare: an object Selvage creates lives while a member holds
+  it, and the Scene Provider gives the component closest to the member. The sharing a container scope gives follows
+  from these rules:</p>
+<div class="table-scroll">
+  <table class="cmp">
+    <tr><th scope="col">Zenject, VContainer</th><th scope="col">Selvage</th></tr>
+    <tr><td>Per scene: <code>SceneContext</code>, a scene's <code>LifetimeScope</code></td><td>A component in the scene, which lives with it. A Shared object that only the scene's objects hold ends once the scene unloads, and the next scene's members receive the same object if they need it on the frame it loads. To give one scene its own object of a <code>[Provide]</code> class, add a second <a href="Choose%20between%20several%20candidates.html#settings">preference</a> that sets <code>Scene</code>.</td></tr>
+    <tr><td>Per GameObject or prefab instance: <code>GameObjectContext</code>, a child <code>LifetimeScope</code></td><td>A component on the prefab. The Scene Provider looks on the member's GameObject, then its parents and children, so the scripts of each instance receive that instance's own component. To match by hierarchy path instead, use a preference that sets <code>Under</code>.</td></tr>
+    <tr><td>Per spawned object: factory arguments, a sub-container</td><td>A <a href="Provide%20objects%20your%20code%20creates.html#local">local block</a> around <code>new</code> or <code>Instantiate</code>.</td></tr>
+    <tr><td>For the whole application: <code>ProjectContext</code>, the root scope</td><td>An object added to the registry, which Selvage never ends, or a Shared object held from something that lasts, such as a static member.</td></tr>
+  </table>
+</div>
+<p>For the reasons behind this model, refer to <a href="Design%20decisions.html#lifetimes">Lifetimes without container
+  scopes</a>.</p>
+
+</section>
+
+<!-- ====================================== receiving ==== -->
+<section id="receiving">
+  <h2>Injection</h2>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Zenject, VContainer</th><th scope="col">Selvage</th></tr>
+    <tr><td><code>[Inject]</code> field or property</td><td><code>[Inject]</code> field or property.</td></tr>
+    <tr><td><code>[Inject] void Construct(...)</code></td><td><code>Start</code>, or code after <code>Context.WhenReady(this)</code>.</td></tr>
+    <tr><td><code>Lazy&lt;T&gt;</code></td><td>The <a href="Options.html#manual"><code>Manual</code></a> option.</td></tr>
+    <tr><td><code>IInitializable</code>, <code>IStartable</code></td><td><code>Start</code>, or <code>Context.WhenReady(this)</code>.</td></tr>
+    <tr><td>Factories</td><td><code>new</code> and <code>Instantiate</code>. To pass data, use a <a href="Provide%20objects%20your%20code%20creates.html#local">local block</a>.</td></tr>
+    <tr><td><code>Resolve&lt;T&gt;()</code></td><td>No equivalent: declare a member. For static code, a rare code path or a choice made at runtime, refer to
+      <a href="Design%20decisions.html#locator">No service locator</a>.</td></tr>
+    <tr><td><code>Container.Inject(obj)</code></td><td>Automatic. For a type from a precompiled DLL, <code>Manual.Inject(obj)</code>.</td></tr>
+  </table>
+</div>
+
+</section>
+
+<!-- ====================================== running ==== -->
+<section id="running">
+  <h2>Run both in one project</h2>
+<p>During a migration, the Compatibility modules run Selvage beside your container. Each module compiles only when
+  its container is in the project, with nothing to set up:</p>
+<ul>
+  <li>The Zenject module requires Zenject or Extenject 9.0 or later. Selvage detects it, including when you imported
+    it from the Asset Store, and logs a line when it turns the module on or off. Zenject must be in its own assembly:
+    if it's in <code>Assembly-CSharp</code>, Selvage reports it with the fix, and the module stays off.</li>
+  <li>The VContainer module requires the VContainer package 1.17.0 or later.</li>
+</ul>
+
+  <h3 id="from-container">Give Selvage members what the container has</h3>
+<p>Add <strong>Zenject Provider</strong> or <strong>VContainer Provider</strong> at the bottom of the provider list.
+  The provider asks the container nearest the member's context:</p>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Context</th><th scope="col">Zenject</th><th scope="col">VContainer</th></tr>
+    <tr><td>On a GameObject</td><td>The <code>GameObjectContext</code> in its parents, else its scene's <code>SceneContext</code>, else the <code>ProjectContext</code>.</td><td>The <code>LifetimeScope</code> in its parents, else the first one in its scene, else the root scope.</td></tr>
+    <tr><td>A plain C# class or a ScriptableObject</td><td>The <code>ProjectContext</code>.</td><td>The root scope.</td></tr>
+  </table>
+</div>
+<p>To use another container, set <code>ZenjectProvider.Listed.ZenjectContext</code> or <code>VContainerProvider.Listed.Scope</code>
+  from code. The provider then follows these rules:</p>
+<ul>
+  <li>A member's channel is tried first as the binding's identifier or key, then without it.</li>
+  <li>A collection member receives every binding of its element type.</li>
+  <li>A container that isn't built yet gives nothing, and neither does any container in Edit mode.</li>
+  <li>The container owns what it gives: Selvage never ends it.</li>
+  <li>The Validation tab shows these members as <strong>May Be Supplied</strong>, because bindings only exist once
+    installers run.</li>
+  <li>When the container throws an exception, the provider logs the container's message, and the member receives
+    nothing from the providers below.</li>
+</ul>
+
+  <h3 id="to-container">Give the container's classes what Selvage has</h3>
+<p>For a constructor parameter, an <code>[Inject]</code> method, or code you don't own that expects a binding, bind
+  the type to Selvage. Each type is bound on its own:</p>
+<pre><code><span class="ty">Container</span>.Bind&lt;<span class="ty">IAudio</span>&gt;().FromSelvage().AsCached();          <span class="cm">// Zenject</span>
+builder.RegisterFromSelvage&lt;<span class="ty">IAudio</span>&gt;();                       <span class="cm">// VContainer</span>
+builder.RegisterFromSelvage&lt;<span class="ty">Camera</span>&gt;(channel: <span class="st">"UI"</span>).Keyed(<span class="st">"UI"</span>);</code></pre>
+<ul>
+  <li>With Zenject, the rest of the binding stays Zenject's own. Zenject's scope decides how often Selvage is asked,
+    and Zenject's default is transient, so add <code>.AsCached()</code> to ask once. Don't also bind
+    <code>IDisposable</code> for the type, or Zenject disposes what Selvage owns.</li>
+  <li>With VContainer, pass the channel when you register, and the lifetime: <code>Lifetime.Singleton</code> (the
+    default) or <code>Lifetime.Transient</code>. <code>Lifetime.Scoped</code> throws an exception.</li>
+  <li>When Selvage has nothing for the type, the container throws its own exception, or Zenject gives
+    <code>null</code> to an optional injection.</li>
+  <li>Selvage holds what it gives until the container is disposed. A transient binding to a dependency with the
+    Separate or Pooled lifetime therefore keeps one object per resolution until then, and <code>RaiseChanged</code> never reaches
+    what the container received.</li>
+</ul>
+
+  <h3 id="one-framework">Inject each member with one framework</h3>
+<p>A member is injected by Selvage or by the container, never both. A conflict happens when a Selvage scope, such as
+  the Inject by Default setting, covers a member that the container's <code>[Inject]</code> marks. After each
+  compilation, the Console window lists these members with the fix: add <code>[DontInject]</code> to the member, or
+  <code>[assembly: DontInject]</code> to the assemblies that hold your container code.</p>
+<p>When the container injects an object first, such as a component in a scene or a prefab it instantiates, a member
+  it already filled holds a value, so Selvage leaves it unless the member uses <code>Overwrite</code>.</p>
+<p>In a file that uses both frameworks, alias the attribute inside your namespace:
+  <code>using Inject = Selvage.InjectAttribute;</code>. The same applies to <code>Context</code> with Zenject and to
+  <code>Lifetime</code> with VContainer.</p>
+
+</section>
+
+<!-- ====================================== moving ==== -->
+<section id="moving">
+  <h2>Migrate step by step</h2>
+<p>To migrate a project, perform the following steps:</p>
+<ol>
+  <li>Add the container's provider at the bottom of the provider list.</li>
+  <li>Move each binding to its Selvage equivalent: a <code>[Provide]</code> class, a registry entry, a scene component,
+    or a Provide Definition.</li>
+  <li>For code that can't move, such as a package built on the container, bind the types it needs with
+    <code>FromSelvage</code> or <code>RegisterFromSelvage</code>.</li>
+  <li>When the Dependencies window shows that the container's provider gives nothing, remove it.</li>
+</ol>
+
+</section>
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="API%20-%20Compatibility.html#ZenjectProvider">ZenjectProvider API reference</a></li>
+    <li><a href="API%20-%20Compatibility.html#VContainerProvider">VContainerProvider API reference</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="Design%20decisions.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Design decisions</div>
+  </a>
+  <a class="next" href="Reference.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Reference</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Selvage v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

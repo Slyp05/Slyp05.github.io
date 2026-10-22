@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Play a small game whose scripts receive everything through [Inject]." />
+  <title>Selvage - Explore the demo</title>
+  <link rel="stylesheet" href="/assets/css/doc-styles.css" />
+  <link rel="stylesheet" href="/assets/css/selvage.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Selvage</div><a href="../index.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Explore the demo</h1>
+      <div class="sub">Play a small game whose scripts receive everything through [Inject].</div>
+    </div>
+
+<!-- ====================================== run ==== -->
+<section id="run">
+  <h2>Run the demo</h2>
+<p>The demo requires the Unity UI package (<code>com.unity.ugui</code>). To run it, perform the following steps:</p>
+<ol>
+  <li>Open <code>Assets/Selvage/Demo/Selvage Demo.unity</code>.</li>
+  <li>Enter Play mode.</li>
+  <li>Move with WASD or the arrow keys, collect the coins, and avoid the enemies. After a game over, press Space or
+    Enter to play again.</li>
+</ol>
+<div class="img-block">
+  <img src="../img/demo_scene.png" alt="The Selvage demo in Play mode, with the score, the lives, the coins and the enemies" />
+</div>
+<p>While the demo plays, the <strong>Live</strong> tab of the Dependencies window displays what each member holds. For
+  more information, refer to <a href="Inspect%20injected%20members.html">Inspect injected members</a>.</p>
+<div class="note"><strong>Note:</strong> The demo requires the Registry Provider, the Attribute Provider, the Asset
+  Provider, and a Scene Provider that looks through the whole scene (its <strong>Reach</strong> is
+  <strong>Scene</strong> or <strong>All Scenes</strong>). If one is missing or turned off, the demo doesn't start, and
+  displays which provider to add. To restore them, go to <strong>Edit</strong> &gt; <strong>Project Settings</strong>
+  &gt; <strong>Selvage</strong>, open the More (<strong>&#8942;</strong>) menu at the top right of the page, and select
+  <strong>Default</strong>. For more information, refer to
+  <a href="Manage%20the%20provider%20list.html#setups">Reuse your setup in other projects</a>.</div>
+
+</section>
+
+<!-- ====================================== scripts ==== -->
+<section id="scripts">
+  <h2>Demo scripts</h2>
+<p>In the demo's scripts, a comment above each member explains where its dependency comes from. Start with
+  <code>Game/Player.cs</code>. The following table lists where the demo uses each feature:</p>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Feature</th><th scope="col">Used in</th></tr>
+    <tr><td><a href="Provide%20scene%20components.html">Scene components</a></td><td><code>Player</code>, <code>Coin</code>, <code>WaveSpawner</code>, <code>GameOverPanel</code>, <code>Hud</code></td></tr>
+    <tr><td><a href="Provide%20your%20own%20classes.html"><code>[Provide]</code></a></td><td><code>Score</code></td></tr>
+    <tr><td><a href="Provide%20assets.html">Provide Definition</a></td><td><code>GameSettings</code>, in <code>Provided Assets</code></td></tr>
+    <tr><td><a href="Provide%20objects%20your%20code%20creates.html#registry">Registry</a></td><td><code>SaveSystem</code>, which adds the player's profile and the save on this device</td></tr>
+    <tr><td><a href="Write%20a%20custom%20provider.html">Custom provider</a></td><td><code>CloudSave</code>, which gives a save from a simulated cloud after a second</td></tr>
+    <tr><td><a href="Options.html#optional"><code>Optional</code></a></td><td><code>Player</code>, <code>Coin</code></td></tr>
+    <tr><td><a href="Options.html#manual"><code>Manual</code></a></td><td><code>Enemy</code></td></tr>
+    <tr><td><a href="Options.html#editmode"><code>EditMode</code></a></td><td><code>Arena</code></td></tr>
+    <tr><td><a href="Options.html#overwrite"><code>Overwrite</code></a>, <a href="Options.html#async"><code>Async</code></a>, <a href="Options.html#reactive"><code>Reactive</code></a>, <a href="Options.html#warm"><code>Warm</code></a>, <a href="Options.html#weak"><code>Weak</code></a></td><td><code>Hud</code></td></tr>
+  </table>
+</div>
+<p>The demo provides only its own types, so it doesn't change what the rest of your project receives. To remove it,
+  delete the <code>Assets/Selvage/Demo</code> folder.</p>
+
+</section>
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="../../quick-usage-guide/index.html">Quick Usage Guide</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="Injection%20lifecycle.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Injection lifecycle</div>
+  </a>
+  <a class="next" href="Provide%20dependencies.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Provide dependencies</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Selvage v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

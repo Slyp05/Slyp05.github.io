@@ -50,7 +50,6 @@ $content-width: 880px;
   --border-softer:   #e4e4e4;
   --th-border:       #dedede;
   --th-border-bottom:#c9c9c9;
-  --header-bar:      #424242;   // minima's 5px bar above the header
   --rule-strong:     #424242;   // site title, mobile menu icon
   --link:            #2a7ae2;
   --link-visited:    #1756a9;
@@ -111,9 +110,6 @@ $content-width: 880px;
   --border-softer:   #333333;
   --th-border:       #3d3d3d;
   --th-border-bottom:#4a4a4a;
-  // The bar reads as a deliberate stripe once it is not near-black on white, so
-  // it steps aside in dark mode and lets the header sit flush with the page.
-  --header-bar:      transparent;
   --rule-strong:     #e8e8e8;
   --link:            #79b8ff;
   --link-visited:    #6ba3e8;
@@ -700,7 +696,7 @@ table th {
 }
 table td { border-color: var(--border-soft); }
 
-.site-header { border-top-color: var(--header-bar); border-bottom-color: var(--border); }
+.site-header { border-top: 0; border-bottom-color: var(--border); }
 .site-title, .site-title:visited { color: var(--rule-strong); }
 .site-nav .page-link { color: var(--text); }
 .site-nav .menu-icon > svg { fill: var(--rule-strong); }

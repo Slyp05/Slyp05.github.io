@@ -1,0 +1,134 @@
+/* Shared frame for the Asset Store screenshots: a 1920x1280 page (3:2), rendered to 1950x1300. The slide is a 1920x1080 body
+   placed 100px down, so the same gap opens above the headline and above the hem. */
+:root {
+  --ink: #e8ecf4;
+  --muted: #b9c6db;
+  --dim: #8796b0;
+  --panel: #1b2c4b;
+  --panel-deep: #142440;
+  --border: #3d5378;
+  --blue: #89b4fa;
+  --mauve: #cba6f7;
+  --teal: #94e2d5;
+  --peach: #fab387;
+  --yellow: #f9e2af;
+  --green: #a6e3a1;
+  --red: #f38ba8;
+  --gold: #d9a441;
+}
+html { margin: 0; padding: 0; width: 1920px; height: 1280px; overflow: hidden; background: #14223d url("denim.svg") no-repeat 0 0 / 1920px 1280px; }
+body {
+  margin: 0; padding: 0; width: 1920px; height: 1080px; overflow: visible;
+  position: relative; top: 100px;
+  font-family: "Segoe UI Variable Display", "Segoe UI", sans-serif;
+  color: var(--ink);
+}
+.hem { position: absolute; left: 0; bottom: -100px; width: 1920px; height: 102px; }
+
+/* Headline block, top left. */
+.head { position: absolute; left: 120px; top: 92px; right: 120px; }
+.head h1 {
+  margin: 0; font-size: 76px; font-weight: 700; letter-spacing: -1.5px; line-height: 1.05; padding-bottom: 12px;
+  background: linear-gradient(90deg, #f2efe6, #d6e2f5); -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.head p { margin: 6px 0 0; font-size: 34px; font-weight: 400; color: var(--muted); line-height: 1.3; }
+
+/* Content stage between the headline and the hem. */
+.stage { position: absolute; left: 120px; right: 120px; top: 290px; bottom: 200px; }
+
+/* Code card. */
+.code {
+  background: rgba(20, 34, 62, 0.92); border: 2px solid var(--border); border-radius: 22px;
+  box-shadow: 0 26px 24px -24px rgba(0, 0, 0, 0.7);
+  padding: 30px 38px; box-sizing: border-box;
+}
+.code .label { font-size: 22px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--dim); margin-bottom: 16px; }
+.code pre {
+  margin: 0; font-family: "Cascadia Code", "Cascadia Mono", Consolas, monospace; font-size: 29px; line-height: 1.5;
+  color: #cdd6f4; white-space: pre; font-variant-ligatures: none;
+}
+.code pre .k { color: var(--mauve); }
+.code pre .t { color: var(--yellow); }
+.code pre .a { color: #ffffff; font-weight: 700; }
+.code pre .s { color: var(--green); }
+.code pre .c { color: #7f8bab; font-style: italic; }
+.code pre .n { color: var(--peach); }
+.code pre .m { color: var(--blue); }
+.code pre .x { color: #7f8bab; text-decoration: line-through; text-decoration-color: var(--red); text-decoration-thickness: 3px; }
+.code pre .hl { background: rgba(137, 180, 250, 0.14); border-radius: 6px; box-shadow: 0 0 0 4px rgba(137, 180, 250, 0.14); }
+
+/* A real Editor capture. */
+.shot {
+  display: block; border-radius: 14px; border: 2px solid var(--border);
+  box-shadow: 0 26px 24px -24px rgba(0, 0, 0, 0.7);
+}
+
+/* A short caption under or beside a visual. */
+.cap { font-size: 28px; color: var(--muted); line-height: 1.35; padding-left: 4px; }
+.cap b { color: var(--ink); font-weight: 600; }
+
+/* Numbered step chip. */
+.step {
+  display: inline-flex; align-items: center; justify-content: center; width: 52px; height: 52px; border-radius: 50%;
+  background: var(--panel-deep); border: 3px solid var(--blue); color: var(--ink); font-size: 26px; font-weight: 700;
+}
+
+/* Layout helpers. */
+.row { display: flex; align-items: center; gap: 64px; height: 100%; }
+.col { display: flex; flex-direction: column; gap: 28px; }
+.center { justify-content: center; }
+
+/* Coloured dot keyed to a provider. */
+.dot { display: inline-block; width: 18px; height: 18px; border-radius: 50%; margin-right: 16px; vertical-align: middle; flex: none; }
+.dot.blue { background: var(--blue); } .dot.mauve { background: var(--mauve); } .dot.peach { background: var(--peach); }
+.dot.teal { background: var(--teal); } .dot.green { background: var(--green); } .dot.yellow { background: var(--yellow); } .dot.red { background: var(--red); }
+.legend { display: flex; flex-direction: column; gap: 18px; }
+.legend div { display: flex; align-items: center; font-size: 28px; color: var(--muted); }
+.legend code, .cap code { font-family: "Cascadia Code", Consolas, monospace; font-size: 0.9em; color: var(--ink); }
+
+/* Feature badge. */
+.badge {
+  background: rgba(20, 34, 62, 0.88); border: 2px solid var(--border); border-radius: 18px; padding: 26px 30px;
+  box-shadow: 0 26px 24px -24px rgba(0, 0, 0, 0.7); box-sizing: border-box;
+}
+.badge b { display: block; font-size: 31px; font-weight: 700; color: var(--ink); margin-bottom: 8px; }
+.badge span { font-size: 24px; color: var(--muted); line-height: 1.35; }
+
+/* IDE squiggle and its tooltip. */
+.squiggle { text-decoration: underline wavy #f9e2af; text-decoration-thickness: 2px; text-underline-offset: 7px; }
+.tip {
+  margin-top: 22px; background: #10192e; border: 2px solid #4a5f86; border-radius: 12px; padding: 20px 24px;
+  font-size: 23px; line-height: 1.45; color: #cdd6f4; font-family: "Segoe UI", sans-serif;
+}
+.tip .id { color: var(--yellow); font-weight: 700; margin-right: 10px; }
+
+/* A crop of the demo game's HUD, on the game's own background. */
+.hud { display: block; border-radius: 12px; border: 2px solid var(--border); box-shadow: 0 26px 24px -24px rgba(0, 0, 0, 0.7); }
+
+/* Where a dependency comes from, one colour per source, the same on every slide and on the cover. */
+:root { --scene: var(--blue); --class: var(--mauve); --asset: var(--peach); --code: var(--teal); }
+.chip {
+  display: inline-flex; align-items: center; gap: 10px; padding: 4px 16px 4px 12px; border-radius: 999px;
+  font-family: "Segoe UI Variable Display", "Segoe UI", sans-serif; font-size: 22px; font-weight: 600; font-style: normal;
+  letter-spacing: 0.2px; white-space: nowrap; border: 2px solid currentColor; background: rgba(12, 22, 42, 0.6);
+}
+.chip::before { content: ""; width: 12px; height: 12px; border-radius: 50%; background: currentColor; }
+.chip.scene { color: var(--scene); } .chip.class { color: var(--class); } .chip.asset { color: var(--asset); } .chip.code { color: var(--code); }
+
+/* A cropped Editor capture with no tab of its own. */
+.crop { display: block; border-radius: 12px; border: 2px solid var(--border); box-shadow: 0 26px 24px -24px rgba(0, 0, 0, 0.7); }
+
+/* A big number with its line underneath. */
+.big { display: flex; flex-direction: column; gap: 6px; }
+.big b { font-size: 92px; font-weight: 700; letter-spacing: -2px; line-height: 1; color: var(--ink); }
+.big span { font-size: 27px; color: var(--muted); line-height: 1.3; }
+
+/* Callout: a coloured ring drawn over part of a capture. */
+.ring { position: absolute; border: 3px solid var(--yellow); border-radius: 10px; box-shadow: 0 0 22px rgba(249, 226, 175, 0.4); }
+.ring.green { border-color: var(--green); box-shadow: 0 0 22px rgba(166, 227, 161, 0.45); }
+.ring.teal { border-color: var(--teal); box-shadow: 0 0 22px rgba(148, 226, 213, 0.45); }
+.tag {
+  position: absolute; font-size: 24px; font-weight: 600; color: #10192e; background: var(--yellow);
+  padding: 6px 14px; border-radius: 10px; white-space: nowrap; box-shadow: 0 26px 24px -24px rgba(0, 0, 0, 0.7);
+}
+.tag.green { background: var(--green); } .tag.teal { background: var(--teal); }

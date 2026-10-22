@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<!-- Asset Store card image, 420x280. Text allowed: title and publisher only. Drawn on an 840x560
+     canvas and rendered at half size by render.sh. -->
+<style>
+  html, body { margin: 0; padding: 0; background: #161622; }
+  svg { display: block; }
+  .title { font-family: "Segoe UI Variable Display", "Segoe UI", sans-serif; font-weight: 700; }
+</style>
+</head>
+<body>
+<svg width="420" height="280" viewBox="0 0 840 560" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="bg" cx="0.7" cy="0.42" r="0.85">
+      <stop offset="0" stop-color="#2a2a40"/>
+      <stop offset="0.55" stop-color="#1e1e2e"/>
+      <stop offset="1" stop-color="#13131c"/>
+    </radialGradient>
+    <linearGradient id="titleGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#cdd6f4"/>
+      <stop offset="1" stop-color="#b4befe"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#000" flood-opacity="0.45"/>
+    </filter>
+    <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="840" height="560" fill="url(#bg)"/>
+
+  <text class="title" x="36" y="296" font-size="106" fill="url(#titleGrad)" letter-spacing="-2">Selvage</text>
+
+  <!-- The cover's illustration reduced to three providers and three members, with thicker strokes
+       so it stays legible at card size. -->
+  <g fill="none" stroke-linecap="round">
+    <path d="M590 375 C640 375, 640 175, 690 175" stroke="#1e1e2e" stroke-width="22"/>
+    <path d="M590 375 C640 375, 640 175, 690 175" stroke="#fab387" stroke-width="10"/>
+    <path d="M590 125 C640 125, 640 270, 690 270" stroke="#1e1e2e" stroke-width="22"/>
+    <path d="M590 125 C640 125, 640 270, 690 270" stroke="#89b4fa" stroke-width="10"/>
+    <path d="M590 250 C640 250, 640 365, 690 365" stroke="#1e1e2e" stroke-width="22"/>
+    <path d="M590 250 C640 250, 640 365, 690 365" stroke="#cba6f7" stroke-width="10"/>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="510" y="90" width="80" height="70" rx="16" fill="#262639" stroke="#89b4fa" stroke-width="4"/>
+    <rect x="510" y="215" width="80" height="70" rx="16" fill="#262639" stroke="#cba6f7" stroke-width="4"/>
+    <rect x="510" y="340" width="80" height="70" rx="16" fill="#262639" stroke="#fab387" stroke-width="4"/>
+    <rect x="690" y="110" width="120" height="320" rx="20" fill="#2a2a3f" stroke="#45475a" stroke-width="3"/>
+  </g>
+
+  <!-- Glyphs: scene cube, attribute brackets, asset grid. -->
+  <g transform="translate(550 125)" fill="none" stroke="#89b4fa" stroke-width="5" stroke-linejoin="round">
+    <path d="M0 -21 L19 -10 L19 11 L0 22 L-19 11 L-19 -10 Z"/>
+    <path d="M-19 -10 L0 0 L19 -10 M0 0 V22"/>
+  </g>
+  <g transform="translate(550 250)" fill="none" stroke="#cba6f7" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M-8 -20 H-18 V20 H-8"/>
+    <path d="M8 -20 H18 V20 H8"/>
+    <circle cx="0" cy="0" r="4" fill="#cba6f7" stroke="none"/>
+  </g>
+  <g transform="translate(550 375)" fill="#fab387">
+    <rect x="-20" y="-20" width="17" height="17" rx="4"/>
+    <rect x="3" y="-20" width="17" height="17" rx="4" opacity="0.6"/>
+    <rect x="-20" y="3" width="17" height="17" rx="4" opacity="0.6"/>
+    <rect x="3" y="3" width="17" height="17" rx="4"/>
+  </g>
+
+  <!-- Context card: header and three members, each lit Green. -->
+  <path d="M690 140 H810" stroke="#45475a" stroke-width="3"/>
+  <rect x="712" y="120" width="60" height="10" rx="5" fill="#cdd6f4" opacity="0.8"/>
+  <g>
+    <rect x="704" y="152" width="92" height="46" rx="12" fill="#313147"/>
+    <rect x="716" y="168" width="40" height="14" rx="7" fill="#fab387" opacity="0.7"/>
+    <circle cx="777" cy="175" r="9" fill="#a6e3a1" filter="url(#glow)"/>
+    <rect x="704" y="247" width="92" height="46" rx="12" fill="#313147"/>
+    <rect x="716" y="263" width="40" height="14" rx="7" fill="#89b4fa" opacity="0.7"/>
+    <circle cx="777" cy="270" r="9" fill="#a6e3a1" filter="url(#glow)"/>
+    <rect x="704" y="342" width="92" height="46" rx="12" fill="#313147"/>
+    <rect x="716" y="358" width="40" height="14" rx="7" fill="#cba6f7" opacity="0.7"/>
+    <circle cx="777" cy="365" r="9" fill="#a6e3a1" filter="url(#glow)"/>
+  </g>
+  <g stroke="#2a2a3f" stroke-width="4">
+    <circle cx="690" cy="175" r="11" fill="#fab387"/>
+    <circle cx="690" cy="270" r="11" fill="#89b4fa"/>
+    <circle cx="690" cy="365" r="11" fill="#cba6f7"/>
+  </g>
+
+  <image href="selvage.svg" x="0" y="515" width="840" height="45"/>
+</svg>
+</body>
+</html>

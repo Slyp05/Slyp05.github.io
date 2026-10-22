@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="How Selvage behaves with threads, weaving, IL2CPP, domain reload and performance." />
+  <title>Selvage - Technical Q&amp;A</title>
+  <link rel="stylesheet" href="../shared/styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Selvage</div><a href="../User%20Manual.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Technical Q&amp;A</h1>
+      <div class="sub">How Selvage behaves with threads, weaving, IL2CPP, domain reload and performance.</div>
+      <div class="guide-index">
+        <a href="#threading">Threading</a>
+        <a href="#performance">Performance</a>
+        <a href="#weaving">Weaving</a>
+        <a href="#aot">IL2CPP and AOT</a>
+        <a href="#reload">Domain reload</a>
+        <a href="#platforms">Platforms</a>
+        <a href="#testing">Testing</a>
+      </div>
+    </div>
+
+<!-- ====================================== threading ==== -->
+<section id="threading">
+  <h2>Threading</h2>
+  <h3 id="thread-safe">Can I inject from another thread?</h3>
+<p>No. Injection runs on the main thread, without locks. In the Editor and in development builds, an assertion
+  reports a call from another thread.</p>
+
+  <h3 id="ctor-thread">What happens when a constructor runs on another thread?</h3>
+<p>The object waits, and Selvage injects it on the main thread, at the next callback of any of your scripts there.</p>
+
+  <h3 id="provider-thread">Can a provider work in the background?</h3>
+<p>Yes, in <code>ProvideAsync</code>. Selvage resumes on the main thread when the work completes.</p>
+
+</section>
+
+<!-- ====================================== performance ==== -->
+<section id="performance">
+  <h2>Performance</h2>
+  <h3 id="speed">How long does an injection take?</h3>
+<p>About 2 µs for a plain C# object with one member, and 4 µs with three members, in an IL2CPP release build on a
+  Windows desktop computer, against 3.6 µs and 6.4 µs for Zenject and 1 µs and 1.7 µs for VContainer in the same test. With Mono, Selvage and Zenject both take
+  about 5.5 µs. VContainer records nothing about an object once it's built. Selvage records what each object holds,
+  so a shared dependency ends at its last release, and one member can be reinjected or released on its own.</p>
+<p>Injection is slower in the Editor than in a build. In both, Selvage assigns members with code that an IL
+  post-processor adds when Unity compiles your scripts, so injection uses no reflection. For more
+  information, refer to <a href="#weaver">What does Selvage add to my code?</a></p>
+
+  <h3 id="alloc">Does injection allocate memory?</h3>
+<p>A synchronous injection allocates nothing per member, and one record per context. The first injection of a member
+  finds its providers and caches them.</p>
+
+  <h3 id="long-list">Does a long provider list slow injection down?</h3>
+<p>No. Selvage caches the providers that serve each member, and asks only those.</p>
+
+  <h3 id="reinject">Can I call Manual.Reinject every frame?</h3>
+<p>Yes, but each call asks the providers again. To follow changes, use <code>Reactive</code> instead, which
+  reinjects only when a provider announces a change.</p>
+
+</section>
+
+<!-- ====================================== weaving ==== -->
+<section id="weaving">
+  <h2>Weaving</h2>
+  <h3 id="weaver">What does Selvage add to my code?</h3>
+<p>When Unity compiles your scripts, Selvage adds the following through an <code>ILPostProcessor</code>. This is
+  called weaving:</p>
+<ul>
+  <li>A call at the end of <code>Awake</code>, <code>OnEnable</code>, constructors and static constructors that
+    injects the object.</li>
+  <li>A call at the start of <code>Awake</code> and <code>OnEnable</code> that injects the objects created while Unity
+    created this one, as described in <a href="Injection%20lifecycle.html#when">When Selvage injects members</a>.</li>
+  <li>A call that releases the object at the end of <code>OnDestroy</code>, <code>Dispose</code> or
+    <code>DisposeAsync</code>.</li>
+  <li>Direct assignments to its members, without reflection.</li>
+  <li>In every coroutine and <code>async</code> method, the code that carries <a href="Provide%20objects%20your%20code%20creates.html#local">local
+    blocks</a> across <code>yield</code> and <code>await</code>.</li>
+</ul>
+<p>The Editor and builds run the same code.</p>
+
+  <h3 id="generics">Does Selvage weave generic classes?</h3>
+<p>Yes. Constrain the type parameter to a class. For more information, refer to
+  <a href="Diagnostics.html#slv0107">SLV0107</a>.</p>
+
+  <h3 id="weave-fails">What happens if weaving fails?</h3>
+<p>The assembly, or the one class that failed, stays as compiled, and the Console window displays a warning that starts
+  with <code>Selvage: automatic injection is off</code>. Its members aren't injected automatically, but
+  <code>Manual.Inject</code> still injects them, through reflection.</p>
+
+</section>
+
+<!-- ====================================== aot ==== -->
+<section id="aot">
+  <h2>IL2CPP and AOT</h2>
+  <h3 id="il2cpp">Is Selvage safe to use with IL2CPP?</h3>
+<p>Yes. The code Selvage adds needs no <code>link.xml</code> entry. A member Selvage reaches through reflection fails the IL2CPP
+  build until you add the <code>[Preserve]</code> attribute or a <code>link.xml</code> entry. These are the members of
+  classes from precompiled DLLs. A generic type closed at runtime from a <code>Type</code> value, such as one read from
+  data, can't be detected in advance, so make sure IL2CPP compiles it.</p>
+
+</section>
+
+<!-- ====================================== reload ==== -->
+<section id="reload">
+  <h2>Domain reload</h2>
+  <h3 id="no-reload">Does Selvage work with domain reload disabled?</h3>
+<p>Yes. Selvage resets its state when you enter Play mode, and reinjects static members and the objects Unity doesn't
+  recreate. Dependencies injected in Edit mode persist. Other dependencies are released when you exit Play mode.</p>
+
+</section>
+
+<!-- ====================================== platforms ==== -->
+<section id="platforms">
+  <h2>Platforms</h2>
+  <h3 id="targets">Which platforms does Selvage support?</h3>
+<p>Every Unity 6 build target. Selvage starts no threads, so WebGL needs no special handling.</p>
+
+</section>
+
+<!-- ====================================== testing ==== -->
+<section id="testing">
+  <h2>Testing</h2>
+  <h3 id="tests">How is Selvage tested?</h3>
+<p>Selvage has over 1,800 NUnit tests in Edit mode and Play mode, including tests for allocations, weaving,
+  cross-assembly injection, release and teardown.</p>
+
+  <h3 id="run-tests">How do I run Selvage's tests?</h3>
+<p>Add <code>SELVAGE_TESTS</code> to the scripting define symbols, then run the tests from the Test Runner window. To add it,
+  perform the following steps:</p>
+<ol>
+  <li>Go to <strong>Edit</strong> &gt; <strong>Project Settings</strong> &gt; <strong>Player</strong>.</li>
+  <li>Select the tab of the platform the Editor targets, then expand <strong>Other Settings</strong>.</li>
+  <li>Under <strong>Script Compilation</strong>, add <code>SELVAGE_TESTS</code> to <strong>Scripting Define Symbols</strong>,
+    then select <strong>Apply</strong>.</li>
+</ol>
+<p>Without the symbol, Selvage's tests don't compile and the Test Runner window doesn't list them. The tests also need
+  the Test Framework package, and the Zenject and VContainer tests need their container in the project.</p>
+
+</section>
+
+<div class="pager">
+  <a class="prev" href="Injection%20in%20depth.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Injection in depth</div>
+  </a>
+  <a class="next" href="Swap%20dependencies.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Swap dependencies for tests and platforms</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Selvage v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

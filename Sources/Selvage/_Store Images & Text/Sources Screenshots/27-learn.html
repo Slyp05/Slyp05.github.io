@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="frame.css">
+<style>
+  .piece { position: absolute; }
+  .piece img { display: block; width: 100%; border-radius: 12px; border: 2px solid var(--border); box-shadow: 0 26px 24px -24px rgba(0, 0, 0, 0.7); }
+  .piece .tag { position: absolute; top: -22px; font-size: 24px; background: var(--ink); }
+  .list { position: absolute; right: 0; top: 50%; transform: translateY(-50%); width: 420px; z-index: 3; display: flex; flex-direction: column; gap: 24px; }
+  .list div { display: flex; align-items: center; gap: 18px; font-size: 31px; color: var(--ink); }
+  .list div::before { content: ""; width: 14px; height: 14px; border-radius: 50%; background: var(--teal); flex: none; }
+</style>
+</head>
+<body>
+<div class="head">
+  <h1>Documentation that starts from zero</h1>
+  <p>New to dependency injection? Start with the Quick Usage Guide and the tutorial.</p>
+</div>
+<div class="stage">
+  <div class="piece" style="left: 0; top: 0; width: 900px; z-index: 1;">
+    <img src="Captures/manual-home.png">
+    <span class="tag" style="left: 18px;">Offline manual</span>
+  </div>
+  <div class="piece" style="left: 640px; top: 250px; width: 520px; z-index: 2;">
+    <img src="Captures/demo-game.png">
+    <span class="tag" style="right: 18px;">Playable demo</span>
+  </div>
+  <div class="list">
+    <div>Quick Usage Guide</div>
+    <div>Step-by-step tutorial</div>
+    <div>Full user manual</div>
+    <div>API reference</div>
+    <div>A playable demo game</div>
+  </div>
+</div>
+<img class="hem" src="selvage.svg">
+</body>
+</html>

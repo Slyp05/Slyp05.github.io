@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<!-- Asset Store social media image, 1200x630. No text allowed. Rendered by render.sh. -->
+<style>
+  html, body { margin: 0; padding: 0; background: #161622; }
+  svg { display: block; }
+</style>
+</head>
+<body>
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="bg" cx="0.5" cy="0.45" r="0.8">
+      <stop offset="0" stop-color="#2a2a40"/>
+      <stop offset="0.55" stop-color="#1e1e2e"/>
+      <stop offset="1" stop-color="#13131c"/>
+    </radialGradient>
+    <pattern id="weave" width="30" height="30" patternUnits="userSpaceOnUse">
+      <rect x="1.25" y="3.75" width="12.5" height="7.5" rx="3.75" fill="#cdd6f4"/>
+      <rect x="18.75" y="1.25" width="7.5" height="12.5" rx="3.75" fill="#cdd6f4"/>
+      <rect x="3.75" y="16.25" width="7.5" height="12.5" rx="3.75" fill="#cdd6f4"/>
+      <rect x="16.25" y="18.75" width="12.5" height="7.5" rx="3.75" fill="#cdd6f4"/>
+    </pattern>
+    <radialGradient id="weaveFade" cx="0.5" cy="0.47" r="0.5">
+      <stop offset="0" stop-color="#fff" stop-opacity="1"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </radialGradient>
+    <mask id="weaveMask">
+      <rect width="1200" height="630" fill="url(#weaveFade)"/>
+    </mask>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#weave)" opacity="0.045" mask="url(#weaveMask)"/>
+
+  <!-- The cover's illustration, centred above the selvage at 0.66 scale. -->
+  <image href="illustration.svg" x="283" y="24" width="634" height="528"/>
+
+  <image href="selvage.svg" x="0" y="566" width="1200" height="64"/>
+</svg>
+</body>
+</html>

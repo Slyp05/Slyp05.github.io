@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Namespace Selvage, assembly Selvage. Explained in Introduction to Selvage and Options." />
+  <title>Selvage - Public API - Consuming</title>
+  <link rel="stylesheet" href="/assets/css/doc-styles.css" />
+  <link rel="stylesheet" href="/assets/css/selvage.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <nav>
+    <a href="../index.html">Overview</a>
+    <a class="nav-band active" href="API%20-%20Consuming.html" aria-current="page">Consuming</a>
+    <div class="nav-group">Injecting</div>
+    <div class="nav-group-body">
+      <a href="#InjectAttribute"><span class="badge badge-class">attr</span>InjectAttribute</a>
+      <a href="#DontInjectAttribute"><span class="badge badge-class">attr</span>DontInjectAttribute</a>
+      <a href="#Manual"><span class="badge badge-static">static</span>Manual</a>
+      <a href="#Context"><span class="badge badge-static">static</span>Context</a>
+    </div>
+    <div class="nav-group">Operations</div>
+    <div class="nav-group-body">
+      <a href="#SelvageOperation"><span class="badge badge-class">sealed</span>SelvageOperation</a>
+      <a href="#OperationStatus"><span class="badge badge-enum">enum</span>OperationStatus</a>
+    </div>
+    <div class="nav-group">Channels</div>
+    <div class="nav-group-body">
+      <a href="#ChannelAttribute"><span class="badge badge-class">attr</span>ChannelAttribute</a>
+      <a href="#DynamicChannelAttribute"><span class="badge badge-class">attr</span>DynamicChannelAttribute</a>
+    </div>
+    <a class="nav-band" href="API%20-%20Providing.html">Providing</a>
+    <a class="nav-band" href="API%20-%20Extending.html">Extending</a>
+    <a class="nav-band" href="API%20-%20Compatibility.html">Compatibility</a>
+  </nav>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Public API <span class="tag">Consuming</span></h1>
+      <div class="sub">Namespace <code>Selvage</code>, assembly <code>Selvage</code>. Explained in <a href="../../user-manual/pages/Introduction%20to%20Selvage.html">Introduction to Selvage</a> and <a href="../../user-manual/pages/Options.html">Options</a>.</div>
+    </div>
+
+    <div class="module-band band-first"><span class="band-name">Consuming</span><span class="band-desc">Everything a script that receives dependencies uses.</span></div>
+
+    <h2 class="api-group">Injecting</h2>
+
+    <!-- InjectAttribute -->
+    <div class="type-section" id="InjectAttribute">
+      <div class="type-header"><h3>InjectAttribute</h3><span class="badge badge-class">attr</span><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">Marks a field or property to be injected with a dependency of its type. On a class, it marks every settable reference-type member of that class; on an assembly, every such member of every class in it. A member takes each option from its own attribute, else from its class's, else from its assembly's, else from the Inject by Default setting while it's enabled. An option nobody sets is off, and setting one to <code>false</code> turns off an inherited one. A subclass does not inherit the attribute from its base class.</p>
+      <div class="member-group">
+        <div class="member-group-title">Options</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">Optional</span> { get; set; }</th><td>Whether a missing dependency is accepted. The member keeps its default (its initializer, else null) and nothing fails.</td></tr>
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">Manual</span> { get; set; }</th><td>Whether the member is injected only by <code>Manual.Inject</code>, never automatically.</td></tr>
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">EditMode</span> { get; set; }</th><td>Whether the member is also injected in Edit mode, for <code>[ExecuteAlways]</code> components, ScriptableObjects and Editor tools. Otherwise it is injected only in Play mode and in builds.</td></tr>
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">Overwrite</span> { get; set; }</th><td>Whether the member is injected over a value it already holds. That value becomes the default the member returns to when its dependency is released or lost.</td></tr>
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">Async</span> { get; set; }</th><td>Whether the dependency can take several frames to arrive. The member keeps its current value until it does.</td></tr>
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">Reactive</span> { get; set; }</th><td>Whether the member is kept up to date. When its dependency is replaced, the new one is injected in its place, and a property receives it through its setter.</td></tr>
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">Warm</span> { get; set; }</th><td>Whether candidates are prepared ahead of time in the background, so the member receives a ready dependency at once instead of waiting or missing.</td></tr>
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">Weak</span> { get; set; }</th><td>Whether the member holds its dependency without keeping it alive. Use it when two objects Selvage created hold each other, so that both can end. When the dependency ends, the member returns to its default.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- DontInjectAttribute -->
+    <div class="type-section" id="DontInjectAttribute">
+      <div class="type-header"><h3>DontInjectAttribute</h3><span class="badge badge-class">attr</span><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">Excludes a field, property, class or assembly from injection. On a class or an assembly, it also excludes every member it covers. An <code>[Inject]</code> on the same scope or an inner one wins, and options set outside an excluded class or assembly do not apply inside it.</p>
+    </div>
+
+    <!-- Manual -->
+    <div class="type-section" id="Manual">
+      <div class="type-header"><h3>Manual</h3><span class="badge badge-static">static</span></div>
+      <p class="type-desc">Injects, reinjects and releases a context's members from code. Works on every member, automatic or not; a member marked <code>Manual</code> is injected only through <code>Inject</code>. Call it on the Unity main thread, and pass a <code>Type</code> as the context to act on the static members of a class.</p>
+      <div class="member-group">
+        <div class="member-group-title">Static methods</div>
+        <div class="note"><span class="ex">In the Editor and in development builds, every method throws ArgumentNullException when the context is null, and ArgumentException when it is a value type. Every method throws InvalidOperationException when called while Unity creates an object: from a constructor or a field initializer.</span></div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t">SelvageOperation</span> <span class="mn">Inject</span>(<span class="t">object</span> context)</th><td>Injects every member of the context that is not injected yet. Automatic members keep their usual timing: outside Play mode, only <code>EditMode</code> members are injected. Called before the context's automatic injection, it injects the automatic members early. Returns the combined operation of the members it injected, which a required member left null fails.</td></tr>
+          <tr><th scope="row"><span class="t">SelvageOperation</span> <span class="mn">Inject</span>(<span class="t">object</span> context, <span class="t">string</span> memberName)</th><td>Injects the named member, unless it is already injected. Outside Play mode, a member without <code>EditMode</code> is not injected: a required one fails the operation, an optional one is left as it is. <span class="ex">Throws ArgumentException when the context has no field or property by that name, the name is ambiguous, or the member cannot be injected (a readonly field, a get-only property, an indexer, or a value-typed member).</span></td></tr>
+          <tr><th scope="row"><span class="t">SelvageOperation</span> <span class="mn">Reinject</span>(<span class="t">object</span> context)</th><td>Reinjects every injected member of the context, replacing each dependency with a newly provided one. Members that are not injected are skipped. Inside a local block (<code>Injector.Local</code>), the members also get that block's dependencies.</td></tr>
+          <tr><th scope="row"><span class="t">SelvageOperation</span> <span class="mn">Reinject</span>(<span class="t">object</span> context, <span class="t">string</span> memberName)</th><td>Reinjects the named member. Does nothing when it is not injected. <span class="ex">Throws ArgumentException in the same cases as <code>Inject(context, memberName)</code>.</span></td></tr>
+          <tr><th scope="row"><span class="t">SelvageOperation</span> <span class="mn">Release</span>(<span class="t">object</span> context)</th><td>Releases the context, as its <code>Dispose</code> or <code>OnDestroy</code> does. Every injected member returns to its default, <code>Context.Released</code> is raised, <code>Context.IsReady</code> returns false, and a pending <code>Context.WhenReady</code> is canceled. The context itself stays alive, and the next <code>Inject</code> starts a new injection. Returns the release's operation, already complete when everything released synchronously.</td></tr>
+          <tr><th scope="row"><span class="t">SelvageOperation</span> <span class="mn">Release</span>(<span class="t">object</span> context, <span class="t">string</span> memberName)</th><td>Releases the named member, returning it to its default. Does nothing when it is not injected. The context's injection does not end, so <code>Context.Released</code> is not raised and its readiness does not change. <span class="ex">Throws ArgumentException in the same cases as <code>Inject(context, memberName)</code>.</span></td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- Context -->
+    <div class="type-section" id="Context">
+      <div class="type-header"><h3>Context</h3><span class="badge badge-static">static</span></div>
+      <p class="type-desc">Readiness queries and events for contexts. Call the queries on the Unity main thread, and pass a <code>Type</code> as the context to act on the static members of a class. The events are raised on the Unity main thread, for every context. A handler that throws is logged, and the remaining handlers still run. A handler that stores a context in a field keeps it alive: hold it weakly, or drop it on <code>Released</code>.</p>
+      <div class="member-group">
+        <div class="member-group-title">Static methods</div>
+        <div class="note"><span class="ex">In the Editor and in development builds, each method throws ArgumentNullException when the context is null, and ArgumentException when it is a value type.</span></div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t">SelvageOperation</span> <span class="mn">WhenReady</span>(<span class="t">object</span> context)</th><td>Returns an operation that completes once the context is ready, without injecting it. A context with no dependencies completes at once. A context not injected yet completes once it injects itself, or is canceled when it is released or destroyed first; one that never injects fails the wait with a <span class="ex">TimeoutException</span> after two minutes. Bound the wait sooner with <code>DetachAfter</code>; detaching ends only this wait, never the injection.</td></tr>
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">IsReady</span>(<span class="t">object</span> context)</th><td>Returns true once the context's automatic injection has succeeded, and false while it is pending or after it failed. Cheap enough to call every frame. To tell a failure from a pending injection, read the <code>Status</code> of <code>WhenReady</code>.</td></tr>
+        </table>
+      </div>
+      <div class="member-group">
+        <div class="member-group-title">Static events</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="kw">event</span> <span class="t">Action</span>&lt;<span class="t">object</span>, <span class="t">SelvageOperation</span>&gt; <span class="mn">Injected</span></th><td>Raised when a context is injected, automatically or by <code>Manual.Inject</code>, once its synchronous members are injected. The operation completes once its asynchronous dependencies are ready, and a required member left null fails it. Raised once per injection: not on a reinjection, and again only after the context is released and injected anew.</td></tr>
+          <tr><th scope="row"><span class="kw">event</span> <span class="t">Action</span>&lt;<span class="t">object</span>&gt; <span class="mn">Released</span></th><td>Raised when a whole context is released: by its <code>OnDestroy</code>, its <code>Dispose</code> or <code>DisposeAsync</code>, <code>Manual.Release</code>, or the end of the owned dependency it is. It holds no dependency any more and can be injected again. A plain object's members are back to their defaults; a destroyed Unity object's members keep their last values.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <h2 class="api-group">Operations</h2>
+
+    <!-- SelvageOperation -->
+    <div class="type-section" id="SelvageOperation">
+      <div class="type-header"><h3>SelvageOperation</h3><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">Result of an injection, a reinjection, a release or a readiness query, returned by <code>Manual</code> and <code>Context.WhenReady</code>. <code>await</code> it, <code>yield return</code> it in a coroutine, or observe it from several subscribers. It completes at once when everything finished synchronously, and otherwise stays <code>Running</code> until the asynchronous work finishes. A yield in a coroutine cannot throw, so check <code>Status</code> or call <code>ThrowIfNotSucceeded</code> after it. A failure nobody observes is logged.</p>
+      <div class="member-group">
+        <div class="member-group-title">Properties</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t">OperationStatus</span> <span class="mn">Status</span> { get; }</th><td>The current outcome of the operation. Reading it counts as observing the operation, so a failure it carries is not logged.</td></tr>
+          <tr><th scope="row"><span class="t">Exception</span> <span class="mn">Exception</span> { get; }</th><td>The failure of a <code>Failed</code> operation, or null otherwise. Reading it counts as observing the operation.</td></tr>
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">IsComplete</span> { get; }</th><td>Whether the operation has finished: succeeded, canceled or failed. Reading it does not count as observing the operation, so a failure it carries is still logged.</td></tr>
+        </table>
+      </div>
+      <div class="member-group">
+        <div class="member-group-title">Public methods</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t">Action</span> <span class="mn">Subscribe</span>(<span class="t">Action</span> onSucceeded = null, <span class="t">Action</span> onCanceledOrDetached = null, <span class="t">Action</span>&lt;<span class="t">Exception</span>&gt; onFailed = null)</th><td>Registers callbacks that run once, when the operation completes, one per outcome. Any of them may be omitted. Returns an action that unsubscribes them.</td></tr>
+          <tr><th scope="row"><span class="kw">void</span> <span class="mn">ThrowIfNotSucceeded</span>()</th><td>Throws if the operation did not succeed. <span class="ex">Rethrows the failure a Failed operation carries, with its original stack trace. Throws InvalidOperationException while the operation is running, and OperationCanceledException when it was canceled or detached.</span></td></tr>
+          <tr><th scope="row"><span class="t">SelvageOperation</span> <span class="mn">Detach</span>()</th><td>Ends the caller's wait now, completing the operation as <code>CanceledOrDetached</code>. The work itself goes on; to stop it, release the context with <code>Manual.Release</code>. Does nothing once the operation is complete, or for one that finished synchronously. Returns this operation, so the call can be chained: <code>await operation.Detach();</code>.</td></tr>
+          <tr><th scope="row"><span class="t">SelvageOperation</span> <span class="mn">DetachAfter</span>(<span class="t">TimeSpan</span> timeSpan)<br><span class="t">SelvageOperation</span> <span class="mn">DetachAfter</span>(<span class="t">float</span> delay)</th><td>Ends the caller's wait after a delay, given as a <code>TimeSpan</code> or in seconds, as <code>Detach</code> does. Zero ends it on the next frame; a negative or non-finite delay is ignored. Calling it again replaces the previous delay. Returns this operation.</td></tr>
+          <tr><th scope="row"><span class="t">Task</span> <span class="mn">AsTask</span>()</th><td>Returns a <code>Task</code> that succeeds, fails or is canceled with this operation, for use with Task-based APIs such as <code>Task.WhenAll</code>. It resumes on the main thread. Calling it counts as observing the operation.</td></tr>
+          <tr><th scope="row"><span class="t">TaskAwaiter</span> <span class="mn">GetAwaiter</span>()</th><td>Makes the operation awaitable. Do not call it directly: write <code>await operation;</code>.</td></tr>
+        </table>
+      </div>
+      <div class="member-group">
+        <div class="member-group-title">Static methods</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t">SelvageOperation</span> <span class="mn">Combine</span>(<span class="kw">params</span> <span class="t">SelvageOperation</span>[] operations)</th><td>Combines several operations into one that succeeds when all of them succeed, and takes the first canceled or failed outcome among them. Null entries are ignored, and a detached entry counts as canceled. A failure that arrives after the combined operation completed is not reflected in it, and is logged unless something else observes it. <span class="ex">Throws ArgumentNullException when the array is null.</span></td></tr>
+        </table>
+      </div>
+      <div class="member-group">
+        <div class="member-group-title">Events</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="kw">event</span> <span class="t">Action</span>&lt;<span class="t">SelvageOperation</span>&gt; <span class="mn">Completed</span></th><td>Raised on the main thread when the operation completes. A handler added after the operation completed is still invoked.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- OperationStatus -->
+    <div class="type-section" id="OperationStatus">
+      <div class="type-header"><h3>OperationStatus</h3><span class="badge badge-enum">enum</span></div>
+      <p class="type-desc">Outcome of a <a href="#SelvageOperation"><code>SelvageOperation</code></a>.</p>
+      <div class="member-group"><table class="mt">
+        <tr><th scope="row"><span class="mn">Running</span></th><td>The operation has not completed yet.</td></tr>
+        <tr><th scope="row"><span class="mn">Succeeded</span></th><td>The operation completed successfully.</td></tr>
+        <tr><th scope="row"><span class="mn">CanceledOrDetached</span></th><td>The operation did not complete: the caller ended its wait with <code>Detach</code> or <code>DetachAfter</code>, or the work was canceled.</td></tr>
+        <tr><th scope="row"><span class="mn">Failed</span></th><td>The operation completed with a failure, held in <code>Exception</code>.</td></tr>
+      </table></div>
+    </div>
+
+    <h2 class="api-group">Channels</h2>
+
+    <!-- ChannelAttribute -->
+    <div class="type-section" id="ChannelAttribute">
+      <div class="type-header"><h3>ChannelAttribute</h3><span class="badge badge-class">attr</span><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">Gives a member a channel: a hint for choosing among several dependencies that could be injected into it, such as which of two cameras. A member with only one possible dependency gets it whatever its channel, and a channel nothing matches changes nothing.</p>
+      <div class="member-group"><table class="mt">
+        <tr><th scope="row"><span class="mn">ChannelAttribute</span>(<span class="t">object</span> channel)</th><td>Gives the member <code>channel</code>, any value: a string, an enum value or a number.</td></tr>
+        <tr><th scope="row"><span class="t">object</span> <span class="mn">Channel</span> { get; }</th><td>The member's channel.</td></tr>
+      </table></div>
+    </div>
+
+    <!-- DynamicChannelAttribute -->
+    <div class="type-section" id="DynamicChannelAttribute">
+      <div class="type-header"><h3>DynamicChannelAttribute</h3><span class="badge badge-class">attr</span><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">Gives a member a channel read from the context when the member is injected, such as a language setting: <code>[DynamicChannel(nameof(language))]</code>. When the value read is null, the member's <code>[Channel]</code> is used, if it has one. The value is read again when the member is reinjected, and not watched in between.</p>
+      <div class="member-group"><table class="mt">
+        <tr><th scope="row"><span class="mn">DynamicChannelAttribute</span>(<span class="t">string</span> memberName)</th><td>Reads the channel from the field or property named <code>memberName</code>, static or not, declared on this class or a base class. Write it with <code>nameof</code>. To use a value from another class, read it through a property of this one. Code analysis reports a name that matches nothing readable (<a href="../../user-manual/pages/Diagnostics.html#slv0108">SLV0108</a>); at runtime the member then uses its <code>[Channel]</code>, and an error is logged.</td></tr>
+        <tr><th scope="row"><span class="t">string</span> <span class="mn">MemberName</span> { get; }</th><td>The name of the field or property the channel is read from.</td></tr>
+      </table></div>
+    </div>
+
+    <div class="doc-footer">Selvage v1.0.0 &nbsp;&middot;&nbsp; For full signatures and remarks, refer to the XML doc comments in the source.</div>
+
+  </main>
+</div>
+</body>
+</html>

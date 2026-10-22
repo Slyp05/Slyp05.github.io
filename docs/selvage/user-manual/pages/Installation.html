@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Import Selvage into your project, and find its menus." />
+  <title>Selvage - Install Selvage</title>
+  <link rel="stylesheet" href="/assets/css/doc-styles.css" />
+  <link rel="stylesheet" href="/assets/css/selvage.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Selvage</div><a href="../index.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Install Selvage</h1>
+      <div class="sub">Import Selvage into your project, and find its menus.</div>
+    </div>
+
+<!-- ====================================== requirements ==== -->
+<section id="requirements">
+  <h2>Requirements</h2>
+<p>Selvage has the following requirements:</p>
+<ul>
+  <li>Unity 6.0 or later.</li>
+  <li>Any build target, with the Mono or IL2CPP scripting backend.</li>
+  <li>The Mono Cecil package (<code>com.unity.nuget.mono-cecil</code>) 1.10 or later. Selvage's compilation step uses it to inject
+    your members. Importing Selvage installs it if your project doesn't have it.</li>
+</ul>
+<p>The following packages are optional:</p>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Package</th><th scope="col">Used for</th></tr>
+    <tr><td>Addressables (<code>com.unity.addressables</code>) 1.19 or later</td><td>Providing addressable assets. For more information, refer to <a href="Provide%20assets.html#loading">When Selvage loads an asset</a>.</td></tr>
+    <tr><td>Unity UI (<code>com.unity.ugui</code>)</td><td>The demo.</td></tr>
+  </table>
+</div>
+
+</section>
+
+<!-- ====================================== install ==== -->
+<section id="install">
+  <h2>Install the package</h2>
+<p>To install Selvage, perform the following steps:</p>
+<ol>
+  <li>Go to <strong>Window</strong> &gt; <strong>Package Manager</strong>.</li>
+  <li>Select <strong>My Assets</strong>, then select <strong>Selvage</strong>.</li>
+  <li>If the package isn't downloaded yet, select <strong>Download</strong>.</li>
+  <li>Select <strong>Import</strong>.</li>
+  <li>In the <strong>Import Unity Package</strong> window, select <strong>Import</strong>.</li>
+</ol>
+<p>When the import finishes, Selvage is active.</p>
+<p>If the Console window displays <code>Selvage: automatic injection is off</code> with a message that names the Mono
+  Cecil package, the package is missing, for example because it was cleared in the import dialog. To add it, perform
+  the following steps:</p>
+<ol>
+  <li>Go to <strong>Window</strong> &gt; <strong>Package Manager</strong>.</li>
+  <li>Select <strong>+</strong> &gt; <strong>Install package by name</strong>.</li>
+  <li>Enter <code>com.unity.nuget.mono-cecil</code>, then select <strong>Install</strong>.</li>
+</ol>
+
+</section>
+
+<!-- ====================================== tools ==== -->
+<section id="tools">
+  <h2>Selvage menus</h2>
+<p>Selvage adds the following menu items to the Unity Editor:</p>
+<div class="img-block">
+  <img src="../img/tools_menu.png" alt="The Tools &gt; Selvage menu, with Settings, Dependencies, Quick Usage Guide, User Manual and Public API" />
+</div>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Menu item</th><th scope="col">Description</th></tr>
+    <tr><td><strong>Tools</strong> &gt; <strong>Selvage</strong> &gt; <strong>Settings</strong></td><td>Opens the <strong>Selvage</strong> page of the Project Settings window. For more information, refer to <a href="Project%20Settings%20reference.html">Project Settings reference</a>.</td></tr>
+    <tr><td><strong>Tools</strong> &gt; <strong>Selvage</strong> &gt; <strong>Dependencies</strong></td><td>Opens the Dependencies window. For more information, refer to <a href="Dependencies%20window%20reference.html">Dependencies window reference</a>.</td></tr>
+    <tr><td><strong>Tools</strong> &gt; <strong>Selvage</strong> &gt; <strong>Quick Usage Guide</strong></td><td>Opens the <a href="../../quick-usage-guide/index.html">Quick Usage Guide</a>.</td></tr>
+    <tr><td><strong>Tools</strong> &gt; <strong>Selvage</strong> &gt; <strong>User Manual</strong></td><td>Opens the <a href="../index.html">User Manual</a>.</td></tr>
+    <tr><td><strong>Tools</strong> &gt; <strong>Selvage</strong> &gt; <strong>Public API</strong></td><td>Opens the <a href="../../public-api/index.html">Public API</a> reference.</td></tr>
+    <tr><td><strong>Assets</strong> &gt; <strong>Create</strong> &gt; <strong>Selvage</strong> &gt; <strong>Provide Definition</strong></td><td>Creates a Provide Definition in the selected folder. For more information, refer to <a href="Provide%20assets.html">Provide assets</a>.</td></tr>
+    <tr><td><strong>Component</strong> &gt; <strong>Selvage</strong> &gt; <strong>Provide Tuning</strong></td><td>Adds a Provide Tuning component to the selected GameObject. For more information, refer to <a href="Provide%20Tuning%20reference.html">Provide Tuning reference</a>.</td></tr>
+  </table>
+</div>
+
+</section>
+
+<!-- ====================================== folders ==== -->
+<section id="folders">
+  <h2>Package contents</h2>
+<p>Selvage installs into <code>Assets/Selvage</code>, which contains the following folders:</p>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Folder</th><th scope="col">Contents</th></tr>
+    <tr><td><code>Runtime</code></td><td>The Selvage runtime.</td></tr>
+    <tr><td><code>Editor</code></td><td>The Dependencies window, the <strong>Selvage</strong> page of the Project Settings window, and the Inspector window additions.</td></tr>
+    <tr><td><code>Compatibility</code></td><td>Modules for migrating a project from Zenject or VContainer. Each compiles only when its container is in the project.</td></tr>
+    <tr><td><code>Tooling</code></td><td>The compilation step that injects your members, and the <a href="Diagnostics.html">code analysis</a>.</td></tr>
+    <tr><td><code>Testing</code></td><td>Connects Selvage to the Test Runner: the <code>[Provide]</code> classes of the tests that run apply during the run, and a provider a test adds is removed when the test ends. Compiles only with the Test Framework package.</td></tr>
+    <tr><td><code>Tests</code></td><td>Selvage's own tests. They compile only when the project defines <code>SELVAGE_TESTS</code>. For more information, refer to <a href="Technical%20QA.html#run-tests">How do I run Selvage's tests?</a></td></tr>
+    <tr><td><code>Demo</code></td><td>The demo scene and its scripts. For more information, refer to <a href="Explore%20the%20demo.html">Explore the demo</a>.</td></tr>
+    <tr><td><code>Documentation</code></td><td>The Quick Usage Guide, the User Manual, and the Public API reference.</td></tr>
+  </table>
+</div>
+
+</section>
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="../../quick-usage-guide/index.html">Quick Usage Guide</a></li>
+    <li><a href="Introduction%20to%20Selvage.html">Introduction to Selvage</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="Get%20started.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Get started</div>
+  </a>
+  <a class="next" href="Introduction%20to%20Selvage.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Introduction to Selvage</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Selvage v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Set up your first injected members with Selvage." />
+  <title>Selvage - Quick Usage Guide</title>
+  <link rel="stylesheet" href="/assets/css/doc-styles.css" />
+  <link rel="stylesheet" href="/assets/css/selvage.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+
+  <script src="shared/nav.js"></script>
+
+  <main id="content" class="guide-standalone">
+
+    <div class="hero">
+      <h1>Quick Usage Guide</h1>
+      <p class="tagline">Set up your first injected members with Selvage.</p>
+    </div>
+
+
+<!-- ====================================== concept ==== -->
+<section id="concept">
+  <h2>How Selvage works</h2>
+<p>Selvage is a dependency injection framework for Unity. Your scripts declare the objects they need, and Selvage
+  finds those objects and assigns them, so your scripts no longer look for them themselves.</p>
+<p>For example, the following script looks for the objects it uses:</p>
+<pre><code><span class="kw">public</span> <span class="kw">class</span> <span class="ty">Player</span> : <span class="ty">MonoBehaviour</span>
+{
+    <span class="ty">Rigidbody</span> body;
+    <span class="ty">Camera</span> view;
+    <span class="ty">AudioManager</span> audioManager;
+
+    <span class="kw">void</span> Awake()
+    {
+        body = GetComponent&lt;<span class="ty">Rigidbody</span>&gt;();
+        view = <span class="ty">Camera</span>.main;
+        audioManager = <span class="ty">AudioManager</span>.Instance;
+    }
+}</code></pre>
+<p>With Selvage, the same script declares them with the <code>[Inject]</code> attribute, and Selvage assigns them when
+  the script's object is created:</p>
+<pre><code><span class="kw">public</span> <span class="kw">class</span> <span class="ty">Player</span> : <span class="ty">MonoBehaviour</span>
+{
+    [Inject] <span class="ty">Rigidbody</span> body;
+    [Inject] <span class="ty">Camera</span> view;
+    [Inject] <span class="ty">AudioManager</span> audioManager;
+}</code></pre>
+<p>Compared with the first script:</p>
+<ul>
+  <li>No more bugs from the order of <code>Awake</code> calls. In the first script, <code>audioManager</code> stays
+    <code>null</code> if Unity runs the <code>Awake</code> of <code>Player</code> before the one of
+    <code>AudioManager</code>, which sets <code>Instance</code>. Selvage finds the <code>AudioManager</code> in the
+    scene, whichever runs first.</li>
+  <li>Missing objects show up in the Editor. The Inspector window lists what each script needs and flags what no
+    provider has, before you enter Play mode, instead of a <code>NullReferenceException</code> at runtime.</li>
+  <li>To give the script another object, such as a stand-in for a test, you change the provider list, not the script.</li>
+</ul>
+<p>For more information, refer to <a href="../user-manual/pages/Introduction%20to%20Selvage.html#why">Why inject
+  dependencies</a>.</p>
+<p>Selvage works with three elements:</p>
+<ul>
+  <li><strong>Members</strong>: the fields and properties marked <code>[Inject]</code>. The object a member receives is
+    its <strong>dependency</strong>.</li>
+  <li><strong>Providers</strong>: each provider gives dependencies from one source, such as the components in your
+    scenes or the assets in a folder.</li>
+  <li><strong>The provider list</strong>: the ordered list of providers on the <strong>Selvage</strong> page of the
+    Project Settings window. For each member, Selvage tries the providers from top to bottom, and the first one that
+    has a dependency gives it.</li>
+</ul>
+<div class="img-block">
+  <svg class="diagram" viewBox="0 0 760 160" role="img"
+       aria-label="A script asks for a type. The provider list tries its providers from top to bottom, and the first one that has a dependency of that type gives it to the member.">
+    <defs>
+      <marker id="qg-arr" markerWidth="8" markerHeight="8" refX="6.5" refY="4" orient="auto">
+        <path d="M0,0 L8,4 L0,8 Z" fill="#9aa0b5"/>
+      </marker>
+    </defs>
+    <rect x="10" y="20" width="190" height="120" rx="10" fill="#ede9fe" stroke="#c4b5fd"/>
+    <text x="105" y="72" text-anchor="middle" font-size="14" font-weight="600" fill="#5b21b6">Your script</text>
+    <text x="105" y="96" text-anchor="middle" font-size="12" fill="#6d28d9">[Inject] Camera view;</text>
+
+    <rect x="285" y="20" width="190" height="120" rx="10" fill="#e0e7ff" stroke="#a5b4fc"/>
+    <text x="380" y="44" text-anchor="middle" font-size="14" font-weight="600" fill="#3730a3">The provider list</text>
+    <text x="380" y="68" text-anchor="middle" font-size="12" fill="#4338ca">1. Registry Provider</text>
+    <text x="380" y="86" text-anchor="middle" font-size="12" fill="#4338ca">2. Scene Provider</text>
+    <text x="380" y="104" text-anchor="middle" font-size="12" fill="#4338ca">3. Attribute Provider</text>
+    <text x="380" y="122" text-anchor="middle" font-size="12" fill="#4338ca">4. Asset Provider</text>
+
+    <rect x="560" y="20" width="190" height="120" rx="10" fill="#dcfce7" stroke="#86efac"/>
+    <text x="655" y="72" text-anchor="middle" font-size="14" font-weight="600" fill="#166534">The dependency</text>
+    <text x="655" y="96" text-anchor="middle" font-size="12" fill="#15803d">the Camera in the scene</text>
+
+    <text x="242" y="70" text-anchor="middle" font-size="12" fill="#555">asks</text>
+    <path d="M212 80 L273 80" stroke="#9aa0b5" stroke-width="1.5" fill="none" marker-end="url(#qg-arr)"/>
+    <text x="517" y="70" text-anchor="middle" font-size="12" fill="#555">gives</text>
+    <path d="M487 80 L548 80" stroke="#9aa0b5" stroke-width="1.5" fill="none" marker-end="url(#qg-arr)"/>
+  </svg>
+</div>
+<p>In the previous diagram, the <code>view</code> member asks for a <code>Camera</code>. The Registry Provider has none, so the
+  Scene Provider, next in the list, gives the Camera in the scene. Because your scripts only declare what they need,
+  you can change where a dependency comes from in the provider list, without editing your scripts.</p>
+<p>If you're familiar with dependency injection containers: Selvage has no container to build, no installer and no
+  bootstrap scene. The provider list replaces them for the whole project, and works as soon as you import Selvage.
+  A binding becomes <code>[Provide]</code> on the class, and a registered instance becomes a registry entry.
+  Dependencies arrive in fields and properties, the same way for MonoBehaviours, ScriptableObjects and plain C#
+  classes. For more information, refer to <a href="../user-manual/pages/What%20sets%20Selvage%20apart.html">What sets Selvage
+  apart</a>.</p>
+
+</section>
+
+<!-- ====================================== check ==== -->
+<section id="check">
+  <h2>Validate your members</h2>
+<p>Selvage tells you whether each member will receive a dependency, without entering Play mode. To validate the
+  members of a script, perform the following steps:</p>
+<ol>
+  <li>In the Hierarchy window, select a GameObject that has the script.</li>
+  <li>At the top of the Inspector window, select the <strong>Selvage</strong> section to expand it.</li>
+</ol>
+<p>The section lists the injected members of each script on the GameObject, with the result of each:</p>
+<div class="img-block">
+  <img src="../user-manual/img/qug_inspector_edit.png" alt="The Selvage section of the Player GameObject in the Inspector window: body, view and audioManager are May Be Supplied" />
+</div>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Result</th><th scope="col">Meaning</th></tr>
+    <tr><td><strong>Guaranteed</strong></td><td>A provider always gives the member a dependency.</td></tr>
+    <tr><td><strong>May Be Supplied</strong></td><td>A provider can give one, but whether it does is only known when the member is injected, such as for a component in a scene.</td></tr>
+    <tr><td><strong>Missing</strong></td><td>No provider can give the member a dependency.</td></tr>
+  </table>
+</div>
+<p>In Play mode, the section displays the state of each member and the provider that gave its dependency:</p>
+<div class="img-block">
+  <img src="../user-manual/img/qug_inspector_play.png" alt="The Selvage section of the Player GameObject in Play mode: body, view and audioManager are Injected, each by the Scene Provider" />
+</div>
+<p>To read the reason for a result, or to validate every script of the project, select the Selvage button at the
+  right of the section to open the Dependencies window, then select <strong>Validation</strong>. For more
+  information, refer to <a href="../user-manual/pages/Validate%20members.html">Validate members</a>.</p>
+
+  <h3 id="optional">Accept a missing dependency</h3>
+<p>A member is required by default, so a missing dependency never goes unnoticed: the Console window displays an
+  error that names the member. When your script works without the dependency, make the member
+  <code>Optional</code>:</p>
+<pre><code>[Inject(Optional = <span class="kw">true</span>)] <span class="ty">AudioManager</span> audioManager;   <span class="cm">// null, without an error, when no provider has one</span></code></pre>
+<p><code>Optional</code> is one of the <strong>options</strong> of <code>[Inject]</code>, which change how and when a
+  member is injected. For more information, refer to <a href="../user-manual/pages/Options.html">Options</a>.</p>
+
+</section>
+
+<!-- ====================================== provide ==== -->
+<section id="provide">
+  <h2>Provide dependencies</h2>
+<p>What you do to provide a dependency depends on where it comes from: a component in a scene, an instance of your
+  own class, an asset, or an object your code creates.</p>
+
+  <h3 id="scene">Provide a component</h3>
+<p>A component in a loaded scene needs nothing more: declare a member of its type, and the Scene Provider gives it. It
+  looks on the member's GameObject first, then on its parents and children, then in the rest of the scene and in other
+  loaded scenes, and gives the closest component:</p>
+<pre><code><span class="kw">using</span> Selvage;
+<span class="kw">using</span> UnityEngine;
+
+<span class="kw">public</span> <span class="kw">class</span> <span class="ty">Player</span> : <span class="ty">MonoBehaviour</span>
+{
+    [Inject] <span class="ty">Rigidbody</span> body;              <span class="cm">// the Rigidbody on this GameObject</span>
+    [Inject] <span class="ty">AudioManager</span> audioManager;   <span class="cm">// your own MonoBehaviour, elsewhere in the scene</span>
+}</code></pre>
+<p>Your own MonoBehaviours are given the same way, so <code>AudioManager</code> no longer needs its static
+  <code>Instance</code>.</p>
+<div class="note"><strong>Note:</strong> Selvage injects the members of a MonoBehaviour at the end of its
+  <code>Awake</code> method, so they're still <code>null</code> inside <code>Awake</code>. Use them in
+  <code>Start</code> or <code>OnEnable</code>, and later.</div>
+
+  <h3 id="class">Provide an instance of your own class</h3>
+<p>To provide a C# class that isn't a component or an asset, add <code>[Provide]</code> to it. The Attribute Provider
+  creates the instance when a member needs it:</p>
+<pre><code><span class="kw">using</span> Selvage.Providers;
+
+[Provide]
+<span class="kw">public</span> <span class="kw">class</span> <span class="ty">Inventory</span> { ... }</code></pre>
+<pre><code>[Inject] <span class="ty">Inventory</span> inventory;</code></pre>
+
+  <h3 id="asset">Provide an asset</h3>
+<p>To provide an asset, such as a ScriptableObject, create a <strong>Provide Definition</strong> in its folder. A
+  Provide Definition is an asset that makes the Asset Provider give the other assets of its folder to members of their
+  types. To create one, select the folder in the Project window, then go to <strong>Assets</strong> &gt;
+  <strong>Create</strong> &gt; <strong>Selvage</strong> &gt; <strong>Provide Definition</strong>.</p>
+<pre><code>[Inject] <span class="ty">GameSettings</span> settings;   <span class="cm">// the GameSettings asset in that folder</span></code></pre>
+<p>The Provide Definition's Inspector window lists every asset it provides.</p>
+<div class="img-block">
+  <img src="../user-manual/img/provide_definition_inspector.png" alt="A Provide Definition in the Inspector window, providing the Game Settings asset of its folder" />
+</div>
+
+  <h3 id="runtime">Provide an object your code creates</h3>
+<p>To give an object your code creates to members, do one of the following:</p>
+<ul>
+  <li>Add it to the registry. Every member of its type then receives it, until you remove it:</li>
+</ul>
+<pre><code><span class="ty">RegistryProvider</span>.Listed.Add(saveSystem);</code></pre>
+<ul>
+  <li>Pass it in a local block, a <code>using</code> block opened with <code>Injector.Local</code>. Only the objects
+    you create inside the block receive it, which suits data that belongs to one object, such as the direction of a
+    bullet:</li>
+</ul>
+<pre><code><span class="kw">using</span> (<span class="ty">Injector</span>.Local(shot))
+    Instantiate(bulletPrefab);   <span class="cm">// the bullet's [Inject] BulletShot member receives shot</span></code></pre>
+
+  <h3 id="lifetime">Choose a lifetime</h3>
+<p>Every object you provide has a <strong>lifetime</strong>, which decides whether members share it:</p>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Lifetime</th><th scope="col">Each member receives</th></tr>
+    <tr><td><strong>Shared</strong> (default)</td><td>The same object as every other member.</td></tr>
+    <tr><td><strong>Separate</strong></td><td>Its own object.</td></tr>
+    <tr><td><strong>Pooled</strong></td><td>Its own object, borrowed from a pool.</td></tr>
+  </table>
+</div>
+<p>Where you set it depends on what you provide:</p>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Provided object</th><th scope="col">Lifetime</th></tr>
+    <tr><td>Scene component</td><td>A <strong>Provide Tuning</strong> component on its GameObject, which changes how the Scene Provider provides it.</td></tr>
+    <tr><td>Class marked <code>[Provide]</code></td><td><code>[Provide(Lifetime.Pooled)]</code></td></tr>
+    <tr><td>Asset</td><td>The <strong>Lifetime</strong> property of its Provide Definition.</td></tr>
+    <tr><td>Registry entry</td><td><code>RegistryProvider.Listed.Add(obj, Lifetime.Pooled)</code></td></tr>
+  </table>
+</div>
+<div class="note"><strong>Note:</strong> Unlike a static <code>Instance</code>, a Shared object that Selvage creates
+  doesn't last for the whole application. Selvage ends it once no member holds it, and creates a fresh one when a
+  member needs it again. For more information, refer to <a href="../user-manual/pages/Lifetimes.html">Lifetimes</a>.</div>
+
+</section>
+
+<!-- ====================================== scopes ==== -->
+<section id="scopes">
+  <h2>Inject every member of a class</h2>
+<p>To avoid writing <code>[Inject]</code> on each field, add it to the class instead. Every field and property of the
+  class whose type is a reference type, such as a class or an interface, is then injected. A class, an assembly or the project marked this way is
+  a <strong>scope</strong>:</p>
+<pre><code>[Inject]
+<span class="kw">public</span> <span class="kw">class</span> <span class="ty">Player</span> : <span class="ty">MonoBehaviour</span>
+{
+    <span class="ty">Rigidbody</span> body;          <span class="cm">// injected</span>
+    <span class="ty">Camera</span> view;             <span class="cm">// injected</span>
+    <span class="kw">string</span> title = <span class="st">"Hero"</span>;   <span class="cm">// keeps its value</span>
+}</code></pre>
+<p>Selvage only injects members that are still <code>null</code>, so a field keeps the value you give it, whether
+  you set it in its initializer, in the Inspector window or in <code>Awake</code>.</p>
+<p>To widen the scope, do one of the following:</p>
+<ul>
+  <li>To inject every class of an assembly, add <code>[assembly: Inject]</code> to any file of the assembly.</li>
+  <li>To inject every class of the project, enable <strong>Inject by Default</strong> on the <strong>Selvage</strong>
+    page of the Project Settings window. Members are then <code>Optional</code> by default, so a field that no
+    provider has a dependency for keeps its value, without an error.</li>
+</ul>
+<p>To leave a member, a class or an assembly out of a scope, add <code>[DontInject]</code> to it. For more
+  information, refer to <a href="../user-manual/pages/Inject%20with%20scopes.html">Inject with scopes</a>.</p>
+
+</section>
+
+<!-- ====================================== next ==== -->
+<section id="next">
+  <h2>Next steps</h2>
+<ul>
+  <li><a href="../user-manual/pages/Convert%20a%20script%20to%20Selvage.html">Tutorial: Convert a script to Selvage</a>: replace
+    <code>GetComponent</code>, <code>Camera.main</code> and a static <code>Instance</code> with injected members, step by
+    step.</li>
+  <li><a href="../user-manual/pages/Options.html">Options</a>: wait for a dependency that loads, follow one that's replaced, and
+    more.</li>
+  <li><a href="../user-manual/pages/Choose%20between%20several%20candidates.html">Choose between several candidates</a>: decide which
+    object a member receives when several fit.</li>
+  <li><a href="../user-manual/pages/Manage%20the%20provider%20list.html">Manage the provider list</a>: reorder the providers, or add
+    your own.</li>
+  <li><a href="../user-manual/pages/Explore%20the%20demo.html">Explore the demo</a>: play a small game built with Selvage.</li>
+  <li><a href="../user-manual/pages/Migrate%20from%20Zenject%20or%20VContainer.html">Migrate from Zenject or VContainer</a>: move a
+    project that uses either.</li>
+  <li><a href="../user-manual/index.html">User Manual</a>: every feature of Selvage, its windows and its settings.</li>
+  <li><a href="../public-api/index.html">Public API</a>: every public type and member.</li>
+</ul>
+<p>For questions and bug reports, use the <a href="https://justetools.net/contact/">contact form</a> or email
+  <a href="mailto:justetools@gmail.com">justetools@gmail.com</a>.</p>
+<div class="note"><strong>Note:</strong> Selvage requires Unity 6.0 or later and the Mono Cecil package
+  (<code>com.unity.nuget.mono-cecil</code>), which importing Selvage installs. For more information, refer to
+  <a href="../user-manual/pages/Installation.html">Install Selvage</a>.</div>
+
+</section>
+
+    <div class="doc-footer">Selvage v1.0.0</div>
+
+  </main>
+</body>
+</html>

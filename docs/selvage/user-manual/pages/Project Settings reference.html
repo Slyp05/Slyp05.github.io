@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="The providers, Inject by Default and validation settings on the Selvage page of the Project Settings window." />
+  <title>Selvage - Project Settings reference</title>
+  <link rel="stylesheet" href="/assets/css/doc-styles.css" />
+  <link rel="stylesheet" href="/assets/css/selvage.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Selvage</div><a href="../index.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Project Settings reference</h1>
+      <div class="sub">The providers, Inject by Default and validation settings on the Selvage page of the Project Settings window.</div>
+    </div>
+
+<p>To open the <strong>Selvage</strong> page, go to <strong>Edit</strong> &gt; <strong>Project Settings</strong> &gt;
+  <strong>Selvage</strong>, or to <strong>Tools</strong> &gt; <strong>Selvage</strong> &gt; <strong>Settings</strong>.
+  Selvage saves the page in <code>ProjectSettings/SelvageSettings.asset</code>. Commit that file so your team and your
+  build machines use the same settings. To find the file, select <strong>Show in Explorer</strong> (<strong>Reveal in
+  Finder</strong> on macOS) at the bottom of the page.</p>
+<div class="img-block">
+  <img src="../img/project_settings_page.png" alt="The Selvage page of the Project Settings window, with the Providers, Inject by Default and Validation sections" />
+</div>
+
+<!-- ====================================== providers ==== -->
+<section id="providers">
+  <h2>Providers</h2>
+<p>The <strong>Providers</strong> section holds the provider list. Selvage tries the providers from top to bottom.</p>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Control</th><th scope="col">Description</th></tr>
+    <tr><td><strong>+</strong></td><td>Adds a provider. The menu lists the providers that ship with Selvage, then the provider classes of your project.</td></tr>
+    <tr><td><strong>-</strong></td><td>Removes the selected provider.</td></tr>
+    <tr><td>A provider's foldout</td><td>Shows the provider's settings, and what it gives. A collapsed provider summarizes its settings at the end of its row.</td></tr>
+  </table>
+</div>
+<p>A provider that code turned off with <code>Enabled</code> has a dimmed title, and its summary reads
+  <strong>Off</strong>. A provider whose class isn't in the project, such as after a rename or from a setup of
+  another project, is an error row that keeps its place and settings until the class is back.</p>
+<p>Providers that code adds with <code>Injector.AddFirst</code> and <code>Injector.AddLast</code> appear above and
+  below the list, read-only, each with a link to the line of code that added it. For more information, refer to
+  <a href="Manage%20the%20provider%20list.html">Manage the provider list</a>.</p>
+
+  <h3 id="scene">Scene Provider</h3>
+<p>The Scene Provider's settings apply to every member it serves. The list can hold several Scene Providers, each
+  with its own settings.</p>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Property</th><th scope="col">Description</th></tr>
+    <tr><td><strong>Reach</strong></td><td>How far from the member's GameObject the provider looks. Each value includes the ones before it. Among the components that <a href="Choose%20between%20several%20candidates.html">preferences</a> leave tied, the closest one wins.<ul>
+      <li><strong>Self</strong>: the member's own GameObject.</li>
+      <li><strong>Hierarchy</strong>: also its parents and children.</li>
+      <li><strong>Scene</strong>: also the rest of its scene.</li>
+      <li><strong>All Scenes</strong>: also the other loaded scenes. This is the default.</li></ul></td></tr>
+    <tr><td><strong>Parents First</strong></td><td>Look at the parents before the children, when <strong>Reach</strong> includes the hierarchy. Enabled by default.</td></tr>
+    <tr><td><strong>Include Inactive</strong></td><td>Also give components on inactive GameObjects. Disabled by default.</td></tr>
+  </table>
+</div>
+
+  <h3 id="others">Other shipped providers</h3>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Provider</th><th scope="col">Expanded, displays</th></tr>
+    <tr><td><strong>Registry Provider</strong>, and each registry of your own</td><td>Each object code has added, with the type it's given as and its lifetime when it isn't Shared. Also the code that reaches the registry, such as <code>RegistryProvider.Listed</code>.</td></tr>
+    <tr><td><strong>Attribute Provider</strong></td><td>The classes marked <code>[Provide]</code>.</td></tr>
+    <tr><td><strong>Asset Provider</strong></td><td>Every asset your project provides, by Provide Definition.</td></tr>
+  </table>
+</div>
+
+</section>
+
+<!-- ====================================== ambient ==== -->
+<section id="ambient">
+  <h2>Inject by Default</h2>
+<p>The <strong>Inject by Default</strong> section injects every class of every assembly that references Selvage, as
+  if each assembly had <code>[assembly: Inject]</code>. For more information, refer to
+  <a href="Inject%20with%20scopes.html#project">Inject every class of the project</a>.</p>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Property</th><th scope="col">Description</th></tr>
+    <tr><td><strong>Enabled</strong></td><td>Injects every class of the project. To leave out an assembly, a class or a member, add <code>[DontInject]</code> to it.</td></tr>
+    <tr><td>Option toggles</td><td>The <a href="Options.html">options</a> every member receives, unless its own <code>[Inject]</code>, its class or its assembly sets them. <strong>Optional</strong> is enabled by default.</td></tr>
+    <tr><td><strong>Apply and Recompile</strong></td><td>Saves the changes and recompiles your scripts. Appears while a change is pending, and is unavailable in Play mode.</td></tr>
+    <tr><td><strong>Revert</strong></td><td>Discards the pending changes.</td></tr>
+  </table>
+</div>
+
+</section>
+
+<!-- ====================================== validation ==== -->
+<section id="validation">
+  <h2>Validation</h2>
+<p>The <strong>Validation</strong> section runs the check of the Validation tab of the Dependencies window when you
+  build and when you enter Play mode. For more information, refer to <a href="Validate%20members.html#gates">Validate when you build or enter Play mode</a>.</p>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Property</th><th scope="col">Description</th></tr>
+    <tr><td><strong>Strict Validation</strong></td><td>Treats a required member that no provider is guaranteed to give as <strong>Missing</strong>, so that every required dependency is proven in the Editor. Disabled by default.</td></tr>
+    <tr><td><strong>Build Validation</strong></td><td>What a build does when a member is <strong>Missing</strong>: <strong>Off</strong>, <strong>Warn</strong>, or <strong>Block</strong>. The default is <strong>Block</strong>.</td></tr>
+    <tr><td><strong>Play Validation</strong></td><td>What entering Play mode does when a member is <strong>Missing</strong>: <strong>Off</strong>, <strong>Warn</strong>, or <strong>Block</strong>. The default is <strong>Off</strong>. The check reads every type in the project, which slows the first entry into Play mode after each script change.</td></tr>
+  </table>
+</div>
+
+</section>
+
+<!-- ====================================== setups ==== -->
+<section id="setups">
+  <h2>Setups menu</h2>
+<p>A <strong>setup</strong> is everything on the <strong>Selvage</strong> page. The More (<strong>&#8942;</strong>) menu at the top
+  right of the page contains the following items:</p>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Item</th><th scope="col">Description</th></tr>
+    <tr><td><strong>Default</strong>, and your setups</td><td>Replaces the page with that setup. <strong>Default</strong> is the setup that ships with Selvage.</td></tr>
+    <tr><td><strong>Save Setup...</strong></td><td>Saves the page under a name, for every project on this computer.</td></tr>
+    <tr><td><strong>Delete Setup</strong></td><td>Deletes one of your setups.</td></tr>
+    <tr><td><strong>Save Setup to File...</strong>, <strong>Load Setup from File...</strong></td><td>Saves or loads a setup as a <code>.json</code> file, to share it with another computer or person.</td></tr>
+  </table>
+</div>
+<p>The help button beside the menu opens the User Manual.</p>
+
+</section>
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="Manage%20the%20provider%20list.html">Manage the provider list</a></li>
+    <li><a href="Inject%20with%20scopes.html">Inject with scopes</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="Reference.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Reference</div>
+  </a>
+  <a class="next" href="Dependencies%20window%20reference.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Dependencies window reference</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Selvage v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

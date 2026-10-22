@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Check whether each member will receive a dependency, without entering Play mode." />
+  <title>Selvage - Validate members</title>
+  <link rel="stylesheet" href="../shared/styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Selvage</div><a href="../User%20Manual.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Validate members</h1>
+      <div class="sub">Check whether each member will receive a dependency, without entering Play mode.</div>
+    </div>
+
+<!-- ====================================== validate ==== -->
+<section id="validate">
+  <h2>Validate a GameObject or an asset</h2>
+<p>When a GameObject or an asset has scripts with injected members, its Inspector window displays a
+  <strong>Selvage</strong> section at the top, with the number of members in each state. Select the section to expand
+  it: it lists the members of each script, with the state of each member and its type, then the static members of its
+  class, marked <strong>static</strong>. To list only the members in one state, select its count. Select several
+  counts to combine them. The check reads your code and the provider list, and doesn't run your code, so you find a
+  missing dependency in the Editor instead of as a <code>null</code> at runtime.</p>
+<div class="img-block">
+  <img src="../img/inspector_selvage_section" alt="The Selvage section at the top of the Inspector window of the Player GameObject, expanded: settings is Guaranteed, and body, view and audioManager are May Be Supplied" />
+</div>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Result</th><th scope="col">Meaning</th></tr>
+    <tr><td><strong>Guaranteed</strong></td><td>A provider always gives the member a dependency.</td></tr>
+    <tr><td><strong>May Be Supplied</strong></td><td>A provider can give one, but whether it does is only known when the member is injected.</td></tr>
+    <tr><td><strong>Missing</strong></td><td>No provider can give the member a dependency. To fix it, add a provider for the type, or make the member <a href="Options.html#optional"><code>Optional</code></a>.</td></tr>
+  </table>
+</div>
+<p>In Play mode, and while editing for a member with the <a href="Options.html#editmode"><code>EditMode</code></a>
+  option, the section displays the state of each member and the provider that gave its dependency. For more
+  information, refer to <a href="Inspect%20injected%20members.html">Inspect injected members</a>.</p>
+
+</section>
+
+<!-- ====================================== reasons ==== -->
+<section id="reasons">
+  <h2>Read the reason for a result</h2>
+<p>The <strong>Validation</strong> tab of the Dependencies window lists each member with its result and the reason
+  for it. To open it on a GameObject or an asset, select the Selvage button at the right of its Selvage section, then
+  select <strong>Validation</strong>. To validate a script, perform the following steps:</p>
+<ol>
+  <li>Go to <strong>Tools</strong> &gt; <strong>Selvage</strong> &gt; <strong>Dependencies</strong>.</li>
+  <li>Select <strong>Validation</strong>.</li>
+  <li>In the Project window, select the script.</li>
+</ol>
+<p>The window follows the selection while it is open.</p>
+<div class="img-block">
+  <img src="../img/dependencies_window_validation" alt="The Validation tab of the Dependencies window with the Player script selected: settings is Guaranteed, and body, view and audioManager are May Be Supplied" />
+</div>
+<p>A row also indicates when the member needs the <a href="Options.html#async"><code>Async</code></a> option, when
+  its provider can revoke its dependency, and when the member is part of a <a href="Injection%20in%20depth.html#cycles">dependency
+  cycle</a> or leads into one.</p>
+
+</section>
+
+<!-- ====================================== explain ==== -->
+<section id="explain">
+  <h2>Find out where a dependency comes from</h2>
+<p>When a member receives an object you didn't expect, select <strong>Explain</strong> on its row. The explanation
+  lists the providers in the order Selvage tries them, highlights the provider that gives the dependency, and
+  indicates why each provider above it didn't. To have another provider give the dependency, move it up in the
+  provider list.</p>
+<div class="img-block">
+  <img src="../img/dependencies_window_explain" alt="Explain open on the settings member, listing the providers in order with the Asset Provider highlighted" />
+</div>
+
+</section>
+
+<!-- ====================================== project ==== -->
+<section id="project">
+  <h2>Validate the whole project</h2>
+<p>To validate every class in the project that has injected members, select nothing, or select <strong>Whole Project</strong>.
+  The tab lists the classes with a <strong>Missing</strong> member first, and counts the members in each state, as it
+  does for a selection. The check covers the assemblies of your
+  project and the Selvage demo, and skips the assemblies of Selvage itself and of Unity. It runs a little every frame,
+  so the Editor stays usable while it runs, and stops when you cancel it. To validate only the scripts of a folder,
+  select the folder in the Project window.</p>
+<div class="img-block">
+  <img src="../img/project_sweep" alt="The Validation tab listing every class of the project that has injected members, with the counts and the toolbar" />
+</div>
+<p>To list only some members, use the <strong>State</strong> and <strong>Options</strong> filters in the toolbar. For
+  a description of each control, refer to <a href="Dependencies%20window%20reference.html">Dependencies window
+  reference</a>.</p>
+
+</section>
+
+<!-- ====================================== gates ==== -->
+<section id="gates">
+  <h2>Validate when you build or enter Play mode</h2>
+<p>The same check can run when you build and when you enter Play mode. To set it up, perform the following
+  steps:</p>
+<ol>
+  <li>Go to <strong>Edit</strong> &gt; <strong>Project Settings</strong> &gt; <strong>Selvage</strong>.</li>
+  <li>In the <strong>Validation</strong> section, set <strong>Build Validation</strong> and <strong>Play
+    Validation</strong> to <strong>Off</strong>, <strong>Warn</strong> or <strong>Block</strong>.</li>
+</ol>
+<p>By default, a build with a <strong>Missing</strong> member is blocked, and entering Play mode isn't checked. When
+  entering Play mode is blocked, select <strong>Show in Dependencies</strong> to list the members that blocked it. For
+  more information, refer to <a href="Project%20Settings%20reference.html#validation">Project Settings
+  reference</a>.</p>
+
+</section>
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="Inspect%20injected%20members.html">Inspect injected members</a></li>
+    <li><a href="Troubleshooting.html">Troubleshooting</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="Inspect%20and%20debug.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Inspect and debug</div>
+  </a>
+  <a class="next" href="Inspect%20injected%20members.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Inspect injected members</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Selvage v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

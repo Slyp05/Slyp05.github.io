@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Understand the choices behind Selvage, and why it doesn't follow the model of .NET dependency injection containers." />
+  <title>Selvage - Design decisions</title>
+  <link rel="stylesheet" href="../shared/styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Selvage</div><a href="../User%20Manual.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Design decisions</h1>
+      <div class="sub">Understand the choices behind Selvage, and why it doesn't follow the model of .NET dependency injection containers.</div>
+      <div class="guide-index">
+        <a href="#overview">Overview</a>
+        <a href="#inversion">Scripts that don't reference Selvage</a>
+        <a href="#constructors">No constructor injection</a>
+        <a href="#container">No container to build</a>
+        <a href="#locator">No service locator</a>
+        <a href="#keys">Choosing among candidates without keys</a>
+        <a href="#lifetimes">Lifetimes without container scopes</a>
+        <a href="#weaving">Code added at compile time</a>
+        <a href="#names">Names</a>
+        <a href="#unity">What Selvage leaves to Unity</a>
+      </div>
+    </div>
+
+<!-- ====================================== overview ==== -->
+<section id="overview">
+  <h2>Overview</h2>
+<p>Dependency injection is a principle: a class receives the objects it uses instead of creating or finding them.
+  Dependency injection containers come from .NET applications, such as web servers, where the container creates every
+  object of the application through its constructor, from registrations written in code. Most containers for Unity keep
+  that model: a composition root that registers each class, constructor injection, and container scopes.</p>
+<p>A Unity project doesn't work that way. Unity creates MonoBehaviours and ScriptableObjects itself, your objects are
+  placed in scenes and asset folders rather than created in code, and their lifetimes follow scenes and
+  <code>Destroy</code>. Selvage keeps the principle and builds the rest around how Unity works.</p>
+
+</section>
+
+<!-- ====================================== inversion ==== -->
+<section id="inversion">
+  <h2>Scripts that don't reference Selvage</h2>
+<p>With a container, your code names the container: the composition root registers each class, and a MonoBehaviour
+  carries the container's <code>[Inject]</code> attribute.</p>
+<p>With the Inject by Default setting enabled, Selvage injects a script that never mentions it, and no code registers
+  the script:</p>
+<pre><code><span class="kw">using</span> UnityEngine;
+
+<span class="kw">public</span> <span class="kw">class</span> <span class="ty">Player</span> : <span class="ty">MonoBehaviour</span>
+{
+    <span class="ty">Rigidbody</span> body;
+    <span class="ty">AudioManager</span> audioManager;
+}</code></pre>
+<p>The script has no <code>using Selvage</code>, no attribute and no registration. Its fields declare what it needs,
+  and the provider list decides where each one comes from. The same script compiles in a project without Selvage,
+  where you assign its fields yourself.</p>
+<p>Selvage injects only a member that holds <code>null</code>, so a field that isn't a dependency, such as a
+  <code>List&lt;int&gt;</code>, only needs a value before Selvage injects it: in its initializer, in the constructor or
+  in <code>Awake</code>. For more information, refer to <a href="Inject%20with%20scopes.html">Inject with
+  scopes</a>.</p>
+
+</section>
+
+<!-- ====================================== constructors ==== -->
+<section id="constructors">
+  <h2>No constructor injection</h2>
+<p>In .NET, the container calls every constructor, so the constructor is where dependencies arrive. Unity calls the
+  constructor of a MonoBehaviour or a ScriptableObject itself, with no parameters. Containers for Unity inject those
+  objects through fields or methods instead, and create plain classes through the container or a factory so that
+  their constructors receive something. A project ends up with two ways to receive a dependency, and with plain
+  classes that can't be created with <code>new</code>.</p>
+<p>Selvage has one way for every context: members, in a MonoBehaviour, a ScriptableObject, a plain C# class or the
+  static members of a class. <code>new</code> and <code>Instantiate</code> work as usual and inject what they
+  create.</p>
+<p>A constructor makes sure an argument is passed, not that the container has one to pass: that's only known once the
+  container is built, at runtime. The Validation tab of the Dependencies window reports a member that no provider can
+  give before you enter Play mode, and a required member left <code>null</code> fails with an error that names it.
+  Selvage injects members at the end of <code>Awake</code> or of the constructor, so you use them from <code>Start</code> or <code>OnEnable</code> on, or once <code>new</code> returns. For more information, refer to <a href="Validate%20members.html">Validate members</a> and
+  <a href="Injection%20lifecycle.html">Injection lifecycle</a>.</p>
+
+</section>
+
+<!-- ====================================== container ==== -->
+<section id="container">
+  <h2>No container to build</h2>
+<p>In .NET, nothing exists until code creates it, so the container has to be told about every class. In Unity, your
+  scenes already hold their components and your folders their assets. Registering them in a container repeats in code,
+  or in references dragged onto an installer, what the project already holds.</p>
+<p>Selvage has the provider list instead. Each provider gives dependencies from one source, such as the loaded scenes
+  or the folders that hold a Provide Definition, with no entry per object. Your own classes are provided by
+  <code>[Provide]</code> on the class, and objects your code creates by the registry or a local block. The Dependencies window shows where each member's dependency comes from: Explain
+  lists what each provider did for it. For more information, refer to <a href="Validate%20members.html">Validate
+  members</a>.</p>
+
+</section>
+
+<!-- ====================================== locator ==== -->
+<section id="locator">
+  <h2>No service locator</h2>
+<p>Many containers let any code ask for an object, with a call such as <code>container.Resolve&lt;T&gt;()</code>.
+  That call is a service locator: the dependency is hidden in the code that makes it, which is the problem dependency
+  injection removes.</p>
+<p>Selvage has no such call. Every dependency is a declared member, so the Dependencies window validates and inspects
+  all of them. The needs that lead to a service locator in other frameworks are met by members:</p>
+<div class="table-scroll">
+  <table class="cmp">
+    <tr><th scope="col">Need</th><th scope="col">Member</th></tr>
+    <tr><td>A dependency in static code</td><td>A static member. Selvage injects the static members of any class. For more information, refer to <a href="Introduction%20to%20Selvage.html#contexts">Contexts</a>.</td></tr>
+    <tr><td>A dependency used only on a rare code path</td><td>A <a href="Options.html#manual"><code>Manual</code></a> member, injected by <code>Manual.Inject</code> when the path runs.</td></tr>
+    <tr><td>A dependency chosen from data at runtime</td><td>A channel read from a field with <code>[DynamicChannel]</code>, then <code>Manual.Reinject</code> when the field changes. For more information, refer to <a href="Choose%20between%20several%20candidates.html#channels">Channels</a>.</td></tr>
+    <tr><td>An object created without running its constructor, such as by a deserializer</td><td>Its members, injected by <code>Manual.Inject(this)</code>.</td></tr>
+    <tr><td>Every object of a type</td><td>A collection member, such as <code>IEnumerable&lt;T&gt;</code>. For more information, refer to <a href="Introduction%20to%20Selvage.html#matching">How a member's type is matched</a>.</td></tr>
+  </table>
+</div>
+
+</section>
+
+<!-- ====================================== keys ==== -->
+<section id="keys">
+  <h2>Choosing among candidates without keys</h2>
+<p>When several objects fit a member, a container asks for a key, such as a name written both on the registration
+  and on the member. The two must match, and a script copied into another project needs the same keys there.</p>
+<p>Selvage chooses with a preference on each candidate, which reads facts your code already holds: the member's name,
+  the class or namespace of the context, the tag or scene of its GameObject. A preference is a hint, never a filter,
+  so a member with one candidate receives it whatever the preference says, and a copied script keeps working. When
+  nothing in your code tells the candidates apart, a channel on the member names the one it wants. For more
+  information, refer to <a href="Choose%20between%20several%20candidates.html">Choose between several
+  candidates</a>.</p>
+
+</section>
+
+<!-- ====================================== lifetimes ==== -->
+<section id="lifetimes">
+  <h2>Lifetimes without container scopes</h2>
+<p>In .NET, a container scope matches a unit of work, such as a web request, and a singleton lives as long as the
+  application. Containers for Unity map scopes onto scenes and prefabs, through a hierarchy of containers you
+  declare.</p>
+<p>Unity objects already have lifetimes, so Selvage declares no scopes. An object Selvage creates lives while a member
+  holds it, and the Scene Provider gives the component closest to the member, so what a scene or a prefab instance
+  shares follows from where objects are and which members hold them. For the equivalent of each container scope, refer to
+  <a href="Migrate%20from%20Zenject%20or%20VContainer.html#scopes">Container scopes</a>. For more information, refer
+  to <a href="Lifetimes.html">Lifetimes</a>.</p>
+
+</section>
+
+<!-- ====================================== weaving ==== -->
+<section id="weaving">
+  <h2>Code added at compile time</h2>
+<p>In .NET, the container creates every object, so it can inject each one through reflection as it creates it. In
+  Unity, objects come from <code>new</code>, <code>Instantiate</code> and scene loads that a container never sees, and
+  IL2CPP strips the members that only reflection reaches.</p>
+<p>Selvage adds code at compile time: when Unity compiles your scripts, an IL post-processor adds a call that injects each object at the
+  end of its <code>Awake</code>, <code>OnEnable</code> or constructor, and assigns its members directly,
+  without reflection. Every object is injected however it's created, and IL2CPP builds need no <code>link.xml</code> entry for your
+  scripts. Selvage doesn't process a type from a precompiled DLL: <code>Manual.Inject</code> injects it. For more information,
+  refer to <a href="Technical%20QA.html#weaver">What does Selvage add to my code?</a></p>
+
+</section>
+
+<!-- ====================================== names ==== -->
+<section id="names">
+  <h2>Names</h2>
+<p>Container names come from .NET, and several of them mean something else to a Unity user, or describe something
+  Selvage doesn't have. Selvage uses a C# or Unity word wherever one fits:</p>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Container word</th><th scope="col">Selvage word</th><th scope="col">Why</th></tr>
+    <tr><td>Service</td><td>Dependency</td><td>A Rigidbody, a Camera or a settings asset isn't a service. Dependency names whatever a member holds.</td></tr>
+    <tr><td>Container, installer, binding</td><td>Provider, the provider list</td><td>Nothing is registered per class. Providers give dependencies from their sources, in the order of the provider list.</td></tr>
+    <tr><td>Resolve</td><td>Inject</td><td><code>Resolve&lt;T&gt;()</code> is a service locator call. Selvage only injects members.</td></tr>
+    <tr><td>Singleton, transient</td><td>Shared, Separate, Pooled</td><td>To a Unity user, a singleton is a static <code>Instance</code> that lasts for the whole application, and a Shared object doesn't.</td></tr>
+    <tr><td>Lifetime scope</td><td>Lifetime</td><td>Selvage has no lifetime scopes. In Selvage, a scope is where <code>[Inject]</code> applies: a class, an assembly or the project.</td></tr>
+    <tr><td>Key, identifier, qualifier</td><td>Preference, channel</td><td>A key must match on both sides. A preference and a channel are hints, never filters.</td></tr>
+    <tr><td>Context (a container of a scene or a GameObject)</td><td>Context (the object whose members are injected)</td><td>Object already means <code>UnityEngine.Object</code>, so Selvage needs another word for the object it injects.</td></tr>
+    <tr><td>Injection point, site</td><td>Member</td><td>Member is the C# word for a field or a property.</td></tr>
+  </table>
+</div>
+
+</section>
+
+<!-- ====================================== unity ==== -->
+<section id="unity">
+  <h2>What Selvage leaves to Unity</h2>
+<p>Some containers also call plain C# classes each frame, order the initialization of objects, or carry an event bus.
+  Selvage injects dependencies and nothing else. MonoBehaviours and the PlayerLoop already run code each frame, and to
+  start once another object has its dependencies, you wait until that context is ready. For more information, refer
+  to <a href="Wait%20until%20a%20context%20is%20ready.html">Wait until a context is ready</a>.</p>
+
+</section>
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="Introduction%20to%20Selvage.html">Introduction to Selvage</a></li>
+    <li><a href="What%20sets%20Selvage%20apart.html">What sets Selvage apart</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="What%20sets%20Selvage%20apart.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">What sets Selvage apart</div>
+  </a>
+  <a class="next" href="Migrate%20from%20Zenject%20or%20VContainer.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Migrate from Zenject or VContainer</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Selvage v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

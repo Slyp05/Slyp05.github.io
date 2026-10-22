@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="frame.css">
+<style>
+  .stage { display: flex; flex-direction: column; justify-content: center; gap: 44px; }
+  .row { display: flex; align-items: center; justify-content: space-between; height: auto; gap: 0; }
+  .code { width: 860px; }
+  .code pre { font-size: 25px; }
+  .arrow { flex: 1; display: flex; align-items: center; justify-content: center; }
+  .crop { width: 700px; }
+  .facts { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+  .facts .cap { margin-right: 6px; }
+  .facts span.f { font-size: 23px; color: var(--ink); border: 2px solid var(--border); background: rgba(20, 34, 62, 0.9); border-radius: 999px; padding: 6px 18px; }
+</style>
+</head>
+<body>
+<div class="head">
+  <h1>The right one, without keys</h1>
+  <p>If two classes fit the same field, a preference says which fields each one is for.</p>
+</div>
+<div class="stage">
+  <div class="row">
+    <div class="code">
+<pre class="cs">
+[Provide, Preference(MemberName = "music")]
+public class MusicBus : IAudioBus { }
+
+[Provide, Preference]   // every other field
+public class EffectsBus : IAudioBus { }
+</pre>
+    </div>
+    <div class="arrow"><svg width="56" height="56" viewBox="0 0 64 64"><path d="M10 32 H50 M36 16 L52 32 L36 48" fill="none" stroke="#89b4fa" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <img class="crop" src="Captures/live-jukebox.png">
+  </div>
+  <div class="facts">
+    <span class="cap">A preference can match</span>
+    <span class="f">field name</span><span class="f">attribute</span><span class="f">class</span><span class="f">namespace</span><span class="f">assembly</span><span class="f">tag</span><span class="f">layer</span><span class="f">scene</span><span class="f">hierarchy path</span>
+  </div>
+</div>
+<img class="hem" src="selvage.svg">
+<script src="highlight.js"></script>
+</body>
+</html>

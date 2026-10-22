@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="frame.css">
+<style>
+  .stage { display: flex; align-items: center; justify-content: space-between; }
+  .right .label { font-size: 22px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--dim); }
+  .left { width: 1000px; display: flex; flex-direction: column; gap: 20px; }
+  .code { padding: 22px 32px; }
+  .code pre { font-size: 23px; }
+  .right { width: 600px; display: flex; flex-direction: column; gap: 22px; }
+  .right .crop { width: 600px; }
+</style>
+</head>
+<body>
+<div class="head">
+  <h1>Name the one you want</h1>
+  <p>A channel works like a key, but as a hint: fixed in code, or read from a field each time it is injected.</p>
+</div>
+<div class="stage">
+  <div class="left">
+    <div class="code">
+      <div class="label">Fixed</div>
+<pre class="cs">[Inject, Channel("Music")] IAudioBus bus;</pre>
+    </div>
+    <div class="code">
+      <div class="label">Read from a field</div>
+<pre class="cs">
+[SerializeField] string language = "fr";
+[Inject, DynamicChannel(nameof(language))] IVoice voice;
+</pre>
+    </div>
+    <div class="code">
+      <div class="label">The candidates</div>
+<pre class="cs">
+[Provide, Preference(Channel = "fr")] class FrenchVoice : IVoice { }
+[Provide, Preference(Channel = "en")] class EnglishVoice : IVoice { }
+</pre>
+    </div>
+  </div>
+  <div class="right">
+    <div class="label">Announcer, language "fr"</div>
+    <img class="crop" src="Captures/live-announcer.png">
+  </div>
+</div>
+<img class="hem" src="selvage.svg">
+<script src="highlight.js"></script>
+</body>
+</html>

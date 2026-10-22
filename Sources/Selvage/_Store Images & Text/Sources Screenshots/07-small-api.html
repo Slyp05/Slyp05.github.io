@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="frame.css">
+<style>
+  .stage { display: flex; flex-direction: column; justify-content: center; gap: 60px; }
+  .start { display: flex; gap: 32px; }
+  .start .code { padding: 22px 34px; display: flex; align-items: baseline; gap: 24px; }
+  .start pre { font-size: 36px; }
+  .start .note { font-size: 25px; color: var(--muted); }
+  .chart { display: flex; flex-direction: column; gap: 18px; }
+  .bar { display: grid; grid-template-columns: 220px 1fr; align-items: center; }
+  .bar .name { font-size: 30px; font-weight: 600; color: var(--muted); }
+  .bar .track { display: flex; align-items: center; gap: 18px; }
+  .bar .fill { height: 46px; border-radius: 10px; background: #4a5f86; }
+  .bar.us .name { color: var(--ink); }
+  .bar.us .fill { background: var(--green); }
+  .bar .n { font-size: 34px; font-weight: 700; color: var(--ink); }
+  .bar .n span { font-size: 22px; font-weight: 400; color: var(--dim); margin-left: 8px; }
+  .note2 { font-size: 20px; color: var(--dim); }
+</style>
+</head>
+<body>
+<div class="head">
+  <h1>A small API</h1>
+  <p>Two attributes to start. Everything else is there when you need it.</p>
+</div>
+<div class="stage">
+  <div class="start">
+    <div class="code"><pre class="cs">[Inject]</pre><span class="note">on what needs something</span></div>
+    <div class="code"><pre class="cs">[Provide]</pre><span class="note">on what is needed</span></div>
+  </div>
+  <div class="chart">
+    <div class="bar us"><span class="name">Selvage</span><div class="track"><div class="fill" style="width: 81px"></div><span class="n">31<span>public types</span></span></div></div>
+    <div class="bar"><span class="name">VContainer</span><div class="track"><div class="fill" style="width: 160px"></div><span class="n">61</span></div></div>
+    <div class="bar"><span class="name">Zenject</span><div class="track"><div class="fill" style="width: 1250px"></div><span class="n">478</span></div></div>
+  </div>
+</div>
+<img class="hem" src="selvage.svg">
+<script src="highlight.js"></script>
+</body>
+</html>

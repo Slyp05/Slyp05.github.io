@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Provide components from the same GameObject or from the loaded scenes." />
+  <title>Selvage - Provide scene components</title>
+  <link rel="stylesheet" href="../shared/styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Selvage</div><a href="../User%20Manual.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Provide scene components</h1>
+      <div class="sub">Provide components from the same GameObject or from the loaded scenes.</div>
+    </div>
+
+<!-- ====================================== inject ==== -->
+<section id="inject">
+  <h2>Provide a component</h2>
+<p>The Scene Provider gives components from the loaded scenes. A member whose type is a component, or an interface
+  that a component implements, receives one. A member of type <code>GameObject</code> receives the GameObject its context is on. This
+  replaces calls such as <code>GetComponent</code> and <code>FindAnyObjectByType</code>:</p>
+<pre><code>[Inject] <span class="ty">Rigidbody</span> body;   <span class="cm">// the Rigidbody on this GameObject</span>
+[Inject] <span class="ty">Camera</span> view;      <span class="cm">// a Camera elsewhere in the scene</span></code></pre>
+<p>A member of a <a href="Introduction%20to%20Selvage.html#matching">collection type</a> receives every component
+  that fits, within the provider's <a href="#settings">reach</a>:</p>
+<pre><code>[Inject] <span class="ty">Light</span>[] lights;</code></pre>
+<p>For a member of an interface type, the Scene Provider looks for a component only when a component class in your
+  project implements the interface. Otherwise it gives nothing, and unless another provider gives one, the Validation
+  tab shows the member as <strong>Missing</strong>.</p>
+<p>Selvage never destroys a component of your scene, only the copies it makes for the
+  <a href="Lifetimes.html">Separate and Pooled lifetimes</a>. When the component is destroyed, a member that holds it reads
+  as <code>null</code>, like any reference to a destroyed object.</p>
+<div class="note"><strong>Note:</strong> What a scene holds is only known when the member is injected, so the
+  Inspector window and the Dependencies window show these members as <strong>May Be Supplied</strong>. For more information, refer to
+  <a href="Validate%20members.html">Validate members</a>.</div>
+
+</section>
+
+<!-- ====================================== closest ==== -->
+<section id="closest">
+  <h2>How the Scene Provider chooses a component</h2>
+<p>When several components fit and no <a href="Choose%20between%20several%20candidates.html">preference</a> decides
+  between them, the Scene Provider gives the closest one to the member's GameObject, in the following order:</p>
+<ol>
+  <li>The member's own GameObject.</li>
+  <li>Its parents, then its children. With <strong>Parents First</strong> disabled, its children come first.</li>
+  <li>The rest of its scene.</li>
+  <li>Other loaded scenes, the <code>DontDestroyOnLoad</code> scene included.</li>
+</ol>
+<p>Within the parents, or within the children, the nearest component wins. All components in the rest of the
+  scene are at the same distance, and so are all components in other scenes.</p>
+<p>If two components are at the same distance, the Console window displays an error that names both, and the
+  member's dependency is missing. To decide which member receives which component, add a preference with a
+  <a href="#tuning">Provide Tuning</a> component. For more information, refer to
+  <a href="Choose%20between%20several%20candidates.html">Choose between several candidates</a>.</p>
+</section>
+
+<!-- ====================================== settings ==== -->
+<section id="settings">
+  <h2>Change how far the Scene Provider looks</h2>
+<p>The Scene Provider's settings apply to every member it serves. To change them, perform the following steps:</p>
+<ol>
+  <li>Go to <strong>Edit</strong> &gt; <strong>Project Settings</strong> &gt; <strong>Selvage</strong>.</li>
+  <li>In the provider list, expand <strong>Scene Provider</strong>.</li>
+  <li>Set <strong>Reach</strong>, <strong>Parents First</strong> and <strong>Include Inactive</strong>.</li>
+</ol>
+<div class="img-block">
+  <img src="../img/scene_provider_settings" alt="The Scene Provider expanded in the provider list, showing Reach, Parents First and Include Inactive" />
+</div>
+<p>For a description of each setting, refer to <a href="Project%20Settings%20reference.html#scene">Project Settings
+  reference</a>.</p>
+<p>A plain C# class or a ScriptableObject isn't on a GameObject, so it receives a component only when the Scene
+  Provider's <strong>Reach</strong> is <strong>All Scenes</strong>, the default.</p>
+<p>The provider list can hold several Scene Providers, each with its own settings, tried in their order like any
+  other providers.</p>
+
+</section>
+
+<!-- ====================================== tuning ==== -->
+<section id="tuning">
+  <h2>Configure one scene object</h2>
+<p>A <strong>Provide Tuning</strong> component changes how the Scene Provider provides the GameObject it's on: its
+  lifetime, whether members follow it, and which members it's for. To add one, perform the following steps:</p>
+<ol>
+  <li>Select the GameObject.</li>
+  <li>In the Inspector window, select <strong>Add Component</strong> &gt; <strong>Selvage</strong> &gt;
+    <strong>Provide Tuning</strong>.</li>
+</ol>
+<div class="img-block">
+  <img src="../img/provide_tuning_inspector" alt="The Provide Tuning component in the Inspector window, with Lifetime, Watched enabled, When Deactivated set to Keep, and Has Preference" />
+</div>
+<p>Without a Provide Tuning component, the Scene Provider provides the object with the Shared lifetime, for
+  every member. For a description of each property, refer to <a href="Provide%20Tuning%20reference.html">Provide Tuning
+  reference</a>.</p>
+
+</section>
+
+<!-- ====================================== watch ==== -->
+<section id="watch">
+  <h2>Follow a scene object</h2>
+<p>The Scene Provider looks for components only when a member is injected, so members don't notice a component that's
+  created or destroyed afterwards. To have members follow one scene object, enable <strong>Watched</strong> on its
+  Provide Tuning component. In Play mode, the object then announces when it appears and when it leaves:</p>
+<div class="table-scroll">
+  <table class="cmp">
+    <tr><th scope="col">When the object</th><th scope="col">The members holding it</th></tr>
+    <tr><td>Is destroyed</td><td>Drop it on the next frame. A <a href="Options.html#reactive"><code>Reactive</code></a> member receives a replacement when one exists, and any other member returns to its default.</td></tr>
+    <tr><td>Has its GameObject deactivated</td><td>Depend on <strong>When Deactivated</strong>. With <strong>Keep</strong>, the default, members keep it, and <code>Reactive</code> members are injected again. With <strong>Revoke</strong>, members drop it, as when it's destroyed.</td></tr>
+    <tr><td>Appears, or is enabled again</td><td>Keep what they hold, while <code>Reactive</code> members are injected again and may move to it, such as when it's closer. A <code>Reactive</code> member that holds nothing receives it.</td></tr>
+  </table>
+</div>
+<p>Turning off only the Provide Tuning component announces nothing.</p>
+
+</section>
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="Lifetimes.html">Lifetimes</a></li>
+    <li><a href="API%20-%20Providing.html#SceneProvider">SceneProvider API reference</a></li>
+    <li><a href="API%20-%20Providing.html#ProvideTuning">ProvideTuning API reference</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="Provide%20dependencies.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Provide dependencies</div>
+  </a>
+  <a class="next" href="Provide%20your%20own%20classes.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Provide your own classes</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Selvage v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

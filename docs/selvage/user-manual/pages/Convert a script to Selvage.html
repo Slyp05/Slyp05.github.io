@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Replace GetComponent, Camera.main and a static Instance with injected members, validate them, and inspect them in Play mode." />
+  <title>Selvage - Tutorial: Convert a script to Selvage</title>
+  <link rel="stylesheet" href="/assets/css/doc-styles.css" />
+  <link rel="stylesheet" href="/assets/css/selvage.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Selvage</div><a href="../index.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Tutorial: Convert a script to Selvage</h1>
+      <div class="sub">Replace GetComponent, Camera.main and a static Instance with injected members, validate them, and inspect them in Play mode.</div>
+      <div class="guide-index">
+        <a href="#before">Before you start</a>
+        <a href="#start">Create the starting scene</a>
+        <a href="#convert">Replace the lookups with injected members</a>
+        <a href="#validate">Validate the members</a>
+        <a href="#asset">Provide the settings asset</a>
+        <a href="#live">Inspect the members in Play mode</a>
+        <a href="#next">Next steps</a>
+      </div>
+    </div>
+
+<!-- ====================================== before ==== -->
+<section id="before">
+  <h2>Before you start</h2>
+<p>You need the following:</p>
+<ul>
+  <li>A project with Selvage installed. For more information, refer to <a href="Installation.html">Install
+    Selvage</a>.</li>
+  <li>A new scene, which holds the default <strong>Main Camera</strong>.</li>
+</ul>
+
+</section>
+
+<!-- ====================================== start ==== -->
+<section id="start">
+  <h2>Create the starting scene</h2>
+<p>The starting scene has a player that finds what it uses in <code>Awake</code>: a component on its own
+  GameObject, the main camera, an audio manager through a static <code>Instance</code>, and a settings asset assigned
+  in the Inspector window. To create it, perform the following steps:</p>
+<ol>
+  <li>Create the following three scripts.</li>
+  <li>In the Project window, create a folder named <strong>Settings</strong>, select it, and go to
+    <strong>Assets</strong> &gt; <strong>Create</strong> &gt; <strong>Game Settings</strong>.</li>
+  <li>Create a GameObject named <strong>Audio Manager</strong>, and add an <strong>Audio Source</strong> component
+    and the <strong>Audio Manager</strong> script to it.</li>
+  <li>Create a GameObject named <strong>Player</strong>, and add a <strong>Rigidbody</strong> component and the
+    <strong>Player</strong> script to it.</li>
+  <li>In the Inspector window of the Player, set <strong>Settings</strong> to the Game Settings asset.</li>
+  <li>Enter Play mode. The Player jumps, and the Console window displays <code>Jumped, seen by Main Camera</code>.</li>
+</ol>
+<pre><code><span class="kw">using</span> UnityEngine;
+
+[CreateAssetMenu(menuName = <span class="st">"Game Settings"</span>)]
+<span class="kw">public</span> <span class="kw">class</span> <span class="ty">GameSettings</span> : <span class="ty">ScriptableObject</span>
+{
+    <span class="kw">public</span> <span class="kw">float</span> jumpForce = <span class="nu">5</span>;
+}</code></pre>
+<pre><code><span class="kw">using</span> UnityEngine;
+
+<span class="kw">public</span> <span class="kw">class</span> <span class="ty">AudioManager</span> : <span class="ty">MonoBehaviour</span>
+{
+    <span class="kw">public</span> <span class="kw">static</span> <span class="ty">AudioManager</span> Instance { <span class="kw">get</span>; <span class="kw">private</span> <span class="kw">set</span>; }
+
+    <span class="ty">AudioSource</span> source;
+
+    <span class="kw">void</span> Awake()
+    {
+        Instance = <span class="kw">this</span>;
+        source = GetComponent&lt;<span class="ty">AudioSource</span>&gt;();
+    }
+
+    <span class="kw">public</span> <span class="kw">void</span> PlayJump() =&gt; source.Play();
+}</code></pre>
+<pre><code><span class="kw">using</span> UnityEngine;
+
+<span class="kw">public</span> <span class="kw">class</span> <span class="ty">Player</span> : <span class="ty">MonoBehaviour</span>
+{
+    [SerializeField] <span class="ty">GameSettings</span> settings;
+    <span class="ty">Rigidbody</span> body;
+    <span class="ty">Camera</span> view;
+    <span class="ty">AudioManager</span> audioManager;
+
+    <span class="kw">void</span> Awake()
+    {
+        body = GetComponent&lt;<span class="ty">Rigidbody</span>&gt;();
+        view = <span class="ty">Camera</span>.main;
+        audioManager = <span class="ty">AudioManager</span>.Instance;
+    }
+
+    <span class="kw">void</span> Start()
+    {
+        body.AddForce(<span class="ty">Vector3</span>.up * settings.jumpForce, <span class="ty">ForceMode</span>.Impulse);
+        audioManager.PlayJump();
+        <span class="ty">Debug</span>.Log(<span class="st">$"Jumped, seen by {view.name}"</span>);
+    }
+}</code></pre>
+<p>Each lookup in <code>Awake</code> is a requirement that only the code shows. <code>AudioManager.Instance</code> is
+  also <code>null</code> whenever the Player's <code>Awake</code> runs before the Audio Manager's, because Unity
+  doesn't order the <code>Awake</code> calls of different GameObjects.</p>
+
+</section>
+
+<!-- ====================================== convert ==== -->
+<section id="convert">
+  <h2>Replace the lookups with injected members</h2>
+<p>To replace the lookups in the <code>AudioManager</code> script, perform the following steps:</p>
+<ol>
+  <li>Add <code>using Selvage;</code>, the namespace of <code>[Inject]</code>.</li>
+  <li>Add <code>[Inject]</code> to the <code>source</code> field.</li>
+  <li>Delete the <code>Instance</code> property and the <code>Awake</code> method.</li>
+</ol>
+<pre><code><span class="kw">using</span> Selvage;                       <span class="cm">// 1.</span>
+<span class="kw">using</span> UnityEngine;
+
+<span class="kw">public</span> <span class="kw">class</span> <span class="ty">AudioManager</span> : <span class="ty">MonoBehaviour</span>
+{
+    [Inject] <span class="ty">AudioSource</span> source;       <span class="cm">// 2. Replaces GetComponent</span>
+
+    <span class="kw">public</span> <span class="kw">void</span> PlayJump() =&gt; source.Play();
+}</code></pre>
+<p>To replace the lookups in the <code>Player</code> script, perform the following steps:</p>
+<ol>
+  <li>Add <code>using Selvage;</code>.</li>
+  <li>Replace <code>[SerializeField]</code> with <code>[Inject]</code> on the <code>settings</code> field.</li>
+  <li>Add <code>[Inject]</code> to the <code>body</code>, <code>view</code> and <code>audioManager</code> fields.</li>
+  <li>Delete the <code>Awake</code> method.</li>
+</ol>
+<pre><code><span class="kw">using</span> Selvage;                       <span class="cm">// 1.</span>
+<span class="kw">using</span> UnityEngine;
+
+<span class="kw">public</span> <span class="kw">class</span> <span class="ty">Player</span> : <span class="ty">MonoBehaviour</span>
+{
+    [Inject] <span class="ty">GameSettings</span> settings;       <span class="cm">// 2. Replaces the Inspector reference</span>
+    [Inject] <span class="ty">Rigidbody</span> body;              <span class="cm">// 3. Replaces GetComponent</span>
+    [Inject] <span class="ty">Camera</span> view;                 <span class="cm">// 3. Replaces Camera.main</span>
+    [Inject] <span class="ty">AudioManager</span> audioManager;   <span class="cm">// 3. Replaces AudioManager.Instance</span>
+
+    <span class="kw">void</span> Start()
+    {
+        body.AddForce(<span class="ty">Vector3</span>.up * settings.jumpForce, <span class="ty">ForceMode</span>.Impulse);
+        audioManager.PlayJump();
+        <span class="ty">Debug</span>.Log(<span class="st">$"Jumped, seen by {view.name}"</span>);
+    }
+}</code></pre>
+<p>Selvage injects the members at the end of <code>Awake</code>, even in a script without an <code>Awake</code>
+  method, so they're ready in <code>Start</code>. The Scene Provider gives <code>body</code>, <code>view</code>, <code>audioManager</code> and
+  <code>source</code>, because each is a component in the scene. <code>AudioManager</code> no longer needs its static
+  <code>Instance</code>, and the Awake order no longer matters.</p>
+<p>Without <code>[SerializeField]</code>, the reference you set in the Inspector window is gone, and no provider
+  gives a <code>GameSettings</code> yet.</p>
+
+</section>
+
+<!-- ====================================== validate ==== -->
+<section id="validate">
+  <h2>Validate the members</h2>
+<p>To check what each member will receive, without entering Play mode, perform the following steps:</p>
+<ol>
+  <li>Go to <strong>Tools</strong> &gt; <strong>Selvage</strong> &gt; <strong>Dependencies</strong>.</li>
+  <li>Select <strong>Validation</strong>.</li>
+  <li>In the Project window, select the <code>Player</code> script.</li>
+</ol>
+<div class="img-block">
+  <img src="../img/tutorial_validation_before.png" alt="The Validation tab with the Player script selected: all four members are May Be Supplied" />
+</div>
+<p>Every member shows <strong>May Be Supplied</strong>. For <code>body</code>, <code>view</code> and
+  <code>audioManager</code>, that's expected: what a scene holds is only known when the member is injected. The reason on
+  the <code>settings</code> row names only the Registry Provider:</p>
+<pre><code>Supplied by Registry Provider only if it has a dependency when the member is injected, so it may stay missing.</code></pre>
+<p>The registry holds only the objects your code adds to it, so nothing you set up gives a <code>GameSettings</code>.
+  In Play mode, <code>settings</code> would stay <code>null</code>, and the Console window would display an error that
+  names it.</p>
+
+</section>
+
+<!-- ====================================== asset ==== -->
+<section id="asset">
+  <h2>Provide the settings asset</h2>
+<p>A <strong>Provide Definition</strong> is an asset that makes Selvage provide the other assets of its folder. To
+  provide the Game Settings asset, perform the following steps:</p>
+<ol>
+  <li>In the Project window, select the <strong>Settings</strong> folder.</li>
+  <li>Go to <strong>Assets</strong> &gt; <strong>Create</strong> &gt; <strong>Selvage</strong> &gt;
+    <strong>Provide Definition</strong>.</li>
+  <li>Select the <code>Player</code> script again.</li>
+</ol>
+<p>The <code>settings</code> row now shows <strong>Guaranteed</strong>:</p>
+<pre><code>Supplied by Registry Provider if it has a dependency when the member is injected, otherwise always by Asset Provider.</code></pre>
+<div class="img-block">
+  <img src="../img/dependencies_window_validation.png" alt="The Validation tab with the Player script selected: settings is Guaranteed, and body, view and audioManager are May Be Supplied" />
+</div>
+<p>Every <code>GameSettings</code> member in the project now receives this asset, with no reference to set in each
+  Inspector window. For more information, refer to <a href="Provide%20assets.html">Provide assets</a>.</p>
+
+</section>
+
+<!-- ====================================== live ==== -->
+<section id="live">
+  <h2>Inspect the members in Play mode</h2>
+<p>To display what each member holds, perform the following steps:</p>
+<ol>
+  <li>Enter Play mode. The Player jumps, and the Console window displays <code>Jumped, seen by Main Camera</code>, as
+    before the change.</li>
+  <li>In the Dependencies window, select <strong>Live</strong>.</li>
+  <li>In the Hierarchy window, select the <strong>Player</strong> GameObject.</li>
+</ol>
+<p>The Live tab lists each member of the Player as <strong>Injected</strong>, with the object it holds and the
+  provider that gave it. For more information, refer to <a href="Inspect%20injected%20members.html">Inspect injected
+  members</a>.</p>
+<div class="img-block">
+  <img src="../img/tutorial_live.png" alt="The Live tab with the Player selected: its four members are Injected, each with the object it holds and the provider that gave it" />
+</div>
+
+</section>
+
+<!-- ====================================== next ==== -->
+<section id="next">
+  <h2>Next steps</h2>
+<ul>
+  <li><a href="Provide%20your%20own%20classes.html">Provide your own classes</a>: replace a singleton that isn't a
+    component or an asset with a class marked <code>[Provide]</code>.</li>
+  <li><a href="Options.html">Options</a>: accept a missing dependency, or wait for one that loads.</li>
+  <li><a href="Inject%20with%20scopes.html">Inject with scopes</a>: inject every member of a class without marking
+    each one.</li>
+</ul>
+
+</section>
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="../../quick-usage-guide/index.html">Quick Usage Guide</a></li>
+    <li><a href="Introduction%20to%20Selvage.html">Introduction to Selvage</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="Introduction%20to%20Selvage.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Introduction to Selvage</div>
+  </a>
+  <a class="next" href="Injection%20lifecycle.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Injection lifecycle</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Selvage v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

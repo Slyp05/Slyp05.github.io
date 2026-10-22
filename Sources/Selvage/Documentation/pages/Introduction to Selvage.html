@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Understand members, dependencies, contexts and providers." />
+  <title>Selvage - Introduction to Selvage</title>
+  <link rel="stylesheet" href="../shared/styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Selvage</div><a href="../User%20Manual.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Introduction to Selvage</h1>
+      <div class="sub">Understand members, dependencies, contexts and providers.</div>
+      <div class="guide-index">
+        <a href="#overview">Overview</a>
+        <a href="#why">Why inject dependencies</a>
+        <a href="#members">Members and dependencies</a>
+        <a href="#contexts">Contexts</a>
+        <a href="#providers">Providers and the provider list</a>
+        <a href="#matching">How a member&#x27;s type is matched</a>
+      </div>
+    </div>
+
+<!-- ====================================== overview ==== -->
+<section id="overview">
+  <h2>Overview</h2>
+<p>Selvage assigns the objects your scripts need, so your scripts don't look for them. Injection involves the
+  following elements:</p>
+<ul>
+  <li>The <a href="#members">members</a> of your scripts, which declare what they need.</li>
+  <li>The <a href="#contexts">contexts</a>, the objects whose members Selvage injects.</li>
+  <li>The <a href="#providers">providers</a>, each of which gives dependencies from one source, ordered in the
+    provider list.</li>
+</ul>
+
+</section>
+
+<!-- ====================================== why ==== -->
+<section id="why">
+  <h2>Why inject dependencies</h2>
+<p>A script that looks for the objects it uses, with <code>GetComponent</code>, <code>FindAnyObjectByType</code> or a
+  static <code>Instance</code>, has the following limitations:</p>
+<ul>
+  <li>Its requirements are hidden in its code. Nothing in the Editor tells you that it needs an
+    <code>AudioManager</code> in the scene, so a missing one appears as a <code>NullReferenceException</code> at
+    runtime.</li>
+  <li>To give it another object, such as a stand-in for a test or a version for one platform, you edit the script, and
+    every other script that looks for the same object.</li>
+  <li>It works only where the objects it looks for exist, so it's harder to reuse in another scene or project.</li>
+</ul>
+<p>When a script declares what it needs as members instead, the following applies:</p>
+<ul>
+  <li>Its members are its requirements, and Selvage checks each of them before you enter Play mode: the Inspector window displays the result.
+    For more information, refer to <a href="Validate%20members.html">Validate members</a>.</li>
+  <li>Where each dependency comes from is set in one place, the provider list, so you replace it there or in a test
+    without editing the script. For more information, refer to <a href="Swap%20dependencies.html">Swap dependencies
+    for tests and platforms</a>.</li>
+  <li>The script works wherever a provider can give what it declares.</li>
+</ul>
+<p>The following image shows the <strong>Selvage</strong> section of the Inspector window, with the result of each
+  member of a script:</p>
+<div class="img-block">
+  <img src="../img/inspector_selvage_section" alt="The Selvage section at the top of the Inspector window of the Player GameObject, expanded: settings is Guaranteed, and body, view and audioManager are May Be Supplied" />
+</div>
+<p>This approach is called <strong>dependency injection</strong>: a class receives its dependencies instead of finding
+  or creating them, and only the code that hands them out knows which object each one is.</p>
+
+</section>
+
+<!-- ====================================== members ==== -->
+<section id="members">
+  <h2>Members and dependencies</h2>
+<p>A <strong>member</strong> is a field or property marked <code>[Inject]</code>. Selvage assigns it an object of its
+  type, which is the member's <strong>dependency</strong>:</p>
+<pre><code><span class="kw">public</span> <span class="kw">class</span> <span class="ty">Player</span> : <span class="ty">MonoBehaviour</span>
+{
+    [Inject] <span class="ty">Rigidbody</span> body;              <span class="cm">// a field</span>
+    [Inject] <span class="ty">Camera</span> View { <span class="kw">get</span>; <span class="kw">set</span>; }    <span class="cm">// a property</span>
+}</code></pre>
+<p>A member has the following requirements:</p>
+<ul>
+  <li>Its type is a reference type, such as a class or an interface.</li>
+  <li>A field isn't <code>readonly</code> or <code>const</code>.</li>
+  <li>A property has a <code>set</code> or <code>init</code> accessor.</li>
+</ul>
+<p>Code analysis reports a member that doesn't meet them. For more information, refer to
+  <a href="Diagnostics.html">Code analysis reference</a>.</p>
+<p>To inject every member of a class, an assembly or the project without marking each one, refer to
+  <a href="Inject%20with%20scopes.html">Inject with scopes</a>.</p>
+<p><code>[Inject]</code> takes <strong>options</strong>, which change how and when its member is injected, such as
+  <code>[Inject(Optional = true)]</code> for a member that can work without its dependency. For more information,
+  refer to <a href="Options.html">Options</a>.</p>
+
+  <h3 id="type">Choose a member's type</h3>
+<p>A member's type is what the script needs from its dependency. Declare the class itself, such as
+  <code>AudioManager</code>, when one class does the job. Declare an interface, such as <code>IAudio</code>, when
+  several classes can do it and the script doesn't care which one, such as one class per platform, or a stand-in for
+  tests. An interface that only one class implements adds a file to maintain and gives nothing in return, so add it
+  when a second class appears.</p>
+
+</section>
+
+<!-- ====================================== contexts ==== -->
+<section id="contexts">
+  <h2>Contexts</h2>
+<p>The object whose members Selvage injects is the <strong>context</strong>. A context can be any of the
+  following:</p>
+<ul>
+  <li>A MonoBehaviour.</li>
+  <li>A ScriptableObject.</li>
+  <li>An instance of a plain C# class.</li>
+  <li>A type, for its static members. Selvage injects the static members of any class, static or not, as one
+    context.</li>
+</ul>
+<p>An instance of a struct is never a context.</p>
+<p>Selvage injects a context when it's created, and releases it when it ends. For more information, refer to
+  <a href="Injection%20lifecycle.html">Injection lifecycle</a>.</p>
+
+</section>
+
+<!-- ====================================== providers ==== -->
+<section id="providers">
+  <h2>Providers and the provider list</h2>
+<p>A member only declares a type. Where its dependency comes from is decided by <strong>providers</strong>: each
+  provider gives dependencies from one source, such as the components in your scenes or the assets in a folder.</p>
+<p>The <strong>provider list</strong> holds the providers of your project in order, on the <strong>Selvage</strong>
+  page of the Project Settings window. For each member, Selvage tries the providers from top to bottom, and the first
+  one that has a dependency gives it:</p>
+<div class="img-block">
+  <svg class="diagram" viewBox="0 0 760 160" role="img"
+       aria-label="A script asks for a type. The provider list tries its providers from top to bottom, and the first one that has a dependency of that type gives it to the member.">
+    <defs>
+      <marker id="intro-arr" markerWidth="8" markerHeight="8" refX="6.5" refY="4" orient="auto">
+        <path d="M0,0 L8,4 L0,8 Z" fill="#9aa0b5"/>
+      </marker>
+    </defs>
+    <rect x="10" y="20" width="190" height="120" rx="10" fill="#ede9fe" stroke="#c4b5fd"/>
+    <text x="105" y="72" text-anchor="middle" font-size="14" font-weight="600" fill="#5b21b6">Your script</text>
+    <text x="105" y="96" text-anchor="middle" font-size="12" fill="#6d28d9">[Inject] Camera view;</text>
+
+    <rect x="285" y="20" width="190" height="120" rx="10" fill="#e0e7ff" stroke="#a5b4fc"/>
+    <text x="380" y="44" text-anchor="middle" font-size="14" font-weight="600" fill="#3730a3">The provider list</text>
+    <text x="380" y="68" text-anchor="middle" font-size="12" fill="#4338ca">1. Registry Provider</text>
+    <text x="380" y="86" text-anchor="middle" font-size="12" fill="#4338ca">2. Scene Provider</text>
+    <text x="380" y="104" text-anchor="middle" font-size="12" fill="#4338ca">3. Attribute Provider</text>
+    <text x="380" y="122" text-anchor="middle" font-size="12" fill="#4338ca">4. Asset Provider</text>
+
+    <rect x="560" y="20" width="190" height="120" rx="10" fill="#dcfce7" stroke="#86efac"/>
+    <text x="655" y="72" text-anchor="middle" font-size="14" font-weight="600" fill="#166534">The dependency</text>
+    <text x="655" y="96" text-anchor="middle" font-size="12" fill="#15803d">the Camera in the scene</text>
+
+    <text x="242" y="70" text-anchor="middle" font-size="12" fill="#555">asks</text>
+    <path d="M212 80 L273 80" stroke="#9aa0b5" stroke-width="1.5" fill="none" marker-end="url(#intro-arr)"/>
+    <text x="517" y="70" text-anchor="middle" font-size="12" fill="#555">gives</text>
+    <path d="M487 80 L548 80" stroke="#9aa0b5" stroke-width="1.5" fill="none" marker-end="url(#intro-arr)"/>
+  </svg>
+</div>
+<p>Because your scripts only declare what they need, you can change where a dependency comes from in the provider
+  list, without editing the scripts that use it.</p>
+<p>By default, the provider list holds the four providers that ship with Selvage:</p>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Provider</th><th scope="col">Gives</th></tr>
+    <tr><td><strong>Registry Provider</strong></td><td>Objects your code adds.</td></tr>
+    <tr><td><strong>Scene Provider</strong></td><td>Components in the loaded scenes.</td></tr>
+    <tr><td><strong>Attribute Provider</strong></td><td>Instances of your classes marked <code>[Provide]</code>.</td></tr>
+    <tr><td><strong>Asset Provider</strong></td><td>Assets in folders that hold a Provide Definition.</td></tr>
+  </table>
+</div>
+<p>For more information, refer to <a href="Provide%20dependencies.html">Provide dependencies</a>.</p>
+
+</section>
+
+<!-- ====================================== matching ==== -->
+<section id="matching">
+  <h2>How a member's type is matched</h2>
+<p>A member receives an object that is of its type, the way <code>GetComponent</code> finds a component: an object
+  matches its own class, each of its base classes and each of its interfaces. No type is an exception, so a member of
+  type <code>object</code> or <code>IDisposable</code> matches almost everything. When several objects match, refer to
+  <a href="Choose%20between%20several%20candidates.html">Choose between several candidates</a>.</p>
+<p>A member of a collection type receives every object of the element type that one provider has. The collection
+  types are arrays, <code>List&lt;T&gt;</code>, and the interfaces <code>List&lt;T&gt;</code> implements:
+  <code>IList&lt;T&gt;</code>, <code>ICollection&lt;T&gt;</code>, <code>IReadOnlyList&lt;T&gt;</code>,
+  <code>IReadOnlyCollection&lt;T&gt;</code> and <code>IEnumerable&lt;T&gt;</code>. The element type is a reference
+  type:</p>
+<pre><code>[Inject] <span class="ty">Light</span>[] lights;   <span class="cm">// every Light of the first provider that has one</span></code></pre>
+<p>The first provider that has an object of the element type gives the whole collection. Selvage never combines the
+  objects of several providers into one collection.</p>
+
+</section>
+
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="../Quick%20Usage%20Guide.html">Quick Usage Guide</a></li>
+    <li><a href="Glossary.html">Glossary</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="Installation.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Install Selvage</div>
+  </a>
+  <a class="next" href="Convert%20a%20script%20to%20Selvage.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Tutorial: Convert a script to Selvage</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Selvage v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

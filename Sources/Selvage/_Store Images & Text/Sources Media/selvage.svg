@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1950" height="104" viewBox="0 1196 1950 104">
+  <!-- Jeans hem: a darker folded indigo band with double gold topstitching. Placed like selvage.svg
+       (height = width * 104 / 1950). -->
+  <defs>
+    <linearGradient id="hem" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1a2c4d"/>
+      <stop offset="1" stop-color="#0f1a31"/>
+    </linearGradient>
+    <pattern id="hemTwill" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(-62)">
+      <rect width="12" height="4" fill="#9fb6d6"/>
+    </pattern>
+  </defs>
+  <rect x="0" y="1210" width="1950" height="90" fill="url(#hem)"/>
+  <rect x="0" y="1210" width="1950" height="90" fill="url(#hemTwill)" opacity="0.08"/>
+  <!-- The fold: a shadow under the body, a worn highlight on the edge. -->
+  <rect x="0" y="1200" width="1950" height="10" fill="#0b1427" opacity="0.55"/>
+  <path d="M0 1211 H1950" stroke="#5e7aa6" stroke-width="2" opacity="0.7"/>
+  <!-- Double topstitch: each stitch casts a small shadow into the fabric. -->
+  <g stroke-linecap="round" stroke-dasharray="15 9">
+    <path d="M0 1239 H1950" stroke="#0a1224" stroke-width="5" opacity="0.6"/>
+    <path d="M0 1237 H1950" stroke="#d9a441" stroke-width="3.5"/>
+    <path d="M0 1259 H1950" stroke="#0a1224" stroke-width="5" opacity="0.6"/>
+    <path d="M0 1257 H1950" stroke="#d9a441" stroke-width="3.5"/>
+  </g>
+</svg>

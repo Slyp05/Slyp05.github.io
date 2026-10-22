@@ -77,3 +77,16 @@
   blurb: >-
     Add <code>[Singleton]</code> to any class and the asset handles everything: asset
     generation, cleanup, polymorphic access, and inspector integration.
+
+# Unreleased: hidden from the home page and the nav until `released` is true.
+# Artwork is in place, exported from Sources/Selvage/_Store Images & Text/.
+- title: Selvage
+  url: /selvage/
+  released: false
+  free: false
+  meta: Coming soon
+  card: /assets/images/selvage-card.jpg
+  icon: /assets/images/SV.png
+  blurb: >-
+    Dependency injection designed around how Unity works. Selvage gives your scripts what
+    they need from your scenes, assets and code, and checks every dependency before Play.

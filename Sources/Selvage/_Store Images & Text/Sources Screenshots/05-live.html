@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="frame.css">
+<style>
+  .stage { top: 280px; bottom: 200px; display: flex; align-items: center; justify-content: center; }
+  .main { position: relative; width: 1270px; flex: none; }
+  .main .shot { width: 1270px; }
+  .tag { height: 44px; box-sizing: border-box; display: flex; align-items: center; padding: 0 14px; }
+</style>
+</head>
+<body>
+<div class="head">
+  <h1>See what every field holds</h1>
+  <p>Each value, the provider that gave it, and what else uses it.</p>
+</div>
+<div class="stage">
+  <div class="main">
+    <img class="shot" src="Captures/live-demo.png">
+    <div class="ring" style="left: -2px; top: 155px; width: 24px; height: 305px;"></div>
+    <div class="tag" style="left: 0px; top: 471px;">green: all injected</div>
+    <div class="ring teal" style="left: 322px; top: 193px; width: 212px; height: 32px;"></div>
+    <div class="tag teal" style="left: 548px; top: 187px;">who supplied it</div>
+    <div class="ring green" style="left: 426px; top: 386px; width: 158px; height: 29px;"></div>
+    <div class="tag green" style="left: 598px; top: 379px;">what else holds it</div>
+  </div>
+</div>
+<img class="hem" src="selvage.svg">
+</body>
+</html>

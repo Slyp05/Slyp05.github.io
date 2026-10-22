@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Reorder providers, add providers from code, and reuse your setup in other projects." />
+  <title>Selvage - Manage the provider list</title>
+  <link rel="stylesheet" href="../shared/styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Selvage</div><a href="../User%20Manual.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Manage the provider list</h1>
+      <div class="sub">Reorder providers, add providers from code, and reuse your setup in other projects.</div>
+    </div>
+
+<!-- ====================================== list ==== -->
+<section id="list">
+  <h2>Edit the provider list</h2>
+<p>The provider list decides where every dependency comes from. For each member, Selvage tries the providers from top
+  to bottom, and the first one that has a dependency gives it. The order is therefore the priority: to make a provider
+  win over another, move it above.</p>
+<p>To edit the provider list, go to <strong>Edit</strong> &gt; <strong>Project Settings</strong> &gt;
+  <strong>Selvage</strong>, then do any of the following in the <strong>Providers</strong> section:</p>
+<ul>
+  <li>To add a provider, select <strong>+</strong>. The menu lists every provider class in the project.</li>
+  <li>To remove the selected provider, select <strong>-</strong>.</li>
+  <li>To reorder providers, drag them.</li>
+  <li>To edit a provider's settings, and see what it gives, expand it.</li>
+</ul>
+<div class="img-block">
+  <img src="../img/provider_list" alt="The provider list in Project Settings, with the Asset Provider expanded to show the folders it provides" />
+</div>
+<p>The <strong>+</strong> menu disables, with the reason, a provider class the list can't hold: a class that isn't
+  <code>[Serializable]</code>, or a one-per-list class already in the list. The Attribute Provider, the Asset
+  Provider, each registry class and the Zenject and VContainer providers are one per list. The Scene Provider can be
+  listed several times, each with its own settings.</p>
+<p>A provider shown as an error is one whose class no longer exists in the project, such as after a rename. It gives
+  nothing, and keeps its place and settings until the class is back.</p>
+<p>Selvage saves the provider list in <code>ProjectSettings/SelvageSettings.asset</code>. Commit that file so your team
+  shares the same list. Changes you make in Play mode are undone when you exit Play mode.</p>
+
+</section>
+
+<!-- ====================================== shipped ==== -->
+<section id="shipped">
+  <h2>Providers that ship with Selvage</h2>
+<p>The <strong>Default</strong> setup lists the following providers, in this order:</p>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Provider</th><th scope="col">Gives</th><th scope="col">Can be Guaranteed</th></tr>
+    <tr><td><strong>Registry Provider</strong></td><td><a href="Provide%20objects%20your%20code%20creates.html#registry">Objects your code adds</a>.</td><td>For an object added, not for a function</td></tr>
+    <tr><td><strong>Scene Provider</strong></td><td><a href="Provide%20scene%20components.html">Components in the loaded scenes</a>.</td><td>No</td></tr>
+    <tr><td><strong>Attribute Provider</strong></td><td><a href="Provide%20your%20own%20classes.html">Instances of classes marked <code>[Provide]</code></a>.</td><td>Yes</td></tr>
+    <tr><td><strong>Asset Provider</strong></td><td><a href="Provide%20assets.html">Assets of Provide Definitions</a>.</td><td>Yes</td></tr>
+  </table>
+</div>
+<p>The <strong>Can be Guaranteed</strong> column indicates whether the Validation tab of the Dependencies window can
+  confirm in advance that the provider gives a dependency. What a scene contains, or what code adds later, is only known
+  when the member is injected.</p>
+
+</section>
+
+<!-- ====================================== code ==== -->
+<section id="code">
+  <h2>Add a provider from code</h2>
+<p>The <code>Injector</code> class adds providers outside the list, such as a replacement in a test, or a provider from
+  a package:</p>
+<pre><code><span class="ty">Injector</span>.AddFirst(provider);   <span class="cm">// tried before the whole list</span>
+<span class="ty">Injector</span>.AddLast(provider);    <span class="cm">// tried after the whole list</span>
+<span class="ty">Injector</span>.Remove(provider);
+provider.Enabled = <span class="kw">false</span>;      <span class="cm">// skipped until enabled again</span></code></pre>
+<p>Selvage removes a provider added in Play mode when you exit Play mode, and one added during a test when the test
+  ends. The provider list displays these providers above and below the list, with a link to the code that added each
+  one.</p>
+<p><code>Injector.Providers</code> returns every provider in the order Selvage tries them, the ones added from code
+  included.</p>
+<p><code>Enabled</code> isn't saved: every listed provider is enabled when the settings load, and exiting Play mode
+  restores what Play mode changed. The provider list dims a provider that code turned off. To keep a provider out for
+  good, remove it from the list.</p>
+
+</section>
+
+<!-- ====================================== setups ==== -->
+<section id="setups">
+  <h2>Reuse your setup in other projects</h2>
+<p>A <strong>setup</strong> is everything on the <strong>Selvage</strong> page of the Project Settings window: the
+  providers, their settings, and the other settings. Save your setup once to apply it in any project, the way Unity
+  saves window layouts.</p>
+<p>To save your setup, perform the following steps:</p>
+<ol>
+  <li>Go to <strong>Edit</strong> &gt; <strong>Project Settings</strong> &gt; <strong>Selvage</strong>.</li>
+  <li>At the top right of the page, open the More (<strong>&#8942;</strong>) menu, then select <strong>Save Setup...</strong>.</li>
+  <li>Enter a name, then select <strong>Save</strong>.</li>
+</ol>
+<p>To apply a setup in another project, open the same menu and select the setup's name, then confirm. To go back,
+  use Undo. <strong>Default</strong> applies the setup that ships with Selvage: the four shipped providers, with Inject
+  by Default disabled and its <strong>Optional</strong> option enabled. For every item of the menu, refer to
+  <a href="Project%20Settings%20reference.html#setups">Project Settings reference</a>.</p>
+<p>Selvage saves your setups in the Unity preferences folder of your computer, so they're available in every project.
+  A setup holds only settings: what a project provides lives in its assets and code. A provider of a setup whose class
+  isn't in the project keeps its place as a placeholder, with a warning, and becomes the provider once the class is
+  imported. A new project with no settings file starts from the setup you last saved or applied.</p>
+
+</section>
+
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="Project%20Settings%20reference.html">Project Settings reference</a></li>
+    <li><a href="Write%20a%20custom%20provider.html">Write a custom provider</a></li>
+    <li><a href="API%20-%20Providing.html#Injector">Injector API reference</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="Swap%20dependencies.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Swap dependencies for tests and platforms</div>
+  </a>
+  <a class="next" href="Write%20a%20custom%20provider.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Write a custom provider</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Selvage v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

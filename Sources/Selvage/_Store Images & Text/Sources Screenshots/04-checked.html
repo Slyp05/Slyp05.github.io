@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="frame.css">
+<style>
+  .stage { top: 290px; display: flex; align-items: center; justify-content: space-between; }
+  .stage > .crop { width: 920px; }
+  .right { width: 680px; display: flex; flex-direction: column; gap: 40px; }
+  .legend { gap: 26px; }
+  .legend div { font-size: 29px; align-items: flex-start; line-height: 1.3; }
+  .legend .dot { margin-top: 10px; }
+  .legend b { color: var(--ink); font-weight: 600; margin-right: 10px; white-space: nowrap; }
+  .gate { display: flex; flex-direction: column; gap: 16px; }
+  .gate .crop { width: 680px; }
+</style>
+</head>
+<body>
+<div class="head">
+  <h1>Every field checked before you press Play</h1>
+  <p>The Inspector reads your code and the provider list. Nothing runs.</p>
+</div>
+<div class="stage">
+  <img class="crop" src="Captures/insp-turret-edit.png">
+  <div class="right">
+    <div class="legend">
+      <div><span class="dot green"></span><span><b>Guaranteed</b> a provider always has one</span></div>
+      <div><span class="dot yellow"></span><span><b>May be supplied</b> known when the field is injected, such as a scene component</span></div>
+      <div><span class="dot red"></span><span><b>Missing</b> no provider has one: you find out here, not from a null at runtime</span></div>
+    </div>
+    <div class="gate">
+      <img class="crop" src="Captures/validation-settings.png">
+      <div class="cap">By default, a build with a missing dependency <b>is blocked</b>.</div>
+    </div>
+  </div>
+</div>
+<img class="hem" src="selvage.svg">
+</body>
+</html>

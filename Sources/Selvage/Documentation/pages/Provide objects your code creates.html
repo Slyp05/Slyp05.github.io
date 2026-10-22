@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Provide objects your code creates, with the registry or a local block." />
+  <title>Selvage - Provide objects your code creates</title>
+  <link rel="stylesheet" href="../shared/styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Selvage</div><a href="../User%20Manual.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Provide objects your code creates</h1>
+      <div class="sub">Provide objects your code creates, with the registry or a local block.</div>
+    </div>
+
+<p>Your code gives the objects it creates to members in one of two ways: the registry, which every member of the
+  object's type receives, or a local block, which only the objects created inside it receive.</p>
+
+<!-- ====================================== registry ==== -->
+<section id="registry">
+  <h2>Add an object to the registry</h2>
+<p>The Registry Provider gives the objects your code adds to it. By default, it's the first provider in the
+  provider list, so what you add wins over every other provider. This is the equivalent of registering an instance in
+  a dependency injection container. To add an object, do one of the following:</p>
+<ul>
+  <li>Add an object you already have. Members of its type receive it, and Selvage never ends it:</li>
+</ul>
+<pre><code><span class="ty">RegistryProvider</span>.Listed.Add(profile);             <span class="cm">// given as PlayerProfile</span>
+<span class="ty">RegistryProvider</span>.Listed.Add&lt;<span class="ty">IProfile</span>&gt;(profile);   <span class="cm">// given as IProfile</span></code></pre>
+<ul>
+  <li>Add a function that creates the object. Selvage calls it when a member first needs the object, and ends the
+    object once no member holds it, like an object it creates for a <code>[Provide]</code> class. If the function
+    returns <code>null</code>, the next provider is tried:</li>
+</ul>
+<pre><code><span class="ty">RegistryProvider</span>.Listed.Add&lt;<span class="ty">IAudio</span>&gt;(() =&gt; <span class="kw">new</span> <span class="ty">Audio</span>());</code></pre>
+<div class="note warning"><strong>Warning:</strong> Selvage ends what a function returns, and ending a component
+  destroys its GameObject. Don't add a function that returns an object that exists elsewhere, such as
+  <code>() =&gt; Camera.main</code>: add the object itself, or give it from the Scene Provider.</div>
+<p>Members of the declared type <code>T</code>, and of each base class and interface of <code>T</code>, receive the
+  object you add. A member injected before you add the object receives it only if it's
+  <a href="Options.html#reactive"><code>Reactive</code></a> and doesn't hold a dependency from a provider above this
+  registry. Otherwise, call <code>Manual.Reinject</code>. To add an object before the first scene loads, use
+  <code>[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]</code>. When a Unity object you added
+  is destroyed, Selvage removes it from the registry with a warning, and the next provider is tried.</p>
+<p>To give each member its own object, pass a <a href="Lifetimes.html">lifetime</a> as the second argument. Selvage
+  then calls the function for each member, or copies the object you added: such an object must be a Unity object or
+  implement <code>ICloneable</code>, or <code>Add</code> throws an exception.</p>
+<p>Entries you add in Play mode are removed when you exit Play mode. Entries you add in Edit mode stay until you
+  remove them, and serve <a href="Options.html#editmode"><code>EditMode</code></a> members.</p>
+<p>The Validation tab of the Dependencies window shows a member as <strong>Guaranteed</strong> when the registry holds
+  an object for it, and as <strong>May Be Supplied</strong> when it holds a function, or nothing yet, because code can
+  add to a registry at any time. When two entries could both be injected into a member and nothing tells them apart,
+  Selvage displays an error that names both.</p>
+<p><code>RegistryProvider.Listed</code> is readable from
+  <code>RuntimeInitializeLoadType.BeforeSceneLoad</code> on, and stays the same object until scripts reload, so you
+  can keep a reference to it.</p>
+
+  <h3 id="remove">Remove an object from the registry</h3>
+<p>To remove an entry, pass <code>Remove</code> the object or the function you added. <code>Clear</code> removes every
+  entry:</p>
+<pre><code><span class="ty">RegistryProvider</span>.Listed.Remove(profile);                 <span class="cm">// the object passed to Add</span>
+<span class="ty">RegistryProvider</span>.Listed.Remove&lt;<span class="ty">IAudio</span>&gt;(CreateAudio);   <span class="cm">// the method passed to Add</span>
+<span class="ty">RegistryProvider</span>.Listed.Clear();</code></pre>
+<p>A function written inline in the <code>Add</code> call can't be passed again: to remove it later, add a method, or
+  keep the delegate you passed. Removing an entry ends the objects waiting in its pool.</p>
+<p>After a removal, a <code>Reactive</code> member that holds what the entry gave receives what the provider list
+  gives now, and any other member keeps it. To make every member drop it, such as a connection that closed, add the
+  entry with <code>canRevoke: true</code>, which costs a little at each injection, then remove it with
+  <code>revoked: true</code>. A <code>Reactive</code> member then receives a replacement when one exists, and any other
+  member returns to its default:</p>
+<pre><code><span class="ty">RegistryProvider</span>.Listed.Add&lt;<span class="ty">IConnection</span>&gt;(connection, canRevoke: <span class="kw">true</span>);
+<span class="ty">RegistryProvider</span>.Listed.Remove(connection, revoked: <span class="kw">true</span>);   <span class="cm">// every member holding it drops it</span></code></pre>
+<p>If you pass <code>revoked: true</code> for an entry added without <code>canRevoke</code>, Selvage logs a warning and
+  doesn't revoke it: <code>Reactive</code> members receive what the provider list gives now, and other members keep
+  it, as after any removal.</p>
+
+</section>
+
+<!-- ====================================== own ==== -->
+<section id="own">
+  <h2>Add a registry of your own</h2>
+<p>A registry is tried at its place in the provider list. To have the objects you add tried at a place other than
+  the Registry Provider's, perform the following steps:</p>
+<ol>
+  <li>Declare a registry class.</li>
+  <li>In the provider list, add the registry where it should be tried.</li>
+  <li>Add objects to it from code.</li>
+</ol>
+<pre><code>[Serializable]
+<span class="kw">public</span> <span class="kw">sealed</span> <span class="kw">class</span> <span class="ty">Cheats</span> : <span class="ty">RegistryProvider</span>&lt;<span class="ty">Cheats</span>&gt; { }   <span class="cm">// 1. The registry class</span>
+
+<span class="ty">Cheats</span>.Listed.Add&lt;<span class="ty">IDamage</span>&gt;(<span class="kw">new</span> <span class="ty">GodMode</span>());                 <span class="cm">// 3. Add an object to it</span></code></pre>
+<p>The provider list holds one of each registry class. <code>Listed</code> throws an exception while the registry isn't
+  in the list, with a message that says where to add it.</p>
+<p>To use a registry outside the list, such as in a test, create it with <code>new</code> and add it with
+  <code>Injector.AddFirst</code> or <code>Injector.AddLast</code>. Such a registry isn't in the list, so <code>Listed</code> never
+  returns it. For more information, refer to <a href="Swap%20dependencies.html">Swap dependencies for tests and
+  platforms</a>.</p>
+
+</section>
+
+<!-- ====================================== local ==== -->
+<section id="local">
+  <h2>Pass objects in a local block</h2>
+<p>A local block passes objects to the objects you create inside it. Open the block with
+  <code>Injector.Local</code>. Everything created inside it, with <code>new</code> or <code>Instantiate</code>,
+  receives the objects you pass, before any provider is tried:</p>
+<pre><code><span class="kw">public</span> <span class="kw">class</span> <span class="ty">Gun</span> : <span class="ty">MonoBehaviour</span>
+{
+    [SerializeField] <span class="ty">GameObject</span> bulletPrefab;
+
+    <span class="kw">public</span> <span class="kw">void</span> Fire(<span class="ty">Vector3</span> direction)
+    {
+        <span class="kw">using</span> (<span class="ty">Injector</span>.Local(<span class="kw">new</span> <span class="ty">BulletShot</span>(direction), <span class="kw">this</span>))
+            Instantiate(bulletPrefab);
+    }
+}</code></pre>
+<pre><code><span class="kw">public</span> <span class="kw">class</span> <span class="ty">Bullet</span> : <span class="ty">MonoBehaviour</span>
+{
+    [Inject] <span class="ty">BulletShot</span> shot;   <span class="cm">// this bullet's direction</span>
+    [Inject] <span class="ty">Gun</span> gun;           <span class="cm">// the gun that fired it</span>
+}</code></pre>
+<p>The block reaches everything that runs inside it: code started inside it, such as coroutines, <code>await</code>
+  continuations and threads, and the objects those create, such as an effect the bullet instantiates in its
+  <code>Awake</code>. A component instantiated inactive receives the block's objects when it's activated. A callback only
+  registered inside the block, such as a C# event or a <code>UnityEvent</code>, and run later by other code, doesn't
+  receive it. To create an object without the block, create it outside.</p>
+<p>An object keeps what it received after the block ends, and receives the same objects again when it's reinjected.
+  An object that existed before the block receives nothing, unless you reinject it inside the block, such as a bullet
+  you take from your own pool:</p>
+<pre><code><span class="kw">using</span> (<span class="ty">Injector</span>.Local(<span class="kw">new</span> <span class="ty">BulletShot</span>(direction)))
+    <span class="ty">Manual</span>.Reinject(pooledBullet);</code></pre>
+<p>A <code>Manual.Reinject</code> call inside a block replaces what the object received with the block's objects. An
+  object lent from a <a href="Lifetimes.html#pooled">pool</a> inside a block receives that block's objects.</p>
+<p>Local blocks follow these rules:</p>
+<ul>
+  <li>A block is tried before the provider list. In nested blocks, the inner block wins.</li>
+  <li>An object in a block matches by type only: preferences and channels don't apply to it.</li>
+  <li>Two objects in one block that match the same member are an error, because Selvage can't tell them apart. Pass
+    one, or nest two blocks.</li>
+  <li>A block that isn't ended is ended at the end of the frame, with an error that names the types it gives. A
+    <code>using</code> statement always ends it.</li>
+  <li>If you end a block before a block opened inside it, the inner block stays open, and the objects created
+    afterwards receive only the inner block's objects.</li>
+  <li>The static members of a class never receive a block's objects, even when you reinject them inside a block.</li>
+  <li>Selvage never destroys the objects you pass to a block.</li>
+</ul>
+<p>The Validation tab shows a member that only a block gives as <strong>May Be Supplied</strong>.</p>
+
+</section>
+<!-- ====================================== choose ==== -->
+<section id="choose">
+  <h2>Choose the registry or a local block</h2>
+<p>The registry and a local block differ in which members receive the object:</p>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Method</th><th scope="col">Received by</th><th scope="col">Use for</th></tr>
+    <tr><td><a href="#registry">Registry</a></td><td>Every member of the object's type, until you remove it.</td><td>An object that many scripts use, such as a save system you load at startup.</td></tr>
+    <tr><td><a href="#local">Local block</a></td><td>Only the objects you create inside the block.</td><td>Data that belongs to one object, such as the direction of a bullet you instantiate.</td></tr>
+  </table>
+</div>
+
+</section>
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="API%20-%20Providing.html#RegistryProvider">RegistryProvider API reference</a></li>
+    <li><a href="API%20-%20Providing.html#Injector">Injector API reference</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="Provide%20assets.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Provide assets</div>
+  </a>
+  <a class="next" href="Choose%20between%20several%20candidates.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Choose between several candidates</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Selvage v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="frame.css">
+<style>
+  .stage { display: flex; align-items: center; justify-content: space-between; }
+  .code { width: 780px; }
+  .code pre { font-size: 28px; }
+  .code pre .em { padding: 2px 8px; margin: 0 2px; background: var(--yellow); color: #10192e; font-weight: 700; border-radius: 6px; box-shadow: 0 0 24px rgba(249, 226, 175, 0.55); }
+  .code pre .em .k { color: #10192e; }
+  .right { width: 820px; display: flex; flex-direction: column; gap: 22px; }
+  .right .crop { width: 820px; }
+</style>
+</head>
+<body>
+<div class="head">
+  <h1>Injection in Edit mode too</h1>
+  <p>For [ExecuteAlways] scripts and Editor tools.</p>
+</div>
+<div class="stage">
+  <div class="code">
+<pre>[<span class="a">ExecuteAlways</span>, <span class="a">Inject</span>(<span class="t">EditMode</span> = <span class="k">true</span>)]
+<span class="k">public class</span> <span class="t">LevelPreview</span> : <span class="t">MonoBehaviour</span>
+{
+    <span class="t">TurretSettings</span> settings;
+    <span class="t">ITargeting</span> targeting;
+    <span class="t">Camera</span> view;
+}</pre>
+  </div>
+  <div class="right">
+    <img class="crop" src="Captures/insp-editmode.png">
+    <div class="cap">Injected <b>without pressing Play</b>.</div>
+  </div>
+</div>
+<img class="hem" src="selvage.svg">
+</body>
+</html>

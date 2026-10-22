@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Understand when Selvage injects and releases members, and what a member holds when no provider has its dependency." />
+  <title>Selvage - Injection lifecycle</title>
+  <link rel="stylesheet" href="/assets/css/doc-styles.css" />
+  <link rel="stylesheet" href="/assets/css/selvage.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Selvage</div><a href="../index.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Injection lifecycle</h1>
+      <div class="sub">Understand when Selvage injects and releases members, and what a member holds when no provider has its dependency.</div>
+      <div class="guide-index">
+        <a href="#when">When Selvage injects members</a>
+        <a href="#yours">Values you assign yourself</a>
+        <a href="#missing">Missing dependencies</a>
+        <a href="#ends">When Selvage releases members</a>
+      </div>
+    </div>
+
+<!-- ====================================== when ==== -->
+<section id="when">
+  <h2>When Selvage injects members</h2>
+<p>Selvage injects the members of a context when the context is created, at the end of the following method:</p>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Context</th><th scope="col">Injected at the end of</th></tr>
+    <tr><td>MonoBehaviour</td><td><code>Awake</code></td></tr>
+    <tr><td>ScriptableObject</td><td><code>OnEnable</code></td></tr>
+    <tr><td>Plain C# class</td><td>Its constructor</td></tr>
+    <tr><td>Static members of a class</td><td>Its static constructor. In the Editor, also each time you enter Play mode</td></tr>
+  </table>
+</div>
+<p>A MonoBehaviour's members are therefore still <code>null</code> inside <code>Awake</code>, and injected in
+  <code>Start</code> and <code>OnEnable</code>. To use a member inside <code>Awake</code>, call
+  <code>Manual.Inject(this)</code> before you use it. The <code>Manual</code> class injects and releases a context when
+  you call it. For more information, refer to <a href="Options.html#manual">Manual</a>.</p>
+<p>Unity doesn't allow its API while it creates a MonoBehaviour or a ScriptableObject, or outside its main thread. A
+  context created there waits, and Selvage injects it at one of the following points, before the code of that method
+  runs:</p>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Context</th><th scope="col">Injected at the start of</th></tr>
+    <tr><td>Static members of a MonoBehaviour or ScriptableObject class, when Unity creates one of its objects before
+      any code uses the class</td><td>The <code>Awake</code> or <code>OnEnable</code> of the first object of the class that
+      wakes</td></tr>
+    <tr><td>An object you create in a field initializer or constructor of a MonoBehaviour or ScriptableObject</td><td>The
+      <code>Awake</code> or <code>OnEnable</code> of the object that creates it, or before that object's
+      <code>Start</code> when it declares neither</td></tr>
+    <tr><td>An object you create on another thread</td><td>The next callback of any script on the main thread</td></tr>
+  </table>
+</div>
+<p>A bootstrapper whose <code>Awake</code> runs first and registers dependencies therefore provides them to
+  those contexts too. Like a MonoBehaviour's own members, they're still <code>null</code> to code that runs before that point,
+  such as another object's earlier <code>Awake</code>, and to code that runs while Unity creates objects: constructors,
+  field initializers and <code>OnAfterDeserialize</code>.</p>
+<p>A script on an inactive GameObject is injected when the GameObject is first activated, because that's when Unity
+  calls its <code>Awake</code> method.</p>
+<p>Selvage injects members in Play mode and in builds. To inject a member in Edit mode too, use the
+  <a href="Options.html#editmode"><code>EditMode</code></a> option. A context created in Edit mode, such as a
+  ScriptableObject asset that Unity loads or an <code>[ExecuteAlways]</code> component, has its other members
+  injected when you enter Play mode.</p>
+
+</section>
+
+<!-- ====================================== yours ==== -->
+<section id="yours">
+  <h2>Values you assign yourself</h2>
+<p>Selvage injects only a member that holds <code>null</code>. If you assign a value yourself, in the Inspector
+  window, in an initializer or in a constructor, Selvage keeps your value:</p>
+<pre><code>[SerializeField, Inject] <span class="ty">Camera</span> view;   <span class="cm">// a Camera assigned in the Inspector window stays</span></code></pre>
+<p>To inject over your value, and restore it when the dependency goes away, use the
+  <a href="Options.html#overwrite"><code>Overwrite</code></a> option.</p>
+
+</section>
+
+<!-- ====================================== missing ==== -->
+<section id="missing">
+  <h2>Missing dependencies</h2>
+<p>When no provider has a dependency for a member, the dependency is <strong>missing</strong>. The member keeps its
+  <strong>default</strong>, which is its initializer, or <code>null</code>.</p>
+<p>A member is required by default, so a missing dependency makes it <strong>fail</strong>: the Console window
+  displays an error that names the member. A <code>null</code> member is therefore never a silent mistake. To accept
+  a missing dependency, use the <a href="Options.html#optional"><code>Optional</code></a> option.</p>
+<p>To find missing dependencies before you enter Play mode, refer to <a href="Validate%20members.html">Validate
+  members</a>.</p>
+
+</section>
+
+<!-- ====================================== ends ==== -->
+<section id="ends">
+  <h2>When Selvage releases members</h2>
+<p>When a context ends, Selvage <strong>releases</strong> its members, in the reverse order of their injection, and
+  an object Selvage created for a member ends once no other member holds it. The members of a plain C# object return
+  to their defaults. The members of a destroyed Unity object keep their last values. Selvage releases a context at the
+  following times:</p>
+<div class="table-scroll">
+  <table class="cmp">
+    <tr><th scope="col">Context</th><th scope="col">Released</th></tr>
+    <tr><td>MonoBehaviour, ScriptableObject</td><td>After <code>OnDestroy</code>.</td></tr>
+    <tr><td>Plain C# class that implements <code>IDisposable</code> or <code>IAsyncDisposable</code></td><td>After its <code>Dispose</code> or <code>DisposeAsync</code> method. The method can still use the members.</td></tr>
+    <tr><td>Plain C# class that implements neither</td><td>When the garbage collector collects it.</td></tr>
+    <tr><td>Static members of a class</td><td>Never in a build. In the Editor, when you exit Play mode, as described in <a href="Injection%20in%20depth.html#play">When you exit Play mode</a>.</td></tr>
+  </table>
+</div>
+<p>A MonoBehaviour that also implements <code>IDisposable</code> is released after <code>OnDestroy</code> only. To
+  release a plain C# object when you choose, implement <code>IDisposable</code>. Releasing twice does nothing. In the
+  Editor, every context is also released before scripts reload, as described in
+  <a href="Injection%20in%20depth.html#reload">When scripts reload</a>.</p>
+<p>To release a context that stays alive, call <code>Manual.Release(context)</code>: every member returns to its
+  default, and the next injection starts over. To release one member only, call
+  <code>Manual.Release(context, memberName)</code>. The rest of the context stays injected.</p>
+<p>How long an object Selvage created lasts depends on its lifetime. For more information, refer to
+  <a href="Lifetimes.html">Lifetimes</a>.</p>
+<div class="note warning"><strong>Warning:</strong> Don't dispose a dependency you received. Selvage disposes the
+  objects it created once no member holds them. If you dispose one earlier, Selvage logs an error that names its
+  type, and the other members that hold it keep a disposed object.</div>
+
+</section>
+
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="Options.html">Options</a></li>
+    <li><a href="Injection%20in%20depth.html">Injection in depth</a></li>
+    <li><a href="Troubleshooting.html">Troubleshooting</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="Convert%20a%20script%20to%20Selvage.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Tutorial: Convert a script to Selvage</div>
+  </a>
+  <a class="next" href="Explore%20the%20demo.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Explore the demo</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Selvage v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

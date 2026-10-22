@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="frame.css">
+<style>
+  .stage { top: 280px; bottom: 120px; }
+  .piece { position: absolute; }
+  .piece img { display: block; width: 100%; border-radius: 12px; border: 2px solid var(--border); box-shadow: 0 26px 24px -24px rgba(0, 0, 0, 0.7); }
+  .piece .tag { position: absolute; font-size: 22px; background: var(--ink); }
+</style>
+</head>
+<body>
+<div class="head">
+  <h1>Integrated into the Editor</h1>
+  <p>Validation, live inspection and setup, in Unity's own windows.</p>
+</div>
+<div class="stage">
+  <div class="piece" style="left: 0; top: 0; width: 600px; z-index: 1;">
+    <img src="Captures/providers-expanded.png">
+    <span class="tag" style="left: 18px; top: -22px;">Project Settings &gt; Selvage</span>
+  </div>
+  <div class="piece" style="left: 30px; top: 330px; width: 400px; z-index: 2;">
+    <img src="Captures/provide-tuning-component.png">
+    <span class="tag" style="left: 18px; top: -22px;">Provide Tuning component</span>
+  </div>
+  <div class="piece" style="left: 470px; top: 120px; width: 760px; z-index: 3;">
+    <img src="Captures/live-turret.png">
+    <span class="tag" style="left: 18px; top: -22px;">Dependencies window</span>
+  </div>
+  <div class="piece" style="left: 1150px; top: -10px; width: 530px; z-index: 4;">
+    <img src="Captures/insp-turret-edit.png">
+    <span class="tag" style="right: 18px; top: -22px;">Inspector section</span>
+  </div>
+  <div class="piece" style="left: 1230px; top: 360px; width: 450px; z-index: 5;">
+    <img src="Captures/provide-definition.png">
+    <span class="tag" style="right: 18px; top: -22px;">Provide Definition asset</span>
+  </div>
+</div>
+<img class="hem" src="selvage.svg">
+</body>
+</html>

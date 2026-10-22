@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Namespace Selvage.Extensions, assembly Selvage. Explained in Write a custom provider." />
+  <title>Selvage - Public API - Extending</title>
+  <link rel="stylesheet" href="/assets/css/doc-styles.css" />
+  <link rel="stylesheet" href="/assets/css/selvage.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <nav>
+    <a href="../index.html">Overview</a>
+    <a class="nav-band" href="API%20-%20Consuming.html">Consuming</a>
+    <a class="nav-band" href="API%20-%20Providing.html">Providing</a>
+    <a class="nav-band active" href="API%20-%20Extending.html" aria-current="page">Extending</a>
+    <div class="nav-group">Writing a provider</div>
+    <div class="nav-group-body">
+      <a href="#Provider"><span class="badge badge-class">abstract</span>Provider</a>
+      <a href="#Verdict"><span class="badge badge-struct">struct</span>Verdict</a>
+      <a href="#Supply"><span class="badge badge-struct">struct</span>Supply</a>
+      <a href="#Request"><span class="badge badge-struct">struct</span>Request</a>
+    </div>
+    <div class="nav-group">Utility</div>
+    <div class="nav-group-body">
+      <a href="#OnePerListAttribute"><span class="badge badge-class">attr</span>OnePerListAttribute</a>
+    </div>
+    <a class="nav-band" href="API%20-%20Compatibility.html">Compatibility</a>
+  </nav>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Public API <span class="tag">Extending</span></h1>
+      <div class="sub">Namespace <code>Selvage.Extensions</code>, assembly <code>Selvage</code>. Explained in <a href="../../user-manual/pages/Write%20a%20custom%20provider.html">Write a custom provider</a>.</div>
+    </div>
+
+    <div class="module-band band-first"><span class="band-name">Extending</span><span class="band-desc">Writing your own provider.</span></div>
+
+    <h2 class="api-group">Writing a provider</h2>
+
+    <!-- Provider -->
+    <div class="type-section" id="Provider">
+      <div class="type-header"><h3>Provider</h3><span class="badge badge-class">abstract</span><span class="badge badge-class">serializable</span></div>
+      <p class="type-desc">Base class for every provider: an object that supplies dependencies to members. When a member needs a dependency, Selvage tries the providers one by one, in the order of the provider list (<strong>Project Settings</strong> &gt; <strong>Selvage</strong>, plus any added from code with <a href="API%20-%20Providing.html#Injector"><code>Injector</code></a>), and the first one that supplies something wins.</p>
+      <p class="type-desc">To write one, derive from this class and mark it <code>[Serializable]</code> so it can be added to the provider list. Override <code>Evaluate</code>, and override either <code>Provide</code>, when every dependency is ready at once, or <code>ProvideAsync</code>, when getting one can take time. Everything else is optional. The provider's serialized fields are its settings, edited on its row in the provider list. Selvage calls every method on the Unity main thread.</p>
+      <div class="member-group">
+        <div class="member-group-title">Properties</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">Enabled</span> { get; set; }</th><td>Whether the provider is tried. Set it to <code>false</code> from code to skip the provider as if it were not in the list. It is not saved: every listed provider is enabled when the settings load, and exiting Play mode puts every provider back as it was before Play mode. Changing it calls <code>Reevaluate()</code>. The provider list shows a disabled provider dimmed, its summary reading <em>Off</em>.</td></tr>
+        </table>
+      </div>
+      <div class="member-group">
+        <div class="member-group-title">Protected methods</div>
+        <div class="note">Override exactly one of <code>Provide</code> and <code>ProvideAsync</code>, and at most one of <code>TearDown</code> and <code>TearDownAsync</code>. Code analysis reports any other combination as an error (<a href="../../user-manual/pages/Diagnostics.html#slv0004">SLV0004</a>), and adding such a provider throws ArgumentException.</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="kw">abstract</span> <span class="t">Verdict</span> <span class="mn">Evaluate</span>(<span class="t">Request</span> request)</th><td>Override this method to say what the provider does for a request: never supplies it, may or always supplies it, vetoes it, or redirects it to the provider list (see <a href="#Verdict"><code>Verdict</code></a>). Selvage evaluates once per member and remembers the verdict, so base it only on the request and the provider's settings. The Editor also reads it, to show which provider supplies each member and whether every required member is guaranteed a dependency.</td></tr>
+          <tr><th scope="row"><span class="kw">virtual</span> <span class="t">object</span> <span class="mn">ShareKey</span>(<span class="t">Request</span> request, <span class="t">object</span> context, <span class="t">object</span> channel)</th><td>Override this method to share one instance between every request that gives the same key. A fixed key such as <code>typeof(IInventory)</code> makes a single shared instance; the <code>GameObject</code> of <code>context</code> makes one per GameObject. While an instance for the key exists, it is reused without calling <code>Provide</code>. The same context and channel must always give the same key. Returns null by default, which answers each request on its own. Called for every request: a reference-type key allocates nothing, a value-type key (a tuple, a <code>Scene</code>) is boxed each time.</td></tr>
+          <tr><th scope="row"><span class="kw">virtual</span> <span class="t">Supply</span> <span class="mn">Provide</span>(<span class="t">Request</span> request, <span class="t">object</span> context, <span class="t">object</span> channel)</th><td>Override this method to return the dependency for a request the provider evaluated <code>Maybe</code> or <code>Always</code> (see <a href="#Supply"><code>Supply</code></a>). <code>context</code> is the object being injected, or the class's <code>Type</code> for a static member. <code>channel</code> is the member's channel at this injection (its <code>[DynamicChannel]</code> value, else its <code>[Channel]</code>, else null), a hint the provider may ignore. Return <code>Supply.Decline</code> when the provider has nothing, and the next provider is tried; declining after <code>Always</code> breaks the verdict and is logged as an error. Throwing is not a decline: the member fails with the exception, and no later provider is tried.</td></tr>
+          <tr><th scope="row"><span class="kw">virtual</span> <span class="t">ValueTask</span>&lt;<span class="t">Supply</span>&gt; <span class="mn">ProvideAsync</span>(<span class="t">Request</span> request, <span class="t">object</span> context, <span class="t">object</span> channel, <span class="t">CancellationToken</span> cancellationToken)</th><td>Override this method instead of <code>Provide</code> when getting a dependency can take time, such as loading a file or an Addressables asset. Write it with <code>async</code>/<code>await</code>, and complete with <code>Supply.Decline</code> when the provider has nothing. <code>cancellationToken</code> is canceled once no member waits for the result any more, or when you exit Play mode; a result that still completes is torn down. For a verdict without <code>mustWait</code>, the answer must be ready at once, and every member gets it; finishing later is an error that names the provider. For a verdict with <code>mustWait</code>, only <code>Async</code> members wait for it, a <code>Warm</code> member has it prepared and receives it once it is ready when it is also <code>Reactive</code>, else on its next <code>Manual.Reinject</code>, and any other member uses the provider only for a shared instance that already exists; the Editor flags such a member when no other provider can supply it. An answer ready at once completes without waiting a frame, and allocates nothing.</td></tr>
+          <tr><th scope="row"><span class="kw">virtual</span> <span class="kw">void</span> <span class="mn">TearDown</span>(<span class="t">object</span> instance)</th><td>Override this method to run your own teardown on an instance the provider supplied, borrowed or owned, once the last member holding it released it: return it to a pool, release an Addressables asset, destroy a prefab's whole <code>GameObject</code>. Does nothing by default. Selvage then ends an instance supplied with <code>Supply.Owned</code> the standard way, which cannot be skipped; supply it with <code>Supply.Borrowed</code> when your teardown is the whole ending.</td></tr>
+          <tr><th scope="row"><span class="kw">virtual</span> <span class="t">ValueTask</span> <span class="mn">TearDownAsync</span>(<span class="t">object</span> instance)</th><td>Override this method instead of <code>TearDown</code> when tearing down has to wait for something, such as saving to a file. It is called in the same cases, under the same rules. Selvage waits for it before ending an owned instance, and before tearing down the next member's dependency.</td></tr>
+          <tr><th scope="row"><span class="kw">void</span> <span class="mn">RaiseChanged</span>(<span class="t">bool</span> revoked = <span class="kw">false</span>)</th><td>Call it when what the provider supplies may have changed, such as when a newer version of everything it supplied exists. Every <code>Reactive</code> member holding something it supplied is injected again from the whole provider list, a <code>Reactive</code> member holding nothing is injected again, and any other member keeps the one it has. The remembered verdicts stay: after a change to what <code>Evaluate</code> answers, call <code>Reevaluate</code>. Pass <code>revoked: true</code> when nothing it supplied may be used any more: every <code>Reactive</code> member holding one drops it on the next frame and receives a replacement when one exists, and so does every other member holding one supplied with <code>canRevoke: true</code> (on the verdict or the supply), which returns to its default. A revoke that reaches no member logs a warning.</td></tr>
+          <tr><th scope="row"><span class="kw">void</span> <span class="mn">RaiseChanged</span>(<span class="t">object</span> dependency, <span class="t">bool</span> revoked = <span class="kw">false</span>)</th><td>Call it when one dependency the provider supplied has a newer version. Only the members holding it are reached: a <code>Reactive</code> one is injected again from the whole provider list, and any other keeps the one it has. Pass <code>revoked: true</code> when it must not be used any more, such as a closed connection: every <code>Reactive</code> member holding it drops it on the next frame and receives a replacement when one exists, and so does every other member when it was supplied with <code>canRevoke: true</code>, which returns to its default. A dependency held from another provider logs an error, and a revoke that reaches no member logs a warning. <span class="ex">Throws ArgumentNullException when the dependency is null.</span></td></tr>
+          <tr><th scope="row"><span class="kw">void</span> <span class="mn">Reevaluate</span>()</th><td>Call it after changing something <code>Evaluate</code> reads, such as one of the provider's settings. Selvage forgets the verdicts it remembered from this provider and asks again for every member, then reaches the members as <code>RaiseChanged()</code> does. Editing the provider's settings in Project Settings and changing <code>Enabled</code> call it.</td></tr>
+        </table>
+      </div>
+      <div class="member-group">
+        <div class="member-group-title">Protected static methods</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t">T</span> <span class="mn">InList</span>&lt;<span class="t">T</span>&gt;()</th><td>Returns the first provider of exactly class <code>T</code> in the provider list, enabled or not, or null when the list has none. Use it to reach a provider whose class is marked <a href="#OnePerListAttribute"><code>[OnePerList]</code></a>: <code>public static SaveProvider Listed =&gt; InList&lt;SaveProvider&gt;();</code>.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- Verdict -->
+    <div class="type-section" id="Verdict">
+      <div class="type-header"><h3>Verdict</h3><span class="badge badge-struct">struct</span></div>
+      <p class="type-desc">What a provider does for a request, returned by <code>Provider.Evaluate</code>.</p>
+      <div class="member-group">
+        <div class="member-group-title">Supplying</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="kw">static</span> <span class="t">Verdict</span> <span class="mn">Never</span></th><td>The provider never supplies the request: it is skipped, and the next provider is tried.</td></tr>
+          <tr><th scope="row"><span class="kw">static</span> <span class="t">Verdict</span> <span class="mn">Maybe</span>(<span class="t">bool</span> canRevoke = <span class="kw">false</span>, <span class="t">bool</span> mustWait = <span class="kw">false</span>)</th><td>The provider is asked through <code>Provide</code>, and may supply or decline: whether it has something is known only when the member is injected, as with registrations made in code. <code>canRevoke</code> and <code>mustWait</code> mean the same as for <code>Always</code>.</td></tr>
+          <tr><th scope="row"><span class="kw">static</span> <span class="t">Verdict</span> <span class="mn">Always</span>(<span class="t">bool</span> canRevoke = <span class="kw">false</span>, <span class="t">bool</span> mustWait = <span class="kw">false</span>)</th><td>The provider is asked through <code>Provide</code>, and always supplies: a member that reaches it is guaranteed a dependency. A decline after this verdict is logged as an error, and the next provider is tried. <code>canRevoke</code> lets a revoke reach every member holding what was supplied for this request, not only <code>Reactive</code> ones, for a dependency that may have to be dropped while held, such as a closed connection; to mark one supplied object instead, pass it to <code>Supply</code>. <code>mustWait</code> gives the answer only to members that can wait for it: <code>Async</code> members wait, a <code>Warm</code> member has it prepared and receives it once it is ready when it is also <code>Reactive</code>, else on its next <code>Manual.Reinject</code>, and every other member skips the provider. Set it when <code>ProvideAsync</code> may take time for this request, such as loading an Addressables asset; without it, the answer must be ready at once.</td></tr>
+        </table>
+      </div>
+      <div class="member-group">
+        <div class="member-group-title">Vetoing</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="kw">static</span> <span class="t">Verdict</span> <span class="mn">Veto</span></th><td>Nothing may supply the request, and no later provider is tried: the member stays missing. Use it to forbid something a provider further down would otherwise supply.</td></tr>
+        </table>
+      </div>
+      <div class="member-group">
+        <div class="member-group-title">Redirecting</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="kw">static</span> <span class="t">Verdict</span> <span class="mn">Redirect</span>(<span class="t">Type</span> type)</th><td>Answers with whatever the provider list supplies for <code>type</code>, which must be assignable to the requested type: for example, a request for <code>IInventory</code> redirected to <code>Inventory</code>. A type that is not assignable is logged as an error, and the member stays missing. <span class="ex">Throws ArgumentNullException when type is null.</span></td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- Supply -->
+    <div class="type-section" id="Supply">
+      <div class="type-header"><h3>Supply</h3><span class="badge badge-struct">struct</span></div>
+      <p class="type-desc">What <code>Provider.Provide</code> or <code>Provider.ProvideAsync</code> returns: the dependency and whether Selvage ends it, or a decline.</p>
+      <div class="member-group">
+        <div class="member-group-title">Supplying</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="kw">static</span> <span class="t">Supply</span> <span class="mn">Borrowed</span>(<span class="t">object</span> instance, <span class="t">bool</span> canRevoke = <span class="kw">false</span>)</th><td>Supplies an instance Selvage never ends, because something else is responsible for it: a component in the scene, or the provider itself through its <code>TearDown</code> (a pooled object, an Addressables asset). <code>canRevoke</code> lets a revoke of this object (<code>RaiseChanged(instance, revoked: true)</code>) reach every member holding it, not only <code>Reactive</code> ones; for every object of a request, pass it to the verdict instead. <span class="ex">Throws ArgumentNullException when the instance is null or a destroyed Unity object.</span></td></tr>
+          <tr><th scope="row"><span class="kw">static</span> <span class="t">Supply</span> <span class="mn">Owned</span>(<span class="t">object</span> instance, <span class="t">bool</span> canRevoke = <span class="kw">false</span>)</th><td>Supplies an instance Selvage ends once no member uses it, after the provider's <code>TearDown</code>: a <code>UnityEngine.Object</code> is destroyed (the object itself and nothing more), anything else is disposed if it is <code>IDisposable</code> or <code>IAsyncDisposable</code>. <code>canRevoke</code> is as for <code>Borrowed</code>. <span class="ex">Throws ArgumentNullException when the instance is null or a destroyed Unity object.</span></td></tr>
+        </table>
+      </div>
+      <div class="member-group">
+        <div class="member-group-title">Declining</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="kw">static</span> <span class="t">Supply</span> <span class="mn">Decline</span></th><td>The provider has nothing for the request: the next provider in the list is tried.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- Request -->
+    <div class="type-section" id="Request">
+      <div class="type-header"><h3>Request</h3><span class="badge badge-struct">struct</span></div>
+      <p class="type-desc">What a member asks for: the type it wants and where it is declared. It never holds the object being injected, which <code>Provide</code> receives separately as <code>context</code>.</p>
+      <div class="member-group">
+        <div class="member-group-title">Properties</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t">Type</span> <span class="mn">Type</span> { get; }</th><td>The type asked for: the member's own type, or the type a <code>Verdict.Redirect</code> names.</td></tr>
+          <tr><th scope="row"><span class="t">Type</span> <span class="mn">ContextType</span> { get; }</th><td>The type of the object being injected.</td></tr>
+          <tr><th scope="row"><span class="t">MemberInfo</span> <span class="mn">Member</span> { get; }</th><td>The field or property being injected, for example to read an attribute on it, or null when no member is behind the request.</td></tr>
+          <tr><th scope="row"><span class="t">Type</span> <span class="mn">ElementType</span> { get; }</th><td>The type of the elements when <code>Type</code> is an array or an <code>IEnumerable&lt;T&gt;</code>, otherwise null.</td></tr>
+          <tr><th scope="row"><span class="t">object</span> <span class="mn">FixedChannel</span> { get; }</th><td>The member's channel when it is known before you enter Play mode: its <code>[Channel]</code>, when it has no <code>[DynamicChannel]</code>. Null otherwise. A hint <code>Evaluate</code> may use or ignore; <code>ShareKey</code> and <code>Provide</code> receive the channel at injection.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <h2 class="api-group">Utility</h2>
+
+    <!-- OnePerListAttribute -->
+    <div class="type-section" id="OnePerListAttribute">
+      <div class="type-header"><h3>OnePerListAttribute</h3><span class="badge badge-class">attr</span><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">Limits the provider list in <strong>Project Settings</strong> &gt; <strong>Selvage</strong> to one provider of the marked class: <code>[Serializable, OnePerList] public sealed class SaveProvider : Provider</code>. Each class deriving from a marked class counts on its own. Providers added from code with <code>Injector</code> are not limited. While one is listed, the <strong>+</strong> menu disables the class; a second one arriving through a setup or a merge is removed with an error, and the first keeps its place. The listed provider stays the same object until scripts are reloaded, even when it is removed and added again, so what code gave it survives editing the list. Reach it with <code>Provider.InList</code>.</p>
+    </div>
+
+    <div class="doc-footer">Selvage v1.0.0 &nbsp;&middot;&nbsp; For full signatures and remarks, refer to the XML doc comments in the source.</div>
+
+  </main>
+</div>
+</body>
+</html>

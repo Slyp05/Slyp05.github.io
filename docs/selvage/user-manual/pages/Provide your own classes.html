@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Provide instances of plain C# classes marked [Provide]." />
+  <title>Selvage - Provide your own classes</title>
+  <link rel="stylesheet" href="/assets/css/doc-styles.css" />
+  <link rel="stylesheet" href="/assets/css/selvage.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Selvage</div><a href="../index.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Provide your own classes</h1>
+      <div class="sub">Provide instances of plain C# classes marked [Provide].</div>
+    </div>
+
+<!-- ====================================== provide ==== -->
+<section id="provide">
+  <h2>Provide a class</h2>
+<p>The Attribute Provider gives instances of the classes marked <code>[Provide]</code>. To provide one of your classes,
+  perform the following steps:</p>
+<ol>
+  <li>Add the <code>[Provide]</code> attribute to the class.</li>
+  <li>Add a member of the class's type, one of its base classes, or one of its interfaces to a script.</li>
+</ol>
+<pre><code><span class="kw">using</span> Selvage.Providers;
+
+[Provide]                                    <span class="cm">// 1. The class Selvage creates</span>
+<span class="kw">public</span> <span class="kw">class</span> <span class="ty">Inventory</span> : <span class="ty">IInventory</span> { ... }</code></pre>
+<pre><code>[Inject] <span class="ty">Inventory</span> inventory;   <span class="cm">// 2. Replaces Inventory.Instance</span>
+[Inject] <span class="ty">IInventory</span> items;      <span class="cm">// 2. Also works with an interface</span></code></pre>
+<p>Selvage creates instances when members need them, and injects their own <code>[Inject]</code> members. To set the
+  class's <a href="Lifetimes.html">lifetime</a>, pass it to the attribute: <code>[Provide(Lifetime.Pooled)]</code>.</p>
+
+</section>
+
+<!-- ====================================== rules ==== -->
+<section id="rules">
+  <h2>Class requirements</h2>
+<p>Selvage creates the class with <code>new</code>, so the class must meet the following requirements:</p>
+<ul>
+  <li>It isn't a Unity object, such as a component or a ScriptableObject.</li>
+  <li>It isn't abstract or static.</li>
+  <li>It has a constructor without parameters. The constructor can be private.</li>
+</ul>
+<p>Code analysis reports a class that doesn't meet these requirements as <a href="Diagnostics.html#slv0007">SLV0007</a>,
+  and the Attribute Provider leaves it out with an error in the Console window.</p>
+<p>To provide a component, refer to <a href="Provide%20scene%20components.html">Provide scene components</a>. A
+  ScriptableObject can't have <code>[Provide]</code>, because Selvage would create a blank one that wins over your
+  configured asset. To inject a configured ScriptableObject or another asset, refer to <a href="Provide%20assets.html">Provide
+  assets</a>. To provide one your code creates, add a function that creates it to the
+  <a href="Provide%20objects%20your%20code%20creates.html#registry">registry</a>:</p>
+<pre><code><span class="ty">RegistryProvider</span>.Listed.Add(() =&gt; <span class="ty">ScriptableObject</span>.CreateInstance&lt;<span class="ty">GameSettings</span>&gt;());</code></pre>
+<p>The Attribute Provider reads the classes marked <code>[Provide]</code> from every assembly that references
+  Selvage. When two classes could be injected into a member and nothing tells them apart, the Validation tab names
+  both before you enter Play mode. To see every class the Attribute Provider gives, expand <strong>Attribute
+  Provider</strong> in the provider list.</p>
+
+</section>
+
+<!-- ====================================== generic ==== -->
+<section id="generic">
+  <h2>Provide a generic class</h2>
+<p>A generic class marked <code>[Provide]</code> is given for every type it can become:</p>
+<pre><code>[Provide]
+<span class="kw">public</span> <span class="kw">class</span> <span class="ty">Repository</span>&lt;<span class="ty">T</span>&gt; : <span class="ty">IRepository</span>&lt;<span class="ty">T</span>&gt; { ... }
+
+[Inject] <span class="ty">IRepository</span>&lt;<span class="ty">Enemy</span>&gt; enemies;   <span class="cm">// a Repository&lt;Enemy&gt;</span></code></pre>
+<p>If a non-generic class is also marked for the same type, the non-generic class wins.</p>
+
+</section>
+
+<!-- ====================================== wrap ==== -->
+<section id="wrap">
+  <h2>Wrap a class</h2>
+<p>To add behavior around a class, such as logging, write a wrapper class that receives the original class by its own
+  type. Add an empty <code>[Preference]</code> to the wrapper: a <strong>preference</strong> says which members a
+  class is for, and an empty one matches every member, so the wrapper wins over the original class:</p>
+<pre><code>[Provide]
+<span class="kw">public</span> <span class="kw">class</span> <span class="ty">SteamSave</span> : <span class="ty">ISave</span> { ... }
+
+[Provide, <span class="ty">Preference</span>]
+<span class="kw">public</span> <span class="kw">class</span> <span class="ty">LoggedSave</span> : <span class="ty">ISave</span>
+{
+    [Inject] <span class="ty">SteamSave</span> inner;
+}</code></pre>
+<p>In this example, members of type <code>ISave</code> receive <code>LoggedSave</code>, which receives
+  <code>SteamSave</code>. The wrapper's member asks for the concrete <code>SteamSave</code> type, so the wrapper never
+  receives itself. A wrapper whose member asks for <code>ISave</code> would receive itself, and Selvage would report
+  the dependency cycle by name. For more information, refer to <a href="Choose%20between%20several%20candidates.html">Choose
+  between several candidates</a>.</p>
+
+</section>
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="Lifetimes.html">Lifetimes</a></li>
+    <li><a href="../../public-api/pages/API%20-%20Providing.html#ProvideAttribute">ProvideAttribute API reference</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="Provide%20scene%20components.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Provide scene components</div>
+  </a>
+  <a class="next" href="Provide%20assets.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Provide assets</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Selvage v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

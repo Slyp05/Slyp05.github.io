@@ -96,7 +96,7 @@
       }
       // nav.js answers "/" and Ctrl+K by focusing its search box, which a closed drawer hides. It has
       // already handled the key by now, so open the drawer and hand the focus over.
-      var search = document.getElementById('pa-search');
+      var search = document.getElementById('pa-search') || document.getElementById('sv-search');
       var wantsSearch = (ev.key === '/') || ((ev.key === 'k' || ev.key === 'K') && (ev.ctrlKey || ev.metaKey));
       if (wantsSearch && ev.defaultPrevented && search && mq && mq.matches && !isOpen()) {
         setOpen(true);

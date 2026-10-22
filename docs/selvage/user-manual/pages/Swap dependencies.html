@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Swap a dependency in a test, at runtime, in the Editor, or on one platform." />
+  <title>Selvage - Swap dependencies for tests and platforms</title>
+  <link rel="stylesheet" href="/assets/css/doc-styles.css" />
+  <link rel="stylesheet" href="/assets/css/selvage.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Selvage</div><a href="../index.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Swap dependencies for tests and platforms</h1>
+      <div class="sub">Swap a dependency in a test, at runtime, in the Editor, or on one platform.</div>
+    </div>
+
+<!-- ====================================== code ==== -->
+<section id="code">
+  <h2>Swap a dependency from code</h2>
+<p>To replace a dependency in a test, or at runtime for a cheat or a mod, perform the following steps:</p>
+<ol>
+  <li>Create a registry, and add it before every other provider with <code>Injector.AddFirst</code>.</li>
+  <li>Add the replacement to the registry.</li>
+  <li>When you no longer need the replacement, remove the registry with <code>Injector.Remove</code>.</li>
+</ol>
+<pre><code><span class="ty">RegistryProvider</span> stubs = <span class="kw">new</span>();
+<span class="ty">Injector</span>.AddFirst(stubs);                       <span class="cm">// 1. Tried before the provider list</span>
+stubs.Add&lt;<span class="ty">IAnalytics</span>&gt;(<span class="kw">new</span> <span class="ty">FakeAnalytics</span>());     <span class="cm">// 2. The replacement</span>
+
+<span class="ty">MatchReport</span> report = <span class="kw">new</span>();   <span class="cm">// a plain class: its [Inject] IAnalytics member receives FakeAnalytics</span>
+
+<span class="ty">Injector</span>.Remove(stubs);                         <span class="cm">// 3. The other providers answer again</span></code></pre>
+<p>Step 3 is optional in a test and in Play mode: Selvage removes a provider added during a Test Runner test when the
+  test ends, and a provider added in Play mode when you exit Play mode.</p>
+<p>A member that was injected before the swap keeps its dependency, unless it's
+  <a href="Options.html#reactive"><code>Reactive</code></a>. To give it the replacement, call
+  <code>Manual.Reinject</code>.</p>
+
+</section>
+
+<!-- ====================================== assemblies ==== -->
+<section id="assemblies">
+  <h2>Swap a class with an assembly</h2>
+<p>A class marked <code>[Provide]</code> in an assembly that only exists in some cases replaces the classes of the
+  other assemblies in those cases. No code chooses between the classes: the assembly each one is in decides.</p>
+<pre><code><span class="cm">// In your game assembly</span>
+[Provide]
+<span class="kw">public</span> <span class="kw">class</span> <span class="ty">SteamStore</span> : <span class="ty">IStore</span> { ... }
+
+<span class="cm">// In an Editor assembly: IStore members receive MockStore in the Editor, and SteamStore in a build.</span>
+[Provide]
+<span class="kw">public</span> <span class="kw">class</span> <span class="ty">MockStore</span> : <span class="ty">IStore</span> { ... }</code></pre>
+<p>For a requested type, the classes of the highest-ranked assembly replace those of every lower rank:</p>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Rank</th><th scope="col">Assembly</th><th scope="col">Its classes apply</th></tr>
+    <tr><td>1</td><td>Test assembly</td><td>While a Test Runner run that includes the assembly is in progress.</td></tr>
+    <tr><td>2</td><td>Editor assembly: an <code>Editor</code> folder, or an assembly definition limited to the Editor platform</td><td>In the Editor, in Edit mode and in Play mode.</td></tr>
+    <tr><td>3</td><td>Assembly definition with platforms or define constraints</td><td>Whenever it's compiled.</td></tr>
+    <tr><td>4</td><td>Project assembly, under <code>Assets</code></td><td>Always.</td></tr>
+    <tr><td>5</td><td>Package assembly, under <code>Packages</code></td><td>Always.</td></tr>
+  </table>
+</div>
+<p>The rank applies to the classes the Attribute Provider gives. The order of the provider list still comes first,
+  so an object in the Registry Provider wins over any class. The Dependencies window names the class that gives the dependency
+  and the class it replaces. The Validation tab reads the assemblies of the Editor and of the current build target, and
+  updates when you switch the target.</p>
+
+</section>
+
+<!-- ====================================== platforms ==== -->
+<section id="platforms">
+  <h2>Swap a class from a provider</h2>
+<p>To choose a class from code, write a provider that picks it, then add the provider to the provider list:</p>
+<pre><code>[Serializable]
+<span class="kw">public</span> <span class="kw">sealed</span> <span class="kw">class</span> <span class="ty">InputProvider</span> : <span class="ty">Provider</span>
+{
+    <span class="kw">protected</span> <span class="kw">override</span> <span class="ty">Verdict</span> Evaluate(<span class="ty">Request</span> request)
+        =&gt; (request.Type == <span class="kw">typeof</span>(<span class="ty">IInput</span>)) ? <span class="ty">Verdict</span>.Always() : <span class="ty">Verdict</span>.Never;
+
+    <span class="kw">protected</span> <span class="kw">override</span> <span class="kw">object</span> ShareKey(<span class="ty">Request</span> request, <span class="kw">object</span> context, <span class="kw">object</span> channel)
+        =&gt; <span class="kw">typeof</span>(<span class="ty">IInput</span>);
+
+    <span class="kw">protected</span> <span class="kw">override</span> <span class="ty">Supply</span> Provide(<span class="ty">Request</span> request, <span class="kw">object</span> context, <span class="kw">object</span> channel)
+        =&gt; <span class="ty">Supply</span>.Owned((<span class="ty">Application</span>.isMobilePlatform) ? <span class="kw">new</span> <span class="ty">TouchInput</span>() : <span class="kw">new</span> <span class="ty">DesktopInput</span>());
+}</code></pre>
+<p>For more information, refer to <a href="Write%20a%20custom%20provider.html">Write a custom provider</a>.</p>
+
+</section>
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="Manage%20the%20provider%20list.html#code">Add a provider from code</a></li>
+    <li><a href="../../public-api/pages/API%20-%20Providing.html#Injector">Injector API reference</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="Technical%20QA.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Technical Q&amp;A</div>
+  </a>
+  <a class="next" href="Manage%20the%20provider%20list.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Manage the provider list</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Selvage v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

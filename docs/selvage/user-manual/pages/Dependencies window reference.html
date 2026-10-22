@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="The tabs, toolbar and results of the Dependencies window." />
+  <title>Selvage - Dependencies window reference</title>
+  <link rel="stylesheet" href="/assets/css/doc-styles.css" />
+  <link rel="stylesheet" href="/assets/css/selvage.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Selvage</div><a href="../index.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Dependencies window reference</h1>
+      <div class="sub">The tabs, toolbar and results of the Dependencies window.</div>
+    </div>
+
+<p>To open the Dependencies window, go to <strong>Tools</strong> &gt; <strong>Selvage</strong> &gt;
+  <strong>Dependencies</strong>. Both tabs work in Edit mode and in Play mode.</p>
+
+<!-- ====================================== toolbar ==== -->
+<section id="toolbar">
+  <h2>Toolbar</h2>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Control</th><th scope="col">Description</th></tr>
+    <tr><td><strong>State</strong></td><td>Lists only the members in the checked states. With nothing checked, every state is listed. Outside Play mode, the states are the Validation results, and <strong>Failed</strong> lists the required members that are <strong>Missing</strong>. In Play mode, they're the <a href="#live">Live states</a>.</td></tr>
+    <tr><td><strong>Options</strong></td><td>Lists only the members with a checked option, or the members that only the Inject by Default setting injects. With nothing checked, every member is listed.</td></tr>
+    <tr><td><strong>Assembly</strong></td><td>Lists only the members of contexts in one assembly.</td></tr>
+    <tr><td><strong>Strict</strong></td><td>Validation tab only. Displays a required member that isn't <strong>Guaranteed</strong> as <strong>Missing</strong>.</td></tr>
+    <tr><td><strong>Auto</strong></td><td>Live tab only. Reads the contexts again about every second, less often in a large scene. Enabled by default.</td></tr>
+    <tr><td><strong>Refresh</strong></td><td>Reads everything again: the results, and on the Live tab, the contexts and what each member holds.</td></tr>
+    <tr><td><strong>Providers</strong></td><td>Opens the provider list.</td></tr>
+    <tr><td>Help (<strong>?</strong>)</td><td>Opens the User Manual.</td></tr>
+  </table>
+</div>
+<p>Above the members, a summary counts the members in each state. To list only the members in one state, select its
+  count. Select several counts to combine them.</p>
+
+</section>
+
+<!-- ====================================== validation ==== -->
+<section id="validation">
+  <h2>Validation tab</h2>
+<p>The Validation tab displays what each member will receive, read from your code and the provider list. What it
+  lists depends on the selection:</p>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Selection</th><th scope="col">Lists</th></tr>
+    <tr><td>A script, or a GameObject</td><td>The members of that script, or of each script on the GameObject.</td></tr>
+    <tr><td>A folder</td><td>The classes declared in the scripts of that folder.</td></tr>
+    <tr><td>Nothing, or <strong>Whole Project</strong></td><td>Every class of the project that has injected members, with the classes that have a <strong>Missing</strong> member first.</td></tr>
+  </table>
+</div>
+<p>Each member has one of the following results:</p>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Result</th><th scope="col">Description</th></tr>
+    <tr><td><strong>Guaranteed</strong></td><td>A provider always gives the member a dependency.</td></tr>
+    <tr><td><strong>May Be Supplied</strong></td><td>A provider can give one, but whether it does is only known when the member is injected.</td></tr>
+    <tr><td><strong>Missing</strong></td><td>No provider gives the member a dependency. A required member fails.</td></tr>
+  </table>
+</div>
+<p>The whole-project list has a search field, which matches class, namespace and member names, <strong>Expand
+  Missing</strong>, which opens every class with a <strong>Missing</strong> member, and <strong>Collapse All</strong>.
+  Each closed class displays its number of members, and how many are <strong>May Be Supplied</strong> and
+  <strong>Missing</strong>. To move through the list with the keyboard, use the arrow keys: Right or Enter opens a
+  class or a member's explanation, and Left closes it.</p>
+<p>In Play mode, a banner offers <strong>Show Live</strong>, which opens the Live tab.</p>
+
+</section>
+
+<!-- ====================================== live ==== -->
+<section id="live">
+  <h2>Live tab</h2>
+<p>The Live tab displays what each injected member holds. The <strong>Live Contexts</strong> list holds the contexts
+  with injected members, under the following headings: each loaded scene, <strong>Kept Across Scene Loads</strong>,
+  <strong>Assets</strong>, <strong>Plain Objects</strong> and <strong>Static</strong> (each class with injected static members). Outside Play mode, it
+  holds only the contexts with <code>EditMode</code> members. Selecting an object in the Hierarchy or the Project window
+  displays its contexts, with the static members of their classes; when it has none, the tab says whether the object has no injected members or isn't injected yet.</p>
+<p>A static member reads <strong>static</strong> before its name: it holds one dependency for its class, shared by
+  every object of it.</p>
+<p>Each member of the selected context has one of the following states:</p>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">State</th><th scope="col">Description</th></tr>
+    <tr><td><strong>Injected</strong></td><td>The member holds its dependency.</td></tr>
+    <tr><td><strong>Waiting</strong></td><td>The member waits for an <code>Async</code> dependency. For more information, refer to <a href="Inspect%20injected%20members.html#waiting">Find out what a member waits for</a>.</td></tr>
+    <tr><td><strong>Missing</strong></td><td>The member is <code>Optional</code>, and no provider gave it a dependency.</td></tr>
+    <tr><td><strong>Failed</strong></td><td>The member is required, and no provider gave it a dependency.</td></tr>
+  </table>
+</div>
+<p>Each context in the list displays a dot for its worst member: red for <strong>Failed</strong>, amber for
+  <strong>Missing</strong>, blue for <strong>Waiting</strong>, and green when every member is
+  <strong>Injected</strong>. Its tooltip gives the counts. When you select several contexts, with Ctrl or Shift, each
+  displays these counts, which you can select to list only that state.</p>
+
+</section>
+
+<!-- ====================================== explain ==== -->
+<section id="explain">
+  <h2>Explain</h2>
+<p><strong>Explain</strong>, on a member's row, lists every provider in the order Selvage tries them, and highlights
+  the one that gives the member its dependency: on the Live tab, the provider that gave it, and on the Validation tab,
+  the first provider that always gives it. The providers below it are dimmed, because Selvage doesn't ask them.
+  Explain creates no object.</p>
+
+</section>
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="Validate%20members.html">Validate members</a></li>
+    <li><a href="Inspect%20injected%20members.html">Inspect injected members</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="Project%20Settings%20reference.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Project Settings reference</div>
+  </a>
+  <a class="next" href="Provide%20Definition%20reference.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Provide Definition reference</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Selvage v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

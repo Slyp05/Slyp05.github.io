@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<!-- Asset Store cover image, 1950x1300. Rendered to PNG by render.sh (headless Chrome). -->
+<style>
+  html, body { margin: 0; padding: 0; background: #161622; }
+  svg { display: block; }
+  .title   { font-family: "Segoe UI Variable Display", "Segoe UI", sans-serif; font-weight: 700; }
+  .tagline { font-family: "Segoe UI Variable Display", "Segoe UI", sans-serif; font-weight: 400; }
+</style>
+</head>
+<body>
+<svg width="1950" height="1300" viewBox="0 0 1950 1300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Palette: the documentation theme (Catppuccin Mocha). -->
+    <radialGradient id="bg" cx="0.68" cy="0.45" r="0.85">
+      <stop offset="0" stop-color="#2a2a40"/>
+      <stop offset="0.55" stop-color="#1e1e2e"/>
+      <stop offset="1" stop-color="#13131c"/>
+    </radialGradient>
+
+    <!-- Woven fabric texture: alternating over/under warp and weft. -->
+    <pattern id="weave" width="48" height="48" patternUnits="userSpaceOnUse">
+      <rect x="2" y="6" width="20" height="12" rx="6" fill="#cdd6f4"/>
+      <rect x="30" y="2" width="12" height="20" rx="6" fill="#cdd6f4"/>
+      <rect x="6" y="26" width="12" height="20" rx="6" fill="#cdd6f4"/>
+      <rect x="26" y="30" width="20" height="12" rx="6" fill="#cdd6f4"/>
+    </pattern>
+    <radialGradient id="weaveFade" cx="0.72" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#fff" stop-opacity="1"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </radialGradient>
+    <mask id="weaveMask">
+      <rect width="1950" height="1300" fill="url(#weaveFade)"/>
+    </mask>
+
+    <linearGradient id="titleGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#cdd6f4"/>
+      <stop offset="1" stop-color="#b4befe"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1950" height="1300" fill="url(#bg)"/>
+  <rect width="1950" height="1300" fill="url(#weave)" opacity="0.045" mask="url(#weaveMask)"/>
+
+  <!-- Text block: title and tagline only, per Asset Store cover rules. -->
+  <text class="title" x="140" y="640" font-size="210" fill="url(#titleGrad)" letter-spacing="-4">Selvage</text>
+  <text class="tagline" x="150" y="745" font-size="47" fill="#cdd6f4">Easy dependency injection for Unity</text>
+  <text class="tagline" x="150" y="840" font-size="42" fill="#a6adc8">No container, no installers, no lookups.</text>
+
+  <image href="illustration.svg" x="940" y="220" width="960" height="800"/>
+
+  <image href="selvage.svg" x="0" y="1196" width="1950" height="104"/>
+</svg>
+</body>
+</html>
