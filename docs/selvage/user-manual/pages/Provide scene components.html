@@ -28,6 +28,15 @@
     <div class="page-header">
       <h1>Provide scene components</h1>
       <div class="sub">Provide components from the same GameObject or from the loaded scenes.</div>
+      <div class="guide-index">
+        <a href="#inject">Provide a component</a>
+        <a href="#closest">How the Scene Provider chooses a component</a>
+        <a href="#settings">Change how far the Scene Provider looks</a>
+        <a href="#marked">Provide only the objects you mark</a>
+        <a href="#none">When the scene has no such component</a>
+        <a href="#tuning">Configure one scene object</a>
+        <a href="#watch">Follow a scene object</a>
+      </div>
     </div>
 
 <!-- ====================================== inject ==== -->
@@ -79,10 +88,12 @@
 <ol>
   <li>Go to <strong>Edit</strong> &gt; <strong>Project Settings</strong> &gt; <strong>Selvage</strong>.</li>
   <li>In the provider list, expand <strong>Scene Provider</strong>.</li>
-  <li>Set <strong>Reach</strong>, <strong>Parents First</strong> and <strong>Include Inactive</strong>.</li>
+  <li>Set <strong>Reach</strong>, <strong>Parents First</strong>, <strong>Include Inactive</strong> and
+    <strong>Require Provide Tuning</strong>. <strong>Parents First</strong> appears when <strong>Reach</strong>
+    includes the hierarchy.</li>
 </ol>
 <div class="img-block">
-  <img src="../img/scene_provider_settings.png" alt="The Scene Provider expanded in the provider list, showing Reach, Parents First and Include Inactive" />
+  <img src="../img/scene_provider_settings.png" alt="The Scene Provider expanded in the provider list, showing Reach, Parents First, Include Inactive and Require Provide Tuning" />
 </div>
 <p>For a description of each setting, refer to <a href="Project%20Settings%20reference.html#scene">Project Settings
   reference</a>.</p>
@@ -90,6 +101,36 @@
   Provider's <strong>Reach</strong> is <strong>All Scenes</strong>, the default.</p>
 <p>The provider list can hold several Scene Providers, each with its own settings, tried in their order like any
   other providers.</p>
+
+</section>
+
+<!-- ====================================== marked ==== -->
+<section id="marked">
+  <h2>Provide only the objects you mark</h2>
+<p>By default, the Scene Provider gives any component of the member's type within its reach. To give only the
+  GameObjects you choose, enable <strong>Require Provide Tuning</strong> on the Scene Provider, and add a
+  <a href="#tuning">Provide Tuning</a> component to each GameObject it may give. The setting applies to the member's
+  own GameObject too, and a Provide Tuning component covers every component on its GameObject.</p>
+<p>To give components on the member's own GameObject without marking them, and mark only the ones farther away, list
+  two Scene Providers: the first with <strong>Reach</strong> set to <strong>Self</strong>, the second with
+  <strong>Require Provide Tuning</strong> enabled.</p>
+
+</section>
+
+<!-- ====================================== none ==== -->
+<section id="none">
+  <h2>When the scene has no such component</h2>
+<p>The Scene Provider gives only components that exist. To make sure a member receives one, pick the place that
+  matches how many you need:</p>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">You need</th><th scope="col">Do this</th></tr>
+    <tr><td>One for the whole game</td><td>Make a prefab of it, and provide the prefab with a <a href="Provide%20assets.html">Provide Definition</a> set to <strong>Permanent</strong>. The Scene Provider comes first, so a component already in the scene still wins.</td></tr>
+    <tr><td>One in a scene</td><td>Add it to a GameObject in that scene.</td></tr>
+    <tr><td>One for each member, or one lent from a pool</td><td>Add it to a GameObject, with a <a href="#tuning">Provide Tuning</a> component set to <strong>Separate</strong> or <strong>Pooled</strong>.</td></tr>
+    <tr><td>One on the member's own GameObject</td><td>Add <code>[RequireComponent(typeof(...))]</code> to the member's class, so Unity adds it in the Editor.</td></tr>
+  </table>
+</div>
 
 </section>
 

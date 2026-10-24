@@ -212,6 +212,7 @@
 <div class="table-scroll">
   <table class="cmp keycol">
     <tr><th scope="col">Lifetime</th><th scope="col">Each member receives</th></tr>
+    <tr><td><strong>Permanent</strong></td><td>The same object as every other member, kept until play stops, or until scripts reload for one made in Edit mode.</td></tr>
     <tr><td><strong>Shared</strong> (default)</td><td>The same object as every other member.</td></tr>
     <tr><td><strong>Separate</strong></td><td>Its own object.</td></tr>
     <tr><td><strong>Pooled</strong></td><td>Its own object, borrowed from a pool.</td></tr>
@@ -229,7 +230,7 @@
 </div>
 <div class="note"><strong>Note:</strong> Unlike a static <code>Instance</code>, a Shared object that Selvage creates
   doesn't last for the whole application. Selvage ends it once no member holds it, and creates a fresh one when a
-  member needs it again. For more information, refer to <a href="pages/Lifetimes.html">Lifetimes</a>.</div>
+  member needs it again. For one object that lasts until play stops, use Permanent. For more information, refer to <a href="pages/Lifetimes.html">Lifetimes</a>.</div>
 
 </section>
 

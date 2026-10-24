@@ -46,8 +46,8 @@
       <li><strong>This Folder and Subfolders</strong>: also the assets in the folders inside it.</li>
       <li><strong>List</strong>: the assets in its list, wherever they are.</li></ul></td></tr>
     <tr><td><strong>Assets</strong></td><td>The assets the definition provides. Appears when <strong>Provides</strong> is <strong>List</strong>.</td></tr>
-    <tr><td><strong>Lifetime</strong></td><td><strong>Shared</strong>: every member receives the same asset. <strong>Separate</strong> and <strong>Pooled</strong>: each member receives its own instance of a prefab, or its own copy of any other asset. For more information, refer to <a href="Lifetimes.html">Lifetimes</a>.</td></tr>
-    <tr><td><strong>Runtime Copy</strong></td><td>With the <strong>Shared</strong> lifetime, gives every member one copy of an asset instead of the asset itself, so changes made in Play mode never reach the asset. A prefab is always given as an instance.</td></tr>
+    <tr><td><strong>Lifetime</strong></td><td><strong>Shared</strong>: every member receives the same asset, or one instance of a prefab, which ends once no member holds it. <strong>Permanent</strong>: the same, and the instance stays until play stops (one made in Edit mode, until scripts reload). <strong>Separate</strong> and <strong>Pooled</strong>: each member receives its own instance of a prefab, or its own copy of any other asset. For more information, refer to <a href="Lifetimes.html">Lifetimes</a>.</td></tr>
+    <tr><td><strong>Runtime Copy</strong></td><td>With the <strong>Shared</strong> or <strong>Permanent</strong> lifetime, gives every member one copy of an asset instead of the asset itself, so changes made in Play mode never reach the asset. A prefab is always given as an instance.</td></tr>
     <tr><td><strong>Has Preference</strong></td><td>Gives the assets a preference, which decides which members receive them when several assets could fit. Shows the preference settings.</td></tr>
   </table>
 </div>

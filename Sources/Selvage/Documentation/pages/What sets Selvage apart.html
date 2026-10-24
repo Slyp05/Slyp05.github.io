@@ -182,7 +182,8 @@
   you added yourself. Lifetimes apply to every source:</p>
 <ul>
   <li>A Shared object ends one frame after no member holds it, so a member of a newly loaded scene can still take it
-    over, where a container singleton lives as long as its container.</li>
+    over, where a container singleton lives as long as its container. A Permanent object stays until play
+    stops (one made in Edit mode, until scripts reload).</li>
   <li>A scene object with the Separate or Pooled lifetime gives each member its own copy of its GameObject, set with a
     Provide Tuning component.</li>
   <li>A ScriptableObject with Separate or Pooled gives each member a copy that's never saved into the asset, and

@@ -66,7 +66,7 @@ Pass data to what you `Instantiate`, reuse objects from pools, and let what Selv
 
 ## More Features
 
-- **Lifetimes:** shared, separate or pooled, for any source.
+- **Lifetimes:** permanent, shared, separate or pooled, for any source.
 - **Cleanup:** what Selvage creates is destroyed or disposed once unused. Your own objects are never touched.
 - **Several candidates:** the right one is picked from names, classes, tags, scenes and more, without keys.
 - **Per-field options:** optional, injected on demand, or a default that steps aside when a dependency arrives.

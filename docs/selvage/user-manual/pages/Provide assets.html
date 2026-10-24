@@ -56,7 +56,7 @@
 <p>A folder provides its main assets only: not its sub-assets, such as a sprite inside a texture, other Provide
   Definitions, or Editor-only assets, such as scripts, scenes and assembly definitions. A list provides whatever you
   add to it, sub-assets included.</p>
-<p>With the Shared lifetime, Selvage gives the asset itself, so changes made to it in Play mode stay, as with any
+<p>With the Shared or Permanent lifetime, Selvage gives the asset itself, so changes made to it in Play mode stay, as with any
   asset. To give every member one copy instead, enable <strong>Runtime Copy</strong>. With the Separate or Pooled
   lifetime, each member receives its own copy, which is never saved into the asset.</p>
 
@@ -70,7 +70,9 @@
 <pre><code>[Inject] <span class="ty">ParticleSystem</span> explosion;   <span class="cm">// the ParticleSystem on an instance of a provided prefab</span></code></pre>
 <p>With the Shared lifetime, every member receives the same instance, which Selvage destroys once no member holds it.
   In Play mode, Selvage keeps that instance under <code>DontDestroyOnLoad</code>, so a scene load doesn't destroy it
-  while a member holds it. With Separate or Pooled, each member receives its own instance.</p>
+  while a member holds it. With Permanent, the instance stays until play stops (one made in Edit mode, until scripts reload), even when no member holds it: use it
+  for a manager that keeps its state for the whole game. With Separate or Pooled, each member receives its own
+  instance.</p>
 
 </section>
 

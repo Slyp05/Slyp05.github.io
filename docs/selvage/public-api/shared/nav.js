@@ -99,6 +99,8 @@
       ["inject", "Provide a component"],
       ["closest", "How the Scene Provider chooses a component"],
       ["settings", "Change how far the Scene Provider looks"],
+      ["marked", "Provide only the objects you mark"],
+      ["none", "When the scene has no such component"],
       ["tuning", "Configure one scene object"],
       ["watch", "Follow a scene object"]
     ] },

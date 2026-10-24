@@ -61,7 +61,8 @@
   </table>
 </div>
 <p>In this table, <code>registry</code> stands for <code>RegistryProvider.Listed</code>. Unlike a container singleton,
-  a Shared instance ends one frame after no member holds it.</p>
+  a Shared instance ends one frame after no member holds it. A Permanent instance stays until play stops (one made in Edit mode, until scripts reload), as a
+  container singleton does.</p>
 
   <h3 id="example">Move an installer</h3>
 <p>The following Zenject installer binds a class to its interface and a camera from the scene. A
@@ -130,7 +131,7 @@
     <tr><td>Per scene: <code>SceneContext</code>, a scene's <code>LifetimeScope</code></td><td>A component in the scene, which lives with it. A Shared object that only the scene's objects hold ends once the scene unloads, and the next scene's members receive the same object if they need it on the frame it loads. To give one scene its own object of a <code>[Provide]</code> class, add a second <a href="Choose%20between%20several%20candidates.html#settings">preference</a> that sets <code>Scene</code>.</td></tr>
     <tr><td>Per GameObject or prefab instance: <code>GameObjectContext</code>, a child <code>LifetimeScope</code></td><td>A component on the prefab. The Scene Provider looks on the member's GameObject, then its parents and children, so the scripts of each instance receive that instance's own component. To match by hierarchy path instead, use a preference that sets <code>Under</code>.</td></tr>
     <tr><td>Per spawned object: factory arguments, a sub-container</td><td>A <a href="Provide%20objects%20your%20code%20creates.html#local">local block</a> around <code>new</code> or <code>Instantiate</code>.</td></tr>
-    <tr><td>For the whole application: <code>ProjectContext</code>, the root scope</td><td>An object added to the registry, which Selvage never ends, or a Shared object held from something that lasts, such as a static member.</td></tr>
+    <tr><td>For the whole application: <code>ProjectContext</code>, the root scope</td><td>An object with the <a href="Lifetimes.html">Permanent</a> lifetime, or an object added to the registry, which Selvage never ends.</td></tr>
   </table>
 </div>
 <p>For the reasons behind this model, refer to <a href="Design%20decisions.html#lifetimes">Lifetimes without container

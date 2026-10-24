@@ -45,14 +45,14 @@
     <tr id="word-fail"><td>Fail</td><td>What a required member does when its dependency is missing: it keeps its default, and the Console window displays an error.</td></tr>
     <tr id="word-ibd"><td>Inject by Default</td><td>The setting that injects every class of the project. For more information, refer to <a href="Inject%20with%20scopes.html#project">Inject every class of the project</a>.</td></tr>
     <tr id="word-inject"><td>Inject, reinject, release</td><td>Give a member its dependency, give it a new one, and take it back.</td></tr>
-    <tr id="word-lifetime"><td>Lifetime</td><td>Whether members share one provided object (Shared), each receive their own (Separate), or borrow one from a pool (Pooled). For more information, refer to <a href="Lifetimes.html">Lifetimes</a>.</td></tr>
+    <tr id="word-lifetime"><td>Lifetime</td><td>Whether members share one provided object (Shared, or Permanent to keep it until play stops or scripts reload), each receive their own (Separate), or borrow one from a pool (Pooled). For more information, refer to <a href="Lifetimes.html">Lifetimes</a>.</td></tr>
     <tr id="word-local"><td>Local block</td><td>A <code>using (Injector.Local(...))</code> block that gives objects to what you create inside it.</td></tr>
     <tr id="word-member"><td>Member</td><td>A field or property marked <code>[Inject]</code>, or covered by a scope.</td></tr>
     <tr id="word-missing"><td>Missing</td><td>No provider had a dependency for the member.</td></tr>
     <tr id="word-option"><td>Option</td><td>A property of <code>[Inject]</code> that changes how a member is injected, such as <code>Optional</code>. For more information, refer to <a href="Options.html">Options</a>.</td></tr>
     <tr id="word-preference"><td>Preference</td><td>Settings on a candidate that say which members it's for.</td></tr>
     <tr id="word-provide-definition"><td>Provide Definition</td><td>An asset that makes Selvage provide the assets of its folder, or a list of assets.</td></tr>
-    <tr id="word-provide-tuning"><td>Provide Tuning</td><td>A component that changes how the Scene Provider provides the GameObject it's on.</td></tr>
+    <tr id="word-provide-tuning"><td>Provide Tuning</td><td>A component that changes how the Scene Provider provides the GameObject it's on. A Scene Provider with <strong>Require Provide Tuning</strong> enabled gives only GameObjects that have one.</td></tr>
     <tr id="word-provider"><td>Provider</td><td>A class that gives dependencies from one source, such as the Scene Provider, which gives components from the loaded scenes.</td></tr>
     <tr id="word-list"><td>Provider list</td><td>The ordered providers on the <strong>Selvage</strong> page of the Project Settings window. Selvage tries them from top to bottom.</td></tr>
     <tr id="word-ready"><td>Ready</td><td>A context is ready once all its members are injected, including its <code>Async</code> members.</td></tr>

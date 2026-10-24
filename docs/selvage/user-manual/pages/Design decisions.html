@@ -186,7 +186,7 @@
     <tr><td>Service</td><td>Dependency</td><td>A Rigidbody, a Camera or a settings asset isn't a service. Dependency names whatever a member holds.</td></tr>
     <tr><td>Container, installer, binding</td><td>Provider, the provider list</td><td>Nothing is registered per class. Providers give dependencies from their sources, in the order of the provider list.</td></tr>
     <tr><td>Resolve</td><td>Inject</td><td><code>Resolve&lt;T&gt;()</code> is a service locator call. Selvage only injects members.</td></tr>
-    <tr><td>Singleton, transient</td><td>Shared, Separate, Pooled</td><td>To a Unity user, a singleton is a static <code>Instance</code> that lasts for the whole application, and a Shared object doesn't.</td></tr>
+    <tr><td>Singleton, transient</td><td>Permanent, Shared, Separate, Pooled</td><td>To a Unity user, a singleton is a static <code>Instance</code> a class keeps for itself. A lifetime says what members receive and how long Selvage keeps it.</td></tr>
     <tr><td>Lifetime scope</td><td>Lifetime</td><td>Selvage has no lifetime scopes. In Selvage, a scope is where <code>[Inject]</code> applies: a class, an assembly or the project.</td></tr>
     <tr><td>Key, identifier, qualifier</td><td>Preference, channel</td><td>A key must match on both sides. A preference and a channel are hints, never filters.</td></tr>
     <tr><td>Context (a container of a scene or a GameObject)</td><td>Context (the object whose members are injected)</td><td>Object already means <code>UnityEngine.Object</code>, so Selvage needs another word for the object it injects.</td></tr>

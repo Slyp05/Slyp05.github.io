@@ -6,6 +6,28 @@ Title: `Selvage - Native Dependency Injection for Unity`
 
 Selvage adapts to your project, not the other way around: it injects from your scenes, assets and code, checks every dependency before Play, and handles async loading, pooling, live updates and more.
 
+## Tags
+
+Entered one per tag, in this order:
+
+1. dependency injection
+2. DI
+3. IoC
+4. inversion of control
+5. Zenject
+6. VContainer
+7. service locator
+8. singleton
+9. code architecture
+10. SOLID
+11. decoupling
+12. ScriptableObject
+13. object pooling
+14. async
+15. inject
+
+Swaps: IoC container, clean code, Extenject, validation, Addressables.
+
 ## Description
 
 Plain text, pasted as is into the Asset Store description field (it renders no code blocks or markdown).
@@ -62,7 +84,7 @@ Pass data to what you Instantiate, reuse objects from pools, and let what Selvag
 
 ⭐ More Features
 
-• Lifetimes: shared, separate or pooled, for any source.
+• Lifetimes: permanent, shared, separate or pooled, for any source.
 • Cleanup: what Selvage creates is destroyed or disposed once unused. Your own objects are never touched.
 • Several candidates: the right one is picked from names, classes, tags, scenes and more, without keys.
 • Per-field options: optional, injected on demand, or a default that steps aside when a dependency arrives.

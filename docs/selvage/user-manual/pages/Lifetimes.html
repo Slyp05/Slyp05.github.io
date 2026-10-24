@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Decide whether members share an object, each receive their own, or borrow one from a pool." />
+  <meta name="description" content="Decide whether members share an object, each receive their own, or borrow one from a pool, and how long a shared object lasts." />
   <title>Selvage - Lifetimes</title>
   <link rel="stylesheet" href="/assets/css/doc-styles.css" />
   <link rel="stylesheet" href="/assets/css/selvage.css" />
@@ -27,7 +27,7 @@
   <main id="content">
     <div class="page-header">
       <h1>Lifetimes</h1>
-      <div class="sub">Decide whether members share an object, each receive their own, or borrow one from a pool.</div>
+      <div class="sub">Decide whether members share an object, each receive their own, or borrow one from a pool, and how long a shared object lasts.</div>
     </div>
 
 <!-- ====================================== types ==== -->
@@ -38,6 +38,7 @@
 <div class="table-scroll">
   <table class="cmp keycol">
     <tr><th scope="col">Lifetime</th><th scope="col">Each member receives</th><th scope="col">When the member releases it</th></tr>
+    <tr id="permanent"><td><strong>Permanent</strong></td><td>The same object as every other member.</td><td>Nothing: the object stays until play stops, even when no member holds it. One made in Edit mode stays until scripts reload.</td></tr>
     <tr id="shared"><td><strong>Shared</strong> (default)</td><td>The same object as every other member.</td><td>The object ends one frame after no member holds it, so a member of a newly loaded scene can still take it over.</td></tr>
     <tr id="separate"><td><strong>Separate</strong></td><td>Its own object.</td><td>The object ends.</td></tr>
     <tr id="pooled"><td><strong>Pooled</strong></td><td>Its own object, borrowed from a pool.</td><td>The object returns to the pool, to be lent again.</td></tr>
@@ -47,8 +48,9 @@
   <code>IDisposable</code>. Selvage only ends the objects it created, copies included. It never ends an original scene
   component or asset, or an object you add to a registry.</p>
 <p>A Shared object doesn't last for the whole application: after it ends, the next member that needs one receives a
-  new one. To keep one object for the whole application, hold it from an object that lasts,
-  such as a static member.</p>
+  new one, and the state of the old one is lost. Use Permanent for an object that holds state for the whole session,
+  such as a score or the player's settings. A Permanent object made from a registry factory also ends when you remove
+  its entry. Selvage never ends a scene component, so Permanent gives a scene component the same as Shared.</p>
 
 </section>
 
