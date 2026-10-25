@@ -18,6 +18,14 @@
     <div class="page-header">
       <h1>Validate members</h1>
       <div class="sub">Check whether each member will receive a dependency, without entering Play mode.</div>
+      <div class="guide-index">
+        <a href="#validate">Validate a GameObject or an asset</a>
+        <a href="#reasons">Read the reason for a result</a>
+        <a href="#explain">Find out where a dependency comes from</a>
+        <a href="#project">Validate the whole project</a>
+        <a href="#gates">Validate when you build or enter Play mode</a>
+        <a href="#strict">Require every member to be guaranteed</a>
+      </div>
     </div>
 
 <!-- ====================================== validate ==== -->
@@ -112,6 +120,39 @@
   entering Play mode is blocked, select <strong>Show in Dependencies</strong> to list the members that blocked it. For
   more information, refer to <a href="Project%20Settings%20reference.html#validation">Project Settings
   reference</a>.</p>
+
+</section>
+<!-- ====================================== strict ==== -->
+<section id="strict">
+  <h2>Require every member to be guaranteed</h2>
+<p>To treat every required member that isn't <strong>Guaranteed</strong> as <strong>Missing</strong>, enable
+  <strong>Strict Validation</strong> in <strong>Edit</strong> &gt; <strong>Project Settings</strong> &gt;
+  <strong>Selvage</strong>, or select <strong>Strict</strong> in the Validation tab. A project that passes has every
+  required dependency proven in the Editor.</p>
+<p>A component the member's class requires with <code>[RequireComponent]</code> is <strong>Guaranteed</strong>. For
+  more information, refer to <a href="Provide%20scene%20components.html#guaranteed">Guarantee a component on the
+  member's GameObject</a>.</p>
+<p>The check can't see what your code provides while playing, such as an object you add to a registry, so members of
+  that type are <strong>May Be Supplied</strong>. To have them count as <strong>Guaranteed</strong>, promise the type
+  in any script of your project:</p>
+<pre><code>[<span class="kw">assembly</span>: <span class="ty">Promise</span>(<span class="kw">typeof</span>(<span class="ty">IAudio</span>))]</code></pre>
+<p>Then keep the promise: add the object before a member of its type is injected, for example from a method marked
+  <code>[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]</code>. Any provider can keep it.
+  When no provider has the dependency as a required member is injected, the member fails, and the error names the
+  promise. On the member's row, <strong>Explain</strong> ends with the promise, after the providers.</p>
+<p>A promise covers Play mode only. A member with the <a href="Options.html#editmode"><code>EditMode</code></a> option
+  is also injected while editing, so the promise doesn't make it <strong>Guaranteed</strong>.</p>
+<p>When the dependency arrives later, set how long it may take, in
+  seconds of real time from when the member is injected:</p>
+<pre><code>[<span class="kw">assembly</span>: <span class="ty">Promise</span>(<span class="kw">typeof</span>(<span class="ty">ISaveData</span>), WithinSeconds = <span class="nu">30</span>)]</code></pre>
+<p>A member with the <a href="Options.html#async"><code>Async</code></a> option then waits until a provider has one.
+  A member with the <a href="Options.html#warm"><code>Warm</code></a> option receives it once a provider has one:
+  at once if it's also <a href="Options.html#reactive"><code>Reactive</code></a>, otherwise on its next
+  <code>Manual.Reinject</code> call. The check reports the members with neither option. If no provider has one in
+  time, a required member fails, and the error names the promise. While a member waits, the Live tab of the
+  Dependencies window reads <strong>Waiting on a provider to have one</strong>. For a dependency whose arrival depends
+  on the player, such as a login, use <code>float.PositiveInfinity</code> to wait without a limit. A scene object wakes the members waiting for it only when its
+  <a href="Provide%20Tuning%20reference.html">Provide Tuning</a> is <strong>Watched</strong>.</p>
 
 </section>
 <div class="resources">

@@ -45,9 +45,14 @@
   in the constructor. A handler you add after the operation completed runs at once.</p>
 <p>To wait for another context, pass it instead of <code>this</code>. For the static members of a class, pass the class's
   <code>Type</code>. If the context is released or destroyed before it's
-  ready, the wait completes as <code>CanceledOrDetached</code>. If it's never injected, such as an object of a class
-  from a precompiled DLL that nothing passes to <code>Manual.Inject</code>, the wait fails with a
-  <code>TimeoutException</code> after two minutes.</p>
+  ready, the wait completes as <code>CanceledOrDetached</code>.</p>
+<p>If the context isn't ready within two minutes, the wait fails with a <code>TimeoutException</code>, which names
+  the likely cause, such as an inactive GameObject or a class from a precompiled DLL that nothing passes to
+  <code>Manual.Inject</code>. The context itself keeps injecting. To change the limit, pass it in seconds:</p>
+<pre><code><span class="kw">yield return</span> <span class="ty">Context</span>.WhenReady(panel, <span class="nu">600</span>);                    <span class="cm">// a panel the player may open later</span>
+<span class="kw">yield return</span> <span class="ty">Context</span>.WhenReady(panel, <span class="kw">float</span>.PositiveInfinity);  <span class="cm">// no limit</span></code></pre>
+<p>With <code>0</code>, the wait fails at once unless the context is already ready. To check without an error, use
+  <code>Context.IsReady</code>.</p>
 
 </section>
 
@@ -64,7 +69,7 @@
     <tr><td><code>Exception</code></td><td>The failure of a failed operation, otherwise <code>null</code>.</td></tr>
     <tr><td><code>IsComplete</code></td><td>Whether the operation has finished, whatever its outcome.</td></tr>
     <tr><td><code>Detach()</code></td><td>Stops waiting now. The operation completes as <code>CanceledOrDetached</code>, but the injection keeps running. To stop the injection, call <code>Manual.Release</code>.</td></tr>
-    <tr><td><code>DetachAfter(seconds)</code></td><td>Stops waiting after a delay, in seconds or as a <code>TimeSpan</code>, to set a timeout: <code>await Context.WhenReady(this).DetachAfter(5);</code></td></tr>
+    <tr><td><code>DetachAfter(seconds)</code></td><td>Stops waiting after a delay, in seconds or as a <code>TimeSpan</code>, without an error: <code>await Context.WhenReady(this).DetachAfter(5);</code></td></tr>
     <tr><td><code>Completed</code>, <code>Subscribe(...)</code></td><td>Run code when the operation completes. <code>Subscribe</code> takes one callback per outcome, and returns an action that unsubscribes them.</td></tr>
     <tr><td><code>ThrowIfNotSucceeded()</code></td><td>Throws the failure of a failed operation, or an <code>OperationCanceledException</code> for a canceled one.</td></tr>
     <tr><td><code>AsTask()</code></td><td>The operation as a <code>Task</code>, such as for <code>Task.WhenAll</code>.</td></tr>

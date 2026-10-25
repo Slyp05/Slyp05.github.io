@@ -97,6 +97,7 @@
     ] },
     { file: "pages/Provide scene components.html", title: "Provide scene components", sections: [
       ["inject", "Provide a component"],
+      ["guaranteed", "Guarantee a component on the member's GameObject"],
       ["closest", "How the Scene Provider chooses a component"],
       ["settings", "Change how far the Scene Provider looks"],
       ["marked", "Provide only the objects you mark"],
@@ -167,7 +168,8 @@
       ["reasons", "Read the reason for a result"],
       ["explain", "Find out where a dependency comes from"],
       ["project", "Validate the whole project"],
-      ["gates", "Validate when you build or enter Play mode"]
+      ["gates", "Validate when you build or enter Play mode"],
+      ["strict", "Require every member to be guaranteed"]
     ] },
     { file: "pages/Inspect injected members.html", title: "Inspect injected members", sections: [
       ["inspector", "Display the state of each member"],
@@ -224,7 +226,7 @@
     { file: "pages/What sets Selvage apart.html", title: "What sets Selvage apart", sections: [
       ["overview", "Overview"],
       ["sources", "Provide from any source"],
-      ["wiring", "Injection without wiring code"],
+      ["wiring", "Inject without wiring code"],
       ["scopes", "Inject without marking members"],
       ["conventions", "Choose with what your code already says"],
       ["async", "Asynchronous dependencies"],

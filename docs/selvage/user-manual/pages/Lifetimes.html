@@ -75,7 +75,8 @@
   instance is released.</p>
 <p>A copy made with <code>Instantiate</code> holds what Unity serializes, as with any <code>Instantiate</code>, and a
   copy of a scene component duplicates its whole GameObject beside the original. A copy's own members are injected
-  again, never copied.</p>
+  again, never copied. A member of a script on the same GameObject as the component receives the component itself,
+  whatever its lifetime.</p>
 <p>Members that receive the same Shared <code>[Provide]</code> class, registry entry, asset or scene component share
   one object. To give some members their own Shared object of a <code>[Provide]</code> class, add a second
   <code>[Preference]</code> that matches them: each preference on the class has its own object. For more information, refer to
@@ -114,7 +115,7 @@
 <span class="kw">void</span> OnHit() =&gt; <span class="ty">Manual</span>.Release(<span class="kw">this</span>, <span class="kw">nameof</span>(projectile));   <span class="cm">// TryReset, then back to the pool</span></code></pre>
 <p>A pool belongs to one <code>[Provide]</code> class, registry entry, asset or scene object, and empties when that
   source changes, such as when you edit its Provide Definition or remove its registry entry. Objects waiting in a pool
-  are destroyed when you enter or exit Play mode. Objects Selvage creates in Edit mode are never saved into your
+  are destroyed when you enter or exit Play mode, and before scripts reload. Objects Selvage creates in Edit mode are never saved into your
   scenes.</p>
 
 </section>

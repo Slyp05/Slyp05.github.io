@@ -61,7 +61,7 @@
         =&gt; (request.Type == <span class="kw">typeof</span>(<span class="ty">Camera</span>)) ? <span class="ty">Verdict</span>.Maybe() : <span class="ty">Verdict</span>.Never;
 
     <span class="kw">protected</span> <span class="kw">override</span> <span class="ty">Supply</span> Provide(<span class="ty">Request</span> request, <span class="kw">object</span> context, <span class="kw">object</span> channel)
-        =&gt; (<span class="ty">Camera</span>.main != <span class="kw">null</span>) ? <span class="ty">Supply</span>.Borrowed(<span class="ty">Camera</span>.main) : <span class="ty">Supply</span>.Decline;
+        =&gt; (<span class="ty">Camera</span>.main != <span class="kw">null</span>) ? <span class="ty">Supply</span>.Borrowed(<span class="ty">Camera</span>.main) : <span class="ty">Supply</span>.Decline();
 }</code></pre>
 <p>To use the provider, add it to the provider list with <strong>+</strong>. The class must have the
   <code>[Serializable]</code> attribute and a constructor without parameters. Without <code>[Serializable]</code>, the
@@ -99,13 +99,21 @@
     <tr><td><code>Verdict.Never</code></td><td>The provider never gives this type. Selvage tries the next provider.</td><td>The next provider's result</td></tr>
     <tr><td><code>Verdict.Maybe()</code></td><td><code>Provide</code> can decline, because whether it has a dependency is only known when the member is injected.</td><td>May Be Supplied</td></tr>
     <tr><td><code>Verdict.Always()</code></td><td><code>Provide</code> always gives a dependency. A decline after this verdict is an error.</td><td>Guaranteed</td></tr>
-    <tr><td><code>Verdict.Veto</code></td><td>No provider gives this type: Selvage tries no provider below. Use it to forbid what a provider below would give.</td><td>Missing</td></tr>
+    <tr><td><code>Verdict.Veto(reason)</code></td><td>No provider gives this type: Selvage tries no provider below. Use it to forbid what a provider below would give. The Validation tab shows <code>reason</code>, and so does the error a required member fails with.</td><td>Missing</td></tr>
     <tr><td><code>Verdict.Redirect(type)</code></td><td>Give what the provider list gives for another type, such as a class for its interface. The type must be assignable to the requested type, otherwise Selvage logs an error and the dependency is missing.</td><td>That type's result</td></tr>
   </table>
 </div>
-<p><code>Maybe</code> and <code>Always</code> take two optional arguments: <code>canRevoke</code>, for a dependency
-  that may have to be dropped while members hold it (refer to <a href="#change">Dependencies that change</a>), and
-  <code>mustWait</code>, for a dependency that takes time (refer to <a href="#async">Asynchronous providers</a>).</p>
+<p><code>Maybe</code> and <code>Always</code> take three optional arguments:</p>
+<ul>
+  <li><code>canRevoke</code>, for a dependency that may have to be dropped while members hold it. For more
+    information, refer to <a href="#change">Dependencies that change</a>.</li>
+  <li><code>mustWait</code>, for a dependency that takes time. For more information, refer to
+    <a href="#async">Asynchronous providers</a>.</li>
+  <li><code>makes</code>, the class the provider creates for the request, when you know it before you enter Play
+    mode. The Validation tab then follows that class's members to report a dependency cycle that never ends. A
+    provider that doesn't override <code>ShareKey</code> creates a new instance for each member; one that does is taken
+    to share what it creates, which closes a cycle.</li>
+</ul>
 
 </section>
 
@@ -117,24 +125,26 @@
 <div class="table-scroll">
   <table class="cmp keycol">
     <tr><th scope="col">Supply</th><th scope="col">Description</th></tr>
-    <tr><td><code>Supply.Borrowed(instance)</code></td><td>An object that belongs to something else, such as a component or an asset. Selvage never ends it.</td></tr>
+    <tr><td><code>Supply.Borrowed(instance)</code></td><td>An object that belongs to something else, such as a component or an asset. Selvage never injects or ends it.</td></tr>
+    <tr><td><code>Supply.Made(instance)</code></td><td>An object the provider has just made, or taken from its own pool. Selvage injects it, and the provider ends it in <code>TearDown</code>.</td></tr>
     <tr><td><code>Supply.Owned(instance)</code></td><td>An object Selvage injects, and ends once no member holds it.</td></tr>
-    <tr><td><code>Supply.Decline</code></td><td>No dependency. Selvage tries the next provider.</td></tr>
+    <tr><td><code>Supply.Decline(reason)</code></td><td>No dependency. Selvage tries the next provider. After <code>Verdict.Always</code>, the error Selvage logs gives <code>reason</code>.</td></tr>
+    <tr><td><code>Supply.Veto(reason)</code></td><td>No dependency, and no provider below may give one: the member is missing, and Selvage logs <code>reason</code> as an error. Use it when what decides is only known at injection, such as several candidates nothing tells apart.</td></tr>
   </table>
 </div>
 <p>If <code>Evaluate</code>, <code>ShareKey</code> or <code>Provide</code> throws an exception, the member fails,
-  Selvage logs the exception with the provider's name, and tries no other provider. <code>Supply.Borrowed</code> and
-  <code>Supply.Owned</code> throw an exception when you pass <code>null</code> or a destroyed Unity object: to give
-  nothing, return <code>Supply.Decline</code>.</p>
+  Selvage logs the exception with the provider's name, and tries no other provider. <code>Supply.Borrowed</code>,
+  <code>Supply.Made</code> and <code>Supply.Owned</code> throw an exception when you pass <code>null</code> or a destroyed Unity object: to give
+  nothing, return <code>Supply.Decline()</code>.</p>
 <p>When the last member releases an instance, two steps run in order:</p>
 <ol>
   <li>The provider's <code>TearDown(instance)</code>, or <code>TearDownAsync(instance)</code>, for every instance it
-    gave, borrowed or owned. It does nothing by default. Override it to run your own code, such as returning the
+    gave, borrowed, made or owned. It does nothing by default. Override it to run your own code, such as returning the
     instance to your own pool.</li>
   <li>For an owned instance only, Selvage ends it: it destroys a Unity object (with <code>DestroyImmediate</code> in
     Edit mode), and disposes an object that implements <code>IDisposable</code> or <code>IAsyncDisposable</code>.</li>
 </ol>
-<p>A provider that ends an instance its own way gives it with <code>Supply.Borrowed</code>, and ends it in
+<p>A provider that ends an instance its own way gives it with <code>Supply.Made</code>, and ends it in
   <code>TearDown</code>. Selvage waits for <code>TearDownAsync</code> to complete before it tears down the next member's
   dependency, and logs a teardown that fails with the provider's name.</p>
 
@@ -168,7 +178,7 @@
     <span class="ty">Request</span> request, <span class="kw">object</span> context, <span class="kw">object</span> channel, <span class="ty">CancellationToken</span> cancellationToken)
 {
     <span class="ty">Catalog</span> catalog = <span class="kw">await</span> <span class="ty">Catalog</span>.LoadAsync(cancellationToken);
-    <span class="kw">return</span> (catalog != <span class="kw">null</span>) ? <span class="ty">Supply</span>.Owned(catalog) : <span class="ty">Supply</span>.Decline;
+    <span class="kw">return</span> (catalog != <span class="kw">null</span>) ? <span class="ty">Supply</span>.Owned(catalog) : <span class="ty">Supply</span>.Decline();
 }</code></pre>
 <p>With <code>mustWait: true</code>, only <a href="Options.html#async"><code>Async</code></a> and
   <a href="Options.html#warm"><code>Warm</code></a> members use the provider. A member that can't wait receives from such a provider only a shared instance that already exists, and the Validation tab flags
@@ -201,10 +211,11 @@
 <ul>
   <li>The verdict, <code>Verdict.Maybe(canRevoke: true)</code> or <code>Verdict.Always(canRevoke: true)</code>: every
     dependency of the request can be revoked. The Validation tab indicates it on the member's row.</li>
-  <li>The supply, <code>Supply.Borrowed(instance, canRevoke: true)</code> or <code>Supply.Owned(instance, canRevoke:
-    true)</code>: only that object can be revoked, such as one that your provider knows can go away.</li>
+  <li>The supply, <code>Supply.Borrowed(instance, canRevoke: true)</code>, and the same argument of
+    <code>Supply.Made</code> and <code>Supply.Owned</code>: only that object can be revoked, such as one that your provider knows can go away.</li>
 </ul>
-<p>Passing a dependency the provider didn't give logs an error. A revoke that reaches no member logs a warning. Call
+<p><code>RaiseChanged(dependency)</code> returns whether members hold the dependency from this provider, and reaches
+  no member otherwise. A revoke that reaches no member logs a warning. Call
   these methods on the main thread.</p>
 
 </section>

@@ -30,6 +30,7 @@
       <div class="sub">Provide components from the same GameObject or from the loaded scenes.</div>
       <div class="guide-index">
         <a href="#inject">Provide a component</a>
+        <a href="#guaranteed">Guarantee a component on the member's GameObject</a>
         <a href="#closest">How the Scene Provider chooses a component</a>
         <a href="#settings">Change how far the Scene Provider looks</a>
         <a href="#marked">Provide only the objects you mark</a>
@@ -57,8 +58,40 @@
   <a href="Lifetimes.html">Separate and Pooled lifetimes</a>. When the component is destroyed, a member that holds it reads
   as <code>null</code>, like any reference to a destroyed object.</p>
 <div class="note"><strong>Note:</strong> What a scene holds is only known when the member is injected, so the
-  Inspector window and the Dependencies window show these members as <strong>May Be Supplied</strong>. For more information, refer to
+  Inspector window and the Dependencies window show these members as <strong>May Be Supplied</strong>, except
+  <a href="#guaranteed">what the member's own GameObject always holds</a>. For more information, refer to
   <a href="Validate%20members.html">Validate members</a>.</div>
+
+</section>
+
+<!-- ====================================== guaranteed ==== -->
+<section id="guaranteed">
+  <h2>Guarantee a component on the member's GameObject</h2>
+<p>A member is <strong>Guaranteed</strong> when the member's own GameObject always holds what it asks for:</p>
+<ul>
+  <li>A member of type <code>GameObject</code> or <code>Transform</code>.</li>
+  <li>A member of a component type that the member's class requires with <code>[RequireComponent]</code>, or a
+    class or interface that component is. A requirement on a base class counts, and so does a requirement of a
+    required component.</li>
+</ul>
+<pre><code>[<span class="ty">RequireComponent</span>(<span class="kw">typeof</span>(<span class="ty">Rigidbody</span>))]
+<span class="kw">public class</span> <span class="ty">Player</span> : <span class="ty">MonoBehaviour</span>
+{
+    [Inject] <span class="ty">Rigidbody</span> body;   <span class="cm">// Guaranteed</span>
+}</code></pre>
+<p>With <a href="#marked"><strong>Require Provide Tuning</strong></a> enabled, the member's GameObject counts only when
+  the class also requires a Provide Tuning component:
+  <code>[RequireComponent(typeof(Rigidbody), typeof(ProvideTuning))]</code>.</p>
+<p>A member stays <strong>May Be Supplied</strong> when several components the GameObject always holds fit its type,
+  because <a href="#closest">two components at the same distance</a> are an error. This applies to a member of type
+  <code>Component</code> or <code>MonoBehaviour</code>, of the member's own class, or of a type two required
+  components share, such as a <code>Collider</code> member when the class requires both a <code>BoxCollider</code>
+  and a <code>SphereCollider</code>. A static member stays <strong>May Be Supplied</strong> too: it has no GameObject of
+  its own.</p>
+<p>Unity adds a required component only when you add the component that requires it. A GameObject set up before the
+  class gained its <code>[RequireComponent]</code> can lack the required component: the Console window then displays an
+  error that names the GameObject and what it lacks, and the next provider is asked. To fix it, add what it lacks
+  to the GameObject.</p>
 
 </section>
 
@@ -128,7 +161,7 @@
     <tr><td>One for the whole game</td><td>Make a prefab of it, and provide the prefab with a <a href="Provide%20assets.html">Provide Definition</a> set to <strong>Permanent</strong>. The Scene Provider comes first, so a component already in the scene still wins.</td></tr>
     <tr><td>One in a scene</td><td>Add it to a GameObject in that scene.</td></tr>
     <tr><td>One for each member, or one lent from a pool</td><td>Add it to a GameObject, with a <a href="#tuning">Provide Tuning</a> component set to <strong>Separate</strong> or <strong>Pooled</strong>.</td></tr>
-    <tr><td>One on the member's own GameObject</td><td>Add <code>[RequireComponent(typeof(...))]</code> to the member's class, so Unity adds it in the Editor.</td></tr>
+    <tr><td>One on the member's own GameObject</td><td>Add <code>[RequireComponent(typeof(...))]</code> to the member's class, so Unity adds it in the Editor. The member is then <a href="#guaranteed">guaranteed</a>.</td></tr>
   </table>
 </div>
 

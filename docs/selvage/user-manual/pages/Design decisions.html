@@ -153,7 +153,7 @@
 <p>In .NET, a container scope matches a unit of work, such as a web request, and a singleton lives as long as the
   application. Containers for Unity map scopes onto scenes and prefabs, through a hierarchy of containers you
   declare.</p>
-<p>Unity objects already have lifetimes, so Selvage declares no scopes. An object Selvage creates lives while a member
+<p>Unity objects already have lifetimes, so Selvage declares no container scopes. An object Selvage creates lives while a member
   holds it, and the Scene Provider gives the component closest to the member, so what a scene or a prefab instance
   shares follows from where objects are and which members hold them. For the equivalent of each container scope, refer to
   <a href="Migrate%20from%20Zenject%20or%20VContainer.html#scopes">Container scopes</a>. For more information, refer

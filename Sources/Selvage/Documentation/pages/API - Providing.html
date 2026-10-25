@@ -22,6 +22,7 @@
       <a href="#LocalDependencies"><span class="badge badge-struct">struct</span>LocalDependencies</a>
       <a href="#Lifetime"><span class="badge badge-enum">enum</span>Lifetime</a>
       <a href="#IPreference"><span class="badge badge-interface">iface</span>IPreference</a>
+      <a href="#PromiseAttribute"><span class="badge badge-class">attr</span>PromiseAttribute</a>
     </div>
     <div class="nav-group">Scene</div>
     <div class="nav-group-body">
@@ -141,6 +142,25 @@
           <tr><th scope="row"><span class="t">string</span> <span class="mn">Layer</span> { get; }</th><td>Matches contexts whose GameObject is on this layer.</td></tr>
           <tr><th scope="row"><span class="t">string</span> <span class="mn">Scene</span> { get; }</th><td>Matches contexts whose GameObject is in the scene with this name.</td></tr>
           <tr><th scope="row"><span class="t">string</span> <span class="mn">Under</span> { get; }</th><td>Matches contexts whose GameObject is at this path from its scene's root, or below it: <code>"UI/HUD"</code>. A <code>/</code> inside a GameObject's name counts as a level of the path.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- PromiseAttribute -->
+    <div class="type-section" id="PromiseAttribute">
+      <div class="type-header"><h3>PromiseAttribute</h3><span class="badge badge-class">attr</span><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">Promises that a provider has a dependency of a type whenever a member of that type is injected in Play mode, so the Editor counts those members as guaranteed: <code>[assembly: Promise(typeof(IHttp))]</code>. Use it for what your code adds at runtime, such as an object added to a registry before the first scene loads. When no provider has one, the member fails with an error naming the promise. Members injected in Edit mode are not covered. Explained in <a href="Validate%20members.html#strict">Require every member to be guaranteed</a>.</p>
+      <div class="member-group">
+        <div class="member-group-title">Constructors</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="mn">PromiseAttribute</span>(<span class="t">Type</span> dependency)</th><td>Promises that a provider has a <code>dependency</code> whenever a member of that type is injected in Play mode. A generic type definition, such as <code>typeof(IRepository&lt;&gt;)</code>, covers every type made from it.</td></tr>
+        </table>
+      </div>
+      <div class="member-group">
+        <div class="member-group-title">Properties</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t">Type</span> <span class="mn">Dependency</span> { get; }</th><td>The type of the members the promise covers.</td></tr>
+          <tr><th scope="row"><span class="t">float</span> <span class="mn">WithinSeconds</span> { get; set; }</th><td>How long after a member is injected the dependency may arrive, in real time: zero (the default) means it is there at once. Above zero, members marked <code>Async</code> wait for it and fail once the time has passed without one, members marked <code>Warm</code> receive it once a provider has one, and the Editor reports the other members. <code>float.PositiveInfinity</code> waits without a limit.</td></tr>
         </table>
       </div>
     </div>

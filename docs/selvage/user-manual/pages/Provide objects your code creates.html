@@ -56,7 +56,9 @@
 <p>Members of the declared type <code>T</code>, and of each base class and interface of <code>T</code>, receive the
   object you add. A member injected before you add the object receives it only if it's
   <a href="Options.html#reactive"><code>Reactive</code></a> and doesn't hold a dependency from a provider above this
-  registry. Otherwise, call <code>Manual.Reinject</code>. To add an object before the first scene loads, use
+  registry. Otherwise, call <code>Manual.Reinject</code>. An <a href="Options.html#async"><code>Async</code></a> member
+  waits for an object you add later only when you promise its type with <code>WithinSeconds</code>, as described in
+  <a href="Validate%20members.html#strict">Require every member to be guaranteed</a>. To add an object before the first scene loads, use
   <code>[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]</code>. When a Unity object you added
   is destroyed, Selvage removes it from the registry with a warning, and the next provider is tried.</p>
 <p>To give each member its own object, pass a <a href="Lifetimes.html">lifetime</a> as the second argument. Selvage
@@ -66,8 +68,9 @@
   remove them, and serve <a href="Options.html#editmode"><code>EditMode</code></a> members.</p>
 <p>The Validation tab of the Dependencies window shows a member as <strong>Guaranteed</strong> when the registry holds
   an object for it, and as <strong>May Be Supplied</strong> when it holds a function, or nothing yet, because code can
-  add to a registry at any time. When two entries could both be injected into a member and nothing tells them apart,
-  Selvage displays an error that names both.</p>
+  add to a registry at any time. To have such members count as <strong>Guaranteed</strong>, promise their type: refer
+  to <a href="Validate%20members.html#strict">Require every member to be guaranteed</a>. When two entries could both
+  be injected into a member and nothing tells them apart, Selvage displays an error that names both.</p>
 <p><code>RegistryProvider.Listed</code> is readable from
   <code>RuntimeInitializeLoadType.BeforeSceneLoad</code> on, and stays the same object until scripts reload, so you
   can keep a reference to it.</p>

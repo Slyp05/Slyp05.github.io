@@ -31,7 +31,7 @@
       <div class="guide-index">
         <a href="#overview">Overview</a>
         <a href="#sources">Provide from any source</a>
-        <a href="#wiring">Injection without wiring code</a>
+        <a href="#wiring">Inject without wiring code</a>
         <a href="#scopes">Inject without marking members</a>
         <a href="#conventions">Choose with what your code already says</a>
         <a href="#async">Asynchronous dependencies</a>
@@ -79,7 +79,7 @@
         =&gt; (request.Type == <span class="kw">typeof</span>(<span class="ty">Camera</span>)) ? <span class="ty">Verdict</span>.Maybe() : <span class="ty">Verdict</span>.Never;
 
     <span class="kw">protected</span> <span class="kw">override</span> <span class="ty">Supply</span> Provide(<span class="ty">Request</span> request, <span class="kw">object</span> context, <span class="kw">object</span> channel)
-        =&gt; (<span class="ty">Camera</span>.main != <span class="kw">null</span>) ? <span class="ty">Supply</span>.Borrowed(<span class="ty">Camera</span>.main) : <span class="ty">Supply</span>.Decline;
+        =&gt; (<span class="ty">Camera</span>.main != <span class="kw">null</span>) ? <span class="ty">Supply</span>.Borrowed(<span class="ty">Camera</span>.main) : <span class="ty">Supply</span>.Decline();
 }</code></pre>
 <p>Your provider gets the same treatment as the providers that ship with Selvage: the Dependencies window validates
   the members it serves, Selvage ends what it owns once no member holds it, and it can load in the background or announce a
@@ -93,7 +93,7 @@
 
 <!-- ====================================== wiring ==== -->
 <section id="wiring">
-  <h2>Injection without wiring code</h2>
+  <h2>Inject without wiring code</h2>
 <p>A member only declares what the script needs. Nothing registers the script, and nothing calls a resolve method:
   Selvage injects each context when it's created: at the end of <code>Awake</code> for a MonoBehaviour, or of
   the constructor for a plain C# class. Selvage adds that call when Unity compiles your scripts.</p>
@@ -183,7 +183,7 @@
 <!-- ====================================== lifetimes ==== -->
 <section id="lifetimes">
   <h2>Lifetimes that follow Unity objects</h2>
-<p>A container makes you declare scopes, such as one per scene or per prefab, and bind objects in each. Selvage has
+<p>A container makes you declare container scopes, such as one per scene or per prefab, and bind objects in each. Selvage has
   none to declare: what members share per scene, per prefab instance or per spawned object follows from where objects
   are and which members hold them. For the equivalent of each container scope, refer to
   <a href="Migrate%20from%20Zenject%20or%20VContainer.html#scopes">Container scopes</a>.</p>
@@ -228,7 +228,9 @@
 <p>The Inspector window and the Validation tab of the Dependencies window tell you whether each member will receive
   a dependency, before you enter Play mode and without running your code. Each member is <strong>Guaranteed</strong>, <strong>May Be
   Supplied</strong> or <strong>Missing</strong>, and <strong>Explain</strong> shows which provider gives it and why
-  each provider above didn't. By default, a build with a Missing member is blocked. Code analysis reports mistakes
+  each provider above didn't. By default, a build with a Missing member is blocked. With strict validation, a project
+  passes only when every required member is Guaranteed, and <code>[assembly: Promise]</code> counts a type your code
+  provides at runtime. Code analysis reports mistakes
   in your IDE as you type. For more information, refer to <a href="Validate%20members.html">Validate
   members</a>.</p>
 <p>Injection also works outside Play mode: an <code>EditMode</code> member is injected in Edit mode, for

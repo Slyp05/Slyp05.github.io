@@ -34,7 +34,7 @@
 <div class="table-scroll">
   <table class="cmp keycol">
     <tr><th scope="col">Property</th><th scope="col">Description</th></tr>
-    <tr><td><strong>Lifetime</strong></td><td><strong>Shared</strong> and <strong>Permanent</strong>: every member receives this object. <strong>Separate</strong> and <strong>Pooled</strong>: each member receives a copy of the whole GameObject, made beside it with <code>Instantiate</code>. For more information, refer to <a href="Lifetimes.html">Lifetimes</a>.</td></tr>
+    <tr><td><strong>Lifetime</strong></td><td><strong>Shared</strong> and <strong>Permanent</strong>: every member receives this object. <strong>Separate</strong> and <strong>Pooled</strong>: each member receives a copy of the whole GameObject, made beside it with <code>Instantiate</code>. A member of a script on this GameObject receives the object itself, whatever the lifetime. For more information, refer to <a href="Lifetimes.html">Lifetimes</a>.</td></tr>
     <tr><td><strong>Watched</strong></td><td>Whether members follow this object in Play mode: when it's destroyed, every member holding it drops it, and when it's enabled, <code>Reactive</code> members are injected again and may move to it. Disabled by default. For more information, refer to <a href="Provide%20scene%20components.html#watch">Follow a scene object</a>.</td></tr>
     <tr><td><strong>When Deactivated</strong></td><td>Appears when <strong>Watched</strong> is enabled. What deactivating the GameObject does to the members holding it:<ul>
       <li><strong>Keep</strong>: members keep it, and <code>Reactive</code> members are injected again. This is the default.</li>

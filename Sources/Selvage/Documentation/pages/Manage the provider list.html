@@ -56,14 +56,14 @@
   <table class="cmp keycol">
     <tr><th scope="col">Provider</th><th scope="col">Gives</th><th scope="col">Can be Guaranteed</th></tr>
     <tr><td><strong>Registry Provider</strong></td><td><a href="Provide%20objects%20your%20code%20creates.html#registry">Objects your code adds</a>.</td><td>For an object added, not for a function</td></tr>
-    <tr><td><strong>Scene Provider</strong></td><td><a href="Provide%20scene%20components.html">Components in the loaded scenes</a>.</td><td>No</td></tr>
+    <tr><td><strong>Scene Provider</strong></td><td><a href="Provide%20scene%20components.html">Components in the loaded scenes</a>.</td><td><a href="Provide%20scene%20components.html#guaranteed">For what the member's own GameObject always holds</a></td></tr>
     <tr><td><strong>Attribute Provider</strong></td><td><a href="Provide%20your%20own%20classes.html">Instances of classes marked <code>[Provide]</code></a>.</td><td>Yes</td></tr>
     <tr><td><strong>Asset Provider</strong></td><td><a href="Provide%20assets.html">Assets of Provide Definitions</a>.</td><td>Yes</td></tr>
   </table>
 </div>
 <p>The <strong>Can be Guaranteed</strong> column indicates whether the Validation tab of the Dependencies window can
-  confirm in advance that the provider gives a dependency. What a scene contains, or what code adds later, is only known
-  when the member is injected.</p>
+  confirm in advance that the provider gives a dependency. What a scene contains, apart from what
+  the member's own GameObject always holds, and what code adds later are only known when the member is injected.</p>
 
 </section>
 

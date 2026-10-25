@@ -46,8 +46,9 @@ stubs.Add&lt;<span class="ty">IAnalytics</span>&gt;(<span class="kw">new</span> 
 <span class="ty">MatchReport</span> report = <span class="kw">new</span>();   <span class="cm">// a plain class: its [Inject] IAnalytics member receives FakeAnalytics</span>
 
 <span class="ty">Injector</span>.Remove(stubs);                         <span class="cm">// 3. The other providers answer again</span></code></pre>
-<p>Step 3 is optional in a test and in Play mode: Selvage removes a provider added during a Test Runner test when the
-  test ends, and a provider added in Play mode when you exit Play mode.</p>
+<p>Step 3 is optional in a test run in the Editor and in Play mode: Selvage removes a provider added during a Test Runner
+  test when the test ends, and a provider added in Play mode when you exit Play mode. A test run on a player keeps what
+  it added, so remove it in the test's <code>TearDown</code>.</p>
 <p>A member that was injected before the swap keeps its dependency, unless it's
   <a href="Options.html#reactive"><code>Reactive</code></a>. To give it the replacement, call
   <code>Manual.Reinject</code>.</p>
