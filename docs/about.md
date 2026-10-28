@@ -15,6 +15,14 @@ body_class: about-page
   <p><em>Juste</em> is a French word with no English equivalent: fair, principled, true, measured. It is a value I strive for, and what the scale in the logo stands for.</p>
 </div>
 
+## The Tools I Make {#the-tools-i-make}
+
+<div class="about-text">
+  <p>I'm a big nerd, so I love metaprogramming: code that writes, rewrites or checks other code. A lot of my tools are built on it.</p>
+  <p>I use it to make advanced techniques simple and accessible to everyone, not to build big frameworks you have to learn and organize your game around.</p>
+  <p>My code tools are made for people who write their own code, with or without an AI agent at their side. If you code by hand, they save you the boring parts. If you work with an agent, they help you check what it wrote and see what that code really does.</p>
+</div>
+
 ## My Stance on AI {#my-stance-on-ai}
 
 <div class="about-text">

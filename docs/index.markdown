@@ -5,8 +5,8 @@ layout: home
 <h1 class="home-title"><img src="/assets/images/logo.png" alt="Juste Tools" class="home-image" width="600" height="352" decoding="async"></h1>
 
 <div class="home-intro">
-  <p>Juste Tools is where I make the Unity tools I always wished existed: clean APIs, solid architecture, and docs that actually help.</p>
-  <p>Each one is shaped by real production experience at top mobile studios, and built to be a pleasure to use.</p>
+  <p>Juste Tools is where I make the Unity tools I always wished existed: hard problems, made simple.</p>
+  <p>Each one is shaped by real production experience at top mobile studios, and built to fit into your project, not take it over.</p>
 </div>
 
 {%- assign live = site.data.packages | where: "released", true -%}
