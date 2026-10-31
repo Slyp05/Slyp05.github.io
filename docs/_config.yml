@@ -39,6 +39,12 @@ defaults:
       path: "selvage"
     values:
       sitemap: false
+  # CloneBuster is unreleased: keep its whole doc tree out of the sitemap.
+  # Remove this entry (and `sitemap: false` in clonebuster.md) on release.
+  - scope:
+      path: "clonebuster"
+    values:
+      sitemap: false
   # The manuals moved from /documentation/ to /user-manual/. The old tree only holds the
   # redirect stubs the build scripts write, which have no place in the sitemap.
   - scope:

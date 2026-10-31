@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="frame.css">
+</head>
+<body>
+  <div class="head with-sub">
+    <h1>Anyone can verify it with standard tools</h1>
+    <div class="sub">The commands come with every export.</div>
+  </div>
+  <div class="stage">
+    <div class="terminal" style="left: 110px; top: 200px; width: 1658px; font-size: 33px"><span class="prompt">$</span> <span class="cmd">sha256sum "Previews/Level 1 v1 preview.png"</span>
+<span class="hl">0b64807d2300d923ff97e41fbec47145401aab95ff119c48672e69f23120671c</span>
+
+<span class="prompt">$</span> <span class="cmd">grep 0b64807d manifest.txt</span>
+<span class="dim">77a6a54e3db5bf418e35337420710ac08241870e9a728853db2100f448424c69</span>  <span class="hl">0b64807d2300d923...</span>
+
+<span class="prompt">$</span> <span class="cmd">openssl ts -verify -data manifest.txt -in manifest.txt.tsr \
+      -CAfile cacert.pem -untrusted tsa.crt</span>
+<span class="ok">Verification: OK</span></div>
+  </div>
+  <script src="slide.js"></script>
+</body>
+</html>

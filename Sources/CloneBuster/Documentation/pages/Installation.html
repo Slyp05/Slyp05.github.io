@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Import the package, find what it adds to the Editor, and remove it." />
+  <title>CloneBuster - Install CloneBuster</title>
+  <link rel="stylesheet" href="../shared/styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">CloneBuster</div><a href="../User%20Manual.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Install CloneBuster</h1>
+      <div class="sub">Import the package, find what it adds to the Editor, and remove it.</div>
+      <div class="guide-index">
+        <a href="#requirements">Requirements</a>
+        <a href="#install">Install the package</a>
+        <a href="#first-import">What happens on import</a>
+        <a href="#commit">Commit the vault</a>
+        <a href="#menus">CloneBuster menus</a>
+        <a href="#remove">Remove CloneBuster</a>
+      </div>
+    </div>
+
+<!-- ====================================== requirements ==== -->
+<section id="requirements">
+  <h2>Requirements</h2>
+<p>CloneBuster has the following requirements:</p>
+<ul>
+  <li>Unity 6.0 to 6.6.</li>
+  <li>An internet connection while you work, to reach the timestamp services. Versions you save offline are recorded,
+    and are timestamped once the connection returns.</li>
+  <li>The <code>curl</code> command, which Windows 10 and later, macOS and most Linux distributions include. CloneBuster
+    uses it to get Bitcoin proofs.</li>
+</ul>
+<p>The following tools are optional:</p>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Tool</th><th scope="col">Used for</th></tr>
+    <tr><td><code>git</code></td><td>Checking that the original file of an old version can still be found when you export a proof. For more information, refer to <a href="How%20CloneBuster%20works.html#history">Originals come from your own history</a>.</td></tr>
+    <tr><td>Blender</td><td>Model previews of <code>.blend</code> files inside <code>Assets</code>, which Unity imports through Blender. Without it, CloneBuster shows the thumbnail Blender saves in the file.</td></tr>
+  </table>
+</div>
+
+</section>
+
+<!-- ====================================== install ==== -->
+<section id="install">
+  <h2>Install the package</h2>
+<p>To install CloneBuster, perform the following steps:</p>
+<ol>
+  <li>Go to <strong>Window</strong> &gt; <strong>Package Manager</strong>.</li>
+  <li>Select <strong>My Assets</strong>, then select <strong>CloneBuster: Anti-AI Proof of Creation</strong>.</li>
+  <li>If the package isn't downloaded yet, select <strong>Download</strong>.</li>
+  <li>Select <strong>Import</strong>.</li>
+  <li>In the <strong>Import Unity Package</strong> window, select <strong>Import</strong>.</li>
+</ol>
+<p>There is nothing to set up. Recording starts when the import finishes.</p>
+
+</section>
+
+<!-- ====================================== first-import ==== -->
+<section id="first-import">
+  <h2>What happens on import</h2>
+<p>When the import finishes, CloneBuster does the following:</p>
+<ol>
+  <li>Opens the Exporter, once, with a banner saying the project is now timestamped.</li>
+  <li>Takes the first snapshot of your project: it computes a hash, a fingerprint of the exact content, of every file
+    under <code>Assets</code>, makes a preview of each image and model, and has the whole snapshot timestamped at once.
+    Unity's status bar shows the progress.</li>
+  <li>Creates the <code>CloneBuster Vault</code> folder beside your <code>Assets</code> folder, where it keeps the
+    timestamps and the previews.</li>
+</ol>
+<div class="img-block">
+  <img src="../img/window_first_open" alt="The Exporter on its first open, with the banner saying the project is now timestamped" />
+</div>
+<div class="note warning"><strong>Warning:</strong> A file's proof starts on the day the vault records it, and a timestamp can't be backdated: files already in your project are dated from the day you install CloneBuster. Install it before you show your work anywhere: a store page, a trailer, a devlog, a jam build.</div>
+
+</section>
+
+<!-- ====================================== commit ==== -->
+<section id="commit">
+  <h2>Commit the vault</h2>
+<p>The vault lives in <code>CloneBuster Vault</code>, beside <code>Assets</code>. Commit it to your version control
+  with the rest of the project, so your repository keeps the evidence along with the work. It stays small: a few
+  kilobytes per batch, and one preview per saved version of an image or a model.</p>
+<p>Several teammates can record into the same vault. Each machine writes its own batches, and a version a teammate
+  already recorded isn't recorded again.</p>
+<div class="note"><strong>Note:</strong> To keep previews out of your repository, ignore <code>CloneBuster Vault/Previews/</code> and commit the rest. The proofs still verify, but a version whose preview is missing shows no image in a reel or in a PDF.</div>
+
+</section>
+
+<!-- ====================================== menus ==== -->
+<section id="menus">
+  <h2>CloneBuster menus</h2>
+<p>CloneBuster adds the following to the Unity Editor:</p>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Item</th><th scope="col">Description</th></tr>
+    <tr><td><strong>Tools</strong> &gt; <strong>CloneBuster</strong> &gt; <strong>Exporter</strong></td><td>Opens the Exporter, where you pick files and export. For more information, refer to <a href="Export%20a%20proof.html">Export a proof</a>.</td></tr>
+    <tr><td><strong>Tools</strong> &gt; <strong>CloneBuster</strong> &gt; <strong>Settings</strong></td><td>Opens the CloneBuster page of the Project Settings, also at <strong>Edit</strong> &gt; <strong>Project Settings</strong> &gt; <strong>CloneBuster</strong>. For more information, refer to <a href="Change%20the%20settings.html">Change the settings</a>.</td></tr>
+    <tr><td><strong>Tools</strong> &gt; <strong>CloneBuster</strong> &gt; <strong>User Manual</strong></td><td>Opens this manual in your browser.</td></tr>
+    <tr><td>The Inspector line</td><td>One line under the header of every asset's Inspector, with its state in the vault, and <strong>Proof</strong> and <strong>Reel</strong> buttons that open the file in the Exporter.</td></tr>
+  </table>
+</div>
+<div class="img-block">
+  <img src="../img/inspector_line" alt="The Inspector line under a texture's header: 10 versions since 2 Mar 2026, timestamped, with Proof and Reel buttons" />
+</div>
+
+</section>
+
+<!-- ====================================== remove ==== -->
+<section id="remove">
+  <h2>Remove CloneBuster</h2>
+<p>To remove CloneBuster, delete the <code>Assets/CloneBuster</code> folder. The <code>CloneBuster Vault</code> and
+  <code>CloneBuster Exports</code> folders and <code>ProjectSettings/CloneBusterSettings.asset</code> stay. Keep the
+  vault: its proofs still verify without CloneBuster. For more information, refer to
+  <a href="Verify%20a%20proof.html">Verify a proof without CloneBuster</a>.</p>
+<p>If you install CloneBuster again, it picks up the vault and records what changed while it was removed, with the date
+  of that scan.</p>
+
+</section>
+
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="How%20CloneBuster%20works.html">How CloneBuster proves your work</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="../User%20Manual.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Home</div>
+  </a>
+  <a class="next" href="How%20CloneBuster%20works.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">How CloneBuster proves your work</div>
+  </a>
+</div>
+
+    <div class="doc-footer">CloneBuster v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

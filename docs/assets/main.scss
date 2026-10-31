@@ -169,6 +169,23 @@ $content-width: 880px;
   border-top-color: #d4d4d4;
 }
 
+// Minima stacks the page's 30px bottom padding, the post's 30px margin and the last
+// element's margin above the footer, then two 15px margins under the footer's last line.
+// Only the paddings stay, so the footer sits 30px from the content and 30px from the bottom.
+.post-content { margin-bottom: 0; }
+.post-content > :last-child { margin-bottom: 0; }
+.footer-col { margin-bottom: 0; }
+.footer-col > :last-child { margin-bottom: 0; }
+// footer.html has no social column, so the description takes its share of the row.
+.footer-col-3 { width: calc(65% - (30px / 2)); }
+@media screen and (max-width: 800px) {
+  .footer-col-1 { width: calc(100% - (30px / 2)); }
+  .footer-col-3 { width: calc(100% - (30px / 2)); margin-top: 10px; }
+}
+@media screen and (max-width: 600px) {
+  .footer-col-1, .footer-col-3 { width: calc(100% - (30px / 2)); }
+}
+
 // Wraps the home hero logo so the page has an <h1>; the image's alt text supplies
 // the heading. Carries no styling of its own so the layout is unchanged.
 .home-title {

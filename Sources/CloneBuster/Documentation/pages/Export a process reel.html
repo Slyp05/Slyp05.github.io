@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Export a dated timelapse of how a file evolved, for social media and your store page." />
+  <title>CloneBuster - Export a process reel</title>
+  <link rel="stylesheet" href="../shared/styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">CloneBuster</div><a href="../User%20Manual.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Export a process reel</h1>
+      <div class="sub">Export a dated timelapse of how a file evolved, for social media and your store page.</div>
+    </div>
+
+<section>
+<p>A process reel shows how a file came to be, version by version, each frame dated. Post it to show your work
+  was there first, or to answer someone who accuses you of using AI.</p>
+</section>
+
+<!-- ====================================== pick ==== -->
+<section id="pick">
+  <h2>Pick a file and its versions</h2>
+<ol>
+  <li>Go to <strong>Tools</strong> &gt; <strong>CloneBuster</strong> &gt; <strong>Exporter</strong>.</li>
+  <li>Select the <strong>Reel</strong> tab.</li>
+  <li>In the tree, select an image or a model. The tree lists only the files a reel can show, such as PNG, PSD and Aseprite
+    files and models.</li>
+  <li>In the pane, select the version cards to leave out of the reel. Every version with an image is in by default.</li>
+  <li>Set the options, watch the preview, then select <strong>Export reel</strong>. CloneBuster writes the reel to a new folder in
+    <code>CloneBuster Exports</code> and opens it.</li>
+</ol>
+<div class="img-block">
+  <img src="../img/reel_tab" alt="The Reel tab with the version cards of Level 1.png, the live preview and the reel's options" />
+</div>
+<p>To open a file straight on the Reel tab, select <strong>Reel</strong> on its Inspector line. A file whose versions
+  were all saved without their image has no reel, so the tree leaves it out. For the formats the
+  reel reads, refer to <a href="Supported%20formats.html#reel">Supported formats</a>.</p>
+
+</section>
+
+<!-- ====================================== options ==== -->
+<section id="options">
+  <h2>Set the reel's options</h2>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Option</th><th scope="col">Description</th></tr>
+    <tr><td><strong>Format</strong></td><td><strong>GIF</strong> plays everywhere. <strong>MP4</strong> is smaller and suits video platforms; it requires Windows or macOS.</td></tr>
+    <tr><td><strong>Pace</strong></td><td>How long each frame stays on screen.</td></tr>
+    <tr><td><strong>Background</strong> and <strong>Text</strong></td><td>The reel's two colors, saved for every reel in the project.</td></tr>
+    <tr><td><strong>Title</strong></td><td>The end card's title. Empty uses the file's name.</td></tr>
+    <tr><td><strong>Last line</strong></td><td>The last line of the end card: the timestamp authorities by name, <strong>Each version independently timestamped</strong>, or <strong>Timestamped with CloneBuster</strong>. The authorities line names the Bitcoin blockchain only once every version in the reel is anchored in it.</td></tr>
+    <tr><td><strong>End on the copy</strong></td><td>An image of the copy, shown beside your latest version before the end card. Optional.</td></tr>
+  </table>
+</div>
+
+</section>
+
+<!-- ====================================== frames ==== -->
+<section id="frames">
+  <h2>What the reel shows</h2>
+<ul>
+  <li>One frame per version in the reel, with its number and its date on a band below the image. When every version
+    falls on the same day, the band shows the time too.</li>
+  <li>When every version in the reel is 540 pixels or less on its longer side, such as pixel art, it's enlarged by whole multiples with hard
+    edges, so every pixel stays sharp. Other images are fitted to 1080 pixels.</li>
+  <li>The latest version stays on screen longer, then the copy appears beside it if you added one.</li>
+  <li>An end card over a blurred image of your latest version: the title, your name as the owner, the versions on a
+    timeline from the first date to the latest, and the line you picked.</li>
+</ul>
+<div class="img-block">
+  <img src="../img/reel_frames" alt="Three frames of a reel: a version with its date, the latest version beside the copy, and the end card" />
+</div>
+<p>The size is set for you, and the dates are always shown. The end card shows your
+  name unless the owner is still Unity's placeholder, DefaultCompany.</p>
+
+</section>
+
+<!-- ====================================== share ==== -->
+<section id="share">
+  <h2>Share the reel</h2>
+<p>The reel shows when each version existed. It doesn't show who made it or how. Post it with a short line saying
+  where the proofs are, for example the link to an uploaded <code>Proof.pdf</code>, so anyone who doubts the dates can
+  check them.</p>
+
+</section>
+
+<div class="pager">
+  <a class="prev" href="Export%20a%20proof.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Export a proof</div>
+  </a>
+  <a class="next" href="File%20a%20takedown.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">File a takedown notice</div>
+  </a>
+</div>
+
+    <div class="doc-footer">CloneBuster v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Export a PDF for a store reviewer, the text for the store's form, and the timestamp files." />
+  <title>CloneBuster - Export a proof</title>
+  <link rel="stylesheet" href="/assets/css/doc-styles.css" />
+  <link rel="stylesheet" href="/assets/css/clonebuster.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">CloneBuster</div><a href="../index.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Export a proof</h1>
+      <div class="sub">Export a PDF for a store reviewer, the text for the store's form, and the timestamp files.</div>
+      <div class="guide-index">
+        <a href="#pick">Pick files and versions</a>
+        <a href="#copy">Add the copy</a>
+        <a href="#code">Show lines of code</a>
+        <a href="#export">Export</a>
+        <a href="#contents">What the export folder holds</a>
+        <a href="#pending">Export again once Bitcoin confirms</a>
+      </div>
+    </div>
+
+<!-- ====================================== pick ==== -->
+<section id="pick">
+  <h2>Pick files and versions</h2>
+<p>To pick what the proof shows, perform the following steps:</p>
+<ol>
+  <li>Go to <strong>Tools</strong> &gt; <strong>CloneBuster</strong> &gt; <strong>Exporter</strong>.</li>
+  <li>In the tree, tick the files the copy takes from. Tick a folder to tick every file under it, or tick
+    <strong>Assets</strong> for the whole project.</li>
+  <li>Select a file to see its versions. Its first and latest versions are ticked; tick the ones you want to show, or
+    select <strong>All</strong>. To set every ticked file at once, use <strong>All</strong> or
+    <strong>First and latest</strong> in the export bar.</li>
+</ol>
+<div class="img-block">
+  <img src="../img/proof_tab.png" alt="The Proof tab with three files ticked and the versions of Level 1.png, its first and latest ticked" />
+</div>
+<p>Each version shows two marks, its RFC 3161 timestamp and its Bitcoin proof: a check mark is confirmed, and an
+  ellipsis is pending. Hover over a mark to see the authority and the time, or the Bitcoin block.</p>
+<p>Only the ticked versions go into the export, so a notice never shows work you haven't released. Purchased files
+  can't be ticked; a folder you tick skips them.</p>
+<p>When you tick more than one file, <code>Proof.pdf</code> starts with a summary: how many files, and when they were
+  first timestamped. A file you tick on its own, rather than through its folder, also gets its own page with its
+  previews, and the summary lists it with that page's number. The other files are counted, not listed: their hashes are
+  in the timestamp files.</p>
+<p><code>Proof.pdf</code> and the notice text show the <strong>Owner</strong> name. While that is still DefaultCompany, Unity's placeholder, the
+  export options show a warning: select <strong>Settings</strong> in it to set your name.</p>
+
+</section>
+
+<!-- ====================================== copy ==== -->
+<section id="copy">
+  <h2>Add the copy</h2>
+<p>Select <strong>Export proof</strong>. Under <strong>The copy</strong>, you can add the following, both optional:</p>
+<ul>
+  <li><strong>Listing URL</strong>: the copy's store page. It goes into <code>Notice text.txt</code> and, if you add a
+    screenshot, under the images in <code>Proof.pdf</code>.</li>
+  <li><strong>Screenshot</strong>: an image of the copy. <code>Proof.pdf</code> shows it beside your own versions.</li>
+</ul>
+<div class="img-block">
+  <img src="../img/proof_options.png" alt="The proof's options, with the copy's listing URL and screenshot filled in" />
+</div>
+
+</section>
+
+<!-- ====================================== code ==== -->
+<section id="code">
+  <h2>Show lines of code</h2>
+<p><code>Proof.pdf</code> shows no code or text by default: a code file appears with its name, its hashes, its dates
+  and its version count. To show an excerpt, enter a line range, such as <code>12-40</code>, beside the file under
+  <strong>Code and text shown</strong>. The excerpt comes from the latest version, up to 45 lines.</p>
+
+</section>
+
+<!-- ====================================== export ==== -->
+<section id="export">
+  <h2>Export</h2>
+<p>Select <strong>Export</strong>. CloneBuster writes the export folder and opens it. The result pane lists what
+  the export left out, and the next step.</p>
+<p>The next step is to upload the export folder somewhere public, such as Google Drive or Dropbox, paste its link
+  into <code>Notice text.txt</code>, then send the notice. For more information, refer to
+  <a href="File%20a%20takedown.html">File a takedown notice</a>.</p>
+<div class="img-block">
+  <img src="../img/proof_result.png" alt="The result pane after an export, with the export folder and the next step" />
+</div>
+
+</section>
+
+<!-- ====================================== contents ==== -->
+<section id="contents">
+  <h2>What the export folder holds</h2>
+<p>Each export is a new folder in <code>CloneBuster Exports</code>, named after the file, the folder or the project,
+  and the date. You share the whole folder with the store, which may forward it to the copier. It holds only the
+  versions you ticked, and it proves every date on its own.</p>
+<div class="img-block">
+  <img src="../img/proof_pdf.png" alt="A page of Proof.pdf: the verdict, the first and latest versions beside the copy, and each version's timestamps" />
+</div>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">File</th><th scope="col">Contents</th></tr>
+    <tr><td><code>Proof.pdf</code></td><td>For a store reviewer: the date your work existed by, your first and latest ticked versions beside the copy, and each ticked version's RFC 3161 time, Bitcoin block and SHA-256 hash.</td></tr>
+    <tr><td><code>Notice text.txt</code></td><td>One paragraph to paste into the description field of a store's form. It names the Bitcoin proof only when every exported version holds one.</td></tr>
+    <tr><td><code>Timestamps/How to verify.txt</code></td><td>Each version with its hashes, dates and the commands that check it. For more information, refer to <a href="Verify%20a%20proof.html">Verify a proof without CloneBuster</a>.</td></tr>
+    <tr><td><code>Timestamps/Batches</code></td><td>The manifest of each batch the versions belong to, with its RFC 3161 timestamp and, once confirmed, its Bitcoin proof. A manifest holds hashes only, so it reveals nothing about the other files of the batch.</td></tr>
+    <tr><td><code>Timestamps/Previews</code></td><td>The preview of each version, such as <code>Key Art v4 preview.png</code>.</td></tr>
+  </table>
+</div>
+<p>Originals aren't copied into the export: the previews and proofs date each version without them. If someone asks
+  for the exact file, the latest version is in your project and an older one is in your git history; its
+  hash in <code>How to verify.txt</code> identifies it.</p>
+
+</section>
+
+<!-- ====================================== pending ==== -->
+<section id="pending">
+  <h2>Export again once Bitcoin confirms</h2>
+<p>You don't need to wait for the Bitcoin proof: the RFC 3161 timestamp dates each version on its own. The Bitcoin proof
+  usually takes a few hours. A version exported before then has only its RFC 3161 timestamp, and the
+  Exporter warns you when the export finishes. A version recorded offline has no RFC 3161 timestamp yet, so it's left out. CloneBuster completes both
+  in the background while the Editor is open; export again later to include them. <code>Proof.pdf</code> and the notice
+  text never mention a proof the export doesn't hold.</p>
+
+</section>
+
+<div class="pager">
+  <a class="prev" href="How%20CloneBuster%20works.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">How CloneBuster proves your work</div>
+  </a>
+  <a class="next" href="Export%20a%20process%20reel.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Export a process reel</div>
+  </a>
+</div>
+
+    <div class="doc-footer">CloneBuster v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

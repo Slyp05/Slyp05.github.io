@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<!-- Asset Store icon, 160x160 (shown at 80x80). No text allowed. Drawn on a 320x320 canvas and rendered at half size. Rendered to PNG by render.sh (headless Chrome). -->
+<style>
+  html, body { margin: 0; padding: 0; background: #2140f0; }
+  svg { display: block; }
+  .title   { font-family: "Segoe UI Black", "Segoe UI Variable Display", "Segoe UI", sans-serif; font-weight: 900; }
+  .tagline { font-family: "Segoe UI Variable Display", "Segoe UI", sans-serif; font-weight: 600; }
+</style>
+</head>
+<body>
+<svg width="160" height="160" viewBox="0 0 320 320" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="bg" cx="0.6" cy="0.55" r="0.9">
+      <stop offset="0" stop-color="#3d5cff"/>
+      <stop offset="0.55" stop-color="#2140f0"/>
+      <stop offset="1" stop-color="#1428b8"/>
+    </radialGradient>
+    <!-- Halftone: a faint grid of light dots. -->
+    <pattern id="dots" width="16" height="16" patternUnits="userSpaceOnUse">
+      <circle cx="8" cy="8" r="2" fill="#ffffff"/>
+    </pattern>
+  </defs>
+
+  <rect width="320" height="320" fill="url(#bg)"/>
+  <rect width="320" height="320" fill="url(#dots)" opacity="0.07"/>
+
+  <image href="illustration-icon.svg" x="22.0" y="44.0" width="276.0" height="232.0"/>
+</svg>
+</body>
+</html>

@@ -1,0 +1,159 @@
+/* Shared look of the screenshot slides: the cover's electric blue ground, white headline with a hard ink shadow, yellow
+   line under it, captures as prints with an ink outline and a hard ink shadow. Each page is 1950x1300. */
+:root
+{
+  --ink: #0a1344;
+  --yellow: #ffd400;
+  --white: #ffffff;
+}
+
+html, body { margin: 0; padding: 0; }
+
+body
+{
+  width: 1950px;
+  height: 1300px;
+  overflow: hidden;
+  position: relative;
+  background: radial-gradient(ellipse 90% 90% at 60% 55%, #3d5cff 0%, #2140f0 55%, #1428b8 100%);
+  font-family: "Segoe UI Variable Display", "Segoe UI", sans-serif;
+  color: var(--white);
+}
+
+/* Halftone: a faint grid of light dots. */
+body::before
+{
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 12px 12px, rgba(255, 255, 255, 0.07) 3px, transparent 3.5px);
+  background-size: 24px 24px;
+  pointer-events: none;
+}
+
+.head
+{
+  position: absolute;
+  left: 110px;
+  right: 110px;
+  top: 70px;
+  text-align: center;
+}
+
+h1
+{
+  margin: 0;
+  font-family: "Segoe UI Black", "Segoe UI", sans-serif;
+  font-weight: 900;
+  font-size: 84px;
+  line-height: 1.1;
+  letter-spacing: -1px;
+  white-space: nowrap;
+  text-shadow: 7px 7px 0 var(--ink);
+}
+
+.sub
+{
+  margin-top: 18px;
+  font-size: 44px;
+  font-weight: 600;
+  color: var(--yellow);
+}
+
+.stage
+{
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 230px;
+}
+
+.head.with-sub + .stage { top: 300px; }
+
+/* A capture or an image, printed: ink outline, hard ink shadow. */
+.print
+{
+  position: absolute;
+  border: 5px solid var(--ink);
+  border-radius: 10px;
+  box-shadow: 16px 16px 0 var(--ink);
+  overflow: hidden;
+  background: #282828;
+}
+
+.print img { display: block; }
+
+/* A crop of a larger capture: the image is placed inside at an offset. */
+.crop { overflow: hidden; }
+.crop img { position: absolute; }
+
+/* A short label pointing at a part of a capture. */
+.callout
+{
+  position: absolute;
+  padding: 14px 26px;
+  border: 5px solid var(--ink);
+  border-radius: 14px;
+  background: var(--yellow);
+  color: var(--ink);
+  font-size: 36px;
+  font-weight: 700;
+  white-space: nowrap;
+  box-shadow: 8px 8px 0 var(--ink);
+}
+
+/* The timestamp stamp, a clock face on a yellow disc, drawn by stamp.js. */
+.stamp { position: absolute; }
+
+/* A plain text file, as an editor shows it. */
+.file
+{
+  position: absolute;
+  border: 5px solid var(--ink);
+  border-radius: 10px;
+  box-shadow: 16px 16px 0 var(--ink);
+  background: #ffffff;
+  color: #1d2233;
+  overflow: hidden;
+}
+
+.file .bar
+{
+  padding: 14px 24px;
+  background: #e9ecf3;
+  border-bottom: 3px solid var(--ink);
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.file .body
+{
+  padding: 26px 30px;
+  font-family: "Cascadia Mono", Consolas, monospace;
+  font-size: 27px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+.terminal
+{
+  position: absolute;
+  border: 5px solid var(--ink);
+  border-radius: 10px;
+  box-shadow: 16px 16px 0 var(--ink);
+  background: #0c0f1d;
+  color: #d8def0;
+  font-family: "Cascadia Mono", Consolas, monospace;
+  font-size: 28px;
+  line-height: 1.55;
+  padding: 30px 36px;
+  white-space: pre;
+}
+
+.terminal .prompt { color: #7f8bb3; }
+.terminal .cmd { color: #ffffff; }
+.terminal .ok { color: #7ee28f; font-weight: 700; }
+.terminal .dim { color: #7f8bb3; }
+.terminal .hl { background: rgba(255, 212, 0, 0.22); color: #ffe566; }

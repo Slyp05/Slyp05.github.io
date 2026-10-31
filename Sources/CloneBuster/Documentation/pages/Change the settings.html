@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Record more folders, leave some out, and choose where batches are timestamped." />
+  <title>CloneBuster - Change the settings</title>
+  <link rel="stylesheet" href="../shared/styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">CloneBuster</div><a href="../User%20Manual.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Change the settings</h1>
+      <div class="sub">Record more folders, leave some out, and choose where batches are timestamped.</div>
+      <div class="guide-index">
+        <a href="#recorded">What the vault records</a>
+        <a href="#source-folders">Record folders outside Assets</a>
+        <a href="#third-party">Mark a third-party folder</a>
+        <a href="#owner">Set the owner</a>
+        <a href="#formats">Turn off previews for a format</a>
+        <a href="#servers">Change the timestamp servers</a>
+        <a href="#pause">Turn CloneBuster off</a>
+      </div>
+    </div>
+
+<section>
+<p>Every setting is optional: CloneBuster records and timestamps your project with none of them changed. The settings
+  are at <strong>Edit</strong> &gt; <strong>Project Settings</strong> &gt; <strong>CloneBuster</strong>, and are saved in
+  <code>ProjectSettings/CloneBusterSettings.asset</code>, so your team shares them through version control.</p>
+<div class="img-block">
+  <img src="../img/settings_page" alt="The CloneBuster page of the Project Settings" />
+</div>
+</section>
+
+<!-- ====================================== recorded ==== -->
+<section id="recorded">
+  <h2>What the vault records</h2>
+<p>CloneBuster records every file under <code>Assets</code> and under each source folder you add, except the
+  following:</p>
+<ul>
+  <li><code>.meta</code> files.</li>
+  <li>Files and folders whose name starts with a period, and folders whose name ends with <code>~</code>, which Unity
+    ignores too.</li>
+  <li>Temporary and system files: names that start with <code>~</code>, <code>.tmp</code> and <code>.blend1</code> files,
+    <code>Thumbs.db</code> and <code>desktop.ini</code>.</li>
+  <li>Files from the Asset Store, and files under a folder you marked as third-party.</li>
+  <li>The <code>CloneBuster</code> folder itself.</li>
+</ul>
+<p>Recording runs in the Editor only. It doesn't run in batch mode, so a build server or a command-line test run
+  doesn't add versions.</p>
+
+</section>
+
+<!-- ====================================== source-folders ==== -->
+<section id="source-folders">
+  <h2>Record folders outside Assets</h2>
+<p>Your source art often lives outside your Unity project: layered PSD files, Blender and Krita files, key
+  art, trailer frames, store-page material. To record a folder outside <code>Assets</code>, perform the following
+  steps:</p>
+<ol>
+  <li>Under <strong>Folders</strong>, select <strong>Add source folder</strong>.</li>
+  <li>Select the folder, then select <strong>Select Folder</strong>.</li>
+</ol>
+<p>The folder appears in the Exporter's tree, and CloneBuster records its files from then on. To stop recording it,
+  select <strong>-</strong> beside it. Its versions stay in the vault.</p>
+<p>CloneBuster refuses the following folders, and the settings page says why:</p>
+<ul>
+  <li>A folder inside <code>Assets</code>, or one that holds it, such as the project folder.</li>
+  <li>A folder Unity or CloneBuster writes to: <code>CloneBuster Vault</code>, <code>CloneBuster Exports</code>,
+    <code>Library</code>, <code>Temp</code>, <code>Logs</code> and <code>UserSettings</code>.</li>
+</ul>
+<div class="note"><strong>Note:</strong> Source folders are saved in the project settings, so a teammate whose copy of the folder sits at another path doesn't record it.</div>
+
+</section>
+
+<!-- ====================================== third-party ==== -->
+<section id="third-party">
+  <h2>Mark a third-party folder</h2>
+<p>CloneBuster recognizes Asset Store files by itself. For assets from anywhere else, such as stock art, sound packs
+  or licensed audio, mark their folder as third-party: under <strong>Folders</strong>, select <strong>Add third-party
+  folder</strong>, then select the folder, inside <code>Assets</code> or a source folder.</p>
+<p>Files under the folder are no longer recorded, show as <strong>Third-party</strong> in the tree, and can't be
+  ticked for an export.</p>
+
+</section>
+
+<!-- ====================================== owner ==== -->
+<section id="owner">
+  <h2>Set the owner</h2>
+<p><strong>Owner</strong> is the name on every <code>Proof.pdf</code>, notice text and reel end card. When empty, it's the
+  Company Name of the Player settings. A new Unity project's Company Name is DefaultCompany: the settings and the
+  Exporter warn you while the proof would show it, and the reel leaves it out.</p>
+
+</section>
+
+<!-- ====================================== formats ==== -->
+<section id="formats">
+  <h2>Turn off previews for a format</h2>
+<p>Under <strong>Formats</strong>, each format can be turned off on its own. Its files are still recorded and
+  timestamped.</p>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Setting</th><th scope="col">Turned off</th></tr>
+    <tr><td><strong>Reel</strong></td><td>CloneBuster stops making previews of that format, which saves space in <code>CloneBuster Vault</code>, and its files leave the Reel tab. New versions show no image in <code>Proof.pdf</code>. For <strong>Models</strong>, previews are still made and only the Reel tab drops them.</td></tr>
+    <tr><td><strong>Model preview</strong></td><td>CloneBuster stops rendering new versions of that model format in <code>Assets</code>, which saves Editor time after each import. Those versions have no preview.</td></tr>
+    <tr><td><strong>Save-time warning</strong></td><td>No banner when a PSD or Blender file is saved without its image.</td></tr>
+  </table>
+</div>
+
+</section>
+
+<!-- ====================================== servers ==== -->
+<section id="servers">
+  <h2>Change the timestamp servers</h2>
+<p>Expand <strong>Timestamp servers</strong> to change where batches are sent: by default FreeTSA as the timestamp
+  authority, and the four calendars the OpenTimestamps client uses. You can use any RFC 3161 timestamp authority.</p>
+<p>A batch already timestamped keeps the proofs it has. A batch gets its Bitcoin proof as long as one calendar answers,
+  and a proof pending on a calendar you remove stays pending. <strong>Reset to defaults</strong> restores the authority and the calendars.</p>
+
+</section>
+
+<!-- ====================================== pause ==== -->
+<section id="pause">
+  <h2>Turn CloneBuster off</h2>
+<p>To turn CloneBuster off for a project, disable <strong>Enabled</strong>. Nothing is recorded or sent, and the
+  Inspector line is hidden; the Exporter still exports what the vault holds. When you enable it again, CloneBuster scans
+  the project and records what changed while it was off, with the date of that scan.</p>
+
+</section>
+
+<div class="pager">
+  <a class="prev" href="Verify%20a%20proof.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Verify a proof without CloneBuster</div>
+  </a>
+  <a class="next" href="Supported%20formats.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Supported formats</div>
+  </a>
+</div>
+
+    <div class="doc-footer">CloneBuster v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

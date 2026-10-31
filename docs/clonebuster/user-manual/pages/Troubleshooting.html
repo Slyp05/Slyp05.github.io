@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="The banners, Console messages and export results CloneBuster shows, and what to do about them." />
+  <title>CloneBuster - Troubleshooting</title>
+  <link rel="stylesheet" href="/assets/css/doc-styles.css" />
+  <link rel="stylesheet" href="/assets/css/clonebuster.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">CloneBuster</div><a href="../index.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Troubleshooting</h1>
+      <div class="sub">The banners, Console messages and export results CloneBuster shows, and what to do about them.</div>
+    </div>
+
+<!-- ====================================== banners ==== -->
+<section id="banners">
+  <h2>Exporter banners</h2>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Banner</th><th scope="col">Cause</th><th scope="col">What to do</th></tr>
+    <tr><td><strong>Your project is now timestamped.</strong></td><td>The first open after the import.</td><td>Commit <code>CloneBuster Vault</code>, then select <strong>Got it</strong>.</td></tr>
+    <tr><td><strong>N files can't be shown in a reel or a PDF</strong></td><td>Files saved without the image CloneBuster reads.</td><td>Select <strong>Show</strong>: one file is selected in the tree with its fix, several are listed with theirs. Refer to <a href="#warnings">Fix a file saved without its image</a>.</td></tr>
+    <tr><td><strong>Timestamps are waiting for the network.</strong></td><td>The timestamp authority couldn't be reached.</td><td>Nothing: versions are still recorded, and are sent once the connection returns.</td></tr>
+    <tr><td><strong>The timestamp authority refused the last request.</strong></td><td>The authority answered without a token.</td><td>Check the <strong>Timestamp authority</strong> address in the settings.</td></tr>
+    <tr><td><strong>OpenTimestamps needs curl, which this system lacks.</strong></td><td>The <code>curl</code> command isn't installed.</td><td>Install curl. RFC 3161 timestamps continue meanwhile.</td></tr>
+    <tr><td><strong>The vault can't be written</strong></td><td>The disk is full, or <code>CloneBuster Vault</code> is read-only or locked.</td><td>Fix the cause the banner names. Recording resumes on its own.</td></tr>
+    <tr><td><strong>... has been busy for over a minute, so it isn't recorded yet</strong></td><td>Another program has kept the named file locked, or rewritten it, for over a minute. The rest of the vault keeps recording.</td><td>Close the program holding the file, or let it finish writing. CloneBuster records the file once the program lets go of it.</td></tr>
+    <tr><td><strong>CloneBuster is turned off</strong></td><td><strong>Enabled</strong> is disabled in the settings.</td><td>Select <strong>Settings</strong> to enable it.</td></tr>
+  </table>
+</div>
+
+</section>
+
+<!-- ====================================== console ==== -->
+<section id="console">
+  <h2>Console messages</h2>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Message</th><th scope="col">Cause</th><th scope="col">What to do</th></tr>
+    <tr><td><code>was saved without its image</code></td><td>A PSD, Blender, Krita or Procreate file saved without the image CloneBuster reads.</td><td>Apply the fix the message names, then save the file again.</td></tr>
+    <tr><td><code>could not be rendered for its preview</code></td><td>Unity imported a model CloneBuster couldn't render.</td><td>Check the model imports without errors. The version is recorded without a preview.</td></tr>
+    <tr><td><code>can't be watched</code></td><td>A recorded folder can't be watched, for example on some network drives.</td><td>Nothing: the scan every few minutes records its files instead.</td></tr>
+    <tr><td><code>lists N versions in manifest.txt and M in paths.txt</code></td><td>A batch folder was damaged.</td><td>Restore the folder from version control.</td></tr>
+    <tr><td><code>has Windows line endings</code></td><td>Git converted the batch's files on checkout, so its proofs no longer match them. The batch is left out.</td><td>Commit <code>CloneBuster Vault/.gitattributes</code>, delete the batch folder and check it out again from git. The committed copy is unchanged.</td></tr>
+    <tr><td><code>exists but could not be read</code></td><td><code>ProjectSettings/CloneBusterSettings.asset</code> or a batch's timestamp file is damaged.</td><td>Restore it from version control.</td></tr>
+    <tr><td><code>could not be read, so it's left out</code></td><td>A batch folder was damaged.</td><td>Restore the folder from version control.</td></tr>
+    <tr><td><code>of batch ... could not be read</code></td><td>A timestamp file in a batch folder is damaged.</td><td>Restore the folder from version control.</td></tr>
+    <tr><td><code>could not be upgraded</code></td><td>CloneBuster couldn't complete a pending Bitcoin proof.</td><td>Nothing if the network is down: CloneBuster tries again every half hour.</td></tr>
+    <tr><td><code>wasn't found in the package's Documentation folder</code></td><td>The manual's folder was deleted.</td><td>Reimport the package.</td></tr>
+  </table>
+</div>
+
+</section>
+
+<!-- ====================================== exports ==== -->
+<section id="exports">
+  <h2>Export results</h2>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Result</th><th scope="col">Meaning</th></tr>
+    <tr><td><code>Nothing exported: no ticked version has its RFC 3161 timestamp yet</code></td><td>Every ticked version was recorded offline. Export again once the network returns.</td></tr>
+    <tr><td><code>The Bitcoin proof for N versions isn't confirmed yet</code></td><td>The export leaves it out. Export again in a few hours to add it. Refer to <a href="Export%20a%20proof.html#pending">Export again once Bitcoin confirms</a>.</td></tr>
+    <tr><td><code>N versions left out: their RFC 3161 timestamps aren't in yet</code></td><td>The versions were recorded offline. Export again once the network returns.</td></tr>
+    <tr><td><code>N versions' originals weren't found on disk or in git history</code></td><td>The message names the files and versions. Each file has changed since, and git doesn't have those versions: git isn't installed, the file isn't tracked, or the versions are older than its last 300 commits. Their previews and proofs still date them.</td></tr>
+  </table>
+</div>
+
+</section>
+
+<!-- ====================================== warnings ==== -->
+<section id="warnings">
+  <h2>Fix a file saved without its image</h2>
+<p>Some tools save files without the flattened image CloneBuster reads. When that happens, the version is still
+  hashed and timestamped, but it has no preview, so it can't appear in a reel or as an image in a PDF. The Exporter shows a
+  banner, and the Console window shows the fix.</p>
+<div class="img-block">
+  <img src="../img/no_composite.png" alt="The banner for a PSD saved without its composite image, with the file selected and its fix" />
+</div>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">File</th><th scope="col">Fix</th></tr>
+    <tr><td>A PSD file without a composite image</td><td>In Photoshop, go to <strong>Preferences</strong> &gt; <strong>File Handling</strong>, set <strong>Maximize PSD and PSB File Compatibility</strong> to <strong>Always</strong>, then save the file again.</td></tr>
+    <tr><td>A <code>.blend</code> file without a thumbnail</td><td>In Blender, go to <strong>Preferences</strong> &gt; <strong>Save &amp; Load</strong>, enable <strong>Save Preview Images</strong>, then save the file again.</td></tr>
+    <tr><td>A compressed <code>.blend</code> file</td><td>In Blender's <strong>Save As</strong> window, disable <strong>Compress</strong>, then save the file again.</td></tr>
+    <tr><td>A <code>.procreate</code> file without a thumbnail</td><td>Save the file again from Procreate.</td></tr>
+    <tr><td>A file shown as Unreadable, such as a 16-bit, CMYK or PSB file</td><td>Save it as an 8-bit RGB or grayscale PSD, or again from its own tool.</td></tr>
+  </table>
+</div>
+<p>Fix the setting as soon as you see the banner: a version that was saved without its image can't get a preview
+  later.</p>
+
+</section>
+
+<div class="pager">
+  <a class="prev" href="Supported%20formats.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Supported formats</div>
+  </a>
+</div>
+
+    <div class="doc-footer">CloneBuster v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

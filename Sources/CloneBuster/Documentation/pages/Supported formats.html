@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="The formats the reel and the PDF read, and the models CloneBuster renders." />
+  <title>CloneBuster - Supported formats</title>
+  <link rel="stylesheet" href="../shared/styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">CloneBuster</div><a href="../User%20Manual.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Supported formats</h1>
+      <div class="sub">The formats the reel and the PDF read, and the models CloneBuster renders.</div>
+    </div>
+
+<section>
+<p>CloneBuster records and timestamps files of any format. This page lists the formats it also makes a preview of:
+  the image a reel and <code>Proof.pdf</code> show.</p>
+</section>
+
+<!-- ====================================== reel ==== -->
+<section id="reel">
+  <h2>Formats the reel reads</h2>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Format</th><th scope="col">Preview</th></tr>
+    <tr><td>PNG, JPG</td><td>The full image.</td></tr>
+    <tr><td>PSD</td><td>The flattened composite image, 8-bit RGB or grayscale. Photoshop saves it only with <strong>Maximize compatibility</strong> on. 16-bit, CMYK and PSB files aren't read.</td></tr>
+    <tr><td>Aseprite (<code>.ase</code>, <code>.aseprite</code>)</td><td>Every frame on one sheet, with its visible layers merged. Blend modes other than normal and tilemap layers aren't read.</td></tr>
+    <tr><td>Krita (<code>.kra</code>)</td><td>The merged image Krita saves in the file.</td></tr>
+    <tr><td>Blender (<code>.blend</code>) outside <code>Assets</code>, or inside it without Blender installed</td><td>The thumbnail Blender saves in the file. Compressed files aren't read.</td></tr>
+    <tr><td>Procreate (<code>.procreate</code>)</td><td>The thumbnail Procreate saves in the file, at low resolution.</td></tr>
+    <tr><td>Models in <code>Assets</code></td><td>A render made after Unity imports the version. Refer to <a href="#models">Model previews</a>.</td></tr>
+  </table>
+</div>
+
+</section>
+
+<!-- ====================================== models ==== -->
+<section id="models">
+  <h2>Model previews</h2>
+<p>When Unity imports a new version of a model in <code>Assets</code>, CloneBuster renders it at once, in the Editor,
+  and records the render as that version's preview.</p>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Property</th><th scope="col">Value</th></tr>
+    <tr><td>Formats</td><td>FBX, OBJ, glTF and GLB (with a glTF importer), Collada, and <code>.blend</code> with Blender installed.</td></tr>
+    <tr><td>Camera</td><td>A fixed angle, the same for every version, framed on that version's bounds.</td></tr>
+    <tr><td>Pose</td><td>The pose the file holds: animation doesn't play.</td></tr>
+    <tr><td>Level of detail</td><td>LOD0 only.</td></tr>
+    <tr><td>Size</td><td>1024 by 1024 pixels.</td></tr>
+  </table>
+</div>
+<p>Models outside <code>Assets</code> aren't rendered: Unity can't import them.</p>
+
+</section>
+
+<!-- ====================================== pdf ==== -->
+<section id="pdf">
+  <h2>What Proof.pdf shows</h2>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Kind of file</th><th scope="col">Proof.pdf shows</th></tr>
+    <tr><td>Formats the reel reads</td><td>The image at the first and the latest ticked version, beside the copy's screenshot if you added one.</td></tr>
+    <tr><td>Code and text (<code>.cs</code>, JSON, YAML, scenes, prefabs and other text)</td><td>Name, hash, dates and version count. A line excerpt only when you enter a range.</td></tr>
+    <tr><td>Everything else (audio, video, models outside <code>Assets</code> other than <code>.blend</code>)</td><td>Name, hash, dates and version count.</td></tr>
+  </table>
+</div>
+
+</section>
+
+<!-- ====================================== unread ==== -->
+<section id="unread">
+  <h2>What CloneBuster doesn't read</h2>
+<p>The following have no preview, so they can't be shown in a reel or as an image in a PDF. Their versions are still
+  recorded and timestamped like any other file:</p>
+<ul>
+  <li>Audio and video files.</li>
+  <li>Scenes and prefabs.</li>
+  <li>GIMP files (<code>.xcf</code>), which save no merged image.</li>
+  <li>Models outside <code>Assets</code> in a format other than <code>.blend</code>.</li>
+  <li>Files larger than 1 GB.</li>
+</ul>
+
+</section>
+
+<div class="pager">
+  <a class="prev" href="Change%20the%20settings.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Change the settings</div>
+  </a>
+  <a class="next" href="Troubleshooting.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Troubleshooting</div>
+  </a>
+</div>
+
+    <div class="doc-footer">CloneBuster v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="frame.css">
+<style>
+  .mark { background: var(--yellow); padding: 0 6px; border-radius: 4px; }
+  .file .body { font-size: 36px; }
+  .file .body.tree { font-family: "Segoe UI Variable Display", "Segoe UI", sans-serif; font-size: 38px; line-height: 1.9; white-space: normal; }
+  .tree div { padding-left: 0; }
+  .tree .in { padding-left: 52px; color: #59607a; }
+</style>
+</head>
+<body>
+  <div class="head with-sub">
+    <h1>Paste the generated notice into the takedown form</h1>
+    <div class="sub">The manual lists where each major store takes notices.</div>
+  </div>
+  <div class="stage">
+    <div class="file" style="left: 110px; top: 150px; width: 1140px">
+      <div class="bar">Notice text.txt</div>
+      <div class="body">I am Example Studio, and I made Jumpy. The listing at https://store.example.com/games/48213 copies my work. My files were timestamped as I made them, the first on 2 March 2026: each version is timestamped by FreeTSA (RFC 3161) and anchored in the Bitcoin blockchain through OpenTimestamps, two independent authorities whose proofs anyone can check. The proof, with my dated versions and the timestamp files that check them, is here: <span class="mark">[paste the link to this folder]</span></div>
+    </div>
+    <div class="file" style="left: 1320px; top: 150px; width: 520px">
+      <div class="bar">Jumpy 2026-10-31 16-14</div>
+      <div class="body tree"><div>&#128196; Notice text.txt</div><div>&#128196; Proof.pdf</div><div>&#128193; Timestamps</div><div class="in">Batches</div><div class="in">Previews</div><div class="in">How to verify.txt</div></div>
+    </div>
+  </div>
+  <script src="slide.js"></script>
+</body>
+</html>

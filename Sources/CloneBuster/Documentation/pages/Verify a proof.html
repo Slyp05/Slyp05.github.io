@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Check every claim of a proof with standard tools." />
+  <title>CloneBuster - Verify a proof without CloneBuster</title>
+  <link rel="stylesheet" href="../shared/styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">CloneBuster</div><a href="../User%20Manual.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Verify a proof without CloneBuster</h1>
+      <div class="sub">Check every claim of a proof with standard tools.</div>
+    </div>
+
+<section>
+<p>You can check every claim in a proof without CloneBuster, with free tools. A store reviewer or the
+  copy's developer can follow these steps from the export's <code>Timestamps</code> folder.</p>
+</section>
+
+<!-- ====================================== hash ==== -->
+<section id="hash">
+  <h2>Hash the file</h2>
+<p>Compute the SHA-256 hash of the version's preview, or of its original file:</p>
+<pre><code>sha256sum "Previews/Key Art v4 preview.png"</code></pre>
+<p>On Windows:</p>
+<pre><code>certutil -hashfile "Previews\Key Art v4 preview.png" SHA256</code></pre>
+<p>The result must match the hash <code>How to verify.txt</code> lists for the version.</p>
+
+</section>
+
+<!-- ====================================== manifest ==== -->
+<section id="manifest">
+  <h2>Find the hash in its manifest</h2>
+<p>Open the <code>manifest.txt</code> of the version's batch, which <code>How to verify.txt</code> names. Each line holds the
+  SHA-256 of one file, then the SHA-256 of its preview, or <code>-</code> when it has none. Search the manifest for the
+  hash:</p>
+<pre><code>grep 3f943c0b6328ffbf544a5ee6b8415b6a Batches/20261025T194250Z-0cc7/manifest.txt</code></pre>
+<p>The manifest names no files, so it reveals nothing about the other files of the batch.</p>
+
+</section>
+
+<!-- ====================================== rfc3161 ==== -->
+<section id="rfc3161">
+  <h2>Check the RFC 3161 timestamp</h2>
+<p>From the batch's folder, verify the authority's token against the manifest with OpenSSL. For FreeTSA, download its
+  certificates first from
+  <a href="https://freetsa.org/files/cacert.pem">freetsa.org/files/cacert.pem</a> and
+  <a href="https://freetsa.org/files/tsa.crt">freetsa.org/files/tsa.crt</a>. For another authority, use its own
+  certificates.</p>
+<pre><code>openssl ts -verify -data manifest.txt -in manifest.txt.tsr -CAfile cacert.pem -untrusted tsa.crt</code></pre>
+<p>OpenSSL prints <code>Verification: OK</code>. To read the date the authority vouches for:</p>
+<pre><code>openssl ts -reply -in manifest.txt.tsr -text</code></pre>
+
+</section>
+
+<!-- ====================================== ots ==== -->
+<section id="ots">
+  <h2>Check the OpenTimestamps proof</h2>
+<p>From the batch's folder, verify the Bitcoin proof with the
+  <a href="https://github.com/opentimestamps/opentimestamps-client">OpenTimestamps client</a>:</p>
+<pre><code>ots verify manifest.txt.ots</code></pre>
+<p>The client names the Bitcoin block and its date. It reads the block from a Bitcoin node; without one, drop
+  <code>manifest.txt</code> and <code>manifest.txt.ots</code> on the verifier at
+  <a href="https://opentimestamps.org">opentimestamps.org</a>.</p>
+
+</section>
+
+<!-- ====================================== preview ==== -->
+<section id="preview">
+  <h2>Check a preview</h2>
+<p>A preview is checked the same way as a file: hash it, and find the hash as the second value on its version's line in
+  the manifest. A matching preview was timestamped with the version, so it shows what the version looked like on that
+  date.</p>
+
+</section>
+
+<div class="pager">
+  <a class="prev" href="File%20a%20takedown.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">File a takedown notice</div>
+  </a>
+  <a class="next" href="Change%20the%20settings.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Change the settings</div>
+  </a>
+</div>
+
+    <div class="doc-footer">CloneBuster v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

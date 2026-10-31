@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Understand the vault, the two timestamps, the previews, and what a timestamp proves." />
+  <title>CloneBuster - How CloneBuster proves your work</title>
+  <link rel="stylesheet" href="/assets/css/doc-styles.css" />
+  <link rel="stylesheet" href="/assets/css/clonebuster.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">CloneBuster</div><a href="../index.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>How CloneBuster proves your work</h1>
+      <div class="sub">Understand the vault, the two timestamps, the previews, and what a timestamp proves.</div>
+      <div class="guide-index">
+        <a href="#record">Every version, recorded as you save</a>
+        <a href="#timestamps">Two independent timestamps</a>
+        <a href="#previews">Previews taken at save time</a>
+        <a href="#history">Originals come from your own history</a>
+        <a href="#purchased">Purchased assets are never evidence</a>
+        <a href="#limits">What a timestamp proves</a>
+      </div>
+    </div>
+
+<section>
+<p>A clone can copy a finished game. It can't copy the dated history of how the game was made. CloneBuster keeps that
+  history: a record of every version of your files, each one timestamped by authorities that anyone can check without
+  CloneBuster.</p>
+</section>
+
+<!-- ====================================== record ==== -->
+<section id="record">
+  <h2>Every version, recorded as you save</h2>
+<p>CloneBuster watches your <code>Assets</code> folder and any source folders you add, such as the folder that holds
+  your PSD files or your store-page material. When a file changes, CloneBuster waits until it stops changing, then
+  computes its SHA-256 hash, a fingerprint unique to that exact content, and records the hash as a new version.</p>
+<p>Versions you save within a few seconds of each other form one batch, and each batch is timestamped once. The first
+  snapshot of the project is a single batch, however many files it holds.</p>
+<p>CloneBuster also scans every recorded folder when the Editor starts, after each script compilation, and every few
+  minutes, so a file you change while Unity is closed is recorded too.</p>
+<p>Hashing, scanning and timestamping run in the background, so they don't slow the Editor or your saves. Only previews
+  use the Editor's time: it decodes each new image and renders each new model, a few at a time. If large models slow
+  it after each import, turn off <a href="Change%20the%20settings.html#formats">Model preview</a> for their format.</p>
+<div class="note"><strong>Note:</strong> Code, scenes, prefabs and data files are recorded like any other file. CloneBuster never shows their contents unless you ask it to.</div>
+
+</section>
+
+<!-- ====================================== timestamps ==== -->
+<section id="timestamps">
+  <h2>Two independent timestamps</h2>
+<p>Each batch is timestamped by two authorities that don't depend on each other:</p>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Authority</th><th scope="col">What it gives you</th></tr>
+    <tr><td>An RFC 3161 timestamp authority, FreeTSA by default</td><td>A signed token, issued within seconds, in the standard timestamp format.</td></tr>
+    <tr><td>OpenTimestamps</td><td>A proof anchored in the Bitcoin blockchain, usually a few hours later. No wallet, fee or cryptocurrency is involved: public servers called calendars collect hashes and write one transaction for all of them.</td></tr>
+  </table>
+</div>
+<p>CloneBuster lists a batch's hashes in a text file, its manifest, and both authorities receive only the hash of that
+  manifest. They never receive your files, their names, or their individual hashes.</p>
+<p>FreeTSA's certificate is valid until 2040, and the Bitcoin proof never expires.</p>
+
+</section>
+
+<!-- ====================================== previews ==== -->
+<section id="previews">
+  <h2>Previews taken at save time</h2>
+<p>A hash proves a file existed. A reviewer also needs to see what it looked like. When you save an image or a model,
+  CloneBuster makes a preview of that version at once, at most 1080 pixels on its longer side, and lists the preview's
+  hash on the same manifest line as the file's. The preview is therefore timestamped with the version it shows.</p>
+<p>A preview has to be made when you save: once the file changes, that version's image is gone. For the
+  formats CloneBuster reads, refer to <a href="Supported%20formats.html">Supported formats</a>.</p>
+
+</section>
+
+<!-- ====================================== history ==== -->
+<section id="history">
+  <h2>Originals come from your own history</h2>
+<p>CloneBuster keeps no copies of your files. For each version it stores the hashes, the two timestamps and the
+  preview. An export doesn't include originals either: if someone asks for one, you send it yourself. So the export looks
+  for each version you picked in these places, and warns you when it can't find one (code and text files aren't
+  checked):</p>
+<ul>
+  <li>The file on disk, when its content still matches.</li>
+  <li>The file's last 300 commits in your git history, read through the <code>git</code> command, when the file is tracked. CloneBuster accepts a file
+    from history only if its SHA-256 matches the timestamped hash, so git's own dates are never relied on.</li>
+</ul>
+<p>A version found in neither place still exports with its hash, its proofs and its preview.</p>
+
+</section>
+
+<!-- ====================================== purchased ==== -->
+<section id="purchased">
+  <h2>Purchased assets are never evidence</h2>
+<p>Another game may have bought the same asset pack as you, so a file you didn't make proves nothing. CloneBuster
+  recognizes the files that come from the Asset Store and never records them:</p>
+<ul>
+  <li>Files whose <code>.meta</code> file carries the <code>AssetOrigin</code> block that Unity 6 writes on import.</li>
+  <li>Files whose GUID appears in a package of your local Asset Store download cache.</li>
+</ul>
+<div class="img-block">
+  <img src="../img/purchased_file.png" alt="Purchased files greyed out in the Exporter's tree, one selected: Purchased, never used as evidence" />
+</div>
+<p>For assets from anywhere else, such as stock art or licensed audio, mark their folder as third-party. For more
+  information, refer to <a href="Change%20the%20settings.html#third-party">Mark a third-party folder</a>. CloneBuster reads all of this
+  on your computer; nothing about your purchases leaves it.</p>
+
+</section>
+
+<!-- ====================================== limits ==== -->
+<section id="limits">
+  <h2>What a timestamp proves</h2>
+<p>A timestamp proves that a file with this exact content existed by the authority's date. It doesn't prove who made
+  the file, or how. CloneBuster doesn't certify that a work was made without AI, and it doesn't detect copies: you
+  recognize your own work, and CloneBuster gives you the dated evidence for it.</p>
+<p>Copyright protects expression, such as art, music, writing, levels and code. It doesn't protect game mechanics, so a
+  clone that copies only how your game plays is outside what any notice can remove.</p>
+
+</section>
+
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="Verify%20a%20proof.html">Verify a proof without CloneBuster</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="Installation.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Install CloneBuster</div>
+  </a>
+  <a class="next" href="Export%20a%20proof.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Export a proof</div>
+  </a>
+</div>
+
+    <div class="doc-footer">CloneBuster v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

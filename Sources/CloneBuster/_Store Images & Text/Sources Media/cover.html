@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<!-- Asset Store cover image, 1950x1300. Rendered to PNG by render.sh (headless Chrome). -->
+<style>
+  html, body { margin: 0; padding: 0; background: #2140f0; }
+  svg { display: block; }
+  .title   { font-family: "Segoe UI Black", "Segoe UI Variable Display", "Segoe UI", sans-serif; font-weight: 900; }
+  .tagline { font-family: "Segoe UI Variable Display", "Segoe UI", sans-serif; font-weight: 600; }
+</style>
+</head>
+<body>
+<svg width="1950" height="1300" viewBox="0 0 1950 1300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="bg" cx="0.6" cy="0.55" r="0.9">
+      <stop offset="0" stop-color="#3d5cff"/>
+      <stop offset="0.55" stop-color="#2140f0"/>
+      <stop offset="1" stop-color="#1428b8"/>
+    </radialGradient>
+    <!-- Halftone: a faint grid of light dots. -->
+    <pattern id="dots" width="24" height="24" patternUnits="userSpaceOnUse">
+      <circle cx="12" cy="12" r="3" fill="#ffffff"/>
+    </pattern>
+  </defs>
+
+  <rect width="1950" height="1300" fill="url(#bg)"/>
+  <rect width="1950" height="1300" fill="url(#dots)" opacity="0.07"/>
+
+  <!-- Text block: title and tagline only, per Asset Store cover rules. Hard ink shadow under the title. -->
+  <text class="title" x="122" y="290" font-size="176" fill="#0a1344" letter-spacing="-3">CloneBuster</text>
+  <text class="title" x="112" y="280" font-size="176" fill="#ffffff" letter-spacing="-3">CloneBuster</text>
+  <text class="tagline" x="120" y="384" font-size="62" fill="#ffd400">Prove you made it first.</text>
+
+  <image href="illustration.svg" x="40.0" y="461.6" width="1870.0" height="776.8"/>
+</svg>
+</body>
+</html>

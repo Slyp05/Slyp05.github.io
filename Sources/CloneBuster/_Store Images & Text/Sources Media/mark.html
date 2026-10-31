@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<!-- Editor mark, 32x32 (shown at 16x16): the icon's stacked prints and timestamp in one color, for the CloneBuster
+     window's tab. Light skin by default; "?dark" for the dark skin. -->
+<style>
+  html, body { margin: 0; padding: 0; background: transparent; }
+  svg { display: block; }
+</style>
+</head>
+<body>
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- The timestamp's casing, cut out of both prints, and the front print's, cut out of the print behind it, so each
+         shape stays apart from the next in one color. -->
+    <mask id="clockCasing" maskUnits="userSpaceOnUse" x="0" y="0" width="32" height="32">
+      <rect width="32" height="32" fill="#fff"/>
+      <circle cx="24" cy="9" r="8.6" fill="#000"/>
+    </mask>
+    <mask id="frontCasing" maskUnits="userSpaceOnUse" x="0" y="0" width="32" height="32">
+      <rect width="32" height="32" fill="#fff"/>
+      <rect x="1.4" y="10.9" width="24.2" height="19.2" rx="3" fill="#000"/>
+      <circle cx="24" cy="9" r="8.6" fill="#000"/>
+    </mask>
+    <!-- The clock's hands, knocked out of its disc. -->
+    <mask id="hands" maskUnits="userSpaceOnUse" x="0" y="0" width="32" height="32">
+      <rect width="32" height="32" fill="#fff"/>
+      <path d="M24 9 V5.4 M24 9 L26.8 10.6" stroke="#000" stroke-width="1.7" stroke-linecap="round" fill="none"/>
+    </mask>
+  </defs>
+  <g id="ink">
+    <!-- The print behind. -->
+    <g mask="url(#frontCasing)">
+      <rect x="2" y="7" width="19" height="14.5" rx="2" fill="none" stroke-width="2.2" transform="rotate(-8 11.5 14.25)"/>
+    </g>
+    <!-- The front print, with a landscape for its picture. -->
+    <g mask="url(#clockCasing)">
+      <rect x="3.5" y="13" width="20" height="15" rx="2" fill="none" stroke-width="2.2"/>
+      <path d="M7 25 L11.5 19.5 L14.5 22.5 L16.8 20.4 L20 25 Z" stroke="none"/>
+    </g>
+    <!-- The timestamp. -->
+    <circle cx="24" cy="9" r="6.6" stroke="none" mask="url(#hands)"/>
+  </g>
+</svg>
+<script>
+  // Editor Foundations' icon grey for each skin.
+  const color = (location.search.indexOf("dark") >= 0) ? "#c4c4c4" : "#555555";
+  const ink = document.getElementById("ink");
+  ink.setAttribute("stroke", color);
+  ink.setAttribute("fill", color);
+</script>
+</body>
+</html>

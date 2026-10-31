@@ -90,3 +90,17 @@
   blurb: >-
     Dependency injection designed around how Unity works. Selvage gives your scripts what
     they need from your scenes, assets and code, and checks every dependency before Play.
+
+# Unreleased: hidden from the home page and the nav until `released` is true.
+# Artwork is in place, exported from Sources/CloneBuster/_Store Images & Text/.
+- title: CloneBuster
+  url: /clonebuster/
+  released: false
+  free: false
+  meta: Coming soon
+  card: /assets/images/clonebuster-card.jpg
+  icon: /assets/images/CB.png
+  blurb: >-
+    Prove you made it first. CloneBuster timestamps every version of your project and source
+    art, and turns that history into a one-page proof and a dated timelapse when someone copies
+    your game.
