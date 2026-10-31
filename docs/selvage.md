@@ -134,8 +134,8 @@ Don't let the ease of use fool you: everything you expect from a DI framework is
 
 ## Get It
 
-<!-- TODO: unreleased; replace href="#" with the Unity Asset Store URL on release, then set store_url in the front matter above and remove `sitemap: false` (here and the selvage scope in _config.yml). -->
-<a href="#" class="asset-store-btn">View on Unity Asset Store</a>
+<!-- TODO: unreleased; on release set store_url in the front matter above (the button below switches to the store link) and remove `sitemap: false` (here and the selvage scope in _config.yml). -->
+{% include store-button.html %}
 
 ## Support
 

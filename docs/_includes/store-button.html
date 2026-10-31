@@ -1,0 +1,10 @@
+{%- comment -%}
+  The "Get It" store button. Reads the page's `software.store_url`: set, it is the
+  Asset Store link; empty (an unreleased package), it is a non-clickable status label.
+{%- endcomment -%}
+{%- assign store_url = page.software.store_url | default: "" -%}
+{%- if store_url != "" -%}
+<a href="{{ store_url }}" class="asset-store-btn">View on Unity Asset Store</a>
+{%- else -%}
+<span class="asset-store-btn asset-store-btn--pending" role="status">Coming soon to the Asset Store, awaiting Unity's review</span>
+{%- endif -%}

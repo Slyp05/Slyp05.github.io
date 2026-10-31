@@ -914,3 +914,34 @@ table td { border-color: var(--border-soft); }
   &--success { border-color: var(--badge-free-fg); background: var(--badge-free-bg); color: var(--badge-free-fg); }
   &--error   { border-color: var(--error); color: var(--error); }
 }
+
+// Unreleased package: the store button's slot shows a status label instead of a link.
+.asset-store-btn.asset-store-btn--pending {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  background: transparent;
+  border: 1px dashed var(--border);
+  color: var(--text-faint) !important;
+  cursor: default;
+
+  &::before {
+    content: "";
+    width: 0.5em;
+    height: 0.5em;
+    border-radius: 50%;
+    background: currentColor;
+    animation: pending-pulse 1.8s ease-in-out infinite;
+  }
+
+  &:hover { background: transparent; color: var(--text-faint) !important; }
+}
+
+@keyframes pending-pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.25; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .asset-store-btn--pending::before { animation: none; }
+}
