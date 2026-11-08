@@ -4,7 +4,7 @@
   At phone width the sidebar has no room beside the content. This puts a menu button at the right of
   the top bar and turns the sidebar into a drawer that slides over the page, so the contents are one
   tap away from anywhere. Pages without the Persistent Asset book bar get a bar of their own, naming
-  the package. The CSS lives with the rest of the doc layout in doc-styles.css (.nav-menu-btn,
+  the package. The CSS lives with the rest of the doc layout in each doc sheet (.nav-menu-btn,
   .nav-drawer, .nav-backdrop, .doc-top-phone); above 760px all of it is hidden and the sidebar shows
   in full, so this changes nothing on a desktop.
 

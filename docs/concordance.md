@@ -127,6 +127,7 @@ Any value more than one system wants a say in, such as:
 
 <!-- TODO: unreleased; on release set store_url in the front matter above (the button below switches to the store link) and remove `sitemap: false` (here and the concordance scope in _config.yml). -->
 {% include store-button.html %}
+<a href="https://justetools.itch.io/concordance" class="asset-store-btn new-tab" target="_blank" rel="noopener">Play Demo<span class="visually-hidden"> (opens in a new tab)</span></a>
 
 ## Support
 

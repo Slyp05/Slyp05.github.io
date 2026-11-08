@@ -1,10 +1,11 @@
 /*
   Dark mode for the standalone documentation pages.
 
-  Loaded AFTER doc-styles.css, which is a byte-for-byte copy of
-  Sources/Persistent Asset/Documentation/shared/styles.css and must stay that way:
-  that same file ships inside the Unity package and is opened from disk, where a
-  site-absolute path or a web-only feature has no business being. So every
+  Loaded AFTER the page's doc sheet: doc-styles.css, or the package's own sheet
+  (selvage.css, concordance.css, ...). Each is a byte-for-byte copy of that
+  package's Documentation/shared/styles.css and must stay that way: the same file
+  ships inside the Unity package and is opened from disk, where a site-absolute
+  path or a web-only feature has no business being. So every
   web-only concern lives here instead, exactly like the favicons and analytics.
 
   Same approach as main.scss: each colour becomes a token whose LIGHT value is
