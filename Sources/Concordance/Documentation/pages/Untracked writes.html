@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Handle writes from precompiled DLLs and packages, and track your own assemblies." />
+  <title>Concordance - Untracked writes</title>
+  <link rel="stylesheet" href="../shared/styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Concordance</div><a href="../User%20Manual.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Untracked writes</h1>
+      <div class="sub">Handle writes from precompiled DLLs and packages, and track your own assemblies.</div>
+    </div>
+
+<p>An <strong>untracked write</strong> is a write from code Concordance doesn't rewrite. Concordance picks it up the
+  next time the member's value is computed, or at once when you recombine the member.</p>
+
+<!-- ====================================== what ==== -->
+<section id="what">
+  <h2>How untracked writes apply</h2>
+<p>Concordance rewrites the assemblies that reference it, including <code>Assembly-CSharp</code>, and sees every
+  write in them. A write from the following is untracked:</p>
+<ul>
+  <li>Precompiled DLLs and the assemblies of Unity packages, including a UnityEvent that sets a property directly, such
+    as a slider's <strong>On Value Changed</strong> set to a field. A method of yours that a UnityEvent calls is
+    tracked.</li>
+  <li>Assemblies of your project that don't reference Concordance.</li>
+  <li>A ref or a pointer to a member that your code keeps in a field.</li>
+</ul>
+<p>An untracked write stays in effect without the modifiers until the member's value is next computed, when a
+  modifier on it is written or stopped. It then becomes the base value, and the modifiers apply on top.</p>
+</section>
+
+<!-- ====================================== find ==== -->
+<section id="find">
+  <h2>Find untracked writes</h2>
+<p>A member's <strong>Writes</strong> section in the Concordance window lists every write to it in your project's
+  code, DLLs and assets, grouped by source, with the untracked ones marked. For more information, refer to
+  <a href="Inspect%20members.html#open">Open a member</a>.</p>
+<div class="img-block">
+  <img src="../img/untracked_writes" alt="The Writes section of a member flagged Untracked writes in the Concordance window, with an untracked assembly and its Add Reference button" />
+</div>
+</section>
+
+<!-- ====================================== assemblies ==== -->
+<section id="assemblies">
+  <h2>Track an assembly</h2>
+<p>An assembly definition of your own is tracked once it references Concordance. To add the reference, do one of the
+  following:</p>
+<ul>
+  <li>Select the assembly definition asset, add <strong>Concordance</strong> to its <strong>Assembly Definition
+    References</strong>, and select <strong>Apply</strong>.</li>
+  <li>In the Concordance window, select a member flagged <strong>Untracked writes</strong>, then select
+    <strong>Add Reference</strong> on the assembly in its <strong>Writes</strong> section.</li>
+</ul>
+</section>
+
+<!-- ====================================== recombine ==== -->
+<section id="recombine">
+  <h2>Recombine a member</h2>
+<p>To take an untracked write into account at once, call <code>Recombine()</code> on the member right after it:</p>
+<pre><code><span class="ty">ThirdPartyAudio</span>.ApplySettings();   <span class="cm">// writes AudioListener.volume from a precompiled DLL</span>
+<span class="ty">AudioListener</span>.volume.Recombine();</code></pre>
+<p>The member's current value becomes its base value, and the modifiers apply on top.</p>
+</section>
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="Base%20values.html">Base values</a></li>
+    <li><a href="Installation.html#asmdef">Reference Concordance from an assembly definition</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="Control%20by%20object.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Control modifiers by object</div>
+  </a>
+  <a class="next" href="Special%20cases.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Special cases</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Concordance v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

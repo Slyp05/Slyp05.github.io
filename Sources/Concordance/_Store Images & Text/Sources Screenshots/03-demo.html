@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="frame.css">
+<style>
+  .stage { display: grid; grid-template-columns: 1fr 1fr; gap: 24px 60px; align-content: center; }
+  .shot { width: 100%; }
+  .verdict { display: flex; align-items: center; gap: 14px; font-size: 32px; font-weight: 700; }
+  .verdict svg { flex: none; }
+</style>
+</head>
+<body>
+<div class="head">
+  <h1>Overlapping effects add up right</h1>
+  <p>The same gravity zones, in the included demo.</p>
+</div>
+<div class="stage">
+  <img class="shot" src="captures/demo-plain.png" alt="">
+  <img class="shot" src="captures/demo-concordance.png" alt="">
+  <div class="verdict" style="color: var(--crimson)">
+    <svg width="40" height="40" viewBox="0 0 40 40"><path d="M10 10 L30 30 M30 10 L10 30" stroke="currentColor" stroke-width="6" stroke-linecap="round"/></svg>
+    Without Concordance: gravity left wrong
+  </div>
+  <div class="verdict">
+    <svg width="40" height="40" viewBox="0 0 40 40"><path d="M8 21 L17 30 L33 11" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    With Concordance: gravity back to normal
+  </div>
+</div>
+</body>
+</html>

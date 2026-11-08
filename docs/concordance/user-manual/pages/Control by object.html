@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Stop and inspect the modifiers and observers of an object, release pooled objects, and copy an object without its modifiers." />
+  <title>Concordance - Control modifiers by object</title>
+  <link rel="stylesheet" href="/assets/css/concordance.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Concordance</div><a href="../index.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Control modifiers by object</h1>
+      <div class="sub">Stop and inspect the modifiers and observers of an object, release pooled objects, and copy an object without its modifiers.</div>
+    </div>
+
+<p><code>Concord</code>, in the <code>Concordance.Advanced</code> namespace, acts on everything Concordance holds for
+  one object: its modifiers and its observers, on every member at once.</p>
+
+<!-- ====================================== scopes ==== -->
+<section id="scopes">
+  <h2>Act on an owner or a target</h2>
+<p><code>Concord</code> reaches an object in one of two ways:</p>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Method</th><th scope="col">Description</th></tr>
+    <tr><td><code>Concord.Owner(obj)</code></td><td>The modifiers and observers the object owns, on any member.</td></tr>
+    <tr><td><code>Concord.Target(obj)</code></td><td>The modifiers and observers on the object's members, whoever wrote them.</td></tr>
+  </table>
+</div>
+<pre><code><span class="kw">using</span> Concordance.Advanced;
+
+<span class="ty">Concord</span>.Owner(<span class="kw">this</span>).StopModifying(<span class="pn">key:</span> buffId);                              <span class="cm">// one buff, on every member</span>
+<span class="ty">Concord</span>.Target(enemy).StopModifying(m =&gt; m.ScriptType == <span class="kw">typeof</span>(<span class="ty">SlowAura</span>));   <span class="cm">// one script's modifiers on the enemy</span></code></pre>
+<p>Both offer <code>StopModifying</code>, <code>StopObserving</code>, <code>Recombine</code>,
+  <code>HasModifiers</code>, <code>HasObservers</code>, <code>GetModifiers</code> and <code>GetObservers</code>. A
+  GameObject covers its components and children too, and a type stands for its static members:
+  <code>Concord.Target(typeof(Time))</code>.</p>
+</section>
+
+<!-- ====================================== pooling ==== -->
+<section id="pooling">
+  <h2>Release pooled objects</h2>
+<p>A pooled object is deactivated, not destroyed, so its modifiers would outlive its use. <code>Concord.Release</code>
+  ends them as destroying the object would. Call it when the object returns to the pool, before deactivating it:</p>
+<pre><code><span class="ty">ObjectPool</span>&lt;<span class="ty">Bullet</span>&gt; pool = <span class="kw">new</span>(<span class="ty">Create</span>, <span class="pn">actionOnRelease:</span> bullet =&gt;
+{
+    <span class="ty">Concord</span>.Release(bullet.gameObject);
+    bullet.gameObject.SetActive(<span class="kw">false</span>);
+});</code></pre>
+</section>
+
+<!-- ====================================== clone ==== -->
+<section id="clone">
+  <h2>Copy an object without its modifiers</h2>
+<p><code>Concord.CloneUnmodified</code> copies an object as it would be without its modifiers: each modified member
+  of the copy holds its base value. The original keeps its modifiers. It takes a
+  GameObject, a component or a ScriptableObject, copied with <code>Object.Instantiate</code>, or a plain C# object
+  that implements <code>ICloneable</code>.</p>
+<p>Disposing what it returns destroys the copy, so a copy you only read, such as for a save, fits in a
+  <code>using</code> statement:</p>
+<pre><code><span class="kw">using</span> (<span class="ty">Concord</span>.CloneUnmodified(stats, <span class="kw">out</span> <span class="ty">PlayerStats</span> copy))
+    json = <span class="ty">JsonUtility</span>.ToJson(copy);</code></pre>
+<p>To keep the copy, ignore the returned object.</p>
+</section>
+
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="Write%20modifier%20lines.html#lifetime">When a modifier ends</a></li>
+    <li><a href="../../public-api/pages/API%20-%20Advanced.html">Public API: Advanced</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="Advanced%20topics.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Advanced topics</div>
+  </a>
+  <a class="next" href="Untracked%20writes.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Untracked writes</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Concordance v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

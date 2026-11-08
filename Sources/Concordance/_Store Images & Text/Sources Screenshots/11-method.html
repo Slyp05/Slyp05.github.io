@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="frame.css">
+<style>
+  .stage { display: grid; grid-template-columns: 1fr 70px 1fr; row-gap: 26px; align-items: center; align-content: start; }
+  .label { font-size: 26px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--dim); }
+  .eq { font-size: 54px; font-weight: 700; color: var(--dim); text-align: center; }
+  .code pre { font-size: 25px; }
+  .wide { grid-column: 1 / 4; margin-top: 24px; }
+</style>
+</head>
+<body>
+<div class="head">
+  <h1>Quick syntax, or regular syntax</h1>
+  <p>Pick what you prefer. The regular syntax takes more options.</p>
+</div>
+<div class="stage">
+  <div class="label">Quick syntax</div><div></div><div class="label">Regular syntax</div>
+  <div class="code blue">
+<pre class="cs">
+body.gravityScale *= (Modifier)0.5f;
+</pre>
+  </div>
+  <div class="eq">=</div>
+  <div class="code blue">
+<pre class="cs">
+body.gravityScale.Modify(body.gravityScale * 0.5f);
+</pre>
+  </div>
+  <div class="code blue">
+<pre class="cs">
+body.gravityScale = Modifier.Stop;
+</pre>
+  </div>
+  <div class="eq">=</div>
+  <div class="code blue">
+<pre class="cs">
+body.gravityScale.StopModifying();
+</pre>
+  </div>
+  <div class="code ochre wide">
+    <div class="file">BuffSystem.cs</div>
+<pre class="cs">
+body.gravityScale.Modify(buff.gravity, owner: buff);   // ends when the buff is destroyed
+</pre>
+  </div>
+</div>
+<script src="highlight.js"></script>
+</body>
+</html>

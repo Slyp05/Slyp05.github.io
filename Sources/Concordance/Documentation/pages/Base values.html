@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Understand how plain writes work with modifiers, and read a value without them." />
+  <title>Concordance - Base values</title>
+  <link rel="stylesheet" href="../shared/styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Concordance</div><a href="../User%20Manual.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Base values</h1>
+      <div class="sub">Understand how plain writes work with modifiers, and read a value without them.</div>
+    </div>
+
+<p>A member's <strong>base value</strong> is its value without modifiers. Concordance applies the active modifiers on
+  top of it.</p>
+
+<!-- ====================================== plain ==== -->
+<section id="plain">
+  <h2>Plain writes</h2>
+<p>A plain write, an assignment without <code>(Modifier)</code>, sets the base value:</p>
+<pre><code><span class="ty">AudioListener</span>.volume = (<span class="ty">Modifier</span>)<span class="nu">0f</span>;   <span class="cm">// a mute, from a cutscene</span>
+<span class="ty">AudioListener</span>.volume = <span class="nu">0.8f</span>;           <span class="cm">// from the options menu: the base value is 0.8, the value stays 0</span></code></pre>
+<p>A script that doesn't use Concordance therefore keeps working alongside the ones that do. An edit in the
+  Inspector window in Play mode, animation, and reflection or <code>JsonUtility.FromJsonOverwrite</code> called from
+  your scripts set the base value too.</p>
+</section>
+
+<!-- ====================================== read ==== -->
+<section id="read">
+  <h2>Read the base value</h2>
+<p>Reading a member gives its value with the modifiers. <code>GetUnmodified()</code> gives the base value. Use it to
+  change a member from its own value, and to save a member:</p>
+<pre><code>rb.gravityScale = rb.gravityScale.GetUnmodified() * <span class="nu">2f</span>;   <span class="cm">// doubles the base value</span>
+data.volume = <span class="ty">AudioListener</span>.volume.GetUnmodified();      <span class="cm">// saves the volume, not a cutscene's mute</span></code></pre>
+<p>Without it, a write such as <code>rb.gravityScale *= 2f</code> reads the value with its modifiers, so they end up
+  in the base value and apply twice, and a save stores the modifiers along with the value.</p>
+</section>
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="Inspect%20members.html#conflicts">Fix conflicting writes</a></li>
+    <li><a href="Untracked%20writes.html">Untracked writes</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="Order%20modifiers.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Order modifiers</div>
+  </a>
+  <a class="next" href="Modifier%20functions.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Modifier functions</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Concordance v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

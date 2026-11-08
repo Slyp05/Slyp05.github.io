@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="frame.css">
+<style>
+  .stage > * { position: absolute; }
+  .code { left: 0; width: 680px; }
+  .code pre { font-size: 28px; }
+  .shot { left: 880px; top: 30px; width: 800px; }
+  .links { left: 0; top: 0; overflow: visible; }
+  .stage .tag { left: 900px; top: -14px; }
+</style>
+</head>
+<body>
+<div class="head">
+  <h1>See every script that writes a value</h1>
+  <p>The HUD flickers? Find every line that sets it, and the two that fight.</p>
+</div>
+<div class="stage">
+  <svg class="links" width="1680" height="790" viewBox="0 0 1680 790">
+    <g fill="none" stroke-width="6" stroke-linecap="round">
+      <path d="M680 125 C 780 125, 800 300, 900 300" stroke="var(--blue)"/>
+      <path d="M680 385 C 780 385, 800 380, 900 380" stroke="var(--ochre)"/>
+      <path d="M680 645 C 780 645, 800 460, 900 460" stroke="var(--crimson)"/>
+    </g>
+  </svg>
+  <div class="code blue" style="top: 30px">
+    <div class="file">CutsceneManager.cs</div>
+<pre class="cs manual">
+hud.SetActive(false);
+</pre>
+  </div>
+  <div class="code ochre" style="top: 290px">
+    <div class="file">LowHealthWarning.cs</div>
+<pre class="cs manual">
+hud.SetActive(true);
+</pre>
+  </div>
+  <div class="code crimson" style="top: 550px">
+    <div class="file">PauseMenu.cs</div>
+<pre class="cs manual">
+hud.SetActive(false);
+</pre>
+  </div>
+  <img class="shot" src="captures/window-writes.png" alt="">
+  <div class="tag">Concordance window</div>
+</div>
+<script src="highlight.js"></script>
+</body>
+</html>

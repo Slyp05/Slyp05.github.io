@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Set the order in which the modifiers of different scripts apply." />
+  <title>Concordance - Order modifiers</title>
+  <link rel="stylesheet" href="../shared/styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Concordance</div><a href="../User%20Manual.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Order modifiers</h1>
+      <div class="sub">Set the order in which the modifiers of different scripts apply.</div>
+    </div>
+
+<p>Each modifier receives the value the modifiers before it left, so their order can change the result: from 1,
+  adding 1 then doubling gives 4, and doubling then adding 1 gives 3. A modifier that sets a value, such as
+  <code>x = (Modifier)0f</code>, replaces the result of every modifier before it.</p>
+
+<!-- ====================================== how ==== -->
+<section id="how">
+  <h2>How modifiers are ordered</h2>
+<p>A member's modifiers apply phase by phase, in this order: <code>Earliest</code>, <code>Early</code>, <code>Default</code>, <code>Late</code>, then <code>Latest</code>. Each script's code
+  gives its modifiers a phase, and the Concordance window orders the scripts that share one. For example, three
+  scripts change a camera's field of view:</p>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Script</th><th scope="col">Phase</th><th scope="col">Modifier line</th></tr>
+    <tr><td><code>SprintFov</code></td><td><code>Default</code></td><td><code>cam.fieldOfView += (Modifier)10f;</code></td></tr>
+    <tr><td><code>AimZoom</code></td><td><code>Late</code></td><td><code>cam.fieldOfView *= (Modifier)0.5f;</code></td></tr>
+    <tr><td><code>CutsceneCamera</code></td><td><code>Latest</code></td><td><code>cam.fieldOfView = (Modifier)40f;</code></td></tr>
+  </table>
+</div>
+<p>From a base value of 60, sprinting while aiming gives (60 + 10) &times; 0.5 = 35. During a cutscene, the field of
+  view is 40, since the cutscene applies last. When the cutscene ends, it's 35 again.</p>
+</section>
+
+<!-- ====================================== phase ==== -->
+<section id="phase">
+  <h2>Set a phase in code</h2>
+<p>To set the phase of a script's modifiers, add a phase attribute to the method or the class that writes them. The
+  method's attribute wins over the class's, a script without one is in <code>Default</code>, and
+  <code>Modifier.Stop</code> needs none:</p>
+<pre><code><span class="kw">using</span> Concordance;
+<span class="kw">using</span> UnityEngine;
+
+[<span class="ty">ModifierPhase</span>.Late]
+<span class="kw">public</span> <span class="kw">class</span> <span class="ty">SpeedLimiter</span> : <span class="ty">MonoBehaviour</span>
+{
+    [<span class="ty">SerializeField</span>] <span class="kw">float</span> maxSpeed = <span class="nu">3f</span>;
+    [<span class="ty">SerializeField</span>] <span class="ty">Animator</span> animator;
+
+    <span class="kw">void</span> Update() =&gt; animator.speed = (<span class="ty">Modifier</span>)<span class="ty">Mathf</span>.Min(animator.speed, maxSpeed);   <span class="cm">// Late</span>
+
+    [<span class="ty">ModifierPhase</span>.Latest]
+    <span class="kw">public</span> <span class="kw">void</span> Freeze() =&gt; animator.speed = (<span class="ty">Modifier</span>)<span class="nu">0f</span>;                                <span class="cm">// Latest</span>
+}</code></pre>
+<p>Typically, a value the others build on goes early, adjustments stay in
+  <code>Default</code>, caps go late, and a value that must win, such as a cutscene's, goes in
+  <code>Latest</code>.</p>
+</section>
+
+<!-- ====================================== window ==== -->
+<section id="window">
+  <h2>Set the order in the Concordance window</h2>
+<p>When two or more scripts modify the same member, its <strong>Modifier Order</strong> in the Concordance window
+  shows them by phase, in the order they apply.</p>
+<div class="img-block">
+  <img src="../img/window_order" alt="The Concordance window, with Camera.fieldOfView selected: its modifier order, SprintFov in Default, AimZoom in Late, CutsceneCamera in Latest" />
+</div>
+<p>To move a script in a member's order, perform the following steps:</p>
+<ol>
+  <li>Go to <strong>Tools</strong> &gt; <strong>Concordance</strong> &gt; <strong>Open Window</strong>, and select the
+    member.</li>
+  <li>In its <strong>Modifier Order</strong>, drag the script by its handle to its new place, in its phase or in
+    another one.</li>
+</ol>
+<p>The script is now <strong>pinned</strong> there: its place in the window wins over its phase in code, so a script you
+  didn't write takes the place you give it, with no edit to its code. To return it to its phase in code, select
+  <strong>Unpin</strong>.</p>
+<p>When two scripts share a phase and their order doesn't matter, such as two multipliers, enable
+  <strong>Any Order</strong> on the phase's heading.</p>
+<p>The order is saved in <code>ProjectSettings/ConcordanceSettings.asset</code>. Commit this file to version control
+  so your team shares the order.</p>
+<div class="note"><strong>Note:</strong> The order is read-only in Play mode.</div>
+</section>
+
+<!-- ====================================== flags ==== -->
+<section id="flags">
+  <h2>Resolve order flags</h2>
+<p>The Concordance window flags a member whose order needs a decision, and <strong>Needs a Decision</strong> above the
+  member list lists these members:</p>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Flag</th><th scope="col">Cause and solution</th></tr>
+    <tr><td><strong>Order not set</strong></td><td>Two or more scripts share a phase, and you haven't set their order: until you do, they apply in alphabetical order of their names. Drag one of them into place, or enable <strong>Any Order</strong> on the phase.</td></tr>
+    <tr><td><strong>Pin to review</strong></td><td>A pinned script was removed or renamed, or its phase changed in code. Unpin it, or drag it again.</td></tr>
+  </table>
+</div>
+</section>
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="Regular%20syntax.html#localorder">Order the modifiers of one script</a></li>
+    <li><a href="Concordance%20window%20reference.html">Concordance window reference</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="Regular%20syntax.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Use the regular syntax</div>
+  </a>
+  <a class="next" href="Base%20values.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Base values</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Concordance v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

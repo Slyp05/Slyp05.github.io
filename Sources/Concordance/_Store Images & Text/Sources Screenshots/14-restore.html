@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="frame.css">
+<style>
+  .stage { display: flex; align-items: center; justify-content: space-between; }
+  .step { display: flex; flex-direction: column; align-items: center; gap: 22px; }
+  .asset {
+    width: 400px; box-sizing: border-box; background: var(--sheet); border: 3px solid var(--line); border-radius: 18px; box-shadow: var(--shadow);
+    padding: 26px 30px;
+  }
+  .asset .name { display: flex; align-items: center; gap: 14px; font-size: 28px; font-weight: 700; margin-bottom: 20px; }
+  .asset .name i { width: 30px; height: 30px; border-radius: 6px; background: var(--blue); flex: none; }
+  .asset .row { display: flex; justify-content: space-between; font-size: 30px; color: var(--ink-soft); }
+  .asset .row b { font-family: "Cascadia Code", Consolas, monospace; font-size: 36px; color: var(--ink); }
+  .asset.play { border-color: var(--ochre); }
+  .asset.play .row b { color: var(--ochre); }
+  .when { font-size: 30px; font-weight: 700; }
+  .arrow { flex: none; }
+</style>
+</head>
+<body>
+<div class="head">
+  <h1>Exit Play mode, and every value is back</h1>
+  <p>Your ScriptableObject assets keep the values you gave them.</p>
+</div>
+<div class="stage">
+  <div class="step">
+    <div class="asset"><div class="name"><i></i>EnemyStats.asset</div><div class="row">Health<b>100</b></div></div>
+    <div class="when">Before Play</div>
+  </div>
+  <svg class="arrow" width="120" height="60" viewBox="0 0 120 60"><path d="M8 30 H100 M80 12 L102 30 L80 48" fill="none" stroke="#9c9182" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  <div class="step">
+    <div class="asset play"><div class="name"><i style="background: var(--ochre)"></i>EnemyStats.asset</div><div class="row">Health<b>200</b></div></div>
+    <div class="when" style="color: var(--ochre)">During Play: a script doubles it</div>
+  </div>
+  <svg class="arrow" width="120" height="60" viewBox="0 0 120 60"><path d="M8 30 H100 M80 12 L102 30 L80 48" fill="none" stroke="#9c9182" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  <div class="step">
+    <div class="asset"><div class="name"><i></i>EnemyStats.asset</div><div class="row">Health<b>100</b></div></div>
+    <div class="when">After Play</div>
+  </div>
+</div>
+</body>
+</html>

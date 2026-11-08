@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="frame.css">
+<style>
+  .stage { display: flex; flex-direction: column; gap: 40px; }
+  .code pre { font-size: 32px; }
+  .k { color: var(--code-key); } .t { color: var(--code-type); } .a { color: #ffffff; font-weight: 700; }
+  .err { text-decoration: underline wavy var(--ochre-lt); text-decoration-thickness: 3px; text-underline-offset: 9px; }
+  .ok { color: var(--ochre-lt); font-weight: 700; }
+  .tip {
+    margin: 0 30px 26px; background: #15111b; border: 2px solid #4b4257; border-radius: 12px; padding: 18px 24px;
+    font-size: 25px; line-height: 1.45; color: var(--code-text); width: fit-content;
+  }
+  .tip .id { color: var(--ochre-lt); font-weight: 700; margin-right: 12px; }
+  .menu {
+    margin: 0 30px 30px; display: flex; align-items: center; gap: 14px; width: fit-content; font-size: 25px; color: var(--code-text);
+    background: color-mix(in srgb, var(--ochre-lt) 22%, #15111b); border: 2px solid #4b4257; border-radius: 10px; padding: 12px 20px;
+  }
+  .down { display: flex; justify-content: center; margin: -14px 0; }
+</style>
+</head>
+<body>
+<div class="head">
+  <h1>Mistakes caught as you type</h1>
+  <p>Each message says how to fix it, in your code editor.</p>
+</div>
+<div class="stage">
+  <div class="code ochre">
+    <div class="file">MusicFadeZone.cs</div>
+<pre>[<span class="a">SerializeField</span>] <span class="t">ModifierFunction</span>&lt;<span class="k">float</span>&gt; <span class="err">fade</span>;</pre>
+    <div class="tip"><span class="id">CND0107</span>'fade' holds a modifier function, which Unity saves only in a [SerializeReference] field: without it, the field is never saved and the Inspector shows nothing</div>
+    <div class="menu">
+      <svg width="26" height="26" viewBox="0 0 24 24"><path d="M9 21h6M10 18h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2V16h5v-.1c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z" fill="#f0bd5c"/></svg>
+      Mark the field [SerializeReference]
+    </div>
+  </div>
+  <div class="down"><svg width="60" height="60" viewBox="0 0 60 60"><path d="M30 8 V48 M14 34 L30 50 L46 34" fill="none" stroke="var(--ochre)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="code ochre">
+<pre>[<span class="ok">SerializeReference</span>] <span class="t">ModifierFunction</span>&lt;<span class="k">float</span>&gt; fade;</pre>
+  </div>
+</div>
+</body>
+</html>

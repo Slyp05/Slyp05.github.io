@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<!-- Editor mark, 32x32 (shown at 16x16): the icon's three rings and their common ground in one colour, for the
+     Concordance window's tab and the button that opens it. Light skin by default; "?dark" for the dark skin; "?demo"
+     for the demo's Modifiers button, gold on ink, rendered at 128x128 with "&size=128". -->
+<style>
+  html, body { margin: 0; padding: 0; background: transparent; }
+  svg { display: block; }
+</style>
+</head>
+<body>
+<!-- Drawn on the 32 px grid, the rings' bounds centred with about a 2 px margin, as Unity's own tab icons keep.
+     Without the icon's tints, which a single colour cannot show, the rings are lines and the value is the only fill. -->
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <clipPath id="ring0"><circle cx="16" cy="11.5" r="8.5"/></clipPath>
+    <clipPath id="ring1"><circle cx="10.8" cy="20.5" r="8.5"/></clipPath>
+    <clipPath id="ring2"><circle cx="21.2" cy="20.5" r="8.5"/></clipPath>
+  </defs>
+  <g id="ink">
+    <g clip-path="url(#ring0)"><g clip-path="url(#ring1)"><g clip-path="url(#ring2)"><rect width="32" height="32"/></g></g></g>
+    <g fill="none" stroke-width="2.4">
+    <circle cx="16" cy="11.5" r="8.5"/>
+    <circle cx="10.8" cy="20.5" r="8.5"/>
+    <circle cx="21.2" cy="20.5" r="8.5"/>
+    </g>
+  </g>
+</svg>
+<script>
+  // Editor Foundations' icon grey for each skin, or the demo's gold.
+  const color = (location.search.indexOf("demo") >= 0) ? "#f0b43c" : (location.search.indexOf("dark") >= 0) ? "#c4c4c4" : "#555555";
+  const ink = document.getElementById("ink");
+  ink.setAttribute("stroke", color);
+  ink.setAttribute("fill", color);
+  const size = /size=(\d+)/.exec(location.search);
+  if (size)
+  {
+    const svg = document.querySelector("svg");
+    svg.setAttribute("width", size[1]);
+    svg.setAttribute("height", size[1]);
+  }
+</script>
+</body>
+</html>

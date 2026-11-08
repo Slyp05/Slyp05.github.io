@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Look up every part of the Concordance window and of its Inspector section." />
+  <title>Concordance - Concordance window reference</title>
+  <link rel="stylesheet" href="/assets/css/concordance.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Concordance</div><a href="../index.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Concordance window reference</h1>
+      <div class="sub">Look up every part of the Concordance window and of its Inspector section.</div>
+    </div>
+
+<!-- ====================================== list ==== -->
+<section id="list">
+  <h2>Member list</h2>
+<p>To open the Concordance window, go to <strong>Tools</strong> &gt; <strong>Concordance</strong> &gt;
+  <strong>Open Window</strong>. Its help (?) button opens this manual.</p>
+<div class="img-block">
+  <img src="../img/window_overview.png" alt="The Concordance window, with the member list on the left and a member's details on the right" />
+</div>
+<p>The list shows members under their assembly and type. A warning icon marks a member that needs a decision, and an
+  eye marks a watched one: select the eye to watch or stop watching. In Play mode, each row shows the member's
+  value.</p>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Control</th><th scope="col">Description</th></tr>
+    <tr><td>Search field</td><td>Finds any member your code writes, by member, type, assembly, script or object name. Ctrl+F (macOS: Command+F) focuses it.</td></tr>
+    <tr><td>Watch filter</td><td>Lists all members, the watched ones, or the others.</td></tr>
+    <tr><td>Access filter</td><td>Lists members by their declared access: public, internal, protected or private.</td></tr>
+    <tr><td><strong>Modified Only</strong></td><td>Lists only the members a script modifies or you watch. Enabled by default.</td></tr>
+    <tr><td><strong>Needs a Decision</strong></td><td>Lists only the members that need a decision, with their number.</td></tr>
+    <tr><td><strong>Collapse All</strong>, <strong>Expand All</strong></td><td>Folds or unfolds every heading.</td></tr>
+  </table>
+</div>
+<p>Right-click a member to watch it for this session, always, or stop watching it.</p>
+</section>
+
+<!-- ====================================== member ==== -->
+<section id="member">
+  <h2>Member details</h2>
+<p>A selected member shows its name, its <strong>Watch</strong> button, and the following sections, each with a
+  warning box for any decision it needs. A special case, such as a member animation drives, says so under the
+  name.</p>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Section</th><th scope="col">Description</th></tr>
+    <tr><td><strong>Modifier Order</strong></td><td>The scripts that modify the member, by phase, in the order they apply. Drag a script to pin it; <strong>Unpin</strong> returns it to its phase in code; <strong>Any Order</strong> marks a phase whose order doesn't matter. Read-only in Play mode. With one script, <strong>Modifier Lines</strong> lists its lines instead.</td></tr>
+    <tr><td><strong>Writes</strong></td><td>Every write to the member in your project other than its modifier lines, grouped by source. <strong>Add Reference</strong> tracks the writes of an assembly, and <strong>Intended</strong> marks a script as an intended writer.</td></tr>
+    <tr><td><strong>Values</strong></td><td>In Play mode, for each object: the base value, each modifier with its owner, line and the value after it, then the value. A toggle on each modifier leaves it out, in the Editor only. A <strong>Conflicting writes</strong> row offers <strong>Open Line</strong> and <strong>Mark as Intended</strong>.</td></tr>
+    <tr><td><strong>History</strong></td><td>In Play mode, for a watched member, its last 64 changes, each with its frame, who made it, its line, and the value after it.</td></tr>
+  </table>
+</div>
+</section>
+
+<!-- ====================================== inspector ==== -->
+<section id="inspector">
+  <h2>Inspector section</h2>
+<p>When you select a GameObject or a ScriptableObject with modified members, the Inspector window shows a
+  <strong>Concordance</strong> section under its header, folded by default. Its header counts the members per state;
+  select a count to show only those rows. Select a row to open its member in the Concordance window.</p>
+<div class="img-block">
+  <img src="../img/inspector_strip.png" alt="The folded Concordance section of a GameObject in the Inspector window, with its member count and its state counts" />
+</div>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">State</th><th scope="col">Meaning</th></tr>
+    <tr><td><strong>order not set</strong>, <strong>pin to review</strong></td><td>The member's order needs a decision.</td></tr>
+    <tr><td><strong>untracked</strong></td><td>An assembly without the Concordance reference writes the member: add the reference so Concordance tracks its writes.</td></tr>
+    <tr><td><strong>ordered</strong>, <strong>one script</strong></td><td>Nothing to decide.</td></tr>
+    <tr><td><strong>conflicting writes</strong></td><td>In Play mode, two objects overwrite each other's value.</td></tr>
+    <tr><td><strong>modified</strong>, <strong>unmodified</strong></td><td>In Play mode, whether modifiers apply to the member now.</td></tr>
+  </table>
+</div>
+</section>
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="Inspect%20members.html">Inspect members</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="Reference.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Reference</div>
+  </a>
+  <a class="next" href="Code%20analysis%20reference.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Code analysis reference</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Concordance v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Import Concordance into your project, reference it from your assembly definitions, and try the demo." />
+  <title>Concordance - Install Concordance</title>
+  <link rel="stylesheet" href="/assets/css/concordance.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Concordance</div><a href="../index.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Install Concordance</h1>
+      <div class="sub">Import Concordance into your project, reference it from your assembly definitions, and try the demo.</div>
+    </div>
+
+<!-- ====================================== requirements ==== -->
+<section id="requirements">
+  <h2>Requirements</h2>
+<p>Concordance requires the following:</p>
+<ul>
+  <li>Unity 6.0 or later, on any build target, with the Mono or IL2CPP scripting backend.</li>
+  <li>The Mono Cecil package (<code>com.unity.nuget.mono-cecil</code>) 1.10 or later. Importing Concordance installs
+    it.</li>
+  <li>A code editor that runs Roslyn 4.3 or later, such as Visual Studio 2022 17.3, Rider 2022.3, or the C# extension
+    for Visual Studio Code 1.25. An older code editor marks the <code>Modifier</code> type as an error, although Unity
+    compiles your scripts.</li>
+</ul>
+</section>
+
+<!-- ====================================== install ==== -->
+<section id="install">
+  <h2>Install the package</h2>
+<p>To install Concordance, perform the following steps:</p>
+<ol>
+  <li>Open the Package Manager window: go to <strong>Window</strong> &gt; <strong>Package Manager</strong> (Unity 6.1
+    and later: <strong>Window</strong> &gt; <strong>Package Management</strong> &gt; <strong>Package
+    Manager</strong>).</li>
+  <li>Select <strong>My Assets</strong>, then select <strong>Concordance</strong> in the list.</li>
+  <li>Select <strong>Download</strong> if Concordance isn't downloaded yet, then select <strong>Import</strong>.</li>
+  <li>In the <strong>Import Unity Package</strong> window, select <strong>Import</strong>.</li>
+</ol>
+<p>Your existing code keeps working as it is: a member's writes run as written until it has a modifier, an observer
+  or a watch. To open the Concordance window and this documentation, go to <strong>Tools</strong> &gt;
+  <strong>Concordance</strong>.</p>
+<div class="img-block">
+  <img src="../img/tools_menu.png" alt="The Tools &gt; Concordance menu, with Open Window, Quick Usage Guide, User Manual and Public API" />
+</div>
+</section>
+
+<!-- ====================================== asmdef ==== -->
+<section id="asmdef">
+  <h2>Reference Concordance from an assembly definition</h2>
+<p>Scripts in the default assembly, <code>Assembly-CSharp</code>, use Concordance with no setup. An assembly
+  definition of your own needs a reference to Concordance: without it, its scripts can't write modifiers, and
+  Concordance doesn't track their writes. To add the reference, perform the following steps:</p>
+<ol>
+  <li>In the Project window, select the assembly definition asset.</li>
+  <li>In the Inspector window, add <strong>Concordance</strong> to <strong>Assembly Definition References</strong>.</li>
+  <li>Select <strong>Apply</strong>.</li>
+</ol>
+<p>The Concordance window can also add the reference, from any member that the assembly writes. For more
+  information, refer to <a href="Untracked%20writes.html#assemblies">Track an assembly</a>.</p>
+</section>
+
+<!-- ====================================== demo ==== -->
+<section id="demo">
+  <h2>Try the demo</h2>
+<p>The demo scene, <code>Assets/Concordance/Demo/Scenes/Concordance Demo.unity</code>, is a short level of gravity
+  zones that you play twice: first with zones that use plain writes, where overlapping zones leave the player with the
+  wrong gravity, then with zones that use modifiers.</p>
+<p>The scripts to read are in <code>Assets/Concordance/Demo/Scripts/Concordance Usage (Read Me)</code>:</p>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Script</th><th scope="col">Description</th></tr>
+    <tr><td><code>LegacyGravityZone</code></td><td>Changes the player's gravity with plain writes, and undoes its change when the player leaves.</td></tr>
+    <tr><td><code>GravityZone</code></td><td>Changes the player's gravity with a modifier, and stops the modifier when the player leaves. Additions apply first, then multiplications, then a zone that sets the gravity, whichever zone the player entered first.</td></tr>
+    <tr><td><code>GravityArrow</code></td><td>Follows the player's gravity with <code>Observe</code>.</td></tr>
+  </table>
+</div>
+</section>
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="Introduction%20to%20Concordance.html">Introduction to Concordance</a></li>
+    <li><a href="Tutorial.html">Tutorial: Coordinate a player's speed</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="Get%20started.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Get started</div>
+  </a>
+  <a class="next" href="Introduction%20to%20Concordance.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Introduction to Concordance</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Concordance v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="frame.css">
+<style>
+  .stage svg { display: block; overflow: visible; }
+  .bar text { font-size: 26px; font-weight: 600; fill: #fbf8f2; }
+  .lane { font-size: 30px; font-weight: 700; fill: var(--ink); }
+  .tick { font-size: 22px; fill: var(--dim); font-family: "Cascadia Code", Consolas, monospace; }
+  .note { font-size: 27px; font-weight: 700; }
+</style>
+</head>
+<body>
+<div class="head">
+  <h1>Scripts stop overwriting each other</h1>
+  <p>For example, game speed when slow motion ends during a pause.</p>
+</div>
+<div class="stage">
+  <svg width="1680" height="780" viewBox="0 0 1680 780">
+    <!-- What each script does, over time. -->
+    <g class="bar">
+      <rect x="380" y="0" width="620" height="50" rx="12" fill="var(--ochre)"/>
+      <text x="402" y="34">Slow motion</text>
+      <rect x="640" y="62" width="660" height="50" rx="12" fill="var(--blue)"/>
+      <text x="662" y="96">Pause menu</text>
+    </g>
+    <g stroke="var(--line)" stroke-width="3" stroke-dasharray="8 10">
+      <line x1="380" y1="130" x2="380" y2="770"/>
+      <line x1="640" y1="130" x2="640" y2="770"/>
+      <line x1="1000" y1="130" x2="1000" y2="770"/>
+      <line x1="1300" y1="130" x2="1300" y2="770"/>
+    </g>
+
+    <!-- Without Concordance: slow motion restores the 1 it cached, under the pause menu. -->
+    <text class="lane" x="0" y="214">Without</text>
+    <text class="lane" x="0" y="252">Concordance</text>
+    <text class="tick" x="196" y="196" text-anchor="end">1</text>
+    <text class="tick" x="196" y="404" text-anchor="end">0</text>
+    <line x1="210" y1="400" x2="1680" y2="400" stroke="var(--line)" stroke-width="2"/>
+    <rect x="1000" y="180" width="300" height="230" fill="var(--crimson)" opacity="0.12"/>
+    <path d="M210 190 H380 V295 H640 V400 H1000 V190 H1680" fill="none" stroke="#9c9182" stroke-width="10" stroke-linejoin="round"/>
+    <path d="M1000 400 V190 H1300" fill="none" stroke="var(--crimson)" stroke-width="10" stroke-linejoin="round"/>
+    <text class="note" x="1150" y="300" fill="var(--crimson)" text-anchor="middle">Unpaused</text>
+    <text class="note" x="1150" y="336" fill="var(--crimson)" text-anchor="middle">under the menu</text>
+
+    <!-- With Concordance: both changes combine, and the game stays paused. -->
+    <text class="lane" x="0" y="574">With</text>
+    <text class="lane" x="0" y="612">Concordance</text>
+    <text class="tick" x="196" y="556" text-anchor="end">1</text>
+    <text class="tick" x="196" y="764" text-anchor="end">0</text>
+    <line x1="210" y1="760" x2="1680" y2="760" stroke="var(--line)" stroke-width="2"/>
+    <path d="M210 550 H380 V655 H640 V760 H1300 V550 H1680" fill="none" stroke="var(--ink)" stroke-width="10" stroke-linejoin="round"/>
+    <text class="note" x="1150" y="720" fill="var(--ink)" text-anchor="middle">Still paused</text>
+  </svg>
+</div>
+</body>
+</html>

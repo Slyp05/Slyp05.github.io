@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="frame.css">
+<style>
+  .stage { display: flex; flex-direction: column; justify-content: center; gap: 44px; }
+  .row { display: flex; align-items: center; gap: 40px; }
+  .row .code { width: 1180px; flex: none; }
+  .row .code pre { font-size: 25px; }
+  .row .what { font-size: 32px; font-weight: 700; }
+</style>
+</head>
+<body>
+<div class="head">
+  <h1>Control any object's changes from code</h1>
+  <p>An advanced API, for when you need it: stop, list or release changes by object.</p>
+</div>
+<div class="stage">
+  <div class="row">
+    <div class="code blue">
+      <div class="file">Cleanse.cs</div>
+<pre class="cs manual">
+«Concord.Target(enemy).StopModifying»(m => m.ScriptType == typeof(SlowAura));
+</pre>
+    </div>
+    <div class="what">Lift every slow on an enemy</div>
+  </div>
+  <div class="row">
+    <div class="code ochre">
+      <div class="file">BulletPool.cs</div>
+<pre class="cs manual">
+«Concord.Release»(bullet.gameObject);
+</pre>
+    </div>
+    <div class="what">Return a pooled object clean</div>
+  </div>
+  <div class="row">
+    <div class="code crimson">
+      <div class="file">SaveSystem.cs</div>
+<pre class="cs manual">
+using («Concord.CloneUnmodified»(stats, out Stats copy))
+    json = JsonUtility.ToJson(copy);
+</pre>
+    </div>
+    <div class="what">Save values without the changes</div>
+  </div>
+</div>
+<script src="highlight.js"></script>
+</body>
+</html>

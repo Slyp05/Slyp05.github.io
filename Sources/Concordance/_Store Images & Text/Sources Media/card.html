@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<!-- Asset Store card image, 420x280. Text allowed: title and publisher only. Drawn on an 840x560
+     canvas and rendered at half size by render.sh. -->
+<style>
+  html, body { margin: 0; padding: 0; background: #f4eee3; }
+  svg { display: block; }
+  .title { font-family: "Segoe UI Variable Display", "Segoe UI", sans-serif; font-weight: 700; }
+</style>
+</head>
+<body>
+<svg width="420" height="280" viewBox="0 0 840 560" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="bg" cx="0.5" cy="0.7" r="0.9">
+      <stop offset="0" stop-color="#fcf9f3"/>
+      <stop offset="0.55" stop-color="#f4eee3"/>
+      <stop offset="1" stop-color="#e6dbc8"/>
+    </radialGradient>
+    <!-- Paper grain: fine, faint fibres. -->
+    <filter id="grain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.7 0.5" numOctaves="3" seed="11" result="n"/>
+      <feColorMatrix in="n" type="matrix" values="0 0 0 0 0.45  0 0 0 0 0.38  0 0 0 0 0.28  0 0 0 1.4 -0.6"/>
+    </filter>
+  </defs>
+
+  <rect width="840" height="560" fill="url(#bg)"/>
+  <rect width="840" height="560" filter="url(#grain)" opacity="0.08"/>
+
+  <text class="title" x="38" y="160" font-size="116" fill="#221d2b" letter-spacing="-3">Concordance</text>
+
+  <!-- The rings and the value without the script files, which blur at card size. -->
+  <image href="illustration-card.svg" x="262" y="222" width="315" height="302"/>
+</svg>
+</body>
+</html>

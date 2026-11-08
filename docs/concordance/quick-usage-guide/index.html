@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Coordinate the scripts that write the same value." />
+  <title>Concordance - Quick Usage Guide</title>
+  <link rel="stylesheet" href="/assets/css/concordance.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+
+  <script src="shared/nav.js"></script>
+
+  <main id="content" class="guide-standalone">
+
+    <div class="hero">
+      <h1>Quick Usage Guide</h1>
+      <p class="tagline">Coordinate the scripts that write the same value.</p>
+    </div>
+
+<!-- ====================================== concept ==== -->
+<section id="concept">
+  <h2>Two scripts, one value</h2>
+<p>Concordance coordinates the scripts that write the same field or property: it tracks who changes a value and
+  when, combines their changes, and turns any member into a change event. It works on the members your code already
+  writes, Unity's included, because it processes your code when Unity compiles it.</p>
+<p>The following two scripts both write <code>Time.timeScale</code>. Each one is correct on its own:</p>
+<pre><code><span class="kw">public</span> <span class="kw">class</span> <span class="ty">PauseMenu</span> : <span class="ty">MonoBehaviour</span>
+{
+    <span class="kw">public</span> <span class="kw">void</span> Pause() =&gt; <span class="ty">Time</span>.timeScale = <span class="nu">0f</span>;
+    <span class="kw">public</span> <span class="kw">void</span> Resume() =&gt; <span class="ty">Time</span>.timeScale = <span class="nu">1f</span>;
+}</code></pre>
+<pre><code><span class="kw">public</span> <span class="kw">class</span> <span class="ty">SlowMotion</span> : <span class="ty">MonoBehaviour</span>
+{
+    <span class="kw">float</span> cached;
+
+    <span class="kw">public</span> <span class="kw">void</span> Begin()
+    {
+        cached = <span class="ty">Time</span>.timeScale;
+        <span class="ty">Time</span>.timeScale = cached * <span class="nu">0.5f</span>;
+    }
+
+    <span class="kw">public</span> <span class="kw">void</span> End() =&gt; <span class="ty">Time</span>.timeScale = cached;
+}</code></pre>
+<p>Together, they break each other. If slow motion ends while the game is paused, <code>End</code> writes back the
+  time scale it cached and unpauses the game under the pause menu. If the pause menu resumes during slow motion, the
+  game runs at full speed again, and slow motion is lost.</p>
+
+</section>
+
+<!-- ====================================== track ==== -->
+<section id="track">
+  <h2>Find who writes a value</h2>
+<p>To find every script that writes a member, go to <strong>Tools</strong> &gt; <strong>Concordance</strong> &gt;
+  <strong>Open Window</strong>, search for the member, and select it. Its <strong>Writes</strong> section lists each
+  write in your project with its file and line: for <code>Time.timeScale</code>, the lines of <code>PauseMenu</code>
+  and <code>SlowMotion</code>.</p>
+<p>To catch the scripts that break each other, select <strong>Watch</strong> &gt; <strong>Watch for This
+  Session</strong>, then enter Play mode. When two objects overwrite each other's value, the window flags their
+  <strong>conflicting writes</strong>, with the line of each:</p>
+<div class="img-block">
+  <img src="../user-manual/img/qug_conflict.png" alt="The Concordance window in Play mode, with Time.timeScale flagged for conflicting writes from PauseMenu and SlowMotion" />
+</div>
+<p>For more information, refer to <a href="../user-manual/pages/Inspect%20members.html">Inspect members</a>.</p>
+
+</section>
+
+<!-- ====================================== modify ==== -->
+<section id="modify">
+  <h2>Write a modifier</h2>
+<p>To fix the conflict, each script writes a <strong>modifier</strong> instead: a change layered on top of the value,
+  which the script removes when its effect ends. Writing <code>(Modifier)</code> before the assigned value sets the modifier,
+  and <code>Modifier.Stop</code> removes it:</p>
+<pre><code><span class="kw">using</span> Concordance;
+
+<span class="kw">public</span> <span class="kw">class</span> <span class="ty">PauseMenu</span> : <span class="ty">MonoBehaviour</span>
+{
+    [<span class="ty">ModifierPhase</span>.Latest]
+    <span class="kw">public</span> <span class="kw">void</span> Pause() =&gt; <span class="ty">Time</span>.timeScale = (<span class="ty">Modifier</span>)<span class="nu">0f</span>;     <span class="cm">// sets it to 0, after the others</span>
+    <span class="kw">public</span> <span class="kw">void</span> Resume() =&gt; <span class="ty">Time</span>.timeScale = <span class="ty">Modifier</span>.Stop;     <span class="cm">// removes this script's modifier</span>
+}</code></pre>
+<pre><code><span class="kw">using</span> Concordance;
+
+<span class="kw">public</span> <span class="kw">class</span> <span class="ty">SlowMotion</span> : <span class="ty">MonoBehaviour</span>
+{
+    <span class="kw">public</span> <span class="kw">void</span> Begin() =&gt; <span class="ty">Time</span>.timeScale *= (<span class="ty">Modifier</span>)<span class="nu">0.5f</span>;    <span class="cm">// halves the time scale</span>
+    <span class="kw">public</span> <span class="kw">void</span> End() =&gt; <span class="ty">Time</span>.timeScale = <span class="ty">Modifier</span>.Stop;
+}</code></pre>
+<p><code>SlowMotion</code> no longer caches the time scale to write it back: Concordance keeps the
+  <strong>base value</strong>, the value without modifiers, and applies the active modifiers to it in order. <code>[ModifierPhase.Latest]</code> puts the
+  pause after slow motion, so the pause wins while both are active.</p>
+<p>In Play mode, the member's <strong>Values</strong> section in the Concordance window shows the base value, then
+  each modifier in the order it applies, with its owner and line:</p>
+<div class="img-block">
+  <img src="../user-manual/img/qug_window_play.png" alt="The Concordance window in Play mode, with Time.timeScale selected: value 0, base 1, the SlowMotion and PauseMenu modifiers, and the history" />
+</div>
+<p>Each script removes only its own modifier. When the game resumes during slow motion, the time scale becomes 0.5,
+  and when slow motion ends during a pause, the game stays paused. A modifier also ends with the object that wrote it,
+  so a script destroyed in the middle of its effect never leaves its change behind.</p>
+<p>Code that doesn't use Concordance keeps working. A plain write, such as <code>Time.timeScale = 1f;</code>, sets
+  the base value, and the modifiers apply on top of it. For more information, refer to
+  <a href="../user-manual/pages/Base%20values.html">Base values</a>.</p>
+<p>After <code>(Modifier)</code>, the member you write reads as its value before this modifier applies, so
+  <code>speed * 0.5f</code> halves whatever the earlier modifiers left. Every other expression is
+  evaluated once, when the line runs:</p>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Line</th><th scope="col">Modifier</th></tr>
+    <tr><td><code>speed = (Modifier)0f</code></td><td>Sets <code>speed</code> to 0.</td></tr>
+    <tr><td><code>speed *= (Modifier)0.5f</code></td><td>Halves <code>speed</code>.</td></tr>
+    <tr><td><code>speed = (Modifier)Mathf.Min(speed, 3f)</code></td><td>Caps <code>speed</code> at 3.</td></tr>
+    <tr><td><code>sprite.color = (Modifier)Color.Lerp(sprite.color, Color.red, 0.5f)</code></td><td>Tints the sprite halfway to red.</td></tr>
+    <tr><td><code>meshRenderer.sharedMaterial = (Modifier)highlight</code></td><td>Swaps in the highlight material.</td></tr>
+    <tr><td><code>canMove = (Modifier)false</code></td><td>Disables movement while it lasts.</td></tr>
+    <tr><td><code>speed = Modifier.Stop</code></td><td>Removes the modifier this object set on <code>speed</code>.</td></tr>
+  </table>
+</div>
+<p>Running the line again replaces the modifier instead of adding one, so a modifier line in <code>Update</code>
+  never piles up modifiers.</p>
+<div class="note"><strong>Note:</strong> Modifiers exist in Play mode and while a test runs. When you exit Play mode,
+  every member goes back to its base value.</div>
+<p>For more information, refer to <a href="../user-manual/pages/Write%20modifier%20lines.html">Write modifiers</a>.</p>
+
+<p>To choose a modifier's owner, the object it ends with, or to hold several modifiers from one object, call <code>x.Modify(...)</code>
+  instead. For more information, refer to <a href="../user-manual/pages/Regular%20syntax.html">Use the regular syntax</a>.</p>
+
+</section>
+
+<!-- ====================================== order ==== -->
+<section id="order">
+  <h2>Order the modifiers</h2>
+<p>Each script's modifiers belong to a <strong>phase</strong>, and a member's modifiers apply phase by phase, in this
+  order: <code>Earliest</code>, <code>Early</code>, <code>Default</code>, <code>Late</code>, then <code>Latest</code>. To choose a script's phase, add a phase attribute to the method or the class that writes its modifiers:</p>
+<pre><code>[<span class="ty">ModifierPhase</span>.Late]
+<span class="kw">public</span> <span class="kw">class</span> <span class="ty">SpeedLimiter</span> : <span class="ty">MonoBehaviour</span>
+{
+    [<span class="ty">SerializeField</span>] <span class="kw">float</span> maxSpeed = <span class="nu">3f</span>;
+    <span class="kw">public</span> <span class="kw">float</span> speed;
+
+    <span class="kw">void</span> Update() =&gt; speed = (<span class="ty">Modifier</span>)<span class="ty">Mathf</span>.Min(speed, maxSpeed);   <span class="cm">// applies after the Default phase</span>
+}</code></pre>
+<p>Without an attribute, a script's modifiers are in <code>Default</code>.</p>
+<p>When two scripts modify the same member in the same phase, the Concordance window flags it
+  <strong>Order not set</strong>, and they apply in the order of their names until you drag one of them into place in the member's <strong>Modifier Order</strong>.</p>
+<div class="img-block">
+  <img src="../user-manual/img/qug_order.png" alt="The Concordance window, with the modifier order of Time.timeScale: SlowMotion in Default, PauseMenu in Latest" />
+</div>
+<p>For more information, refer to <a href="../user-manual/pages/Order%20modifiers.html">Order modifiers</a>.</p>
+
+</section>
+
+<!-- ====================================== observe ==== -->
+<section id="observe">
+  <h2>Observe a value</h2>
+<p>To run code each time a member's value changes, call <code>Observe</code> on it. It works on any field or
+  property, your own or Unity's:</p>
+<pre><code><span class="kw">void</span> OnEnable() =&gt; <span class="ty">AudioListener</span>.volume.Observe(OnVolumeChanged);
+<span class="kw">void</span> OnDisable() =&gt; <span class="ty">AudioListener</span>.volume.StopObserving(OnVolumeChanged);
+
+<span class="kw">void</span> OnVolumeChanged(<span class="kw">float</span> volume) =&gt; <span class="ty">Debug</span>.Log(<span class="st">$"Volume: {volume}"</span>);</code></pre>
+<p>The handler runs after each change of the value, from a modifier or a plain write alike, and stops when the object that called <code>Observe</code> is destroyed. For more information, refer to <a href="../user-manual/pages/Observe%20changes.html">Observe changes</a>.</p>
+
+</section>
+
+<!-- ====================================== next ==== -->
+<section id="next">
+  <h2>Next steps</h2>
+<ul>
+  <li><a href="../user-manual/pages/Tutorial.html">Tutorial: Coordinate a player's speed</a>: build a
+    player whose speed boosts, stun and speed log work together, step by step.</li>
+  <li><a href="../user-manual/pages/Installation.html#demo">Try the demo</a>: play overlapping gravity zones, written once with plain
+    writes and once with modifiers.</li>
+  <li><a href="../user-manual/index.html">User Manual</a>: every feature of Concordance and its windows.</li>
+  <li><a href="../public-api/index.html">Public API</a>: every public type and member.</li>
+</ul>
+<p>For questions and bug reports, use the <a href="https://justetools.net/contact/">contact form</a> or email
+  <a href="mailto:justetools@gmail.com">justetools@gmail.com</a>.</p>
+
+</section>
+
+    <div class="doc-footer">Concordance v1.0.0</div>
+
+  </main>
+</body>
+</html>

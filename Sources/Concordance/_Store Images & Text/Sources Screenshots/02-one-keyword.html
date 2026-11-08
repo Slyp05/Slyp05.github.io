@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="frame.css">
+<style>
+  .stage { display: grid; grid-template-columns: 1fr 1fr; column-gap: 60px; row-gap: 18px; align-content: start; }
+  .label { font-size: 26px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--dim); }
+  .col { display: flex; flex-direction: column; gap: 30px; }
+  .code pre { font-size: 27px; }
+  .result { display: flex; align-items: center; gap: 14px; font-size: 30px; font-weight: 700; margin-top: 10px; }
+  .result svg { flex: none; }
+</style>
+</head>
+<body>
+<div class="head">
+  <h1>Keep your line, make it a Modifier</h1>
+  <p>A stun that ends mid-cutscene no longer lets the character walk.</p>
+</div>
+<div class="stage">
+  <div class="label">Without Concordance</div>
+  <div class="label">With Concordance</div>
+  <div class="col">
+    <div class="code blue">
+      <div class="file">Stun.cs</div>
+<pre class="cs">
+void Begin() => movement.enabled = false;
+void End() => movement.enabled = true;
+</pre>
+    </div>
+    <div class="code ochre">
+      <div class="file">Cutscene.cs</div>
+<pre class="cs">
+void Begin() => movement.enabled = false;
+void End() => movement.enabled = true;
+</pre>
+    </div>
+    <div class="result" style="color: var(--crimson)">
+      <svg width="40" height="40" viewBox="0 0 40 40"><path d="M10 10 L30 30 M30 10 L10 30" stroke="currentColor" stroke-width="6" stroke-linecap="round"/></svg>
+      The stun ends: the character walks mid-cutscene
+    </div>
+  </div>
+  <div class="col">
+    <div class="code blue">
+      <div class="file">Stun.cs</div>
+<pre class="cs">
+void Begin() => movement.enabled = (Modifier)false;
+void End() => movement.enabled = Modifier.Stop;
+</pre>
+    </div>
+    <div class="code ochre">
+      <div class="file">Cutscene.cs</div>
+<pre class="cs">
+void Begin() => movement.enabled = (Modifier)false;
+void End() => movement.enabled = Modifier.Stop;
+</pre>
+    </div>
+    <div class="result">
+      <svg width="40" height="40" viewBox="0 0 40 40"><path d="M8 21 L17 30 L33 11" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      The character moves again only once both have ended
+    </div>
+  </div>
+</div>
+<script src="highlight.js"></script>
+</body>
+</html>

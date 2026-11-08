@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Look up every CND code analysis message, and how to fix it." />
+  <title>Concordance - Code analysis reference</title>
+  <link rel="stylesheet" href="../shared/styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Concordance</div><a href="../User%20Manual.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Code analysis reference</h1>
+      <div class="sub">Look up every CND code analysis message, and how to fix it.</div>
+    </div>
+
+<!-- ====================================== reading ==== -->
+<section id="reading">
+  <h2>Diagnostic codes</h2>
+<p>Concordance reports mistakes in your code editor as you type, and in the Console window when Unity compiles.
+  <strong>CND00xx</strong> codes are errors, <strong>CND01xx</strong> warnings, and <strong>CND02xx</strong> hints
+  shown in your code editor only.</p>
+</section>
+
+<!-- ====================================== errors ==== -->
+<section id="errors">
+  <h2>Errors</h2>
+<h3 id="cnd0001">CND0001: (Modifier) must apply to the whole right side</h3>
+<p><code>(Modifier)x * 0.5f</code> applies only to <code>x</code>. Write <code>(Modifier)(x * 0.5f)</code>. Your code editor offers this fix.</p>
+<h3 id="cnd0002">CND0002: (Modifier) must start the right side of an assignment to a field or property</h3>
+<p>A modifier belongs to the member it's assigned to, so <code>(Modifier)</code> in a method argument, a local or a return value has
+  none. Assign it to the member, or pass it as the value of a getter and setter pair's setter.</p>
+<h3 id="cnd0003">CND0003: A modifier cannot be assigned here</h3>
+<p>A chained assignment, a deconstruction, <code>??=</code>, a local or a parameter has no single member. Write one
+  assignment to the member, in its own statement.</p>
+<h3 id="cnd0004">CND0004: Modifier.Stop cannot be used with a compound assignment</h3>
+<p>Write <code>x = Modifier.Stop</code>.</p>
+<h3 id="cnd0005">CND0005: A modifier function cannot follow (Modifier)</h3>
+<p>Pass the modifier function to <code>Modify</code>: <code>x.Modify(function)</code>.</p>
+<h3 id="cnd0006">CND0006: (Modifier) cannot take a value of a generic type parameter</h3>
+<p>Use the regular syntax: <code>x.Modify(value)</code>.</p>
+<h3 id="cnd0007">CND0007: (Modifier) cannot appear twice in one value</h3>
+<p>Split the line in two.</p>
+<h3 id="cnd0009">CND0009: The receiver must be a field or a property that can be written</h3>
+<p>Call <code>Modify</code>, <code>Observe</code> and the other methods on the member itself: a field, a property
+  with a setter, or the getter of a getter and setter pair. Never call them on a local variable.</p>
+<h3 id="cnd0010">CND0010: A struct in a local or a parameter cannot take modifiers</h3>
+<p>A struct in a local variable or a parameter is a copy, with no member to hold the modifier. Modify the field or
+  property that holds the struct instead, as in <code>offset.x = (Modifier)0f</code> or
+  <code>transform.position.y.Modify(0f)</code>.</p>
+<h3 id="cnd0011">CND0011: A modifier line in a struct method has no owner</h3>
+<p>Use the regular syntax with an owner: <code>x.Modify(value, owner: manager)</code>.</p>
+<h3 id="cnd0012">CND0012: The member cannot take modifiers</h3>
+<p>The engine computes this member from its own previous value. Modify what the message names instead. For more
+  information, refer to <a href="Special%20cases.html#unmodifiable">Members the engine updates</a>.</p>
+<h3 id="cnd0014">CND0014: GetUnmodified cannot read the member a modifier line writes</h3>
+<p>Read the base value into a local variable before the line.</p>
+<h3 id="cnd0016">CND0016: (Modifier) cannot take a type private to a class</h3>
+<p>Make the type internal, or use the regular syntax: <code>x.Modify(...)</code>.</p>
+<h3 id="cnd0018">CND0018: An array element, an indexer or a method taking more than the value is not a member</h3>
+<p>Give the value a field, or wrap it in a property of your own and modify the property. For more information, refer
+  to <a href="Write%20modifier%20lines.html#wrap">Wrap a value in a property</a>.</p>
+</section>
+
+<!-- ====================================== warnings ==== -->
+<section id="warnings">
+  <h2>Warnings</h2>
+<h3 id="cnd0101">CND0101: A static modifier is never stopped</h3>
+<p>A modifier written in a static method lasts until you exit Play mode. Stop it, or pass an object as its owner.</p>
+<h3 id="cnd0104">CND0104: ModifierInfo.Key is compared by reference</h3>
+<p>Compare keys with <code>Equals</code>.</p>
+<h3 id="cnd0105">CND0105: The special case names no type this assembly can see</h3>
+<p>Check the type's name and assembly, as in <code>"UnityEngine.Cloth, UnityEngine.ClothModule"</code>, or use
+  <code>typeof</code>.</p>
+<h3 id="cnd0106">CND0106: The getter and setter pair is not a member</h3>
+<p>A pair's setter takes the value as its only parameter, and its getter takes none. Wrap methods that take a key in a
+  property of your own, as described in <a href="Write%20modifier%20lines.html#wrap">Wrap a value in a property</a>.</p>
+<h3 id="cnd0107">CND0107: A modifier function field needs [SerializeReference]</h3>
+<p>Unity never saves a <code>[SerializeField]</code> field of a <code>ModifierFunction&lt;T&gt;</code> type. Mark it
+  <code>[SerializeReference]</code>. Your code editor offers this fix.</p>
+<h3 id="cnd0108">CND0108: The name binds to another type than Concordance's</h3>
+<p>Another type named <code>Modifier</code> or <code>ModifierPhase</code> hides Concordance's. Rename your type, or
+  add an alias inside your file's namespace:</p>
+<pre><code><span class="kw">namespace</span> <span class="ty">Gameplay</span>
+{
+    <span class="kw">using</span> Modifier = <span class="ty">Concordance</span>.Modifier;
+}</code></pre>
+</section>
+
+<!-- ====================================== info ==== -->
+<section id="info">
+  <h2>Hints</h2>
+<h3 id="cnd0201">CND0201: The written member read through another receiver is a snapshot</h3>
+<p>Only the member itself reads as the value before the modifier. Read it through the same variable you assign. For
+  more information, refer to <a href="Write%20modifier%20lines.html#previous">The value before the modifier</a>.</p>
+</section>
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="Write%20modifier%20lines.html">Write modifiers</a></li>
+    <li><a href="Troubleshooting.html">Troubleshooting</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="Concordance%20window%20reference.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Concordance window reference</div>
+  </a>
+  <a class="next" href="Glossary.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Glossary</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Concordance v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

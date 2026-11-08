@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Run code each time a member's value changes, for any field or property, Unity's own included." />
+  <title>Concordance - Observe changes</title>
+  <link rel="stylesheet" href="/assets/css/concordance.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Concordance</div><a href="../index.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Observe changes</h1>
+      <div class="sub">Run code each time a member's value changes, for any field or property, Unity's own included.</div>
+    </div>
+
+<p><code>Observe</code> runs your code each time a member's value changes, from a modifier or a plain write. It
+  works on any field or property, your own or Unity's, with or without modifiers on it.</p>
+
+<!-- ====================================== observe ==== -->
+<section id="observe">
+  <h2>Observe a member</h2>
+<p>Call <code>Observe</code> on the member, with a handler that takes the new value:</p>
+<pre><code><span class="kw">using</span> Concordance;
+<span class="kw">using</span> UnityEngine;
+
+<span class="kw">public</span> <span class="kw">class</span> <span class="ty">VolumeLabel</span> : <span class="ty">MonoBehaviour</span>
+{
+    <span class="kw">void</span> OnEnable() =&gt; <span class="ty">AudioListener</span>.volume.Observe(<span class="ty">OnVolumeChanged</span>);
+
+    <span class="kw">void</span> OnVolumeChanged(<span class="kw">float</span> volume) =&gt; <span class="ty">Debug</span>.Log(<span class="st">$"Volume: {volume}"</span>);
+}</code></pre>
+<p>When a handler throws, Concordance logs the exception, and the other handlers still run. A handler can't write the member it observes, or set a modifier on it: that throws, since
+  each write would call the handler again. To keep a value in range, use a modifier instead.</p>
+<div class="note"><strong>Note:</strong> <code>Observe</code> works in Play mode and while a Test Runner test runs,
+  as modifiers do.</div>
+</section>
+
+<!-- ====================================== previous ==== -->
+<section id="previous">
+  <h2>Receive the previous value</h2>
+<p>To receive the previous value too, pass a handler that takes two parameters, the previous value then the new
+  one:</p>
+<pre><code><span class="ty">AudioListener</span>.volume.Observe(<span class="ty">OnVolumeChanged</span>);
+
+<span class="kw">void</span> OnVolumeChanged(<span class="kw">float</span> previous, <span class="kw">float</span> volume) =&gt; <span class="ty">Debug</span>.Log(<span class="st">$"Volume: {previous} to {volume}"</span>);</code></pre>
+</section>
+
+<!-- ====================================== stop ==== -->
+<section id="stop">
+  <h2>Stop observing</h2>
+<p>An observer ends when its owner, the object that called <code>Observe</code>, is destroyed. To stop earlier, such
+  as while the object is disabled, call <code>StopObserving</code> with the same handler, and the same owner if you
+  passed one:</p>
+<pre><code><span class="kw">void</span> OnDisable() =&gt; <span class="ty">AudioListener</span>.volume.StopObserving(<span class="ty">OnVolumeChanged</span>);</code></pre>
+<p>An owner that isn't a Unity object ends its observers when the garbage collector collects it.</p>
+</section>
+
+<!-- ====================================== owner ==== -->
+<section id="owner">
+  <h2>End an observer with another object</h2>
+<p>To end an observer when another object is destroyed, pass that object as its owner:</p>
+<pre><code>player.health.Observe(<span class="ty">OnHealthChanged</span>, <span class="pn">owner:</span> healthBar);   <span class="cm">// ends when healthBar is destroyed</span></code></pre>
+</section>
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="Inspect%20members.html#watch">Watch a member</a></li>
+    <li><a href="../../public-api/pages/API%20-%20Modifying.html#ObserverExtensions">Public API: Modifying</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="Observe%20and%20track.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Observe and track</div>
+  </a>
+  <a class="next" href="Inspect%20members.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Inspect members</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Concordance v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

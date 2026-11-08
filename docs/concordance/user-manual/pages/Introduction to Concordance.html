@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Understand how Concordance tracks, combines and observes the writes to a value." />
+  <title>Concordance - Introduction to Concordance</title>
+  <link rel="stylesheet" href="/assets/css/concordance.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Concordance</div><a href="../index.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Introduction to Concordance</h1>
+      <div class="sub">Understand how Concordance tracks, combines and observes the writes to a value.</div>
+      <div class="guide-index">
+        <a href="#problem">Values with several writers</a>
+        <a href="#track">Tracking</a>
+        <a href="#modifiers">Modifiers</a>
+        <a href="#order">Modifier order</a>
+        <a href="#observe">Change events on any member</a>
+        <a href="#metaprogramming">Metaprogramming</a>
+      </div>
+    </div>
+
+<!-- ====================================== problem ==== -->
+<section id="problem">
+  <h2>Values with several writers</h2>
+<p>A value breaks when several scripts write it and each one assumes it's the only writer. Each script is correct on
+  its own, and the bug appears only when they meet:</p>
+<ul>
+  <li>A damage flash restores the sprite color it cached, and erases the poison tint applied during the flash.</li>
+  <li>A stun enables movement again while a cutscene still needs it disabled.</li>
+  <li>A script destroyed in the middle of its effect never restores the value.</li>
+</ul>
+<p>Concordance fixes this for any field, property or setter method, of your scripts or of Unity's, such as
+  <code>AudioListener.volume</code>, <code>Rigidbody2D.gravityScale</code> or <code>GameObject.SetActive</code>.</p>
+</section>
+
+<!-- ====================================== track ==== -->
+<section id="track">
+  <h2>Tracking</h2>
+<p>The Concordance window shows, for each member, every write to it in your project. In Play mode, it flags
+  <strong>conflicting writes</strong>, two objects overwriting each other's value, which is the bug of a value with
+  several writers, and shows how the value is computed. A member you watch also records its history: who changed it,
+  when, and from which line. For more information, refer to <a href="Inspect%20members.html">Inspect members</a>.</p>
+</section>
+
+<!-- ====================================== modifiers ==== -->
+<section id="modifiers">
+  <h2>Modifiers</h2>
+<p>A script that changes a value for a while writes a <strong>modifier</strong>: a change layered on top of the value.
+  To write one, put <code>(Modifier)</code> before the assigned value, and assign <code>Modifier.Stop</code> when the
+  effect ends:</p>
+<pre><code>sprite.color = (<span class="ty">Modifier</span>)<span class="ty">Color</span>.Lerp(sprite.color, <span class="ty">Color</span>.red, <span class="nu">0.5f</span>);   <span class="cm">// tints the sprite halfway to red</span>
+sprite.color = <span class="ty">Modifier</span>.Stop;                                          <span class="cm">// removes the tint</span></code></pre>
+<p>Concordance keeps the <strong>base value</strong>, the value without modifiers, and applies the active modifiers
+  to it. Each script removes only its own modifier, and a modifier also ends when the object that wrote it is
+  destroyed.</p>
+<p>Code that doesn't use Concordance keeps working: a plain write, an assignment without <code>(Modifier)</code>, sets the base
+  value, and the modifiers apply on top. For more information, refer to
+  <a href="Write%20modifier%20lines.html">Write modifiers</a>.</p>
+</section>
+
+<!-- ====================================== order ==== -->
+<section id="order">
+  <h2>Modifier order</h2>
+<p>When several modifiers change one member, their order can matter: a stun that sets the speed to 0 must apply
+  after a speed boost. A phase attribute in code, such as <code>[ModifierPhase.Late]</code>, gives a script's modifiers
+  their place among five phases, applied in this order: <code>Earliest</code>, <code>Early</code>, <code>Default</code>,
+  <code>Late</code>, then <code>Latest</code>. The Concordance window orders the scripts that share a phase. For more information, refer to <a href="Order%20modifiers.html">Order modifiers</a>.</p>
+</section>
+
+<!-- ====================================== observe ==== -->
+<section id="observe">
+  <h2>Change events on any member</h2>
+<p>Most values have no change event. <code>Observe</code> gives any member one, and its handler runs after each
+  change, from a modifier or a plain write:</p>
+<pre><code><span class="ty">AudioListener</span>.volume.Observe(<span class="ty">OnVolumeChanged</span>);</code></pre>
+<p>For more information, refer to <a href="Observe%20changes.html">Observe changes</a>.</p>
+</section>
+
+<!-- ====================================== metaprogramming ==== -->
+<section id="metaprogramming">
+  <h2>Metaprogramming</h2>
+<p>Concordance is metaprogramming: after Unity compiles your scripts, it rewrites them. You keep writing ordinary C#
+  on the members you already have: <code>speed</code> stays a <code>float</code>, <code>Time.timeScale</code> stays
+  Unity's property, and no wrapper type replaces them.</p>
+<p>A line such as <code>speed *= (Modifier)0.5f</code> or <code>speed.Observe(OnSpeedChanged)</code> compiles as
+  plain C#, and Concordance turns it into code that knows which member it changes. That's why these lines work on a
+  field, a property or a setter method, and not on a local variable. Your source files never change, and a line
+  Concordance can't rewrite is reported in your code editor as you type, with its fix.</p>
+<p>For more information, refer to <a href="How%20Concordance%20works.html">How Concordance works</a>.</p>
+</section>
+
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="../../quick-usage-guide/index.html">Quick Usage Guide</a></li>
+    <li><a href="Glossary.html">Glossary</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="Installation.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Install Concordance</div>
+  </a>
+  <a class="next" href="Tutorial.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Tutorial: Coordinate a player's speed</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Concordance v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

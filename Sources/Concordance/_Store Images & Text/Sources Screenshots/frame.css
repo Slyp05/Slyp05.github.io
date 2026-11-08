@@ -1,0 +1,96 @@
+/* Shared frame for the Asset Store screenshots: a 1920x1280 page (3:2) on the cover's cream paper, rendered to 1950x1300. */
+:root {
+  --paper: #f4eee3;
+  --sheet: #fbf8f2;
+  --ink: #221d2b;
+  --ink-soft: #4a4256;
+  --dim: #8a7f72;
+  --line: #d9cdb8;
+  /* The three inks, the same script in the same ink on every slide. */
+  --blue: #2f5597;
+  --ochre: #c98a1b;
+  --crimson: #b23a48;
+  /* Their light versions, for use on the dark code cards. */
+  --blue-lt: #8fb0ea;
+  --ochre-lt: #f0bd5c;
+  --crimson-lt: #ee8796;
+  /* Code card syntax colours. */
+  --code-bg: #221d2b;
+  --code-text: #e6e1ea;
+  --code-key: #c7a6f0;
+  --code-type: #f2d79b;
+  --code-method: #9cc3f5;
+  --code-num: #f5b48a;
+  --code-str: #a9dca1;
+  --code-comment: #8d8499;
+  --shadow: 0 30px 30px -26px rgba(70, 52, 25, 0.45);
+}
+html { margin: 0; padding: 0; width: 1920px; height: 1280px; overflow: hidden; background: var(--paper) url("paper.svg") no-repeat 0 0 / 1920px 1280px; }
+body {
+  margin: 0; padding: 0; width: 1920px; height: 1280px; overflow: hidden; position: relative;
+  font-family: "Segoe UI Variable Display", "Segoe UI", sans-serif; color: var(--ink);
+}
+
+/* Headline block, top left: the title carries the slide, the optional line stays short. */
+.head { position: absolute; left: 120px; top: 110px; right: 120px; }
+.head h1 { margin: 0; font-size: 84px; font-weight: 700; letter-spacing: -2px; line-height: 1.05; color: var(--ink); }
+.head p { margin: 14px 0 0; font-size: 36px; font-weight: 400; color: var(--ink-soft); line-height: 1.3; }
+
+/* Content stage under the headline. */
+.stage { position: absolute; left: 120px; right: 120px; top: 340px; bottom: 150px; }
+
+/* Code card: a dark editor page with its file name in the script's ink. */
+.code {
+  background: var(--code-bg); border-radius: 20px; box-shadow: var(--shadow); overflow: hidden; box-sizing: border-box;
+  --script: var(--blue); --script-lt: var(--blue-lt);
+}
+.code.blue { --script: var(--blue); --script-lt: var(--blue-lt); }
+.code.ochre { --script: var(--ochre); --script-lt: var(--ochre-lt); }
+.code.crimson { --script: var(--crimson); --script-lt: var(--crimson-lt); }
+.code .file {
+  display: flex; align-items: center; gap: 12px; padding: 14px 28px; background: var(--script);
+  font-size: 24px; font-weight: 600; color: #fbf8f2; letter-spacing: 0.3px;
+}
+.code .file::before { content: ""; width: 14px; height: 14px; border-radius: 50%; background: #fbf8f2; opacity: 0.85; }
+.code pre {
+  margin: 0; padding: 24px 30px 26px; font-family: "Cascadia Code", "Cascadia Mono", Consolas, monospace; font-size: 28px;
+  line-height: 1.5; color: var(--code-text); white-space: pre; font-variant-ligatures: none;
+}
+.code pre .k { color: var(--code-key); }
+.code pre .t { color: var(--code-type); }
+.code pre .m { color: var(--code-method); }
+.code pre .n { color: var(--code-num); }
+.code pre .s { color: var(--code-str); }
+.code pre .c { color: var(--code-comment); font-style: italic; }
+.code pre .a { color: #ffffff; font-weight: 700; }
+/* What Concordance adds to a line: bold, in the script's ink, on a soft marker. */
+.code pre .cc {
+  color: var(--script-lt); font-weight: 700; border-radius: 6px;
+  background: color-mix(in srgb, var(--script-lt) 16%, transparent); box-shadow: 0 0 0 4px color-mix(in srgb, var(--script-lt) 16%, transparent);
+}
+.code pre .x { color: #8d8499; text-decoration: line-through; text-decoration-color: var(--crimson-lt); text-decoration-thickness: 3px; }
+.code pre .dim { opacity: 0.45; }
+
+/* An Editor or game capture, cropped on what the slide is about. */
+.shot { display: block; box-sizing: border-box; border-radius: 14px; box-shadow: var(--shadow); }
+
+/* Placeholder for an Editor or game capture still to take: the Unity dark skin's grey, labelled with the capture's name. */
+.ph {
+  position: relative; box-sizing: border-box; border-radius: 14px; background: #2d2d2d; border: 3px dashed #7a7a7a;
+  box-shadow: var(--shadow); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px;
+  color: #c4c4c4; text-align: center; padding: 30px;
+}
+.ph b { font-size: 30px; font-weight: 600; color: #e4e4e4; }
+.ph span { font-size: 23px; line-height: 1.35; color: #a8a8a8; max-width: 90%; }
+.ph::before { content: "Screenshot pending"; font-size: 18px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #8a8a8a; }
+
+/* Short label pinned to a visual. */
+.tag {
+  position: absolute; font-size: 26px; font-weight: 600; color: #fbf8f2; background: var(--ink); padding: 8px 18px; border-radius: 12px;
+  white-space: nowrap; box-shadow: var(--shadow);
+}
+.tag.blue { background: var(--blue); } .tag.ochre { background: var(--ochre); } .tag.crimson { background: var(--crimson); }
+
+/* Small caption under a visual. */
+.cap { font-size: 30px; font-weight: 600; color: var(--ink); }
+.cap.dim { color: var(--ink-soft); font-weight: 400; }

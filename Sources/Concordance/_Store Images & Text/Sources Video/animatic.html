@@ -1,0 +1,461 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Concordance Store Video</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<style>
+:root
+{
+  --paper: #f4eee3; --ink: #221d2b; --ink-soft: #4a4256; --dim: #9c9182;
+  --blue: #2f5597; --ochre: #c98a1b; --crimson: #b23a48;
+  --blue-lt: #8fb0ea; --ochre-lt: #f0bd5c; --crimson-lt: #ee8796;
+  --code-bg: #221d2b; --code-text: #e6e1ea; --code-key: #c7a6f0; --code-type: #f2d79b; --code-method: #9cc3f5;
+  --shadow: 0 30px 30px -26px rgba(70, 52, 25, 0.45);
+  --mono: "Cascadia Code", "Cascadia Mono", Consolas, monospace;
+}
+html, body { margin: 0; height: 100%; background: #1c1922; overflow: hidden; font-family: "Segoe UI Variable Display", "Segoe UI", sans-serif; }
+#viewport { position: absolute; left: 0; top: 0; }
+#frame
+{
+  position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: hidden; transform-origin: 0 0; color: var(--ink);
+  background: var(--paper) url("../Sources Screenshots/paper.svg") no-repeat 0 0 / 1920px 1280px;
+}
+.abs { position: absolute; }
+
+.caption
+{
+  position: absolute; left: 100px; right: 100px; top: 84px; text-align: center; z-index: 10; opacity: 0; white-space: nowrap;
+  font-size: 66px; font-weight: 700; letter-spacing: -1.5px; line-height: 1.1;
+}
+
+/* The level: a drawn stretch of two zones, on an ink page like the code cards. */
+#level
+{
+  position: absolute; left: 0; top: 0; width: 1120px; height: 630px; transform-origin: 0 0;
+  border-radius: 20px; background: var(--ink); box-shadow: var(--shadow); overflow: hidden; opacity: 0;
+}
+#level svg { position: absolute; left: 0; top: 0; }
+
+/* The two title cards, words only: the rings build once, on the end card. */
+.card { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 40px; opacity: 0; }
+.card h2 { margin: 0; font-size: 120px; font-weight: 700; letter-spacing: -3px; }
+
+/* The value, made visible: its name, then how it is built, and the value itself in ink. */
+#panel { position: absolute; left: 1310px; top: 300px; width: 520px; height: 630px; opacity: 0; }
+.vname { position: absolute; left: 0; top: 0; font-family: var(--mono); font-size: 34px; font-weight: 600; color: var(--ink-soft); font-variant-ligatures: none; }
+.pill
+{
+  position: absolute; display: flex; align-items: center; justify-content: center; box-sizing: border-box;
+  font-family: var(--mono); font-weight: 700; color: #fbf8f2; border-radius: 999px; font-variant-ligatures: none;
+}
+.pill.blue { background: var(--blue); } .pill.crimson { background: var(--crimson); }
+.pill.base { background: none; border: 4px solid var(--dim); color: var(--dim); }
+.pill.result { background: var(--ink); box-shadow: var(--shadow); }
+.side { position: absolute; font-size: 26px; font-weight: 600; color: var(--ink-soft); white-space: nowrap; }
+#flowLine { position: absolute; left: 108px; top: 150px; width: 6px; height: 300px; background: var(--dim); border-radius: 3px; opacity: 0; }
+#flowLine::after { content: ""; position: absolute; left: -9px; bottom: -14px; border: 12px solid transparent; border-top: 16px solid var(--dim); border-bottom: 0; }
+#write
+{
+  position: absolute; left: 0; top: 230px; width: 520px; box-sizing: border-box; padding: 20px 26px; border-radius: 16px; background: var(--code-bg);
+  border-left: 12px solid var(--blue); box-shadow: var(--shadow); font-family: var(--mono); font-size: 27px; color: var(--code-text);
+  white-space: pre; font-variant-ligatures: none; opacity: 0;
+}
+#write.crimson { border-left-color: var(--crimson); }
+#write .who { display: block; font-family: "Segoe UI Variable Display", "Segoe UI", sans-serif; font-size: 22px; font-weight: 700; margin-bottom: 6px; color: var(--blue-lt); }
+#write.crimson .who { color: var(--crimson-lt); }
+
+/* Code cards, as on the screenshots: a dark editor page under a bar in the script's ink. */
+.code { position: absolute; background: var(--code-bg); border-radius: 20px; box-shadow: var(--shadow); overflow: hidden; --script: var(--blue); --script-lt: var(--blue-lt); }
+.code.crimson { --script: var(--crimson); --script-lt: var(--crimson-lt); }
+.code .file { display: flex; align-items: center; gap: 14px; padding: 14px 30px; background: var(--script); font-size: 28px; font-weight: 600; color: #fbf8f2; }
+.code .file::before { content: ""; width: 16px; height: 16px; border-radius: 50%; background: #fbf8f2; opacity: 0.85; }
+.code pre { margin: 0; padding: 26px 34px 30px; font-family: var(--mono); font-size: 36px; line-height: 1.55; color: var(--code-text); white-space: pre; font-variant-ligatures: none; }
+.code .k { color: var(--code-key); } .code .m { color: var(--code-method); }
+.code .cc { color: var(--script-lt); font-weight: 700; }
+.ins, .old { display: inline-block; vertical-align: top; overflow: hidden; white-space: pre; }
+.old.struck { color: #8d8499; text-decoration: line-through; text-decoration-color: var(--crimson-lt); text-decoration-thickness: 4px; }
+
+/* An Editor capture, as on the screenshots. */
+.shot { position: absolute; display: block; box-sizing: border-box; border-radius: 14px; box-shadow: var(--shadow); }
+/* What to look at in a capture: a ring in the light ink of the script it is about, the warning in ochre. */
+.look { position: absolute; box-sizing: border-box; border: 4px solid var(--ink-look); border-radius: 10px; opacity: 0;
+  background: color-mix(in srgb, var(--ink-look) 12%, transparent); box-shadow: 0 0 18px color-mix(in srgb, var(--ink-look) 45%, transparent); }
+.look.blue { --ink-look: var(--blue-lt); } .look.crimson { --ink-look: var(--crimson-lt); } .look.ochre { --ink-look: var(--ochre-lt); }
+
+#end { position: absolute; inset: 0; }
+#end h1 { position: absolute; left: 0; right: 0; top: 735px; margin: 0; text-align: center; font-size: 132px; font-weight: 700; letter-spacing: -3px; opacity: 0; }
+#end p { position: absolute; left: 0; right: 0; top: 900px; margin: 0; text-align: center; font-size: 46px; color: var(--ink-soft); opacity: 0; }
+
+#controls
+{
+  position: absolute; left: 0; right: 0; bottom: 0; height: 64px; display: flex; align-items: center; gap: 14px; padding: 0 18px;
+  background: #15121a; color: #c9c2d2; font: 14px "Segoe UI", sans-serif; box-sizing: border-box;
+}
+#controls button { background: #2a2433; color: #fff; border: 1px solid #4a4256; border-radius: 6px; padding: 6px 12px; font: inherit; cursor: pointer; }
+#controls input[type=range] { flex: 1; }
+#time { width: 92px; font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body>
+<div id="viewport">
+<div id="frame">
+  <!-- A "= 2" zone inside a "× -1" zone, crossed once with plain writes and once with Concordance. -->
+  <div id="level">
+    <svg width="1120" height="630" viewBox="0 0 1120 630">
+      <line x1="0" y1="88" x2="1120" y2="88" stroke="#4a4256" stroke-width="6"/>
+      <line x1="0" y1="542" x2="1120" y2="542" stroke="#4a4256" stroke-width="6"/>
+      <rect x="300" y="91" width="600" height="448" fill="#4f7fd6" fill-opacity="0.32"/>
+      <rect id="zoneMulEdge" x="303" y="94" width="594" height="442" fill="none" stroke="#8fb0ea" stroke-width="6" opacity="0"/>
+      <rect x="480" y="91" width="240" height="448" fill="#e0566a" fill-opacity="0.38"/>
+      <g font-family="Cascadia Code, Consolas, monospace" font-size="36" font-weight="700" fill="#fbf8f2">
+        <text x="390" y="300" text-anchor="middle" font-family="Segoe UI Variable Display, Segoe UI, sans-serif" font-size="28" font-weight="600" fill-opacity="0.75">Flip</text>
+        <text x="390" y="344" text-anchor="middle">× -1</text>
+        <text x="600" y="300" text-anchor="middle" font-family="Segoe UI Variable Display, Segoe UI, sans-serif" font-size="28" font-weight="600" fill-opacity="0.75">Heavy</text>
+        <text x="600" y="344" text-anchor="middle">= 2</text>
+      </g>
+      <g id="flag">
+        <line x1="1050" y1="539" x2="1050" y2="430" stroke="#d9cdb8" stroke-width="5"/>
+        <path d="M1052 432 L1104 452 L1052 472 Z" fill="#c98a1b"/>
+      </g>
+      <!-- The character, with an arrow along its gravity: turned up when it is negative, twice as long when it is 2. -->
+      <g id="char">
+        <circle r="28" fill="#f4eee3"/>
+        <g id="arrow"><path d="M0 -10 V10 M-7.5 2.5 L0 10 L7.5 2.5" fill="none" stroke="#221d2b" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/></g>
+      </g>
+    </svg>
+  </div>
+
+  <div class="card" id="without"><h2>Without Concordance</h2></div>
+  <div class="card" id="with"><h2>With Concordance</h2></div>
+
+  <div id="panel">
+    <div class="vname">body.gravityScale</div>
+    <div id="flowLine"></div>
+    <div class="pill base" id="base" style="left: 0; top: 70px; width: 222px; height: 80px; font-size: 42px; opacity: 0">1</div>
+    <div class="side" id="baseSide" style="left: 248px; top: 90px; opacity: 0">before any change</div>
+    <div class="pill blue" id="chipMul" style="left: 0; top: 190px; width: 222px; height: 80px; font-size: 42px; opacity: 0">× -1</div>
+    <div class="pill crimson" id="chipSet" style="left: 0; top: 310px; width: 222px; height: 80px; font-size: 42px; opacity: 0">= 2</div>
+    <div id="write" class="blue"><span class="who" id="writeWho">FlipZone.cs</span><span id="writeLine">body.gravityScale *= -1f;</span></div>
+    <div class="pill result" id="result" style="left: 0; top: 470px; width: 222px; height: 110px; font-size: 64px">1</div>
+  </div>
+
+  <div class="code blue" id="cardMul" style="left: 250px; top: 300px; width: 1420px; opacity: 0">
+    <div class="file">FlipZone.cs</div>
+<pre><span class="k">void</span> <span class="m">Enter</span>() => body.gravityScale *= <span class="ins" id="insMulEnter"><span class="cc">(Modifier)</span></span>-1f;
+<span class="k">void</span> <span class="m">Exit</span>()  => body.gravityScale <span class="old" id="oldMulExit">*= -1f</span><span class="ins" id="insMulExit"><span class="cc">= Modifier.Stop</span></span>;</pre>
+  </div>
+  <div class="code crimson" id="cardSet" style="left: 250px; top: 620px; width: 1420px; opacity: 0">
+    <div class="file">HeavyZone.cs</div>
+<pre><span class="k">void</span> <span class="m">Enter</span>() => body.gravityScale = <span class="ins" id="insSetEnter"><span class="cc">(Modifier)</span></span>2f;
+<span class="k">void</span> <span class="m">Exit</span>()  => body.gravityScale <span class="old" id="oldSetExit">= 1f</span><span class="ins" id="insSetExit"><span class="cc">= Modifier.Stop</span></span>;</pre>
+  </div>
+
+  <!-- Sized 1300 wide: the capture's pixels at 0.6715. The rings sit on FlipZone's writes, HeavyZone's, and the conflict. -->
+  <div id="window" style="position: absolute; left: 310px; top: 300px; width: 1300px; height: 586px; opacity: 0">
+    <img class="shot" src="captures/window-conflict.png" alt="" style="left: 0; top: 0; width: 1300px; height: 586px">
+    <div class="look blue" id="lookFlip" style="left: 46px; top: 154px; width: 1238px; height: 92px"></div>
+    <div class="look crimson" id="lookHeavy" style="left: 46px; top: 247px; width: 1238px; height: 92px"></div>
+    <div class="look ochre" id="lookConflict" style="left: 12px; top: 422px; width: 1272px; height: 34px"></div>
+  </div>
+
+  <div id="end"><div class="abs" id="markEnd" style="left: 660px; top: 90px"></div><h1>Concordance</h1><p>Coordinate the scripts that write the same value.</p></div>
+</div>
+</div>
+
+<div id="controls">
+  <button id="playBtn">Play</button>
+  <span id="time">0.00 s</span>
+  <input type="range" id="scrub" min="0" max="36" step="0.01" value="0">
+  <span id="scenes"></span>
+</div>
+
+<script>
+// The score runs at 120 BPM from 0 s, a bar every 2 s: each section starts on a bar, and every zone entry and exit lands on
+// a beat or a half-beat, where sound.py writes to the melody.
+const W = 1920, H = 1080, INTRO = 0, END = 36.0;
+const WITHOUT = 0.0, PLAIN_RUN = 2.0, WITH = 10.0, CONFLICT = 12.0, ONE_LINE = 16.0, CONCORD_RUN = 22.0, FINAL = 30.0;
+
+const frame = document.getElementById('frame');
+const video = gsap.timeline({ paused: true });
+const tl = video;
+
+// The cover's rings, with the value in ink where all three meet: fills, then the ink, then the outlines.
+const RINGS = [[0, -142, '#2f5597'], [-123, 71, '#c98a1b'], [123, 71, '#b23a48']];
+function rings(el, size, id)
+{
+  const clips = RINGS.map(([x, y], i) => `<clipPath id="${id}c${i}"><circle cx="${x}" cy="${y}" r="250"/></clipPath>`).join('');
+  const fills = RINGS.map(([x, y, c], i) => `<circle class="r${i}" cx="${x}" cy="${y}" r="250" fill="${c}" fill-opacity="0.15" style="mix-blend-mode: multiply"/>`).join('');
+  const lines = RINGS.map(([x, y, c], i) => `<circle class="r${i}" cx="${x}" cy="${y}" r="250" fill="none" stroke="${c}" stroke-width="14"/>`).join('');
+  el.innerHTML = `<svg width="${size}" height="${size * 767 / 800}" viewBox="-400 -419 800 767" style="overflow: visible"><defs>${clips}</defs>`
+    + `<g style="isolation: isolate">${fills}</g>`
+    + `<g clip-path="url(#${id}c0)"><g clip-path="url(#${id}c1)"><g clip-path="url(#${id}c2)"><rect class="core" x="-250" y="-250" width="500" height="500" fill="#221d2b"/></g></g></g>`
+    + lines + '</svg>';
+}
+rings(document.getElementById('markEnd'), 600, 'e');
+// Where each ring starts before coming together.
+const SPREAD = [[0, -230], [-200, 115], [200, 115]];
+
+// Captions: [start, end, text]. Each holds at least 0.3 s per word plus 1 s.
+const captions = [
+  [1.8, 5.7, 'Two gravity zones. Each undoes its own change.'],
+  [6.2, 9.7, 'Leaving one zone wiped out the other.'],
+  [12.2, 15.7, 'See which scripts overwrite each other.'],
+  [16.2, 21.3, 'No wrapper type. Keep your line, make it a Modifier.'],
+  [22.4, 26.2, 'Now Modifiers stack on the value.'],
+  [26.6, 29.7, 'Each zone removes only its own.'],
+];
+for (const [t0, t1, txt] of captions)
+{
+  const el = document.createElement('div');
+  el.className = 'caption';
+  el.textContent = txt;
+  frame.appendChild(el);
+  tl.fromTo(el, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' }, t0);
+  tl.to(el, { opacity: 0, duration: 0.3 }, t1);
+}
+
+// Discrete states (a value shown, a line written): each key takes its latest state at or before the time, on every seek,
+// forwards or backwards.
+const states = new Map();
+function state(key, t, apply)
+{
+  if (states.has(key) === false)
+    states.set(key, []);
+  states.get(key).push([t, apply]);
+}
+function applyStates(time)
+{
+  for (const list of states.values())
+  {
+    let last = null;
+    for (const [t, apply] of list)
+      if (t <= time)
+        last = apply;
+    if (last)
+      last();
+  }
+}
+const text = (id, value) => () => document.getElementById(id).textContent = value;
+
+// The character's runs: x keyframes, a fall to the floor or the ceiling at each change of sign, and its arrow turning with
+// the gravity. Every tween states both ends, so a seek in any direction lands on the same frame.
+const FLOOR = 511, CEILING = 119;
+const arrowFor = v => ({ rotation: (v < 0) ? 180 : 0, scale: (Math.abs(v) > 1) ? 2 : 1, svgOrigin: '0 0' });
+// Zone edges reached at these offsets from the run's start: enter × -1, enter = 2, leave = 2, leave × -1, then the flag.
+// The run starts with the melody's phrase, crosses the edges on its beats 2, 4, 7 and 9, and reaches the flag on beat 11.
+const PATH = [[0, 60], [1.0, 300], [2.0, 480], [3.5, 720], [4.5, 900], [5.5, 1050]];
+const EVENTS = [1.0, 2.0, 3.5, 4.5];
+function run(t0, values, from)
+{
+  tl.set('#char', { x: 60, y: FLOOR }, from)
+    .set('#arrow', arrowFor(1), from);
+  for (let i = 1; i < PATH.length; i++)
+    tl.fromTo('#char', { x: PATH[i - 1][1] }, { x: PATH[i][1], duration: PATH[i][0] - PATH[i - 1][0], ease: 'none', immediateRender: false }, t0 + PATH[i - 1][0]);
+  let y = FLOOR, v = 1;
+  EVENTS.forEach((e, i) =>
+  {
+    const to = (values[i] < 0) ? CEILING : FLOOR;
+    if (to !== y)
+      tl.fromTo('#char', { y }, { y: to, duration: 0.4, ease: 'power2.in', immediateRender: false }, t0 + e);
+    tl.fromTo('#arrow', arrowFor(v), { ...arrowFor(values[i]), duration: 0.25, ease: 'back.out(2)', immediateRender: false }, t0 + e);
+    y = to;
+    v = values[i];
+  });
+}
+const PLAIN = [-1, 2, 1, -1], CONCORD = [-1, 2, -1, 1];
+
+// Each section that shows the level states its place in both ends of the tween, so any render of it puts the level there.
+const BESIDE = { left: 110, top: 300, scale: 1, x: 0, y: 0 };
+const leave = (targets, t) => tl.to(targets, { opacity: 0, y: -20, duration: 0.3, ease: 'power2.in' }, t);
+
+// Title cards: "Without Concordance", then "With Concordance".
+function card(id, t)
+{
+  tl.fromTo('#' + id, { opacity: 0 }, { opacity: 1, duration: 0.25 }, t)
+    .fromTo(`#${id} h2`, { y: 24 }, { y: 0, duration: 0.45, ease: 'power3.out' }, t)
+    .to('#' + id, { opacity: 0, duration: 0.25 }, t + 1.25);
+}
+card('without', WITHOUT);
+
+// Without Concordance, the value beside the level: each zone's line replaces it, and leaving "= 2" writes 1 while "× -1"
+// still applies, so the character ends upside down.
+tl.fromTo('#level', { ...BESIDE, opacity: 0 }, { ...BESIDE, opacity: 1, duration: 0.4, immediateRender: false }, 1.5)
+  .fromTo('#panel', { opacity: 0, x: 30, y: 0 }, { opacity: 1, x: 0, y: 0, duration: 0.4, ease: 'power2.out' }, 1.5);
+run(PLAIN_RUN, PLAIN, 1.5);
+const writes = [
+  ['blue', 'FlipZone.cs', 'body.gravityScale *= -1f;', '-1'],
+  ['crimson', 'HeavyZone.cs', 'body.gravityScale = 2f;', '2'],
+  ['crimson', 'HeavyZone.cs', 'body.gravityScale = 1f;', '1'],
+  ['blue', 'FlipZone.cs', 'body.gravityScale *= -1f;', '-1'],
+];
+state('result', 0, text('result', '1'));
+writes.forEach(([ink, who, line, value], i) =>
+{
+  const t = PLAIN_RUN + EVENTS[i];
+  state('write', t, () =>
+  {
+    document.getElementById('write').className = ink;
+    document.getElementById('writeWho').textContent = who;
+    document.getElementById('writeLine').textContent = line;
+  });
+  state('result', t, text('result', value));
+  tl.fromTo('#write', { opacity: (i === 0) ? 0 : 1, y: -24, scale: 0.96 }, { opacity: 1, y: 0, scale: 1, duration: 0.25, ease: 'back.out(2)', immediateRender: false }, t)
+    .fromTo('#result', { scale: 1.12 }, { scale: 1, duration: 0.3, ease: 'power2.out', immediateRender: false }, t);
+});
+tl.fromTo('#zoneMulEdge', { opacity: 0 }, { opacity: 1, duration: 0.15, yoyo: true, repeat: 3, immediateRender: false }, PLAIN_RUN + EVENTS[2] + 0.1)
+  .fromTo('#result', { x: 0 }, { x: 10, duration: 0.05, yoyo: true, repeat: 5, immediateRender: false }, PLAIN_RUN + EVENTS[2] + 0.3);
+leave('#level, #panel', 9.7);
+
+card('with', WITH);
+
+// With Concordance, the window first catches the two scripts overwriting each other, before any line changes.
+tl.fromTo('#window', { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.5, ease: 'power3.out' }, CONFLICT + 0.1);
+// Each script's writes, then the conflict that names both.
+['#lookFlip', '#lookHeavy', '#lookConflict'].forEach((id, i) =>
+  tl.fromTo(id, { opacity: 0, scale: 1.04 }, { opacity: 1, scale: 1, duration: 0.35, ease: 'power2.out', immediateRender: false }, CONFLICT + 0.7 + i * 0.6));
+leave('#window', 15.7);
+
+// One line: both zones' writes become Modifiers, and each exit stops only its own.
+function grow(id, t)
+{
+  const el = document.getElementById(id);
+  tl.fromTo(el, { width: 0 }, { width: el.scrollWidth, duration: 0.35, ease: 'power2.out' }, t);
+}
+function replace(oldId, insId, t)
+{
+  const old = document.getElementById(oldId);
+  state(oldId, 0, () => old.classList.remove('struck'));
+  state(oldId, t, () => old.classList.add('struck'));
+  tl.fromTo(old, { width: old.scrollWidth, opacity: 1 }, { width: 0, opacity: 0, duration: 0.3, ease: 'power2.in' }, t + 0.45);
+  grow(insId, t + 0.6);
+}
+tl.fromTo('#cardMul, #cardSet', { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.45, stagger: 0.15, ease: 'power2.out' }, ONE_LINE + 0.1);
+grow('insMulEnter', ONE_LINE + 1.0);
+grow('insSetEnter', ONE_LINE + 1.5);
+replace('oldMulExit', 'insMulExit', ONE_LINE + 2.0);
+replace('oldSetExit', 'insSetExit', ONE_LINE + 2.5);
+leave('#cardMul, #cardSet', 21.3);
+
+// With Concordance: the same stretch, the changes stacking between what the value was before any change and the value.
+tl.fromTo('#level', { ...BESIDE, opacity: 0 }, { ...BESIDE, opacity: 1, duration: 0.4, immediateRender: false }, 21.5)
+  .fromTo('#panel', { opacity: 0, x: 0, y: 0 }, { opacity: 1, x: 0, y: 0, duration: 0.4, immediateRender: false }, 21.5)
+  .set('#write', { opacity: 0 }, 21.5)
+  .fromTo('#flowLine, #base, #baseSide', { opacity: 0 }, { opacity: 1, duration: 0.3 }, 21.6);
+run(CONCORD_RUN, CONCORD, 21.5);
+state('result', 21.5, text('result', '1'));
+CONCORD.forEach((value, i) => state('result', CONCORD_RUN + EVENTS[i], text('result', String(value))));
+const chipIn = { opacity: 1, x: 0, scale: 1, duration: 0.3, ease: 'back.out(2)' }, chipOut = { opacity: 0, x: 40, scale: 0.85, duration: 0.3, ease: 'power2.in' };
+tl.fromTo('#chipMul', { opacity: 0, x: -40, scale: 0.85 }, chipIn, CONCORD_RUN + EVENTS[0])
+  .fromTo('#chipSet', { opacity: 0, x: -40, scale: 0.85 }, chipIn, CONCORD_RUN + EVENTS[1])
+  .to('#chipSet', chipOut, CONCORD_RUN + EVENTS[2])
+  .to('#chipMul', chipOut, CONCORD_RUN + EVENTS[3]);
+for (const e of EVENTS)
+  tl.fromTo('#result', { scale: 1.12 }, { scale: 1, duration: 0.3, ease: 'power2.out', immediateRender: false }, CONCORD_RUN + e);
+// The flag bounces as the character lands on it.
+tl.fromTo('#flag', { scale: 1 }, { scale: 1.3, duration: 0.15, yoyo: true, repeat: 1, ease: 'power2.out', svgOrigin: '1050 539', immediateRender: false }, CONCORD_RUN + 5.5);
+leave('#level, #panel', 29.7);
+
+// End: the three rings come together, the value in ink where they meet, then the name and the tagline.
+SPREAD.forEach(([x, y], i) => tl.fromTo(`#markEnd .r${i}`, { x: x * 1.2, y: y * 1.2, opacity: 0 }, { x: 0, y: 0, opacity: 1, duration: 0.7, ease: 'power3.out' }, FINAL + i * 0.25));
+tl.fromTo('#markEnd .core', { opacity: 0 }, { opacity: 1, duration: 0.4, ease: 'power1.out' }, FINAL + 1.0)
+  .fromTo('#end h1', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }, FINAL + 1.2)
+  .fromTo('#end p', { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }, FINAL + 1.7);
+tl.set({}, {}, END);
+
+// Several tweens animate the same element across sections, and a backward seek reverts them latest first, which can leave
+// an earlier section's values in place. A backward jump therefore goes back to the start, then forward to its time, the
+// order in which the tweens play.
+function jump(t)
+{
+  if (t < video.time())
+    video.seek(0, false);
+  video.seek(t, false);
+}
+
+// Player. The soundtrack starts first and the timeline starts from its position. During playback the audio is never seeked (a
+// seek stalls it): the timeline follows the audio clock by running at most 5% faster or slower, so it never jumps.
+const scrub = document.getElementById('scrub'), time = document.getElementById('time'), playBtn = document.getElementById('playBtn');
+scrub.max = INTRO + END;
+const audio = new Audio('soundtrack.wav?' + Date.now());
+audio.preload = 'auto';
+let playing = false, withSound = false, runId = 0;
+video.eventCallback('onUpdate', () => { applyStates(video.time() - INTRO); scrub.value = video.time(); time.textContent = video.time().toFixed(2) + ' s'; });
+gsap.ticker.add(() =>
+{
+  if (playing && withSound && (video.paused() === false))
+    video.timeScale(1 + Math.max(-0.05, Math.min(0.05, (audio.currentTime - video.time()) * 0.8)));
+  if (playing && (video.progress() === 1))
+    stop();
+});
+function start(at)
+{
+  const id = ++runId;
+  video.pause();
+  jump(at);
+  playing = true;
+  playBtn.textContent = 'Pause';
+  const go = () =>
+  {
+    if (id !== runId)
+      return;
+    if (withSound)
+      jump(audio.currentTime);
+    video.play();
+  };
+  audio.pause();
+  audio.currentTime = at;
+  audio.addEventListener('playing', () => { withSound = true; go(); }, { once: true });
+  audio.play().catch(() => { withSound = false; go(); });
+}
+function stop()
+{
+  runId++;
+  playing = false;
+  video.timeScale(1);
+  withSound = false;
+  audio.pause();
+  video.pause();
+  playBtn.textContent = (video.progress() === 1) ? 'Replay' : 'Play';
+}
+function toggle()
+{
+  if (playing)
+    stop();
+  else
+    start((video.progress() === 1) ? 0 : video.time());
+}
+scrub.oninput = () => { stop(); jump(+scrub.value); };
+playBtn.onclick = toggle;
+document.addEventListener('keydown', e => { if (e.code === 'Space') { e.preventDefault(); toggle(); } });
+for (const [name, t] of [['Without', 0], ['With', 9.8], ['Window', 11.8], ['Code', 15.8], ['Concordance run', 21.8], ['End', 29.8]])
+{
+  const b = document.createElement('button');
+  b.textContent = name;
+  b.onclick = () => start(t);
+  document.getElementById('scenes').appendChild(b);
+}
+const t0 = new URLSearchParams(location.search).get('t');
+const bar = (t0 === null) ? 64 : 0;
+function fit()
+{
+  const s = Math.min(innerWidth / W, (innerHeight - bar) / H);
+  frame.style.transform = 'scale(' + s + ')';
+  const vp = document.getElementById('viewport');
+  vp.style.left = ((innerWidth - W * s) / 2) + 'px';
+  vp.style.top = ((innerHeight - bar - H * s) / 2) + 'px';
+}
+addEventListener('resize', fit);
+// Frame rendering seeks with ?t=seconds and stays paused.
+window.seekTo = t => { jump(t); applyStates(t - INTRO); };
+if (t0 !== null)
+{
+  seekTo(+t0);
+  document.getElementById('controls').style.display = 'none';
+}
+else
+  seekTo(0);
+fit();
+</script>
+</body>
+</html>

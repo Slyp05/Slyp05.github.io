@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="frame.css">
+<style>
+  .stage { display: flex; justify-content: center; align-items: flex-start; gap: 0; }
+  .sheet { display: flex; flex-direction: column; align-items: center; gap: 26px; }
+  .shot { width: 560px; }
+  .sheet:nth-child(1) { transform: rotate(-4deg) translate(40px, 30px); z-index: 1; }
+  .sheet:nth-child(2) { z-index: 2; }
+  .sheet:nth-child(3) { transform: rotate(4deg) translate(-40px, 30px); z-index: 1; }
+</style>
+</head>
+<body>
+<div class="head">
+  <h1>Learn it in minutes</h1>
+  <p>Quick Usage Guide, User Manual, API reference, a demo and the source.</p>
+</div>
+<div class="stage">
+  <div class="sheet"><img class="shot" src="captures/docs-qug.png" alt=""><div class="cap">Quick Usage Guide</div></div>
+  <div class="sheet"><img class="shot" src="captures/docs-manual.png" alt=""><div class="cap">User Manual</div></div>
+  <div class="sheet"><img class="shot" src="captures/demo-start.png" alt=""><div class="cap">Playable demo</div></div>
+</div>
+</body>
+</html>

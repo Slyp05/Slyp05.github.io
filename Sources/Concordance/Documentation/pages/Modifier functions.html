@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Set up what a modifier does in the Inspector window, and write your own functions." />
+  <title>Concordance - Modifier functions</title>
+  <link rel="stylesheet" href="../shared/styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Concordance</div><a href="../User%20Manual.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Modifier functions</h1>
+      <div class="sub">Set up what a modifier does in the Inspector window, and write your own functions.</div>
+    </div>
+
+<p>A <strong>modifier function</strong>, <code>ModifierFunction&lt;T&gt;</code>, is what a modifier does to the value
+  before it, as an object you pass to <code>Modify</code>. In a field, it's picked and set up in the Inspector window:
+  your code decides when the modifier applies, and the Inspector window decides what it does. You can then tune a zone,
+  a buff or an effect without editing its script.</p>
+
+<!-- ====================================== field ==== -->
+<section id="field">
+  <h2>Add a function field</h2>
+<p>To pick a modifier's function in the Inspector window, perform the following steps:</p>
+<ol>
+  <li>Add a <code>[SerializeReference]</code> field of type <code>ModifierFunction&lt;T&gt;</code> to your script, with
+    <code>T</code> the type of the member it modifies, and pass it to <code>Modify</code>:
+<pre><code><span class="kw">using</span> Concordance;
+<span class="kw">using</span> UnityEngine;
+
+<span class="kw">public</span> <span class="kw">class</span> <span class="ty">MusicFadeZone</span> : <span class="ty">MonoBehaviour</span>
+{
+    [<span class="ty">SerializeField</span>] <span class="ty">AudioSource</span> music;
+    [<span class="ty">SerializeReference</span>] <span class="ty">ModifierFunction</span>&lt;<span class="kw">float</span>&gt; fade;
+
+    <span class="kw">void</span> OnTriggerEnter(<span class="ty">Collider</span> other) =&gt; music.volume.Modify(fade);
+    <span class="kw">void</span> OnTriggerExit(<span class="ty">Collider</span> other) =&gt; music.volume.StopModifying();
+}</code></pre></li>
+  <li>In the Inspector window, select a function in the field's dropdown, such as <strong>Multiply</strong>, and set its
+    fields.</li>
+</ol>
+<div class="img-block">
+  <img src="../img/function_inspector" alt="A function field in the Inspector window, with the Multiply function and an Operand of 0.5" />
+</div>
+<p>The field needs <code>[SerializeReference]</code>: Unity never saves a <code>[SerializeField]</code> field of this
+  type. Code analysis reports the missing attribute, and your code editor offers the fix.</p>
+<p>A modifier keeps the function's values from when <code>Modify</code> ran. Call <code>Modify</code> again to apply new
+  values. The copy is shallow: a function's field that holds an object, such as the curve of <strong>Remap</strong>,
+  still points to the same object, so editing that object changes the modifier too. A function field left on
+  <strong>None</strong> leaves the member's value unchanged.</p>
+</section>
+
+<!-- ====================================== tune ==== -->
+<section id="tune">
+  <h2>Tune a function in Play mode</h2>
+<p>An edit of a function field in the Inspector window applies at the next <code>Modify</code>, as a change from code
+  does. To see each edit at once, call <code>Modify</code> again from <code>OnValidate</code>, which Unity calls after
+  every Inspector edit:</p>
+<pre><code><span class="kw">bool</span> inside;
+
+<span class="kw">void</span> OnTriggerEnter(<span class="ty">Collider</span> other)
+{
+    inside = <span class="kw">true</span>;
+    music.volume.Modify(fade);
+}
+
+<span class="kw">void</span> OnTriggerExit(<span class="ty">Collider</span> other)
+{
+    inside = <span class="kw">false</span>;
+    music.volume.StopModifying();
+}
+
+<span class="kw">void</span> OnValidate()
+{
+    <span class="kw">if</span> (<span class="ty">Application</span>.isPlaying &amp;&amp; inside)
+        music.volume.Modify(fade);
+}</code></pre>
+<p>Unity also calls <code>OnValidate</code> outside Play mode, when the script loads or recompiles, and
+  <code>Modify</code> throws there: check <code>Application.isPlaying</code> first. <code>OnValidate</code> runs whether
+  the modifier applies or not, so check that too, as <code>inside</code> does here.</p>
+</section>
+
+<!-- ====================================== builtins ==== -->
+<section id="builtins">
+  <h2>Built-in functions</h2>
+<p>The dropdown lists the functions that fit the member's type:</p>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Function</th><th scope="col">Result</th></tr>
+    <tr><td><strong>Set</strong></td><td>Sets a value.</td></tr>
+    <tr><td><strong>Add</strong>, <strong>Multiply</strong> and the other operators</td><td>Applies the operator to the value and <strong>Operand</strong>.</td></tr>
+    <tr><td><strong>At Most</strong>, <strong>At Least</strong>, <strong>Clamp</strong></td><td>Keeps the value under <strong>Max</strong>, over <strong>Min</strong>, or between both.</td></tr>
+    <tr><td><strong>Abs</strong></td><td>Returns the absolute value.</td></tr>
+    <tr><td><strong>Snap</strong></td><td>Rounds a <code>float</code> to the nearest multiple of <strong>Step</strong>.</td></tr>
+    <tr><td><strong>Remap</strong></td><td>Maps a <code>float</code> through <strong>Curve</strong>.</td></tr>
+    <tr><td><strong>Blend</strong></td><td>Moves the value toward <strong>Target</strong> by <strong>Weight</strong>, for <code>float</code>, vectors, <code>Color</code> and <code>Quaternion</code>.</td></tr>
+    <tr><td><strong>Scale</strong></td><td>Multiplies each axis of a vector by the same axis of <strong>Factor</strong>.</td></tr>
+  </table>
+</div>
+</section>
+
+<!-- ====================================== custom ==== -->
+<section id="custom">
+  <h2>Create a custom function</h2>
+<p>To add your own function to the dropdown, derive a <code>[Serializable]</code> class from
+  <code>ModifierFunction&lt;T&gt;</code>, and return the new value from <code>Apply</code>:</p>
+<pre><code><span class="kw">using</span> System;
+<span class="kw">using</span> System.ComponentModel;
+<span class="kw">using</span> Concordance;
+<span class="kw">using</span> UnityEngine;
+
+[<span class="ty">Serializable</span>]
+[DisplayName(<span class="st">"Round Up"</span>)]
+<span class="kw">public</span> <span class="kw">sealed</span> <span class="kw">class</span> <span class="ty">RoundUp</span> : <span class="ty">ModifierFunction</span>&lt;<span class="kw">float</span>&gt;
+{
+    [<span class="ty">SerializeField</span>] <span class="kw">float</span> step = <span class="nu">1f</span>;
+
+    <span class="kw">public</span> <span class="kw">override</span> <span class="kw">float</span> Apply(<span class="kw">float</span> previous) =&gt; <span class="ty">Mathf</span>.Ceil(previous / step) * step;
+}</code></pre>
+<p><code>[DisplayName]</code> sets the function's label in the dropdown. <code>Apply</code> runs each time the member's
+  value is computed again, so make it depend only on <code>previous</code> and its fields.</p>
+</section>
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="Regular%20syntax.html">Use the regular syntax</a></li>
+    <li><a href="API%20-%20Functions.html">Public API: Modifier functions</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="Base%20values.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Base values</div>
+  </a>
+  <a class="next" href="Observe%20and%20track.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Observe and track</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Concordance v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

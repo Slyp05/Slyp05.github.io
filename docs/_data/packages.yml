@@ -104,3 +104,16 @@
     Prove you made it first. CloneBuster timestamps every version of your project and source
     art, and turns that history into a one-page proof and a dated timelapse when someone copies
     your game.
+
+# Unreleased: hidden from the home page and the nav until `released` is true.
+# Artwork is in place, exported from Sources/Concordance/_Store Images & Text/.
+- title: Concordance
+  url: /concordance/
+  released: false
+  free: false
+  meta: Coming soon
+  card: /assets/images/concordance-card.jpg
+  icon: /assets/images/CO.png
+  blurb: >-
+    Coordinate every script that writes the same value: changes combine instead of
+    overwriting, any field or property becomes a change event, and every write is tracked.

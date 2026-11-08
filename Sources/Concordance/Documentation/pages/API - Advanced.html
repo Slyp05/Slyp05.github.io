@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="The Concordance.Advanced namespace: the special case attributes, and Concord, which controls modifiers by object." />
+  <title>Concordance - Public API - Advanced</title>
+  <link rel="stylesheet" href="../shared/styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <nav>
+    <a href="../Public%20API.html">Overview</a>
+    <a class="nav-band" href="API%20-%20Modifying.html">Modifying</a>
+    <a class="nav-band" href="API%20-%20Functions.html">Modifier functions</a>
+    <a class="nav-band active" href="API%20-%20Advanced.html" aria-current="page">Advanced</a>
+    <div class="nav-group">Special cases</div>
+    <div class="nav-group-body">
+      <a href="#PropertyMethodsAttribute"><span class="badge badge-class">attr</span>PropertyMethodsAttribute</a>
+      <a href="#DrivenMemberAttribute"><span class="badge badge-class">attr</span>DrivenMemberAttribute</a>
+      <a href="#UnmodifiableMemberAttribute"><span class="badge badge-class">attr</span>UnmodifiableMemberAttribute</a>
+    </div>
+    <div class="nav-group">Control</div>
+    <div class="nav-group-body">
+      <a href="#Concord"><span class="badge badge-static">static</span>Concord</a>
+      <a href="#OwnerScope"><span class="badge badge-struct">struct</span>OwnerScope</a>
+      <a href="#TargetScope"><span class="badge badge-struct">struct</span>TargetScope</a>
+      <a href="#ModifierInfo"><span class="badge badge-struct">struct</span>ModifierInfo</a>
+      <a href="#ObserverInfo"><span class="badge badge-struct">struct</span>ObserverInfo</a>
+      <a href="#Phase"><span class="badge badge-enum">enum</span>Phase</a>
+    </div>
+  </nav>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Public API <span class="tag">Advanced</span></h1>
+      <div class="sub">Namespace <code>Concordance.Advanced</code>, assembly <code>Concordance</code>. For more information, refer to <a href="Special%20cases.html">Special cases</a> and <a href="Control%20by%20object.html">Control modifiers by object</a>.</div>
+    </div>
+
+    <div class="module-band band-first"><span class="band-name">Advanced</span><span class="band-desc">Assembly attributes that declare special cases, and <code>Concord</code>, which controls and inspects what Concordance does to an object.</span></div>
+    <p class="api-open">Each attribute applies to the assembly declaring it and to the assemblies that reference that assembly. Its arguments must be constants, so a type is named with <code>typeof</code> and a member with <code>nameof</code>. For a type a build may not include, each attribute also takes the type by assembly-qualified name; the entry applies only where the type exists, and code analysis warns about a name the assembly can't see (CND0105). Concordance declares Unity's own special cases with the same attributes.</p>
+
+    <h2 class="api-group">Special cases</h2>
+
+    <!-- PropertyMethodsAttribute -->
+    <div class="type-section" id="PropertyMethodsAttribute">
+      <div class="type-header"><h3>PropertyMethodsAttribute</h3><span class="badge badge-class">attr</span><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">Makes a getter and a setter method one member, which modifiers and observers reach like a property: <code>go.SetActive((Modifier)false)</code>, <code>go.activeSelf.Modify(false)</code>. The setter takes the value as its only parameter; the getter takes none and returns it, as a method or a property. A setter taking a key before the value, as <code>Material.SetFloat(name, value)</code>, is not a member: wrap the call in a property of your own. Use it on an assembly, as many times as needed.</p>
+      <div class="member-group">
+        <div class="member-group-title">Constructors</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="mn">PropertyMethodsAttribute</span>(<span class="t">Type</span> declaringType, <span class="t">string</span> getter, <span class="t">string</span> setter)</th><td>Declares the pair: the type declaring both methods, the getter method or property name, and the setter method name, each name given with <code>nameof</code>.</td></tr>
+          <tr><th scope="row"><span class="mn">PropertyMethodsAttribute</span>(<span class="t">string</span> declaringTypeName, <span class="t">string</span> getter, <span class="t">string</span> setter)</th><td>Declares the pair of a type the assembly doesn't reference: the type by assembly-qualified name, as <code>"UnityEngine.Animator, UnityEngine.AnimationModule"</code>, then the getter and setter names.</td></tr>
+        </table>
+      </div>
+      <div class="member-group">
+        <div class="member-group-title">Properties</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t">Type</span> <span class="mn">DeclaringType</span> { get; }</th><td>The type declaring both methods, or null when it's named by string.</td></tr>
+          <tr><th scope="row"><span class="t">string</span> <span class="mn">DeclaringTypeName</span> { get; }</th><td>The assembly-qualified name of the type declaring both methods, or null when it's given as a type.</td></tr>
+          <tr><th scope="row"><span class="t">string</span> <span class="mn">Getter</span> { get; }</th><td>The getter method or property name.</td></tr>
+          <tr><th scope="row"><span class="t">string</span> <span class="mn">Setter</span> { get; }</th><td>The setter method name.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- DrivenMemberAttribute -->
+    <div class="type-section" id="DrivenMemberAttribute">
+      <div class="type-header"><h3>DrivenMemberAttribute</h3><span class="badge badge-class">attr</span><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">Declares a driven member: a member written during known player-loop stages by code Concordance doesn't rewrite, such as animation. Right after each stage, the value written becomes the member's base value, and its modifiers apply on top. Applies only while the member has modifiers or observers. A stage the player loop doesn't have logs an error. Use it on an assembly, as many times as needed.</p>
+      <div class="member-group">
+        <div class="member-group-title">Constructors</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="mn">DrivenMemberAttribute</span>(<span class="t">Type</span> declaringType, <span class="t">string</span> member, <span class="kw">params</span> <span class="t">Type</span>[] stages)</th><td>Declares the driven member: the type declaring it, the field or property name given with <code>nameof</code>, and the player-loop stages that write it, such as <code>typeof(UnityEngine.PlayerLoop.Update)</code> or one of its systems.</td></tr>
+          <tr><th scope="row"><span class="mn">DrivenMemberAttribute</span>(<span class="t">string</span> declaringTypeName, <span class="t">string</span> member, <span class="kw">params</span> <span class="t">Type</span>[] stages)</th><td>Declares the driven member of a type the assembly doesn't reference: the type by assembly-qualified name, as <code>"UnityEngine.Cloth, UnityEngine.ClothModule"</code>, then the member name and the stages.</td></tr>
+        </table>
+      </div>
+      <div class="member-group">
+        <div class="member-group-title">Properties</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t">Type</span> <span class="mn">DeclaringType</span> { get; }</th><td>The type declaring the member, or null when it's named by string.</td></tr>
+          <tr><th scope="row"><span class="t">string</span> <span class="mn">DeclaringTypeName</span> { get; }</th><td>The assembly-qualified name of the type declaring the member, or null when it's given as a type.</td></tr>
+          <tr><th scope="row"><span class="t">string</span> <span class="mn">Member</span> { get; }</th><td>The field or property name.</td></tr>
+          <tr><th scope="row"><span class="t">Type</span>[] <span class="mn">Stages</span> { get; }</th><td>The player-loop stages that write the member.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- UnmodifiableMemberAttribute -->
+    <div class="type-section" id="UnmodifiableMemberAttribute">
+      <div class="type-header"><h3>UnmodifiableMemberAttribute</h3><span class="badge badge-class">attr</span><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">Makes a modifier on the member a compile error, for a member the engine updates from its own previous value, such as a velocity the physics engine updates each step: each step would apply the modifiers again on top of the last result. Stopping a modifier on it is an error too; observing it and <code>Recombine()</code> stay allowed. Use it on an assembly, as many times as needed.</p>
+      <div class="member-group">
+        <div class="member-group-title">Constructors</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="mn">UnmodifiableMemberAttribute</span>(<span class="t">Type</span> declaringType, <span class="t">string</span> member)</th><td>Marks the member as unmodifiable: the type declaring it, and the field or property name given with <code>nameof</code>.</td></tr>
+          <tr><th scope="row"><span class="mn">UnmodifiableMemberAttribute</span>(<span class="t">string</span> declaringTypeName, <span class="t">string</span> member)</th><td>Marks the member of a type the assembly doesn't reference as unmodifiable: the type by assembly-qualified name, then the member name.</td></tr>
+        </table>
+      </div>
+      <div class="member-group">
+        <div class="member-group-title">Properties</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t">Type</span> <span class="mn">DeclaringType</span> { get; }</th><td>The type declaring the member, or null when it's named by string.</td></tr>
+          <tr><th scope="row"><span class="t">string</span> <span class="mn">DeclaringTypeName</span> { get; }</th><td>The assembly-qualified name of the type declaring the member, or null when it's given as a type.</td></tr>
+          <tr><th scope="row"><span class="t">string</span> <span class="mn">Member</span> { get; }</th><td>The field or property name.</td></tr>
+          <tr><th scope="row"><span class="t">string</span> <span class="mn">Instead</span> { get; set; }</th><td>What to modify instead, shown in the error.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <h2 class="api-group">Control</h2>
+    <p class="api-open">A type stands for its static members and static code. A GameObject covers its components and children too, as destroying it would. For more information, refer to <a href="Control%20by%20object.html">Control modifiers by object</a>.</p>
+
+    <!-- Concord -->
+    <div class="type-section" id="Concord">
+      <div class="type-header"><h3>Concord</h3><span class="badge badge-static">static</span></div>
+      <p class="type-desc">Controls and inspects what Concordance does to an object: the modifiers and observers it holds as their owner, and the ones on its members as their target.</p>
+      <div class="member-group">
+        <div class="member-group-title">Static methods</div>
+        <div class="note"><span class="ex">Every method throws InvalidOperationException off the main thread and in the Editor outside Play mode and tests, and ArgumentNullException when its argument is null.</span></div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t">OwnerScope</span> <span class="mn">Owner</span>(<span class="t">object</span> owner)</th><td>The modifiers and observers the object holds as their owner, on any member of any target. For a type, the ones its static code holds.</td></tr>
+          <tr><th scope="row"><span class="t">TargetScope</span> <span class="mn">Target</span>(<span class="t">object</span> target)</th><td>The modifiers and observers on the object's members, whoever holds them. For a type, the ones on its static members.</td></tr>
+          <tr><th scope="row"><span class="kw">void</span> <span class="mn">Release</span>(<span class="t">object</span> obj)</th><td>Does to Concordance's state what destroying the object does, without destroying it: stops its observers, then its modifiers, and the ones on its members. Call it when a pooled object returns, before deactivating it. Each modified member gets its base value back.</td></tr>
+          <tr><th scope="row"><span class="t">IDisposable</span> <span class="mn">CloneUnmodified</span>&lt;<span class="t">T</span>&gt;(<span class="t">T</span> original, <span class="kw">out</span> <span class="t">T</span> copy) <span class="kw">where</span> <span class="t">T</span> : <span class="t">Object</span></th><td>Copies a GameObject, a component or a ScriptableObject with <code>Object.Instantiate</code>, as it would be without its modifiers: each modified member of the copy holds its base value. A component is copied with its GameObject. The original keeps its modifiers. Disposing the returned object destroys the copy, for a component its GameObject; to keep the copy, ignore it. Overloads take a parent, <code>worldPositionStays</code>, or a position and a rotation with an optional parent, as <code>Object.Instantiate</code> does.</td></tr>
+          <tr><th scope="row"><span class="t">IDisposable</span> <span class="mn">CloneUnmodified</span>(<span class="t">ICloneable</span> original, <span class="kw">out</span> <span class="t">object</span> copy)</th><td>Copies a plain C# object with its own <code>Clone</code>, as it would be without its modifiers. Disposing the returned object disposes the copy when it is <code>IDisposable</code>.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- OwnerScope -->
+    <div class="type-section" id="OwnerScope">
+      <div class="type-header"><h3>OwnerScope</h3><span class="badge badge-struct">struct</span></div>
+      <p class="type-desc">The modifiers and observers one object holds as their owner, returned by <code>Concord.Owner</code>. <code>TargetScope</code> has the same members, for the modifiers and observers on one object's members. A default instance covers nothing.</p>
+      <div class="member-group">
+        <div class="member-group-title">Properties</div>
+        <div class="note"><span class="ex">Every property and method throws InvalidOperationException off the main thread and in the Editor outside Play mode and tests.</span></div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">HasModifiers</span> { get; }</th><td>Whether the scope holds any modifier.</td></tr>
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">HasObservers</span> { get; }</th><td>Whether the scope holds any observer.</td></tr>
+        </table>
+      </div>
+      <div class="member-group">
+        <div class="member-group-title">Methods</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="kw">void</span> <span class="mn">StopModifying</span>()</th><td>Stops every modifier in the scope. A stop ends the modifier, not its line: the line writes it again the next time it runs.</td></tr>
+          <tr><th scope="row"><span class="kw">void</span> <span class="mn">StopModifying</span>&lt;<span class="t">TKey</span>&gt;(<span class="t">TKey</span> key)</th><td>Stops the modifiers in the scope whose key equals <code>key</code>, compared with <code>Equals</code> without boxing a value-type key. <code>StopModifying&lt;object&gt;(null)</code> stops the modifiers that have no key.</td></tr>
+          <tr><th scope="row"><span class="kw">void</span> <span class="mn">StopModifying</span>(<span class="t">Predicate</span>&lt;<span class="t">ModifierInfo</span>&gt; filter)</th><td>Stops the modifiers in the scope that the filter accepts. Every modifier in the scope is filtered before any stops, so a filter that throws stops none. <span class="ex">Throws ArgumentNullException when filter is null.</span></td></tr>
+          <tr><th scope="row"><span class="kw">void</span> <span class="mn">StopObserving</span>()</th><td>Stops every observer in the scope.</td></tr>
+          <tr><th scope="row"><span class="kw">void</span> <span class="mn">StopObserving</span>(<span class="t">Predicate</span>&lt;<span class="t">ObserverInfo</span>&gt; filter)</th><td>Stops the observers in the scope that the filter accepts. Every observer in the scope is filtered before any stops, so a filter that throws stops none. <span class="ex">Throws ArgumentNullException when filter is null.</span></td></tr>
+          <tr><th scope="row"><span class="kw">void</span> <span class="mn">Recombine</span>()</th><td>Recombines every member the owner modifies, or for a <code>TargetScope</code>, every member of the target with modifiers or observers: each member's current value becomes its base value, and its modifiers apply again. Call it after code Concordance doesn't rewrite writes the members. Each modifier keeps the values it was written with.</td></tr>
+          <tr><th scope="row"><span class="t">ModifierInfo</span>[] <span class="mn">GetModifiers</span>(<span class="t">Predicate</span>&lt;<span class="t">ModifierInfo</span>&gt; filter = <span class="kw">null</span>)</th><td>Returns the modifiers in the scope that the filter accepts, all when it is null, in a new array. Each member's modifiers come in the order they apply.</td></tr>
+          <tr><th scope="row"><span class="t">int</span> <span class="mn">GetModifiers</span>(<span class="t">List</span>&lt;<span class="t">ModifierInfo</span>&gt; results, <span class="t">Predicate</span>&lt;<span class="t">ModifierInfo</span>&gt; filter = <span class="kw">null</span>)</th><td>Clears <code>results</code>, fills it with the modifiers in the scope, each member's in the order they apply, and returns their number. Reuse the list to allocate nothing. <span class="ex">Throws ArgumentNullException when results is null.</span></td></tr>
+          <tr><th scope="row"><span class="t">ObserverInfo</span>[] <span class="mn">GetObservers</span>(<span class="t">Predicate</span>&lt;<span class="t">ObserverInfo</span>&gt; filter = <span class="kw">null</span>)</th><td>Returns the observers in the scope that the filter accepts, in a new array.</td></tr>
+          <tr><th scope="row"><span class="t">int</span> <span class="mn">GetObservers</span>(<span class="t">List</span>&lt;<span class="t">ObserverInfo</span>&gt; results, <span class="t">Predicate</span>&lt;<span class="t">ObserverInfo</span>&gt; filter = <span class="kw">null</span>)</th><td>Clears <code>results</code>, fills it with the observers in the scope, and returns their number. <span class="ex">Throws ArgumentNullException when results is null.</span></td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- TargetScope -->
+    <div class="type-section" id="TargetScope">
+      <div class="type-header"><h3>TargetScope</h3><span class="badge badge-struct">struct</span></div>
+      <p class="type-desc">The modifiers and observers on one object's members, whoever holds them, returned by <code>Concord.Target</code>. For a type, the ones on its static members. It has the same members as <code>OwnerScope</code>.</p>
+    </div>
+
+    <!-- ModifierInfo -->
+    <div class="type-section" id="ModifierInfo">
+      <div class="type-header"><h3>ModifierInfo</h3><span class="badge badge-struct">struct</span></div>
+      <p class="type-desc">A read-only description of one modifier. It holds no function and cannot act on the modifier.</p>
+      <div class="member-group">
+        <div class="member-group-title">Properties</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t">object</span> <span class="mn">Owner</span> { get; }</th><td>The object the modifier belongs to, or a type for a modifier written in static code.</td></tr>
+          <tr><th scope="row"><span class="t">object</span> <span class="mn">Target</span> { get; }</th><td>The object whose member the modifier changes; for a static member, its declaring type.</td></tr>
+          <tr><th scope="row"><span class="t">object</span> <span class="mn">Key</span> { get; }</th><td>The key the modifier line passed, or null. Compare it with <code>Equals</code>: <code>==</code> compares references.</td></tr>
+          <tr><th scope="row"><span class="t">string</span> <span class="mn">StructMember</span> { get; }</th><td>The field or property of the member's struct the modifier changes, as written after the member: <code>"x"</code> for <code>offset.x</code>, <code>"Area.width"</code> for <code>placard.Area.width</code>. Null for a modifier on the whole member.</td></tr>
+          <tr><th scope="row"><span class="t">Type</span> <span class="mn">ScriptType</span> { get; }</th><td>The type whose code wrote the modifier: its script in the modifier order.</td></tr>
+          <tr><th scope="row"><span class="t">string</span> <span class="mn">MemberName</span> { get; }</th><td>The modified member, as the Concordance window names it: <code>Type.name</code>, or <code>Type.Getter/Setter</code> for a getter and setter pair, as in <code>GameObject.activeSelf/SetActive</code>.</td></tr>
+          <tr><th scope="row"><span class="t">Phase</span> <span class="mn">Phase</span> { get; }</th><td>The phase the modifier applies in: its phase in code, unless the modifier order pins its script elsewhere.</td></tr>
+          <tr><th scope="row"><span class="t">Phase</span> <span class="mn">PhaseInCode</span> { get; }</th><td>The phase its script's code gives it.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- ObserverInfo -->
+    <div class="type-section" id="ObserverInfo">
+      <div class="type-header"><h3>ObserverInfo</h3><span class="badge badge-struct">struct</span></div>
+      <p class="type-desc">A read-only description of one observer.</p>
+      <div class="member-group">
+        <div class="member-group-title">Properties</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t">object</span> <span class="mn">Owner</span> { get; }</th><td>The object the observer belongs to, or a type for an observer added in static code.</td></tr>
+          <tr><th scope="row"><span class="t">object</span> <span class="mn">Target</span> { get; }</th><td>The object whose member the observer follows; for a static member, its declaring type.</td></tr>
+          <tr><th scope="row"><span class="t">string</span> <span class="mn">MemberName</span> { get; }</th><td>The observed member, as the Concordance window names it: <code>Type.name</code>, or <code>Type.Getter/Setter</code> for a getter and setter pair.</td></tr>
+          <tr><th scope="row"><span class="t">Delegate</span> <span class="mn">Handler</span> { get; }</th><td>The handler passed to <code>Observe</code>: an <code>Action&lt;T&gt;</code> or an <code>Action&lt;T, T&gt;</code>.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- Phase -->
+    <div class="type-section" id="Phase">
+      <div class="type-header"><h3>Phase</h3><span class="badge badge-enum">enum</span></div>
+      <p class="type-desc">The phases of the modifier order, in the order they apply, so <code>info.Phase &gt;= Phase.Late</code> selects Late and Latest. Scripts set their phase with the <code>[ModifierPhase.X]</code> attributes.</p>
+      <div class="member-group">
+        <div class="member-group-title">Values</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="mn">Earliest</span></th><td>Applies first.</td></tr>
+          <tr><th scope="row"><span class="mn">Early</span></th><td>Applies after Earliest and before Default.</td></tr>
+          <tr><th scope="row"><span class="mn">Default</span></th><td>The phase of a script without a <code>[ModifierPhase.X]</code> attribute.</td></tr>
+          <tr><th scope="row"><span class="mn">Late</span></th><td>Applies after Default and before Latest.</td></tr>
+          <tr><th scope="row"><span class="mn">Latest</span></th><td>Applies last.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="doc-footer">Concordance v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

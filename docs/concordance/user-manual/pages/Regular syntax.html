@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Modify a member with method calls, to choose the owner, a key and a local order." />
+  <title>Concordance - Use the regular syntax</title>
+  <link rel="stylesheet" href="/assets/css/concordance.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Concordance</div><a href="../index.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Use the regular syntax</h1>
+      <div class="sub">Modify a member with method calls, to choose the owner, a key and a local order.</div>
+    </div>
+
+<p>The regular syntax is a set of extension methods in the <code>Concordance</code> namespace, called on the member
+  you modify. It does everything the quick syntax does, and lets you choose the owner, a key and a local order:
+  <code>x = (Modifier)(x * 0.5f)</code> is <code>x.Modify(x * 0.5f)</code>, and <code>x = Modifier.Stop</code> is
+  <code>x.StopModifying()</code>.</p>
+
+<!-- ====================================== calls ==== -->
+<section id="calls">
+  <h2>Call Modify</h2>
+<p>To set a modifier with options, call <code>Modify</code> on the member, and <code>StopModifying</code> to remove
+  it:</p>
+<pre><code><span class="kw">using</span> Concordance;
+
+rb.gravityScale.Modify(rb.gravityScale * <span class="nu">0.5f</span>);                    <span class="cm">// halves gravityScale</span>
+<span class="ty">AudioListener</span>.volume.Modify(<span class="nu">0f</span>, <span class="pn">owner:</span> caller, <span class="pn">key:</span> <span class="st">"mute"</span>);      <span class="cm">// owned by caller, told apart by a key</span>
+<span class="ty">AudioListener</span>.volume.StopModifying(<span class="pn">owner:</span> caller, <span class="pn">key:</span> <span class="st">"mute"</span>);</code></pre>
+<p>Call it on the member itself: a field, a property with a setter, or the getter of a getter and setter pair. Never
+  call it on a local variable. Concordance rewrites the call so that it acts on the member, not on a copy of its value.
+  Every method takes the same parameters:</p>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Parameter</th><th scope="col">Default</th><th scope="col">Description</th></tr>
+    <tr><td>The value</td><td>Required</td><td>What the modifier does: a value, read as in the quick syntax, or a <a href="Modifier%20functions.html">modifier function</a>.</td></tr>
+    <tr><td><code>owner</code></td><td>The calling object</td><td>The object the modifier ends with. A line in a shared helper, such as a buff system, belongs to the helper: pass <code>owner</code> to give each buff its own lifetime. For more information, refer to <a href="Write%20modifier%20lines.html#lifetime">When a modifier ends</a>.</td></tr>
+    <tr><td><code>key</code></td><td>None</td><td>Tells apart several modifiers of one owner on one member.</td></tr>
+    <tr><td><code>localOrder</code></td><td><code>0</code></td><td>Orders the modifiers of one script on one member.</td></tr>
+  </table>
+</div>
+</section>
+
+<!-- ====================================== values ==== -->
+<section id="values">
+  <h2>Compute the value</h2>
+<p>The value passed to <code>Modify</code> follows the quick syntax's rules: the member you modify reads as its value
+  before this modifier, and everything else is read once, when the call runs:</p>
+<pre><code>speed.Modify(speed / <span class="nu">2f</span>);
+transform.localScale.Modify(transform.localScale * <span class="nu">2f</span>);
+lamp.color.Modify(<span class="ty">Color</span>.Lerp(lamp.color, alarmColor, <span class="nu">0.5f</span>), <span class="pn">key:</span> <span class="st">"alarm"</span>);</code></pre>
+<p>A modifier keeps the values it was written with. To follow a value that changes over time, call
+  <code>Modify</code> again, such as from <code>Update</code>.</p>
+<p>To pass what the modifier does as an object, such as a function picked in the Inspector window, pass a modifier
+  function. For more information, refer to <a href="Modifier%20functions.html">Modifier functions</a>.</p>
+</section>
+
+<!-- ====================================== keys ==== -->
+<section id="keys">
+  <h2>Hold several modifiers from one owner</h2>
+<p>An owner has one modifier per member. To hold several on the same member, give each one a key:</p>
+<pre><code><span class="kw">void</span> OnTriggerEnter2D(<span class="ty">Collider2D</span> zone) =&gt; rb.gravityScale.Modify(<span class="nu">0.5f</span>, <span class="pn">key:</span> zone);
+<span class="kw">void</span> OnTriggerExit2D(<span class="ty">Collider2D</span> zone) =&gt; rb.gravityScale.StopModifying(<span class="pn">key:</span> zone);</code></pre>
+<p>A key can be any object. The quick syntax always uses a null key, the same as <code>Modify</code> without a key.
+  Code in a base class and in a class deriving from it has the same owner, the object, so their modifier lines on
+  the same member replace each other: give each one a key to keep both.</p>
+</section>
+
+<!-- ====================================== localorder ==== -->
+<section id="localorder">
+  <h2>Order the modifiers of one script</h2>
+<p>When one script sets several modifiers on the same member, <code>localOrder</code> orders them, lowest
+  first:</p>
+<pre><code>lamp.intensity.Modify(lamp.intensity + <span class="nu">0.5f</span>, <span class="pn">key:</span> <span class="st">"boost"</span>, <span class="pn">localOrder:</span> <span class="nu">0</span>);
+lamp.intensity.Modify(lamp.intensity * dim, <span class="pn">key:</span> <span class="st">"dim"</span>, <span class="pn">localOrder:</span> <span class="nu">1</span>);   <span class="cm">// applies after the boost</span></code></pre>
+<p>The order between different scripts comes from their phases. For more information, refer to
+  <a href="Order%20modifiers.html">Order modifiers</a>.</p>
+</section>
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="Write%20modifier%20lines.html">Write modifiers</a></li>
+    <li><a href="Modifier%20functions.html">Modifier functions</a></li>
+    <li><a href="../../public-api/pages/API%20-%20Modifying.html">Public API: Modifying</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="Write%20modifier%20lines.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Write modifiers</div>
+  </a>
+  <a class="next" href="Order%20modifiers.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Order modifiers</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Concordance v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

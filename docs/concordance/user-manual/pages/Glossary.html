@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Look up the terms the Concordance documentation uses." />
+  <title>Concordance - Glossary</title>
+  <link rel="stylesheet" href="/assets/css/concordance.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Concordance</div><a href="../index.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Glossary</h1>
+      <div class="sub">Look up the terms the Concordance documentation uses.</div>
+    </div>
+
+<!-- ====================================== terms ==== -->
+<section id="terms">
+  <h2>Terms</h2>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Term</th><th scope="col">Definition</th></tr>
+    <tr id="word-base"><td>Base value</td><td>A member's value without its modifiers. Plain writes set it.</td></tr>
+    <tr id="word-conflicting"><td>Conflicting writes</td><td>Two objects setting the same member with plain writes, each replacing the other's value.</td></tr>
+    <tr id="word-driven"><td>Driven member</td><td>A member written at known moments of the frame by code Concordance doesn't rewrite, such as animation.</td></tr>
+    <tr id="word-intended"><td>Intended writers</td><td>Scripts marked as meant to replace each other's writes on a member, so their writes aren't flagged.</td></tr>
+    <tr id="word-key"><td>Key</td><td>What tells apart several modifiers of one owner on one member.</td></tr>
+    <tr id="word-member"><td>Member</td><td>A field, a property, or a getter and setter method pair, such as <code>Rigidbody2D.gravityScale</code>.</td></tr>
+    <tr id="word-modifier"><td>Modifier</td><td>A change layered on a member's value, written with the quick syntax or the regular syntax.</td></tr>
+    <tr id="word-function"><td>Modifier function</td><td>What a modifier does to the value before it, as an object (<code>ModifierFunction&lt;T&gt;</code>): passed to <code>Modify</code>, or picked in the Inspector window through a <code>[SerializeReference]</code> field. A modifier copies it when written.</td></tr>
+    <tr id="word-order"><td>Modifier order</td><td>The order in which the scripts that modify a member apply, set by phases and in the Concordance window.</td></tr>
+    <tr id="word-observer"><td>Observer</td><td>A handler that <code>Observe</code> calls each time a member's value changes.</td></tr>
+    <tr id="word-owner"><td>Owner</td><td>The object a modifier belongs to. The modifier ends when the owner is destroyed.</td></tr>
+    <tr id="word-phase"><td>Phase</td><td>Where a script's modifiers apply in a member's order: <code>Earliest</code>, <code>Early</code>, <code>Default</code>, <code>Late</code>, then <code>Latest</code>. Set with an attribute such as <code>[ModifierPhase.Late]</code>.</td></tr>
+    <tr id="word-pinned"><td>Pinned script</td><td>A script you dragged into place in a modifier order.</td></tr>
+    <tr id="word-plain"><td>Plain write</td><td>An assignment or setter call without <code>(Modifier)</code>. It sets the base value.</td></tr>
+    <tr id="word-quick"><td>Quick syntax</td><td>An assignment with <code>(Modifier)</code> before the value, such as <code>speed *= (Modifier)0.5f</code>, which sets a modifier, and <code>Modifier.Stop</code>, which stops it.</td></tr>
+    <tr id="word-recombine"><td>Recombine</td><td>Computing a member's value again: its modifiers apply in order to its base value. Writing or stopping a modifier and a plain write recombine the member. <code>Recombine()</code> recombines it at once, from its current value, to take in an untracked write.</td></tr>
+    <tr id="word-regular"><td>Regular syntax</td><td>The <code>Modify</code> and <code>StopModifying</code> methods, which do what the quick syntax does, with an owner, a key and a local order.</td></tr>
+    <tr id="word-snapshot"><td>Snapshot</td><td>A part of a modifier's value other than the member itself, evaluated once when the line runs.</td></tr>
+    <tr id="word-special-case"><td>Special case</td><td>A member Concordance handles differently: a driven member, an unmodifiable member, or a getter and setter pair.</td></tr>
+    <tr id="word-tracked"><td>Tracked code</td><td>Code whose writes Concordance sees as they happen: every assembly that references Concordance, including <code>Assembly-CSharp</code>.</td></tr>
+    <tr id="word-unmodifiable"><td>Unmodifiable member</td><td>A member the engine computes from its own previous value, such as a velocity, which can't take modifiers.</td></tr>
+    <tr id="word-untracked"><td>Untracked write</td><td>A write from code Concordance doesn't rewrite, such as a precompiled DLL. It becomes the base value at the member's next recombine.</td></tr>
+    <tr id="word-watched"><td>Watched member</td><td>A member whose history the Concordance window records.</td></tr>
+  </table>
+</div>
+</section>
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="Introduction%20to%20Concordance.html">Introduction to Concordance</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="Code%20analysis%20reference.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Code analysis reference</div>
+  </a>
+  <a class="next" href="Troubleshooting.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Troubleshooting</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Concordance v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

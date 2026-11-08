@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="See why a member has its value and who writes it, in the Concordance window." />
+  <title>Concordance - Inspect members</title>
+  <link rel="stylesheet" href="../shared/styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Concordance</div><a href="../User%20Manual.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Inspect members</h1>
+      <div class="sub">See why a member has its value and who writes it, in the Concordance window.</div>
+    </div>
+
+<p>The Concordance window lists the members your scripts modify and the ones you watch. For each member, it shows its
+  modifier order, every write to it in your project and, in Play mode, how its value is computed.</p>
+
+<!-- ====================================== open ==== -->
+<section id="open">
+  <h2>Open a member</h2>
+<p>To open a member in the Concordance window, perform the following steps:</p>
+<ol>
+  <li>Go to <strong>Tools</strong> &gt; <strong>Concordance</strong> &gt; <strong>Open Window</strong>.</li>
+  <li>Select the member in the list on the left. To find a member that isn't listed, search for it.</li>
+</ol>
+<div class="img-block">
+  <img src="../img/window_member" alt="The Concordance window, with Camera.fieldOfView selected: its modifier order, its writes, its values and its history" />
+</div>
+<p>The member's details show its <strong>Modifier Order</strong>, and its <strong>Writes</strong> section lists every
+  other write to it in your project. In Play mode, its <strong>Values</strong> section shows the base value, then each
+  modifier with its owner and the value after it, then the value. Select a file and line to
+  open it in your code editor.</p>
+</section>
+
+<!-- ====================================== watch ==== -->
+<section id="watch">
+  <h2>Watch a member</h2>
+<p>Watching a member records its <strong>History</strong> of changes in Play mode. On a member that no script
+  modifies, watching it is also what shows its values and flags its conflicting writes. To watch a member, select <strong>Watch</strong> at the top right of its details, then one of
+  the following:</p>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Option</th><th scope="col">Description</th></tr>
+    <tr><td><strong>Watch for This Session</strong></td><td>Watches the member until you exit Play mode. Selected in Edit mode, it watches the member for the next Play session.</td></tr>
+    <tr><td><strong>Watch Always</strong></td><td>Watches the member in every Play session. Saved for you only, in the project's <code>UserSettings</code> folder.</td></tr>
+  </table>
+</div>
+<p>In the member list, right-click a member for the same options, or select its eye to watch it for this session.</p>
+</section>
+
+<!-- ====================================== conflicts ==== -->
+<section id="conflicts">
+  <h2>Fix conflicting writes</h2>
+<p>When two objects write the same member with plain writes, each replaces the other's value. The Concordance window
+  flags these <strong>conflicting writes</strong> in Play mode, with the line of each. On a member that no script
+  modifies yet, watch the member first. To fix the conflict, turn one of the writes into a modifier:</p>
+<pre><code><span class="cm">// Before: caches the value, writes its own value, and writes the cached value back.</span>
+cached = body.gravityScale;
+body.gravityScale = cached * <span class="nu">0.5f</span>;
+<span class="cm">// ...</span>
+body.gravityScale = cached;
+
+<span class="cm">// After: a modifier, and its stop.</span>
+body.gravityScale *= (<span class="ty">Modifier</span>)<span class="nu">0.5f</span>;
+<span class="cm">// ...</span>
+body.gravityScale = <span class="ty">Modifier</span>.Stop;</code></pre>
+<p>When the writers are meant to replace each other, such as a loader and a reset, select
+  <strong>Mark as Intended</strong> on the conflict, or enable <strong>Intended</strong> on their scripts in the
+  member's <strong>Writes</strong> section. The marks are saved in
+  <code>ProjectSettings/ConcordanceIntendedWriters.asset</code>.</p>
+</section>
+
+<!-- ====================================== inspector ==== -->
+<section id="inspector">
+  <h2>View modified members in the Inspector window</h2>
+<p>When you select a GameObject or a ScriptableObject, the Inspector window shows its modified members in a
+  <strong>Concordance</strong> section under its header. Select a row to open its member in the Concordance
+  window.</p>
+<div class="img-block">
+  <img src="../img/inspector_section" alt="The Concordance section of a GameObject in the Inspector window, unfolded, with a row per modified member" />
+</div>
+</section>
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="Concordance%20window%20reference.html">Concordance window reference</a></li>
+    <li><a href="Troubleshooting.html">Troubleshooting</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="Observe%20changes.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Observe changes</div>
+  </a>
+  <a class="next" href="Advanced%20topics.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Advanced topics</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Concordance v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

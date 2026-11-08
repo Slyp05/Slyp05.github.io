@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Concordance v1.0.0 · namespaces Concordance, Concordance.Functions and Concordance.Advanced" />
+  <title>Concordance - Public API</title>
+  <link rel="stylesheet" href="/assets/css/concordance.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <!-- Sidebar: the API overview lists the three reference pages -->
+  <script src="shared/nav.js"></script>
+  <nav>
+    <a href="index.html" class="active">Overview</a>
+    <a class="nav-band" href="pages/API%20-%20Modifying.html">Modifying</a>
+    <a class="nav-band" href="pages/API%20-%20Functions.html">Modifier functions</a>
+    <a class="nav-band" href="pages/API%20-%20Advanced.html">Advanced</a>
+  </nav>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Public API</h1>
+      <div class="sub">Concordance v1.0.0 &nbsp;&middot;&nbsp; namespaces <code>Concordance</code>, <code>Concordance.Functions</code> and <code>Concordance.Advanced</code></div>
+    </div>
+
+    <div class="module-band band-first"><span class="band-name">Modifying</span><span class="band-desc">What a script that modifies or observes a member uses (<code>Concordance</code>).</span></div>
+    <p class="api-open"><a class="nav-ext" href="pages/API%20-%20Modifying.html">Open the Modifying reference &rarr;</a></p>
+    <div class="summary-index">
+    <div class="summary-group">Modifier lines</div>
+    <a href="pages/API%20-%20Modifying.html#Modifier"><span class="badge badge-struct">struct</span>Modifier</a>
+    <a href="pages/API%20-%20Modifying.html#ModifierPhase"><span class="badge badge-static">static</span>ModifierPhase</a>
+
+    <div class="summary-group">Extension methods</div>
+    <a href="pages/API%20-%20Modifying.html#ModifierExtensions"><span class="badge badge-static">static</span>ModifierExtensions</a>
+    <a href="pages/API%20-%20Modifying.html#ObserverExtensions"><span class="badge badge-static">static</span>ObserverExtensions</a>
+
+    <div class="summary-group">Functions</div>
+    <a href="pages/API%20-%20Modifying.html#ModifierFunction"><span class="badge badge-class">abstract</span>ModifierFunction&lt;T&gt;</a>
+
+    </div>
+
+    <div class="module-band"><span class="band-name">Modifier functions</span><span class="band-desc">The built-in functions a function field offers, and the operators they apply (<code>Concordance.Functions</code>).</span></div>
+    <p class="api-open"><a class="nav-ext" href="pages/API%20-%20Functions.html">Open the Modifier functions reference &rarr;</a></p>
+    <div class="summary-index">
+    <div class="summary-group">Built-in functions</div>
+    <a href="pages/API%20-%20Functions.html#Set"><span class="badge badge-class">sealed</span>Set&lt;T&gt;</a>
+    <a href="pages/API%20-%20Functions.html#AtMost"><span class="badge badge-class">sealed</span>AtMost&lt;T&gt;</a>
+    <a href="pages/API%20-%20Functions.html#AtLeast"><span class="badge badge-class">sealed</span>AtLeast&lt;T&gt;</a>
+    <a href="pages/API%20-%20Functions.html#Clamp"><span class="badge badge-class">sealed</span>Clamp&lt;T&gt;</a>
+    <a href="pages/API%20-%20Functions.html#Abs"><span class="badge badge-class">sealed</span>Abs&lt;T&gt;</a>
+    <a href="pages/API%20-%20Functions.html#Snap"><span class="badge badge-class">sealed</span>Snap</a>
+    <a href="pages/API%20-%20Functions.html#Remap"><span class="badge badge-class">sealed</span>Remap</a>
+    <a href="pages/API%20-%20Functions.html#Blend"><span class="badge badge-class">sealed</span>Blend functions</a>
+    <a href="pages/API%20-%20Functions.html#Scale"><span class="badge badge-class">sealed</span>Scale functions</a>
+    <a href="pages/API%20-%20Functions.html#BinaryOperation"><span class="badge badge-class">sealed</span>BinaryOperation&lt;T, TOperand&gt;</a>
+    <a href="pages/API%20-%20Functions.html#UnaryOperation"><span class="badge badge-class">sealed</span>UnaryOperation&lt;T&gt;</a>
+
+    <div class="summary-group">Operators</div>
+    <a href="pages/API%20-%20Functions.html#BinaryOperator"><span class="badge badge-enum">enum</span>BinaryOperator</a>
+    <a href="pages/API%20-%20Functions.html#UnaryOperator"><span class="badge badge-enum">enum</span>UnaryOperator</a>
+    <a href="pages/API%20-%20Functions.html#OperatorsOfTOperand"><span class="badge badge-static">static</span>Operators&lt;T, TOperand&gt;</a>
+    <a href="pages/API%20-%20Functions.html#OperatorsOfT"><span class="badge badge-static">static</span>Operators&lt;T&gt;</a>
+    </div>
+
+    <div class="module-band"><span class="band-name">Advanced</span><span class="band-desc">Assembly attributes that declare special cases, and control by object (<code>Concordance.Advanced</code>).</span></div>
+    <p class="api-open"><a class="nav-ext" href="pages/API%20-%20Advanced.html">Open the Advanced reference &rarr;</a></p>
+    <div class="summary-index">
+    <div class="summary-group">Special cases</div>
+    <a href="pages/API%20-%20Advanced.html#PropertyMethodsAttribute"><span class="badge badge-class">attr</span>PropertyMethodsAttribute</a>
+    <a href="pages/API%20-%20Advanced.html#DrivenMemberAttribute"><span class="badge badge-class">attr</span>DrivenMemberAttribute</a>
+    <a href="pages/API%20-%20Advanced.html#UnmodifiableMemberAttribute"><span class="badge badge-class">attr</span>UnmodifiableMemberAttribute</a>
+    <div class="summary-group">Control</div>
+    <a href="pages/API%20-%20Advanced.html#Concord"><span class="badge badge-static">static</span>Concord</a>
+    <a href="pages/API%20-%20Advanced.html#OwnerScope"><span class="badge badge-struct">struct</span>OwnerScope</a>
+    <a href="pages/API%20-%20Advanced.html#TargetScope"><span class="badge badge-struct">struct</span>TargetScope</a>
+    <a href="pages/API%20-%20Advanced.html#ModifierInfo"><span class="badge badge-struct">struct</span>ModifierInfo</a>
+    <a href="pages/API%20-%20Advanced.html#ObserverInfo"><span class="badge badge-struct">struct</span>ObserverInfo</a>
+    <a href="pages/API%20-%20Advanced.html#Phase"><span class="badge badge-enum">enum</span>Phase</a>
+    </div>
+
+    <div class="doc-footer">Concordance v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

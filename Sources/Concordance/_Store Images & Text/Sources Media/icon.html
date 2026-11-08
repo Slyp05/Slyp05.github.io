@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<!-- Asset Store icon, 160x160 (shown at 80x80). No text allowed. Drawn on a 320x320 canvas and
+     rendered at half size by render.sh. -->
+<style>
+  html, body { margin: 0; padding: 0; background: #f4eee3; }
+  svg { display: block; }
+</style>
+</head>
+<body>
+<svg width="160" height="160" viewBox="0 0 320 320" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="bg" cx="0.5" cy="0.5" r="0.9">
+      <stop offset="0" stop-color="#fcf9f3"/>
+      <stop offset="0.55" stop-color="#f4eee3"/>
+      <stop offset="1" stop-color="#e6dbc8"/>
+    </radialGradient>
+    <!-- Paper grain: fine, faint fibres. -->
+    <filter id="grain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.5 0.35" numOctaves="3" seed="11" result="n"/>
+      <feColorMatrix in="n" type="matrix" values="0 0 0 0 0.45  0 0 0 0 0.38  0 0 0 0 0.28  0 0 0 1.4 -0.6"/>
+    </filter>
+  </defs>
+
+  <rect width="320" height="320" fill="url(#bg)"/>
+  <rect width="320" height="320" filter="url(#grain)" opacity="0.08"/>
+
+  <!-- The rings and the value without the script files or the value bar: both blur at 80x80. -->
+  <image href="illustration-icon.svg" x="19" y="25" width="282" height="270"/>
+</svg>
+</body>
+</html>

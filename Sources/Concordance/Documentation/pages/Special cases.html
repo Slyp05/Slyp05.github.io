@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Understand how Concordance handles animation and physics, and declare your own special cases." />
+  <title>Concordance - Special cases</title>
+  <link rel="stylesheet" href="../shared/styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Concordance</div><a href="../User%20Manual.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Special cases</h1>
+      <div class="sub">Understand how Concordance handles animation and physics, and declare your own special cases.</div>
+    </div>
+
+<p>A <strong>special case</strong> is a member Concordance handles differently from other fields and properties:</p>
+<ul>
+  <li>A driven member, written at known moments of each frame by code Concordance doesn't rewrite, such as
+    animation.</li>
+  <li>An unmodifiable member, which takes no modifiers.</li>
+  <li>A getter and setter method pair that forms one member.</li>
+</ul>
+
+<!-- ====================================== animation ==== -->
+<section id="animation">
+  <h2>Animated members</h2>
+<p>Animation writes the members it animates from engine code, which Concordance doesn't rewrite. Concordance knows these
+  members: right after each animation stage of the frame, the value the animation wrote becomes the base value, and
+  the modifiers apply on top. A member written this way is a <strong>driven member</strong>. Concordance checks one
+  only while it has modifiers or observers, or while you watch it in the Concordance window, whose History then shows
+  what the animation wrote.</p>
+<p>The built-in driven members are every member an animation clip can write on a built-in component, and the values
+  of Unity UI controls. For a clip that animates a field of your
+  own script, declare the field as a driven member, as described in
+  <a href="#declare">Declare your own special cases</a>.</p>
+</section>
+
+<!-- ====================================== unmodifiable ==== -->
+<section id="unmodifiable">
+  <h2>Members the engine updates</h2>
+<p>The engine computes some members from their own previous value, such as a velocity the physics engine updates
+  each step. A modifier on one would compound at every step, so a modifier line on it is a compile error that names
+  what to modify instead: a force, <code>gravityScale</code>, an agent's <code>speed</code>, or a playback
+  <code>pitch</code>.</p>
+<p>These <strong>unmodifiable</strong> members are the velocities, positions, rotations and forces of rigidbodies and
+  articulation bodies, a nav mesh agent's velocity and position, playback times, and the text and scroll position of
+  Unity UI fields and scroll rects. Observing them works.</p>
+</section>
+
+<!-- ====================================== declare ==== -->
+<section id="declare">
+  <h2>Declare your own special cases</h2>
+<p>The built-in special cases are declared with assembly attributes from <code>Concordance.Advanced</code>. Use the
+  same attributes for your own members or a package's:</p>
+<pre><code><span class="kw">using</span> Concordance.Advanced;
+<span class="kw">using</span> UnityEngine.PlayerLoop;
+
+[<span class="kw">assembly</span>: UnmodifiableMember(<span class="kw">typeof</span>(<span class="ty">CharacterMotor</span>), <span class="kw">nameof</span>(<span class="ty">CharacterMotor</span>.Velocity), <span class="ty">Instead</span> = <span class="st">"CharacterMotor.MaxSpeed"</span>)]
+[<span class="kw">assembly</span>: DrivenMember(<span class="kw">typeof</span>(<span class="ty">AudioSource</span>), <span class="kw">nameof</span>(<span class="ty">AudioSource</span>.volume), <span class="kw">typeof</span>(<span class="ty">Update</span>))]</code></pre>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Attribute</th><th scope="col">Effect</th></tr>
+    <tr><td><code>UnmodifiableMember</code></td><td>Makes a modifier line on the member a compile error. <code>Instead</code> names what to modify instead.</td></tr>
+    <tr><td><code>DrivenMember</code></td><td>Right after each player-loop stage you name, the value written during that stage becomes the base value.</td></tr>
+    <tr><td><code>PropertyMethods</code></td><td>Makes a getter and setter method pair one member.</td></tr>
+  </table>
+</div>
+<p>A declaration applies to its assembly and to the assemblies that reference it. For a type your build may not
+  include, such as one from an optional package, name the type by its assembly-qualified name and the member by
+  string, as in <code>"UnityEngine.Cloth, UnityEngine.ClothModule"</code>.</p>
+</section>
+
+<!-- ====================================== pairs ==== -->
+<section id="pairs">
+  <h2>Declare your own getter and setter pair</h2>
+<p>A <strong>getter and setter pair</strong> is two methods that read and write one value, such as
+  <code>Transform.GetSiblingIndex</code> and <code>Transform.SetSiblingIndex</code>. Concordance treats each of Unity's pairs as one
+  member, so a modifier line passes <code>(Modifier)</code> to the setter, as described in
+  <a href="Write%20modifier%20lines.html#pairs">Getter and setter methods</a>. To make a pair of your own methods one
+  member, declare it with <code>[assembly: PropertyMethods]</code>:</p>
+<pre><code><span class="kw">using</span> Concordance.Advanced;
+<span class="kw">using</span> UnityEngine;
+
+[<span class="kw">assembly</span>: PropertyMethods(<span class="kw">typeof</span>(<span class="ty">Thermostat</span>), <span class="pn">getter:</span> <span class="kw">nameof</span>(<span class="ty">Thermostat</span>.GetTarget), <span class="pn">setter:</span> <span class="kw">nameof</span>(<span class="ty">Thermostat</span>.SetTarget))]
+
+<span class="kw">public</span> <span class="kw">class</span> <span class="ty">Thermostat</span> : <span class="ty">MonoBehaviour</span>
+{
+    <span class="kw">float</span> target = <span class="nu">20f</span>;
+
+    <span class="kw">public</span> <span class="kw">float</span> GetTarget() =&gt; target;
+    <span class="kw">public</span> <span class="kw">void</span> SetTarget(<span class="kw">float</span> value) =&gt; target = value;
+}</code></pre>
+<p>The setter takes the value as its only parameter, and the getter takes none. A pair whose methods take a key, such
+  as a room name, is not a member: wrap it in a property, as described in
+  <a href="Write%20modifier%20lines.html#wrap">Wrap a value in a property</a>.</p>
+</section>
+
+<!-- ====================================== find ==== -->
+<section id="find">
+  <h2>Find a member's special case</h2>
+<p>To find out whether a member is a special case, select it in the Concordance window. Under its name, its details
+  say what makes it a special case, and the tooltip of that line names where the special case is declared.</p>
+<div class="img-block">
+  <img src="../img/special_case" alt="The Concordance window, with Transform.localPosition selected and Driven by the engine under its name" />
+</div>
+</section>
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="Untracked%20writes.html">Untracked writes</a></li>
+    <li><a href="API%20-%20Advanced.html">Public API: Advanced</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="Untracked%20writes.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Untracked writes</div>
+  </a>
+  <a class="next" href="How%20Concordance%20works.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">How Concordance works</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Concordance v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Find out what changed a value, and fix common issues with Concordance." />
+  <title>Concordance - Troubleshooting</title>
+  <link rel="stylesheet" href="/assets/css/concordance.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Concordance</div><a href="../index.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Troubleshooting</h1>
+      <div class="sub">Find out what changed a value, and fix common issues with Concordance.</div>
+    </div>
+
+<!-- ====================================== digging ==== -->
+<section id="digging">
+  <h2>Find out what changed a value</h2>
+<p>To find out why a member has its value, open it in the Concordance window, and
+  <a href="Inspect%20members.html#watch">watch</a> it. In Play mode, its <strong>Values</strong> section shows each
+  modifier and the value it gives, and its <strong>History</strong> section shows each change with the line that made
+  it.</p>
+</section>
+
+<!-- ====================================== console ==== -->
+<section id="console">
+  <h2>Messages in the Console window</h2>
+<h3 id="issue-cecil">Concordance cannot process modifier lines</h3>
+<p>The Console window displays <code>Concordance cannot process modifier lines</code>, and modifier lines throw when
+  they run. Concordance's build step needs the Mono Cecil package (<code>com.unity.nuget.mono-cecil</code>) 1.10 or
+  later: the package is missing or too old, or the build step failed to compile.</p>
+<p>To fix it, install or update the Mono Cecil package in the Package Manager window, as the message says. If the
+  package is up to date, look for the build step's compile error in the Console window.</p>
+<h3 id="issue-settings">Concordance cannot read ConcordanceSettings.asset</h3>
+<p>The Console window displays <code>Concordance cannot read 'ProjectSettings/ConcordanceSettings.asset'</code>. The
+  file is damaged, such as by a merge conflict. Until you fix it, every script applies in its phase in code, and the
+  order is read-only.</p>
+<p>To fix it, restore the file from version control, then reopen the project. To start over with no order set, delete
+  the file instead.</p>
+</section>
+
+<!-- ====================================== exceptions ==== -->
+<section id="exceptions">
+  <h2>Exceptions</h2>
+<h3 id="issue-not-processed">A line was not rewritten when it compiled</h3>
+<p>A modifier line, or a call such as <code>Modify</code> or <code>Observe</code>, throws <code>was not rewritten when
+  its assembly compiled</code>. The code was compiled outside Unity, such as by a hot reload tool.</p>
+<p>To fix it, let Unity recompile the assembly.</p>
+<h3 id="issue-edit-mode">Concordance works only in Play mode or while a test runs</h3>
+<p>A call throws <code>Concordance works only in Play mode or while a test runs</code>. The line ran in Edit mode,
+  such as from <code>OnValidate</code>, where a value with its modifiers would be saved into the scene or the
+  asset.</p>
+<p>To fix it, run the line in Play mode only.</p>
+<h3 id="issue-thread">Concordance can only be used from the main thread</h3>
+<p>A call throws <code>can only be used from the main thread</code>. A thread other than the main thread wrote a
+  modifier, or wrote a member of an object that has modifiers or observers.</p>
+<p>To fix it, write modifiers, and the members they modify, from the main thread.</p>
+</section>
+
+<!-- ====================================== values ==== -->
+<section id="values">
+  <h2>Unexpected values</h2>
+<h3 id="issue-baked">A modifier's effect stays after it stops</h3>
+<p>A plain write computed from the member, such as <code>x *= 2f</code>, read the value with its modifiers, so the
+  modifiers ended up in the base value.</p>
+<p>To fix it, compute the write from <code>x.GetUnmodified()</code>. For more information, refer to
+  <a href="Base%20values.html#read">Read the base value</a>.</p>
+<h3 id="issue-lasts">A modifier lasts after the script that wrote it is gone</h3>
+<p>The modifier's owner is still alive. For a line in a static method, the owner is the class, which is never
+  destroyed.</p>
+<p>To fix it, stop the modifier yourself, or pass an owner. For more information, refer to
+  <a href="Write%20modifier%20lines.html#lifetime">When a modifier ends</a>.</p>
+<h3 id="issue-order">A modifier has no effect, or two apply in the wrong order</h3>
+<p>A later modifier may replace the value this one gives. To check, read the member's <strong>Values</strong> section
+  in the Concordance window in Play mode.</p>
+<p>To fix it, set a phase in code, or drag the scripts in the member's <strong>Modifier Order</strong>. For more
+  information, refer to <a href="Order%20modifiers.html">Order modifiers</a>.</p>
+<h3 id="issue-ignored">Modifiers stop applying after a plugin writes the member</h3>
+<p>The plugin's write is untracked: it comes from code Concordance doesn't rewrite, and replaces the value without
+  the modifiers until the member's value is next computed.</p>
+<p>To fix it, call <code>Recombine()</code> on the member after the plugin's write. For more information, refer to
+  <a href="Untracked%20writes.html">Untracked writes</a>.</p>
+</section>
+
+<!-- ====================================== support ==== -->
+<section id="support">
+  <h2>Support</h2>
+<p>For questions and bug reports, use the <a href="https://justetools.net/contact/">contact form</a> or email
+  <a href="mailto:justetools@gmail.com">justetools@gmail.com</a>, with your Unity version and the Console window's
+  messages.</p>
+</section>
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="Code%20analysis%20reference.html">Code analysis reference</a></li>
+    <li><a href="Inspect%20members.html">Inspect members</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="Glossary.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Glossary</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Concordance v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

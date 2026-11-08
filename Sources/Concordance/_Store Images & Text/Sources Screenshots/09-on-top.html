@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="frame.css">
+<style>
+  .stage > * { position: absolute; }
+  .code { top: 0; width: 810px; }
+  .code pre { font-size: 25px; }
+  .graph { left: 0; top: 230px; overflow: visible; }
+  .graph text { font-family: "Segoe UI Variable Display", "Segoe UI", sans-serif; }
+</style>
+</head>
+<body>
+<div class="head">
+  <h1>Modifiers stay on top of other writes</h1>
+  <p>Old scripts, the Animator, Timeline and UI keep writing as before.</p>
+</div>
+<div class="stage">
+  <div class="code ochre" style="left: 0">
+    <div class="file">Storm.cs</div>
+<pre class="cs">
+sun.intensity *= (Modifier)0.4f;
+</pre>
+  </div>
+  <svg class="graph" width="1680" height="560" viewBox="0 0 1680 560">
+    <!-- A light's intensity, written every frame by an Animator. -->
+    <path d="M0 470 L28 469 L56 466 L84 460 L112 452 L140 443 L168 431 L196 417 L224 402 L252 385 L280 368 L308 348 L336 328 L364 308 L392 286 L420 265 L448 244 L476 222 L504 202 L532 182 L560 163 L588 145 L616 128 L644 113 L672 99 L700 87 L728 78 L756 70 L784 64 L812 61 L840 60 L868 61 L896 64 L924 70 L952 78 L980 87 L1008 99 L1036 113 L1064 128 L1092 145 L1120 162 L1148 182 L1176 202 L1204 222 L1232 244 L1260 265 L1288 286 L1316 308 L1344 328 L1372 348 L1400 367 L1428 385 L1456 402 L1484 417 L1512 431 L1540 443 L1568 452 L1596 460 L1624 466 L1652 469 L1680 470" fill="none" stroke="var(--blue)" stroke-width="8" stroke-dasharray="2 16" stroke-linecap="round"/>
+    <!-- The light: the same curve, times 0.4 during the storm. -->
+    <path d="M0 470 L10 470 L20 469 L30 469 L40 468 L50 466 L60 465 L70 463 L80 461 L90 458 L100 456 L110 453 L120 450 L130 446 L140 443 L150 439 L160 434 L170 430 L180 425 L190 420 L200 415 L210 410 L220 404 L230 399 L240 393 L250 387 L260 380 L270 374 L280 368 L290 361 L300 354 L310 347 L320 340 L330 333 L340 325 L350 318 L360 311 L370 303 L380 296 L390 288 L400 280 L410 273 L420 265 L430 257 L440 250 L450 242 L460 234 L470 227 L480 219 L490 212 L500 205 L510 197 L520 190 L530 183 L540 176 L550 169 L560 163 L570 156 L580 150 L590 143 L600 137" fill="none" stroke="var(--ink)" stroke-width="10"/>
+    <path d="M600 137 V337" fill="none" stroke="var(--ochre)" stroke-width="5" stroke-dasharray="10 8"/>
+    <path d="M600 337 L612 334 L623 331 L635 329 L647 327 L658 324 L670 322 L682 320 L693 318 L705 316 L717 315 L728 313 L740 312 L752 310 L763 309 L775 308 L787 308 L798 307 L810 307 L822 306 L833 306 L845 306 L857 306 L868 306 L880 307 L892 308 L903 308 L915 309 L927 310 L938 311 L950 313 L962 314 L973 316 L985 318 L997 320 L1008 322 L1020 324 L1032 326 L1043 329 L1055 331 L1067 334 L1078 336 L1090 339 L1102 342 L1113 345 L1125 348 L1137 352 L1148 355 L1160 358 L1172 361 L1183 365 L1195 368 L1207 372 L1218 375 L1230 379 L1242 382 L1253 386 L1265 390 L1277 393 L1288 397 L1300 400" fill="none" stroke="var(--ink)" stroke-width="10"/>
+    <path d="M1300 400 V296" fill="none" stroke="var(--ochre)" stroke-width="5" stroke-dasharray="10 8"/>
+    <path d="M1300 296 L1306 300 L1313 305 L1319 310 L1325 315 L1332 319 L1338 324 L1344 329 L1351 333 L1357 338 L1363 342 L1370 347 L1376 351 L1382 356 L1389 360 L1395 364 L1401 368 L1408 373 L1414 377 L1420 381 L1427 385 L1433 389 L1439 392 L1446 396 L1452 400 L1458 403 L1465 407 L1471 410 L1477 414 L1484 417 L1490 420 L1496 424 L1503 427 L1509 429 L1515 432 L1522 435 L1528 438 L1534 440 L1541 443 L1547 445 L1553 447 L1560 450 L1566 452 L1572 454 L1579 455 L1585 457 L1591 459 L1598 460 L1604 462 L1610 463 L1617 464 L1623 465 L1629 466 L1636 467 L1642 468 L1648 469 L1655 469 L1661 469 L1667 470 L1674 470 L1680 470" fill="none" stroke="var(--ink)" stroke-width="10"/>
+    <rect x="600" y="520" width="700" height="36" rx="10" fill="var(--ochre)"/>
+    <text x="620" y="546" font-size="24" font-weight="600" fill="#fbf8f2">Storm</text>
+    <text x="840" y="40" font-size="26" font-weight="600" fill="var(--blue)" text-anchor="middle">What the Animator writes</text>
+    <text x="950" y="282" font-size="26" font-weight="700" fill="var(--ink)" text-anchor="middle">The light, with the storm on top</text>
+  </svg>
+</div>
+<script src="highlight.js"></script>
+</body>
+</html>

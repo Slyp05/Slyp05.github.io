@@ -45,6 +45,12 @@ defaults:
       path: "clonebuster"
     values:
       sitemap: false
+  # Concordance is unreleased: keep its whole doc tree out of the sitemap.
+  # Remove this entry (and `sitemap: false` in concordance.md) on release.
+  - scope:
+      path: "concordance"
+    values:
+      sitemap: false
   # The manuals moved from /documentation/ to /user-manual/. The old tree only holds the
   # redirect stubs the build scripts write, which have no place in the sitemap.
   - scope:

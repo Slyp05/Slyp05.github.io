@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="The Concordance namespace: Modifier, ModifierPhase, and the Modify and Observe extension methods." />
+  <title>Concordance - Public API - Modifying</title>
+  <link rel="stylesheet" href="/assets/css/concordance.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <nav>
+    <a href="../index.html">Overview</a>
+    <a class="nav-band active" href="API%20-%20Modifying.html" aria-current="page">Modifying</a>
+    <div class="nav-group">Modifier lines</div>
+    <div class="nav-group-body">
+      <a href="#Modifier"><span class="badge badge-struct">struct</span>Modifier</a>
+      <a href="#ModifierPhase"><span class="badge badge-static">static</span>ModifierPhase</a>
+    </div>
+    <div class="nav-group">Extension methods</div>
+    <div class="nav-group-body">
+      <a href="#ModifierExtensions"><span class="badge badge-static">static</span>ModifierExtensions</a>
+      <a href="#ObserverExtensions"><span class="badge badge-static">static</span>ObserverExtensions</a>
+    </div>
+    <div class="nav-group">Functions</div>
+    <div class="nav-group-body">
+      <a href="#ModifierFunction"><span class="badge badge-class">abstract</span>ModifierFunction&lt;T&gt;</a>
+    </div>
+    <a class="nav-band" href="API%20-%20Functions.html">Modifier functions</a>
+    <a class="nav-band" href="API%20-%20Advanced.html">Advanced</a>
+  </nav>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Public API <span class="tag">Modifying</span></h1>
+      <div class="sub">Namespace <code>Concordance</code>. Assembly <code>Concordance</code>, except <code>Modifier</code> and <code>ModifierPhase</code>, which Concordance generates in each assembly that uses them. For more information, refer to <a href="../../user-manual/pages/Modify%20members.html">Modify members</a> and <a href="../../user-manual/pages/Observe%20changes.html">Observe changes</a>.</div>
+    </div>
+
+    <div class="module-band band-first"><span class="band-name">Modifying</span><span class="band-desc">What a script that modifies or observes a member uses.</span></div>
+
+    <h2 class="api-group">Modifier lines</h2>
+
+    <!-- Modifier -->
+    <div class="type-section" id="Modifier">
+      <div class="type-header"><h3>Modifier</h3><span class="badge badge-struct">struct</span><span class="badge badge-pm">generated</span></div>
+      <p class="type-desc">Marks a modifier line, which Concordance rewrites after Unity compiles it: <code>x = (Modifier)value;</code> turns the assigned value into the calling object's modifier on the member. Concordance generates it as an internal type in the <code>Concordance</code> namespace of each assembly that uses it, with a conversion for each type of value its quick syntax lines use. <code>(Modifier)</code> must apply to the whole right side of an assignment to a field or property, or the value argument of a getter and setter pair's setter. For more information, refer to <a href="../../user-manual/pages/Write%20modifier%20lines.html">Write modifiers</a>.</p>
+      <div class="member-group">
+        <div class="member-group-title">Static fields</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="kw">static readonly</span> <span class="t">Modifier</span> <span class="mn">Stop</span></th><td>Removes the calling object's modifier on the member: <code>x = Modifier.Stop;</code>. Same as <code>x.StopModifying()</code>.</td></tr>
+        </table>
+      </div>
+      <div class="member-group">
+        <div class="member-group-title">Operators</div>
+        <div class="note"><span class="ex">The conversions throw InvalidOperationException when they run, which happens only in code that Concordance didn't rewrite.</span></div>
+        <table class="mt">
+          <tr><th scope="row"><span class="kw">explicit operator</span> <span class="t">Modifier</span>(<span class="t">T</span> value)</th><td>The conversion <code>(Modifier)</code> applies to the assigned value. Generated for each type <code>T</code> the assembly's casts use, except interfaces, <code>object</code> and type parameters.</td></tr>
+          <tr><th scope="row"><span class="kw">implicit operator</span> <span class="t">T</span>(<span class="t">Modifier</span> modifier)</th><td>Lets <code>(Modifier)value</code> stand where the member's type is expected, so the assignment compiles.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- ModifierPhase -->
+    <div class="type-section" id="ModifierPhase">
+      <div class="type-header"><h3>ModifierPhase</h3><span class="badge badge-static">static</span><span class="badge badge-pm">generated</span></div>
+      <p class="type-desc">The default place of a script's modifiers in each member's modifier order, set with one of its nested attributes on a method, a class or a struct. The method's attribute wins over its type's, a lambda, coroutine or <code>async</code> method takes the phase of the method that declares it, and a line without any is in <code>Default</code>. The attributes aren't inherited. The member's modifier order in the Concordance window can pin a script elsewhere. Concordance generates the type in each assembly that uses it. For more information, refer to <a href="../../user-manual/pages/Order%20modifiers.html#phase">Set a phase in code</a>.</p>
+      <div class="member-group">
+        <div class="member-group-title">Nested attributes</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="kw">class</span> <span class="mn">Earliest</span> : <span class="t">Attribute</span></th><td>Applies before every other phase.</td></tr>
+          <tr><th scope="row"><span class="kw">class</span> <span class="mn">Early</span> : <span class="t">Attribute</span></th><td>Applies after <code>Earliest</code> and before <code>Default</code>.</td></tr>
+          <tr><th scope="row"><span class="kw">class</span> <span class="mn">Default</span> : <span class="t">Attribute</span></th><td>The phase of a line without an attribute. Use it to return a method to <code>Default</code> inside a class with another phase.</td></tr>
+          <tr><th scope="row"><span class="kw">class</span> <span class="mn">Late</span> : <span class="t">Attribute</span></th><td>Applies after <code>Default</code> and before <code>Latest</code>.</td></tr>
+          <tr><th scope="row"><span class="kw">class</span> <span class="mn">Latest</span> : <span class="t">Attribute</span></th><td>Applies after every other phase.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <h2 class="api-group">Extension methods</h2>
+
+    <!-- ModifierExtensions -->
+    <div class="type-section" id="ModifierExtensions">
+      <div class="type-header"><h3>ModifierExtensions</h3><span class="badge badge-static">static</span></div>
+      <p class="type-desc">Modifies a member, as the quick syntax <code>(Modifier)</code> does, with a choice of owner, key and local order: <code>AudioListener.volume.Modify(0f)</code>. Concordance rewrites each call after Unity compiles it, so <code>member</code> names the member itself rather than passing its value. Call it on the member itself: a field, a property with a setter, or the getter of a getter and setter pair. Never call it on a local variable. Leaving <code>owner</code> out, or passing null, means the calling object, or the declaring type in a static method. A <code>key</code> tells apart several modifiers of one owner on one member, compared with <code>Equals</code>. For more information, refer to <a href="../../user-manual/pages/Regular%20syntax.html">Use the regular syntax</a>.</p>
+      <div class="member-group">
+        <div class="member-group-title">Static methods</div>
+        <div class="note"><span class="ex">Every method throws InvalidOperationException when the call was not rewritten at compile time, when called off the main thread, and in the Editor outside Play mode and tests, and NullReferenceException when the object holding the member is null. Modify and StopModifying also throw ArgumentNullException when owner is null in a struct method, which has no calling object.</span></div>
+        <table class="mt">
+          <tr><th scope="row"><span class="kw">void</span> <span class="mn">Modify</span>&lt;<span class="t">T</span>&gt;(<span class="kw">this</span> <span class="t">T</span> member, <span class="t">T</span> value, <span class="t">object</span> owner = <span class="kw">null</span>, <span class="t">object</span> key = <span class="kw">null</span>, <span class="t">int</span> localOrder = 0)</th><td>Modifies the member with a value, as <code>x = (Modifier)value</code> does: <code>speed.Modify(speed * slowFactor)</code>. In the value, a read of the member itself is the value before this modifier; every other part is read once, when the call runs. <code>localOrder</code> orders this modifier among the other modifiers of the same script, lowest first; it has no effect on the order between scripts.</td></tr>
+          <tr><th scope="row"><span class="kw">void</span> <span class="mn">Modify</span>&lt;<span class="t">T</span>&gt;(<span class="kw">this</span> <span class="t">T</span> member, <span class="t">ModifierFunction</span>&lt;<span class="t">T</span>&gt; function, <span class="t">object</span> owner = <span class="kw">null</span>, <span class="t">object</span> key = <span class="kw">null</span>, <span class="t">int</span> localOrder = 0)</th><td>Modifies the member with a function of the value before this modifier, such as one picked in the Inspector window. Its fields are copied when the call runs: to apply new field values, call again. The copy is shallow: a field holding an object stays shared. Null, such as a field left on None, leaves the value unchanged. <span class="ex">Also throws InvalidOperationException when the function cannot apply to its types, such as an operator they lack.</span></td></tr>
+          <tr><th scope="row"><span class="kw">void</span> <span class="mn">StopModifying</span>&lt;<span class="t">T</span>&gt;(<span class="kw">this</span> <span class="t">T</span> member, <span class="t">object</span> owner = <span class="kw">null</span>, <span class="t">object</span> key = <span class="kw">null</span>)</th><td>Removes the owner's modifier for the key, if there is one. The member's value is then computed again from its base value and its other modifiers. <code>owner</code> and <code>key</code> are the ones passed to <code>Modify</code>.</td></tr>
+          <tr><th scope="row"><span class="kw">void</span> <span class="mn">Recombine</span>&lt;<span class="t">T</span>&gt;(<span class="kw">this</span> <span class="t">T</span> member)</th><td>Computes the member's value again: its current value becomes the base value, and the modifiers apply on top. Call it after a write from code Concordance doesn't rewrite, such as a precompiled DLL, to apply the modifiers at once. Does nothing on a member without modifiers or observers.</td></tr>
+          <tr><th scope="row"><span class="t">T</span> <span class="mn">GetUnmodified</span>&lt;<span class="t">T</span>&gt;(<span class="kw">this</span> <span class="t">T</span> member)</th><td>Returns the member's value without its modifiers. A plain write computed from it changes the base value without adding the modifiers to it: <code>x = x.GetUnmodified() * 2f</code>.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- ObserverExtensions -->
+    <div class="type-section" id="ObserverExtensions">
+      <div class="type-header"><h3>ObserverExtensions</h3><span class="badge badge-static">static</span></div>
+      <p class="type-desc">Calls a handler each time a member's value changes, from a modifier or a plain write alike: <code>light.intensity.Observe(OnChanged)</code>. Concordance rewrites each call after Unity compiles it, so <code>member</code> names the member itself rather than passing its value. A handler that throws is logged, and the others still run. An owner registers a handler on a member once: observing again with the same handler and owner changes nothing. A handler that writes the member it observes, or sets a modifier on it, throws. For more information, refer to <a href="../../user-manual/pages/Observe%20changes.html">Observe changes</a>.</p>
+      <div class="member-group">
+        <div class="member-group-title">Static methods</div>
+        <div class="note"><span class="ex">Every method throws InvalidOperationException when the call was not rewritten at compile time, when called off the main thread, and in the Editor outside Play mode and tests, and NullReferenceException when the object holding the member is null. Observe also throws ArgumentNullException when handler is null, or owner is null in a struct method.</span></div>
+        <table class="mt">
+          <tr><th scope="row"><span class="kw">void</span> <span class="mn">Observe</span>&lt;<span class="t">T</span>&gt;(<span class="kw">this</span> <span class="t">T</span> member, <span class="t">Action</span>&lt;<span class="t">T</span>&gt; handler, <span class="t">object</span> owner = <span class="kw">null</span>)</th><td>Calls the handler with the new value each time the member's value changes. The handler is removed when the owner is destroyed, or collected for a plain C# object. Leaving <code>owner</code> out, or passing null, means the calling object, or the declaring type in a static method.</td></tr>
+          <tr><th scope="row"><span class="kw">void</span> <span class="mn">Observe</span>&lt;<span class="t">T</span>&gt;(<span class="kw">this</span> <span class="t">T</span> member, <span class="t">Action</span>&lt;<span class="t">T</span>, <span class="t">T</span>&gt; handler, <span class="t">object</span> owner = <span class="kw">null</span>)</th><td>Calls the handler with the previous and the new value each time the member's value changes.</td></tr>
+          <tr><th scope="row"><span class="kw">void</span> <span class="mn">StopObserving</span>&lt;<span class="t">T</span>&gt;(<span class="kw">this</span> <span class="t">T</span> member, <span class="t">Action</span>&lt;<span class="t">T</span>&gt; handler, <span class="t">object</span> owner = <span class="kw">null</span>)<br><span class="kw">void</span> <span class="mn">StopObserving</span>&lt;<span class="t">T</span>&gt;(<span class="kw">this</span> <span class="t">T</span> member, <span class="t">Action</span>&lt;<span class="t">T</span>, <span class="t">T</span>&gt; handler, <span class="t">object</span> owner = <span class="kw">null</span>)</th><td>Removes a handler added with <code>Observe</code>, if it is there. The handler is compared with <code>Equals</code>: passing the same method again removes it. <code>owner</code> is the owner passed to <code>Observe</code>; leaving it out, or passing null, means the calling object, or the declaring type in a static method.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <h2 class="api-group">Functions</h2>
+
+    <!-- ModifierFunction -->
+    <div class="type-section" id="ModifierFunction">
+      <div class="type-header"><h3>ModifierFunction&lt;T&gt;</h3><span class="badge badge-class">abstract</span></div>
+      <p class="type-desc">A modifier's function from the value before it to the value after it. Derive from it to write your own function, as the <a href="API%20-%20Functions.html">built-in functions</a> do; mark the subclass <code>[Serializable]</code> for a function field's dropdown to list it, and <code>[DisplayName]</code> to label it. <code>T</code> is the type of the modified member.</p>
+      <div class="member-group">
+        <div class="member-group-title">Methods</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="kw">abstract</span> <span class="t">T</span> <span class="mn">Apply</span>(<span class="t">T</span> previous)</th><td>Returns the value after this modifier. <code>previous</code> is the value before it: the base value, with every earlier modifier applied. Runs each time the member's value is computed again. An exception thrown here is logged, and the modifier is skipped. Setting a modifier here, or writing a member with modifiers or observers, throws and skips it the same way.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="doc-footer">Concordance v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

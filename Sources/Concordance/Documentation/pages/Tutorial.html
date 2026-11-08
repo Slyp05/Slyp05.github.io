@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Build a player whose speed boosts, stun and speed log all work together, one feature of Concordance at a time." />
+  <title>Concordance - Tutorial: Coordinate a player's speed</title>
+  <link rel="stylesheet" href="../shared/styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Concordance</div><a href="../User%20Manual.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Tutorial: Coordinate a player's speed</h1>
+      <div class="sub">Build a player whose speed boosts, stun and speed log all work together, one feature of Concordance at a time.</div>
+      <div class="guide-index">
+        <a href="#overview">Example overview</a>
+        <a href="#prerequisites">Prerequisites</a>
+        <a href="#player">Create the player</a>
+        <a href="#conflict">Find the conflict</a>
+        <a href="#modifiers">Fix the boost</a>
+        <a href="#order">Order the stun</a>
+        <a href="#observe">Observe the speed</a>
+        <a href="#inspect">Read the speed</a>
+      </div>
+    </div>
+
+<!-- ====================================== overview ==== -->
+<section id="overview">
+  <h2>Example overview</h2>
+<p>You build a player that runs over pads: two speed boost pads, whose boosts stack, and a stun pad that stops the
+  player. You start with a boost that uses plain writes, see two boosts break each other in the Concordance window,
+  and fix the boost with a modifier. You then order the stun after the boosts with a phase, log each change of speed
+  with <code>Observe</code>, and read how the speed is computed in the Concordance window.</p>
+<p>When you finish, the player speeds up on each boost pad, stops on the stun pad, and returns to its own speed once
+  every effect ends, with no script caching or restoring the speed.</p>
+</section>
+
+<!-- ====================================== prerequisites ==== -->
+<section id="prerequisites">
+  <h2>Prerequisites</h2>
+<p>Before you start, <a href="Installation.html">install Concordance</a>, and get familiar with the following:</p>
+<ul>
+  <li><a href="https://docs.unity.com/en-us/engine/6000.0/manual/scripting/get-started/creating-scripts">Creating
+    scripts</a></li>
+  <li><a href="https://docs.unity.com/en-us/engine/6000.0/manual/unity-editor/editor-windows-views-reference/using-the-inspector">The
+    Inspector window</a></li>
+</ul>
+</section>
+
+<!-- ====================================== player ==== -->
+<section id="player">
+  <h2>Create the player</h2>
+<p>To create the player and its speed boost pads, perform the following steps:</p>
+<ol>
+  <li>Create a C# script named <code>Player.cs</code> with the following contents:
+<pre><code><span class="kw">using</span> UnityEngine;
+
+<span class="kw">public</span> <span class="kw">class</span> <span class="ty">Player</span> : <span class="ty">MonoBehaviour</span>
+{
+    <span class="kw">public</span> <span class="kw">float</span> speed = <span class="nu">1f</span>;
+
+    <span class="kw">void</span> Update() =&gt; transform.Translate(speed * <span class="ty">Time</span>.deltaTime, <span class="nu">0f</span>, <span class="nu">0f</span>);
+}</code></pre></li>
+  <li>Create a C# script named <code>SpeedBoost.cs</code> with the following contents:
+<pre><code><span class="kw">using</span> UnityEngine;
+
+<span class="kw">public</span> <span class="kw">class</span> <span class="ty">SpeedBoost</span> : <span class="ty">MonoBehaviour</span>
+{
+    [<span class="ty">SerializeField</span>] <span class="kw">float</span> duration = <span class="nu">5f</span>;
+
+    <span class="ty">Player</span> player;
+    <span class="kw">float</span> cached;
+
+    <span class="kw">void</span> Start()
+    {
+        player = <span class="ty">GetComponent</span>&lt;<span class="ty">Player</span>&gt;();
+        cached = player.speed;
+        player.speed = cached + <span class="nu">1f</span>;
+        Destroy(<span class="kw">this</span>, duration);
+    }
+
+    <span class="kw">void</span> OnDestroy() =&gt; player.speed = cached;
+}</code></pre></li>
+  <li>Create a C# script named <code>BoostPad.cs</code> with the following contents:
+<pre><code><span class="kw">using</span> UnityEngine;
+
+<span class="kw">public</span> <span class="kw">class</span> <span class="ty">BoostPad</span> : <span class="ty">MonoBehaviour</span>
+{
+    <span class="kw">void</span> OnTriggerEnter(<span class="ty">Collider</span> other) =&gt; other.gameObject.AddComponent&lt;<span class="ty">SpeedBoost</span>&gt;();
+}</code></pre></li>
+  <li>Go to <strong>GameObject</strong> &gt; <strong>3D Object</strong> &gt; <strong>Cube</strong>, and name the
+    cube <code>Player</code>. Set its position to (0, 0, 0).</li>
+  <li>Add the <strong>Player</strong> component and a <strong>Rigidbody</strong> component to the player, and enable
+    the Rigidbody's <strong>Is Kinematic</strong> property.</li>
+  <li>Create another cube, name it <code>Boost Pad</code>, and set its position to (3, 0, 0).</li>
+  <li>In the boost pad's <strong>Box Collider</strong> component, enable <strong>Is Trigger</strong>, then add the
+    <strong>Boost Pad</strong> component.</li>
+  <li>Duplicate the boost pad, and set the copy's position to (5, 0, 0).</li>
+</ol>
+</section>
+
+<!-- ====================================== conflict ==== -->
+<section id="conflict">
+  <h2>Find the conflict</h2>
+<p>To see two boosts break each other, perform the following steps:</p>
+<ol>
+  <li>Go to <strong>Tools</strong> &gt; <strong>Concordance</strong> &gt; <strong>Open Window</strong>.</li>
+  <li>In the search field, enter <code>speed</code>, and select <strong>Player.speed</strong>. Its
+    <strong>Writes</strong> section lists the two lines of <code>SpeedBoost</code> that write the speed.</li>
+  <li>Select <strong>Watch</strong>, then <strong>Watch for This Session</strong>. No script modifies the speed yet,
+    so the window follows it only once you watch it.</li>
+  <li>Enter Play mode, and let the player run over both boost pads.</li>
+</ol>
+<p>The speed goes from 1 to 2, then 3. When the first boost ends, it writes back 1, although the second boost is
+  still active. When the second boost ends, it writes back 2, and the player keeps that speed for good. The
+  Concordance window flags <strong>Conflicting writes</strong> on <strong>Player.speed</strong>, with the line of each
+  boost.</p>
+<div class="img-block">
+  <img src="../img/tutorial_conflict" alt="The Concordance window in Play mode, with Player.speed flagged for conflicting writes from two SpeedBoost components" />
+</div>
+<p>Exit Play mode before you continue.</p>
+</section>
+
+<!-- ====================================== modifiers ==== -->
+<section id="modifiers">
+  <h2>Fix the boost with a modifier</h2>
+<p>To turn the boost into a modifier, perform the following steps:</p>
+<ol>
+  <li>In <code>SpeedBoost.cs</code>, add <code>using Concordance;</code> above <code>using UnityEngine;</code>.</li>
+  <li>In <code>Start</code>, replace the two lines that cache the speed and write the boosted speed:
+<pre><code>cached = player.speed;
+player.speed = cached + <span class="nu">1f</span>;</code></pre>
+    <p>with a modifier line:</p>
+<pre><code>player.speed += (<span class="ty">Modifier</span>)<span class="nu">1f</span>;</code></pre>
+    <p><code>(Modifier)</code> turns the write into a modifier: a change layered on top of the speed.</p></li>
+  <li>Delete the <code>cached</code> field and the <code>OnDestroy</code> method. The modifier ends when the component
+    that wrote it is destroyed, so the boost has nothing to restore. <code>SpeedBoost.cs</code> now has the following
+    contents:
+<pre><code><span class="kw">using</span> Concordance;
+<span class="kw">using</span> UnityEngine;
+
+<span class="kw">public</span> <span class="kw">class</span> <span class="ty">SpeedBoost</span> : <span class="ty">MonoBehaviour</span>
+{
+    [<span class="ty">SerializeField</span>] <span class="kw">float</span> duration = <span class="nu">5f</span>;
+
+    <span class="ty">Player</span> player;
+
+    <span class="kw">void</span> Start()
+    {
+        player = <span class="ty">GetComponent</span>&lt;<span class="ty">Player</span>&gt;();
+        player.speed += (<span class="ty">Modifier</span>)<span class="nu">1f</span>;
+        Destroy(<span class="kw">this</span>, duration);
+    }
+}</code></pre></li>
+  <li>Enter Play mode, and let the player run over both boost pads.</li>
+</ol>
+<p>The speed now goes to 2, then 3, then back to 2 when the first boost ends, and to 1 when the second one ends. To end
+  a modifier before its component is destroyed, assign <code>Modifier.Stop</code> to the member.</p>
+<p>Exit Play mode before you continue.</p>
+</section>
+
+<!-- ====================================== order ==== -->
+<section id="order">
+  <h2>Order the stun after the boosts</h2>
+<p>A stun sets the speed to 0, and must apply after the boosts: a boost applied after the stun would add 1 to its 0,
+  and the player would move while stunned. To add the stun, perform the following steps:</p>
+<ol>
+  <li>Create a C# script named <code>Stun.cs</code> with the following contents:
+<pre><code><span class="kw">using</span> Concordance;
+<span class="kw">using</span> UnityEngine;
+
+<span class="kw">public</span> <span class="kw">class</span> <span class="ty">Stun</span> : <span class="ty">MonoBehaviour</span>
+{
+    [<span class="ty">SerializeField</span>] <span class="kw">float</span> duration = <span class="nu">2f</span>;
+
+    <span class="kw">void</span> Start()
+    {
+        <span class="ty">Player</span> player = <span class="ty">GetComponent</span>&lt;<span class="ty">Player</span>&gt;();
+        player.speed = (<span class="ty">Modifier</span>)<span class="nu">0f</span>;
+        Destroy(<span class="kw">this</span>, duration);
+    }
+}</code></pre></li>
+  <li>Create a C# script named <code>StunPad.cs</code> with the following contents:
+<pre><code><span class="kw">using</span> UnityEngine;
+
+<span class="kw">public</span> <span class="kw">class</span> <span class="ty">StunPad</span> : <span class="ty">MonoBehaviour</span>
+{
+    <span class="kw">void</span> OnTriggerEnter(<span class="ty">Collider</span> other) =&gt; other.gameObject.AddComponent&lt;<span class="ty">Stun</span>&gt;();
+}</code></pre></li>
+  <li>Duplicate a boost pad, name the copy <code>Stun Pad</code>, and set its position to (8, 0, 0). Remove its
+    <strong>Boost Pad</strong> component, and add the <strong>Stun Pad</strong> component.</li>
+  <li>In the Concordance window, select <strong>Player.speed</strong>.</li>
+</ol>
+<p>Its <strong>Modifier Order</strong> lists <code>SpeedBoost</code> and <code>Stun</code> together in the
+  <code>Default</code> phase, and the window flags <strong>Order not set</strong>: both scripts modify the speed, and
+  no phase says which one applies first.</p>
+<p>To place the stun after the boosts, perform the following steps:</p>
+<ol>
+  <li>In <code>Stun.cs</code>, add <code>[ModifierPhase.Late]</code> above the class:
+<pre><code>[<span class="ty">ModifierPhase</span>.Late]
+<span class="kw">public</span> <span class="kw">class</span> <span class="ty">Stun</span> : <span class="ty">MonoBehaviour</span></code></pre></li>
+  <li>Enter Play mode, and let the player run over the three pads.</li>
+</ol>
+<p>The <strong>Modifier Order</strong> of <strong>Player.speed</strong> now shows <code>Stun</code> in the
+  <code>Late</code> phase, after every modifier in <code>Default</code>, and the flag is gone. The player speeds up
+  on both boost pads, stops on the stun pad for two seconds, then runs on at its boosted speed until the boosts
+  end.</p>
+<p>Exit Play mode before you continue.</p>
+</section>
+
+<!-- ====================================== observe ==== -->
+<section id="observe">
+  <h2>Observe the speed</h2>
+<p>A field raises no event when it changes. To log each change of speed, perform the following steps:</p>
+<ol>
+  <li>Create a C# script named <code>SpeedLog.cs</code> with the following contents:
+<pre><code><span class="kw">using</span> Concordance;
+<span class="kw">using</span> UnityEngine;
+
+<span class="kw">public</span> <span class="kw">class</span> <span class="ty">SpeedLog</span> : <span class="ty">MonoBehaviour</span>
+{
+    <span class="kw">void</span> Start()
+    {
+        <span class="ty">Player</span> player = <span class="ty">GetComponent</span>&lt;<span class="ty">Player</span>&gt;();
+        player.speed.Observe(<span class="ty">OnSpeedChanged</span>);
+    }
+
+    <span class="kw">void</span> OnSpeedChanged(<span class="kw">float</span> speed) =&gt; <span class="ty">Debug</span>.Log(<span class="st">$"Speed: {speed}"</span>);
+}</code></pre></li>
+  <li>Add the <strong>Speed Log</strong> component to the player.</li>
+  <li>Enter Play mode, and let the player run over the three pads.</li>
+</ol>
+<p>The Console window now logs each new speed as each modifier starts and ends: 2, 3, 0, 3, 2, then 1. The handler
+  runs for a plain write too.</p>
+<p>Exit Play mode before you continue.</p>
+</section>
+
+<!-- ====================================== inspect ==== -->
+<section id="inspect">
+  <h2>Read the speed in the Concordance window</h2>
+<p>To see how the speed is computed, perform the following steps:</p>
+<ol>
+  <li>In the Concordance window, select <strong>Player.speed</strong>, then select <strong>Watch</strong> &gt;
+    <strong>Watch for This Session</strong> again. A watch for this session ends when you exit Play mode.</li>
+  <li>Enter Play mode, and when the player stops on the stun pad, select <strong>Pause</strong> in the
+    toolbar.</li>
+</ol>
+<p>The <strong>Values</strong> section of <strong>Player.speed</strong> shows the base value 1, the modifier of each
+  boost, the stun's modifier in the <code>Late</code> phase, then the value 0. Each modifier names its owner and its
+  line: select the line to open it in your code editor.</p>
+<div class="img-block">
+  <img src="../img/tutorial_modifiers" alt="The Concordance window in Play mode, with Player.speed at 0, base 1, two SpeedBoost modifiers and the Stun modifier in the Late phase" />
+</div>
+<p>Its <strong>History</strong> section lists the latest changes of the speed, each with the line
+  that made it.</p>
+</section>
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="Write%20modifier%20lines.html">Write modifiers</a></li>
+    <li><a href="Order%20modifiers.html">Order modifiers</a></li>
+    <li><a href="Observe%20changes.html">Observe changes</a></li>
+    <li><a href="Inspect%20members.html">Inspect members</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="Introduction%20to%20Concordance.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Introduction to Concordance</div>
+  </a>
+  <a class="next" href="Modify%20members.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Modify members</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Concordance v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

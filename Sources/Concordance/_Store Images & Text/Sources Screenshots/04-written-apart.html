@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="frame.css">
+<style>
+  .stage { display: flex; align-items: center; justify-content: space-between; }
+  .cards { display: flex; flex-direction: column; gap: 40px; width: 940px; }
+  .code pre { font-size: 27px; }
+  .code .file { justify-content: space-between; }
+  .code .file::before { display: none; }
+  .code .file b { font-weight: 600; }
+  .code .file span { font-size: 22px; font-weight: 700; padding: 4px 14px; border-radius: 999px; background: rgba(251, 248, 242, 0.92); color: var(--script); }
+  .rings { width: 640px; height: 614px; }
+</style>
+</head>
+<body>
+<div class="head">
+  <h1>Scripts written apart still work together</h1>
+  <p>Whoever writes them: you, a teammate or an AI assistant (Concordance itself needs no AI).</p>
+</div>
+<div class="stage">
+  <div class="cards">
+    <div class="code blue">
+      <div class="file"><b>DoubleJump.cs</b><span>You</span></div>
+<pre class="cs">
+mover.jumpHeight += (Modifier)2f;
+</pre>
+    </div>
+    <div class="code ochre">
+      <div class="file"><b>HeavyArmor.cs</b><span>A teammate</span></div>
+<pre class="cs">
+mover.jumpHeight *= (Modifier)0.7f;
+</pre>
+    </div>
+    <div class="code crimson">
+      <div class="file"><b>LowGravityZone.cs</b><span>An AI assistant</span></div>
+<pre class="cs">
+mover.jumpHeight *= (Modifier)1.5f;
+</pre>
+    </div>
+  </div>
+  <img class="rings" src="../Sources Media/illustration.svg">
+</div>
+<script src="highlight.js"></script>
+</body>
+</html>

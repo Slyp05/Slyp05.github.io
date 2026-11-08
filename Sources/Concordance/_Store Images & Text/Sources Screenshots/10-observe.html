@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="frame.css">
+<style>
+  .stage > * { position: absolute; }
+  .code { left: 0; top: 150px; width: 960px; }
+  .code pre { font-size: 24px; }
+  .note { left: 4px; top: 420px; font-size: 28px; font-weight: 600; color: var(--ink-soft); }
+  .live { left: 0; top: 0; overflow: visible; }
+  .live text { font-family: "Segoe UI Variable Display", "Segoe UI", sans-serif; }
+  .live .mono { font-family: "Cascadia Code", Consolas, monospace; }
+</style>
+</head>
+<body>
+<div class="head">
+  <h1>React when any value changes</h1>
+  <p>Even values Unity raises no event for, such as the master volume.</p>
+</div>
+<div class="stage">
+  <div class="code crimson">
+    <div class="file">VolumeMeter.cs</div>
+<pre class="cs">
+void Start() => AudioListener.volume.Observe(ShowVolume);
+
+void ShowVolume(float volume) => meter.fillAmount = volume;
+</pre>
+  </div>
+  <svg class="live" width="1680" height="790" viewBox="0 0 1680 790">
+    <defs>
+      <marker id="head" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="var(--crimson)"/></marker>
+      <marker id="headDim" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#9c9182"/></marker>
+    </defs>
+    <!-- Something lowers the master volume. -->
+    <text class="mono" x="1345" y="120" font-size="30" font-weight="700" fill="var(--ink)" text-anchor="middle">AudioListener.volume</text>
+    <rect x="1040" y="160" width="250" height="80" rx="40" fill="none" stroke="#9c9182" stroke-width="4"/>
+    <text class="mono" x="1165" y="214" font-size="36" font-weight="700" fill="#9c9182" text-anchor="middle">1</text>
+    <path d="M1300 200 H1380" stroke="#9c9182" stroke-width="5" marker-end="url(#headDim)"/>
+    <rect x="1400" y="160" width="250" height="80" rx="40" fill="var(--ink)"/>
+    <text class="mono" x="1525" y="214" font-size="36" font-weight="700" fill="#fbf8f2" text-anchor="middle">0.3</text>
+    <!-- The handler runs and the UI slider follows. -->
+    <path d="M1345 260 V340" stroke="var(--crimson)" stroke-width="6" marker-end="url(#head)"/>
+    <rect x="1145" y="360" width="400" height="84" rx="42" fill="var(--crimson)"/>
+    <text class="mono" x="1345" y="414" font-size="30" font-weight="700" fill="#fbf8f2" text-anchor="middle">ShowVolume(0.3)</text>
+    <path d="M1345 464 V544" stroke="var(--crimson)" stroke-width="6" marker-end="url(#head)"/>
+    <!-- A drawn volume meter, display only. -->
+    <rect x="1040" y="570" width="610" height="110" rx="18" fill="var(--sheet)" stroke="var(--line)" stroke-width="3"/>
+    <text x="1070" y="612" font-size="24" font-weight="600" fill="var(--ink-soft)">Volume</text>
+    <rect x="1070" y="634" width="550" height="26" rx="6" fill="var(--line)"/>
+    <rect x="1070" y="634" width="165" height="26" rx="6" fill="var(--crimson)"/>
+  </svg>
+</div>
+<script src="highlight.js"></script>
+</body>
+</html>

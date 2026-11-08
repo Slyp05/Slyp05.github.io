@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="frame.css">
+<style>
+  .stage { display: flex; flex-direction: column; gap: 50px; }
+  .code { width: 1010px; flex: none; }
+  .code pre { font-size: 24px; }
+  .shot { width: 1100px; margin-left: 580px; }
+</style>
+</head>
+<body>
+<div class="head">
+  <h1>Pick what a Modifier does, in the Inspector</h1>
+  <p>Set, add, multiply, clamp, snap, remap, blend and more, or your own.</p>
+</div>
+<div class="stage">
+  <div class="code ochre">
+    <div class="file">MusicFadeZone.cs</div>
+<pre class="cs manual">
+[SerializeField] AudioSource music;
+[SerializeReference] «ModifierFunction&lt;float&gt; fade»;
+
+void OnTriggerEnter(Collider other) => music.volume.Modify(«fade»);
+void OnTriggerExit(Collider other) => music.volume.StopModifying();
+</pre>
+  </div>
+  <img class="shot" src="captures/function-inspector.png" alt="">
+</div>
+<script src="highlight.js"></script>
+</body>
+</html>

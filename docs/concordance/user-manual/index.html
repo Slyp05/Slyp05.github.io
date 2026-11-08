@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Coordinate the scripts that write the same value: track every write, combine their changes, and observe the value." />
+  <title>Concordance - Concordance User Manual</title>
+  <link rel="stylesheet" href="/assets/css/concordance.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Concordance</div><a href="index.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Concordance User Manual</h1>
+      <div class="sub">Coordinate the scripts that write the same value: track every write, combine their changes, and observe the value.</div>
+    </div>
+
+<p>Concordance is a Unity package that coordinates the scripts that write the same field or property. There is no
+  need, for example, to cache a value and write it back when an effect ends: two overlapping gravity zones both change
+  a rigidbody's <code>gravityScale</code>, and leaving one zone no longer resets the other's change.</p>
+<p>Concordance rewrites your code after Unity compiles it, so it works on any member your scripts write, Unity's own
+  included, with no wrapper type to adopt. Use it in the following areas:</p>
+<ul>
+  <li><strong>Track</strong>: the Concordance window lists every write to a member in your project, shows how its
+    value is computed in Play mode, and flags <strong>conflicting writes</strong>: two objects overwriting each
+    other's value. In the Editor, a member you watch also records who changed it, when, and from which line.</li>
+  <li><strong>Combine</strong>: each script writes a <strong>modifier</strong>, a change layered on the value, instead
+    of overwriting it. Modifiers apply in an order you set per member, and end with the object that wrote them.</li>
+  <li><strong>Observe</strong>: <code>Observe</code> turns any member into a change event, including values Unity
+    raises no event for, such as <code>Time.timeScale</code>.</li>
+</ul>
+<p>To start using Concordance in a few steps, refer to the <a href="../quick-usage-guide/index.html">Quick Usage
+  Guide</a>.</p>
+
+<!-- ====================================== sections ==== -->
+<section id="sections">
+  <h2>User Manual sections</h2>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Section</th><th scope="col">Description</th></tr>
+    <tr><td><a href="pages/Get%20started.html">Get started</a></td><td>Install Concordance, understand its concepts, and follow the tutorial.</td></tr>
+    <tr><td><a href="pages/Modify%20members.html">Modify members</a></td><td>Write modifiers, order them, and work with base values and modifier functions.</td></tr>
+    <tr><td><a href="pages/Observe%20and%20track.html">Observe and track</a></td><td>Run code on each change of a member, and find out who changed it and why.</td></tr>
+    <tr><td><a href="pages/Advanced%20topics.html">Advanced topics</a></td><td>Control modifiers by object, handle untracked writes and special cases, and understand how Concordance works.</td></tr>
+    <tr><td><a href="pages/Reference.html">Reference</a></td><td>Look up the Concordance window, code analysis messages and terms, and fix common issues.</td></tr>
+  </table>
+</div>
+</section>
+
+<!-- ====================================== contact ==== -->
+<section id="contact">
+  <h2>Contact</h2>
+<p>For questions and bug reports, use the <a href="https://justetools.net/contact/">contact form</a> or email
+  <a href="mailto:justetools@gmail.com">justetools@gmail.com</a>, with what you expected and what happened.</p>
+<p>Concordance is distributed under the <a href="https://unity.com/legal/as-terms">Unity Asset Store EULA</a>.</p>
+</section>
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="../quick-usage-guide/index.html">Quick Usage Guide</a></li>
+    <li><a href="../public-api/index.html">Public API</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="next" href="pages/Get%20started.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Get started</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Concordance v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

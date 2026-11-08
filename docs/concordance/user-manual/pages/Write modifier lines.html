@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Turn an assignment into a modifier with the quick syntax, and stop it with Modifier.Stop." />
+  <title>Concordance - Write modifiers</title>
+  <link rel="stylesheet" href="/assets/css/concordance.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Concordance</div><a href="../index.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Write modifiers</h1>
+      <div class="sub">Turn an assignment into a modifier with the quick syntax, and stop it with Modifier.Stop.</div>
+    </div>
+
+<p>The <strong>quick syntax</strong> writes a modifier as an assignment with <code>(Modifier)</code> before the value. Instead of writing the
+  value, the line sets a modifier owned by the object that runs it, which lasts until the script stops it or the owner is
+  destroyed.</p>
+
+<!-- ====================================== cast ==== -->
+<section id="cast">
+  <h2>Write a modifier</h2>
+<p>To turn an assignment into a modifier, perform the following steps:</p>
+<ol>
+  <li>Add <code>using Concordance;</code> to the top of your script.</li>
+  <li>Put <code>(Modifier)</code> before the assigned value.</li>
+  <li>When the effect ends, assign <code>Modifier.Stop</code> to the member.</li>
+</ol>
+<p>The following script halves the gravity of each rigidbody in its trigger, and removes its modifier when the
+  rigidbody leaves:</p>
+<pre><code><span class="kw">using</span> Concordance;
+<span class="kw">using</span> UnityEngine;
+
+<span class="kw">public</span> <span class="kw">class</span> <span class="ty">LowGravityZone</span> : <span class="ty">MonoBehaviour</span>
+{
+    <span class="kw">void</span> OnTriggerEnter2D(<span class="ty">Collider2D</span> other) =&gt; other.attachedRigidbody.gravityScale *= (<span class="ty">Modifier</span>)<span class="nu">0.5f</span>;
+    <span class="kw">void</span> OnTriggerExit2D(<span class="ty">Collider2D</span> other) =&gt; other.attachedRigidbody.gravityScale = <span class="ty">Modifier</span>.Stop;
+}</code></pre>
+<p>Running a modifier line again replaces its modifier instead of adding one, so a modifier line in
+  <code>Update</code> never piles up modifiers.</p>
+<p>A compound assignment such as <code>x *= (Modifier)0.5f</code> is the same as <code>x = (Modifier)(x * 0.5f)</code>.
+  Put parentheses around a value that contains an operator: <code>(Modifier)x * 0.5f</code> applies only to
+  <code>x</code>, and doesn't compile.</p>
+<p>Concordance rewrites each modifier line after Unity compiles your script, so <code>(Modifier)</code> works only
+  where the line names the member it writes: before the whole right side of an assignment to a field or property, or
+  before the value argument of a setter method. When a line can't be a modifier, your code editor and the Console
+  window say why and how to fix it. For every
+  message, refer to <a href="Code%20analysis%20reference.html">Code analysis reference</a>.</p>
+</section>
+
+<!-- ====================================== members ==== -->
+<section id="members">
+  <h2>Members that take modifiers</h2>
+<p>Any field or property with a setter takes modifiers, of your own scripts or of Unity's, whatever its type: a
+  number, a <code>bool</code>, an enum, a <code>Color</code>, a struct of your own, or a reference such as a
+  <code>Material</code>. One field or property of a struct, such as <code>offset.x</code>, takes
+  modifiers too.</p>
+<p>An array element, a list element and a dictionary entry take no modifiers. For items in a list, put the field on the
+  item: <code>enemies[i].speed</code> takes modifiers, <code>enemies[i]</code> doesn't. For a value without a field of
+  its own, refer to <a href="#wrap">Wrap a value in a property</a>.</p>
+<p>A member the engine computes from its own previous value, such as a rigidbody's velocity, takes no modifiers. For
+  more information, refer to <a href="Special%20cases.html#unmodifiable">Members the engine updates</a>.</p>
+<h3 id="pairs">Getter and setter methods</h3>
+<p>Values that Unity exposes as a pair of methods, such as <code>GameObject.SetActive</code> or
+  <code>Transform.SetSiblingIndex</code>, take modifiers too. Put <code>(Modifier)</code> before the argument:</p>
+<pre><code>go.SetActive((<span class="ty">Modifier</span>)<span class="kw">false</span>);
+go.SetActive(<span class="ty">Modifier</span>.Stop);</code></pre>
+<p>A method that takes a key before the value, such as <code>Material.SetFloat(name, value)</code> or
+  <code>Animator.SetFloat(name, value)</code>, takes no modifiers. Wrap it in a property instead.</p>
+<h3 id="wrap">Wrap a value in a property</h3>
+<p>To modify a value that isn't a member, such as a material property, an animator parameter, an audio mixer
+  parameter or a list element, wrap it in a property of your own and modify the property:</p>
+<pre><code><span class="kw">public class</span> <span class="ty">Flash</span> : <span class="ty">MonoBehaviour</span>
+{
+    <span class="kw">static readonly int</span> FlashId = <span class="ty">Shader</span>.PropertyToID(<span class="st">"_Flash"</span>);
+
+    [<span class="ty">SerializeField</span>] <span class="ty">Renderer</span> target;
+
+    <span class="kw">public float</span> Amount
+    {
+        <span class="kw">get</span> =&gt; target.material.GetFloat(FlashId);
+        <span class="kw">set</span> =&gt; target.material.SetFloat(FlashId, <span class="kw">value</span>);
+    }
+}</code></pre>
+<pre><code>flash.Amount = (<span class="ty">Modifier</span>)<span class="nu">1f</span>;   <span class="cm">// in any other script</span></code></pre>
+<p>The property is a member like any other: its modifiers combine, it shows in the Concordance window under its own
+  name, and observers hear its changes. Write the value through the property everywhere. A direct call to
+  <code>SetFloat</code> elsewhere isn't tracked, and the next combine of the property overwrites it.</p>
+</section>
+
+<!-- ====================================== previous ==== -->
+<section id="previous">
+  <h2>The value before the modifier</h2>
+<p>After <code>(Modifier)</code>, the member you write reads as its value before this modifier: the base value, with the earlier
+  modifiers applied. Concordance computes the line again each time that value changes.</p>
+<p>Everything else after <code>(Modifier)</code> is a <strong>snapshot</strong>, evaluated once, when the line runs:</p>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Modifier line</th><th scope="col">Result</th></tr>
+    <tr><td><code>speed = (Modifier)Mathf.Min(speed, maxSpeed)</code></td><td>Caps <code>speed</code> at <code>maxSpeed</code>, as it was when the line ran.</td></tr>
+    <tr><td><code>sprite.color = (Modifier)Color.Lerp(sprite.color, flashColor, flash)</code></td><td>Moves the color toward <code>flashColor</code>.</td></tr>
+    <tr><td><code>canMove = (Modifier)(canMove &amp;&amp; hasStamina)</code></td><td>Disables movement if <code>hasStamina</code> was false when the line ran.</td></tr>
+  </table>
+</div>
+<p>Elsewhere, the member reads as usual, with every modifier applied.</p>
+</section>
+
+<!-- ====================================== inputs ==== -->
+<section id="inputs">
+  <h2>Follow a changing value</h2>
+<p>A modifier keeps its snapshots until its line runs again. To follow a value that changes over time, write the
+  modifier from <code>Update</code>:</p>
+<pre><code><span class="kw">void</span> Update()
+{
+    t += <span class="ty">Time</span>.deltaTime / fadeDuration;
+    music.volume = (<span class="ty">Modifier</span>)<span class="ty">Mathf</span>.Lerp(<span class="nu">1f</span>, <span class="nu">0.2f</span>, t);
+}</code></pre>
+</section>
+
+<!-- ====================================== lifetime ==== -->
+<section id="lifetime">
+  <h2>When a modifier ends</h2>
+<p>A modifier ends when one of the following happens:</p>
+<ul>
+  <li>Its script assigns <code>Modifier.Stop</code>, or calls <code>StopModifying</code>.</li>
+  <li>Its <strong>owner</strong>, the object that wrote it, is destroyed. Disabling the object keeps its modifiers.</li>
+  <li>A <code>Concord</code> call stops it, such as <code>Concord.Release</code> for a pooled object.</li>
+  <li>You exit Play mode, or a Test Runner test ends. Concordance then writes each base value back, so a
+    ScriptableObject asset never keeps a value with modifiers in it.</li>
+</ul>
+<p>A script destroyed in the middle of its effect therefore never leaves its change behind. To make a modifier outlast
+  the script that writes it, such as a pickup that destroys itself, pass another owner with the
+  <a href="Regular%20syntax.html">regular syntax</a>:</p>
+<pre><code>player.speed.Modify(player.speed * <span class="nu">1.5f</span>, <span class="pn">owner:</span> player);   <span class="cm">// lasts as long as the player</span>
+Destroy(gameObject);</code></pre>
+<p>In a static method, the owner is the class, which is never destroyed: stop the modifier yourself, or pass an owner.
+  In a static method of a generic class, the owner is the closed type, such as <code>Buff&lt;int&gt;</code>.
+  An owner that isn't a Unity object ends its modifiers when the garbage collector collects it. A pooled object is
+  deactivated, not destroyed: refer to <a href="Control%20by%20object.html#pooling">Release pooled objects</a>.</p>
+<div class="note"><strong>Note:</strong> Modifiers exist in Play mode and while a Test Runner test runs. In Edit
+  mode, a modifier line throws <code>InvalidOperationException</code>, since a value with its modifiers would be saved
+  into the scene or the asset.</div>
+</section>
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="Regular%20syntax.html">Use the regular syntax</a></li>
+    <li><a href="Order%20modifiers.html">Order modifiers</a></li>
+    <li><a href="Code%20analysis%20reference.html">Code analysis reference</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="Modify%20members.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Modify members</div>
+  </a>
+  <a class="next" href="Regular%20syntax.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Use the regular syntax</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Concordance v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

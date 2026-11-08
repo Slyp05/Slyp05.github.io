@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="frame.css">
+<style>
+  .stage { display: flex; flex-direction: column; justify-content: center; }
+  .code { width: 1300px; }
+  .code pre { font-size: 30px; }
+</style>
+</head>
+<body>
+<div class="head">
+  <h1>No cleanup code to write</h1>
+  <p>A Modifier ends with the object that made it, even one destroyed mid-effect.</p>
+</div>
+<div class="stage">
+  <div class="code ochre">
+    <div class="file">PowerUp.cs</div>
+<pre class="cs">
+void Start() => weapon.damage *= (Modifier)2f;
+
+~~void OnDestroy()~~
+~~{~~
+~~    if (weapon != null)~~
+~~        weapon.damage /= 2f;~~
+~~}~~
+</pre>
+  </div>
+</div>
+<script src="highlight.js"></script>
+</body>
+</html>

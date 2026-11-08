@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="frame.css">
+<style>
+  .stage > * { position: absolute; }
+  .code { left: 0; width: 1210px; }
+  .code pre { font-size: 23px; padding-top: 18px; padding-bottom: 20px; }
+  .code .file { padding-top: 10px; padding-bottom: 10px; }
+  .flow { left: 0; top: 0; overflow: visible; }
+  .pill { font-family: "Cascadia Code", Consolas, monospace; font-size: 40px; font-weight: 700; }
+</style>
+</head>
+<body>
+<div class="head">
+  <h1>Choose the order Modifiers apply in</h1>
+  <p>In code, or by dragging in the Concordance window.</p>
+</div>
+<div class="stage">
+  <div class="code blue" style="top: 90px">
+    <div class="file">Sprint.cs</div>
+<pre class="cs">
+cam.fieldOfView += (Modifier)20f;
+</pre>
+  </div>
+  <div class="code ochre" style="top: 290px">
+    <div class="file">FieldOfViewCap.cs</div>
+<pre class="cs">
+[ModifierPhase.Late]
+void Update() => cam.fieldOfView = (Modifier)Mathf.Min(cam.fieldOfView, 75f);
+</pre>
+  </div>
+  <div class="code crimson" style="top: 540px">
+    <div class="file">CutsceneCamera.cs</div>
+<pre class="cs">
+[ModifierPhase.Latest]
+void Play() => cam.fieldOfView = (Modifier)40f;
+</pre>
+  </div>
+  <svg class="flow" width="1680" height="790" viewBox="0 0 1680 790">
+    <defs>
+      <marker id="head" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#9c9182"/></marker>
+    </defs>
+    <!-- The field of view flowing down through each change, in order. -->
+    <path d="M1380 66 V122" stroke="#9c9182" stroke-width="6" marker-end="url(#head)"/>
+    <path d="M1380 206 V322" stroke="#9c9182" stroke-width="6" marker-end="url(#head)"/>
+    <path d="M1380 406 V572" stroke="#9c9182" stroke-width="6" marker-end="url(#head)"/>
+    <g stroke-width="6" stroke-linecap="round" fill="none">
+      <path d="M1210 164 H1280" stroke="var(--blue)"/>
+      <path d="M1210 364 H1280" stroke="var(--ochre)"/>
+      <path d="M1210 614 H1280" stroke="var(--crimson)"/>
+    </g>
+    <g class="pill" text-anchor="middle">
+      <rect x="1300" y="0" width="160" height="66" rx="33" fill="none" stroke="#9c9182" stroke-width="4"/>
+      <text x="1380" y="47" fill="#9c9182">60</text>
+      <rect x="1300" y="130" width="160" height="70" rx="35" fill="var(--blue)"/>
+      <text x="1380" y="179" fill="#fbf8f2">80</text>
+      <rect x="1300" y="330" width="160" height="70" rx="35" fill="var(--ochre)"/>
+      <text x="1380" y="379" fill="#fbf8f2">75</text>
+      <rect x="1290" y="576" width="180" height="80" rx="40" fill="var(--ink)"/>
+      <text x="1380" y="631" fill="#fbf8f2" font-size="46">40</text>
+    </g>
+    <g font-size="26" font-weight="600" fill="var(--ink-soft)" font-family="Segoe UI Variable Display, Segoe UI, sans-serif">
+      <text x="1490" y="43">Field of view</text>
+      <text x="1490" y="174">1. Sprint</text>
+      <text x="1490" y="374">2. Cap</text>
+      <text x="1490" y="624">3. Cutscene</text>
+    </g>
+  </svg>
+</div>
+<script src="highlight.js"></script>
+</body>
+</html>

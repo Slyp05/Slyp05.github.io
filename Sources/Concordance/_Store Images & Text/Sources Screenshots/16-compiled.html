@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="frame.css">
+<style>
+  .stage { display: flex; flex-wrap: wrap; align-content: center; gap: 30px; }
+  .fact {
+    display: flex; align-items: center; gap: 18px; padding: 22px 36px 22px 24px; border-radius: 999px; border: 3px solid var(--line);
+    background: var(--sheet); font-size: 36px; font-weight: 600; box-shadow: var(--shadow);
+  }
+  .fact i { width: 22px; height: 22px; border-radius: 50%; flex: none; }
+</style>
+</head>
+<body>
+<div class="head">
+  <h1>Your scripts stay as you wrote them</h1>
+  <p>Concordance rewrites the compiled code each time Unity compiles.</p>
+</div>
+<div class="stage">
+  <div class="fact"><i style="background: var(--blue)"></i>No wrapper type or boilerplate</div>
+  <div class="fact"><i style="background: var(--ochre)"></i>Direct calls, no reflection</div>
+  <div class="fact"><i style="background: var(--crimson)"></i>In a build, untouched values cost nothing extra</div>
+  <div class="fact"><i style="background: var(--blue)"></i>No allocation when a change updates</div>
+  <div class="fact"><i style="background: var(--ochre)"></i>No stripping issues with IL2CPP</div>
+  <div class="fact"><i style="background: var(--crimson)"></i>Packages and DLLs keep working</div>
+</div>
+</body>
+</html>

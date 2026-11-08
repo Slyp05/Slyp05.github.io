@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="The built-in modifier functions and the operators of Concordance.Functions." />
+  <title>Concordance - Public API - Modifier functions</title>
+  <link rel="stylesheet" href="../shared/styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <nav>
+    <a href="../Public%20API.html">Overview</a>
+    <a class="nav-band" href="API%20-%20Modifying.html">Modifying</a>
+    <a class="nav-band active" href="API%20-%20Functions.html" aria-current="page">Modifier functions</a>
+    <div class="nav-group">Built-in functions</div>
+    <div class="nav-group-body">
+      <a href="#Set"><span class="badge badge-class">sealed</span>Set&lt;T&gt;</a>
+      <a href="#AtMost"><span class="badge badge-class">sealed</span>AtMost&lt;T&gt;</a>
+      <a href="#AtLeast"><span class="badge badge-class">sealed</span>AtLeast&lt;T&gt;</a>
+      <a href="#Clamp"><span class="badge badge-class">sealed</span>Clamp&lt;T&gt;</a>
+      <a href="#Abs"><span class="badge badge-class">sealed</span>Abs&lt;T&gt;</a>
+      <a href="#Snap"><span class="badge badge-class">sealed</span>Snap</a>
+      <a href="#Remap"><span class="badge badge-class">sealed</span>Remap</a>
+      <a href="#Blend"><span class="badge badge-class">sealed</span>Blend functions</a>
+      <a href="#Scale"><span class="badge badge-class">sealed</span>Scale functions</a>
+      <a href="#BinaryOperation"><span class="badge badge-class">sealed</span>BinaryOperation&lt;T, TOperand&gt;</a>
+      <a href="#UnaryOperation"><span class="badge badge-class">sealed</span>UnaryOperation&lt;T&gt;</a>
+    </div>
+    <div class="nav-group">Operators</div>
+    <div class="nav-group-body">
+      <a href="#BinaryOperator"><span class="badge badge-enum">enum</span>BinaryOperator</a>
+      <a href="#UnaryOperator"><span class="badge badge-enum">enum</span>UnaryOperator</a>
+      <a href="#OperatorsOfTOperand"><span class="badge badge-static">static</span>Operators&lt;T, TOperand&gt;</a>
+      <a href="#OperatorsOfT"><span class="badge badge-static">static</span>Operators&lt;T&gt;</a>
+    </div>
+    <a class="nav-band" href="API%20-%20Advanced.html">Advanced</a>
+  </nav>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Public API <span class="tag">Modifier functions</span></h1>
+      <div class="sub">Namespace <code>Concordance.Functions</code>, assembly <code>Concordance</code>. For more information, refer to <a href="Modifier%20functions.html">Modifier functions</a>.</div>
+    </div>
+
+    <div class="module-band band-first"><span class="band-name">Modifier functions</span><span class="band-desc">The built-in functions a function field offers, and the operators they apply.</span></div>
+
+    <h2 class="api-group">Built-in functions</h2>
+    <p class="api-open">Each is <code>[Serializable]</code> and derives from <a href="API%20-%20Modifying.html#ModifierFunction"><code>ModifierFunction&lt;T&gt;</code></a>. The functions that compare, such as <code>Clamp&lt;T&gt;</code>, need a <code>&lt;</code> operator registered for <code>T</code>. A <code>[SerializeReference] ModifierFunction&lt;T&gt;</code> field registers the operators of its type, and so does creating a built-in function in code.</p>
+
+    <!-- Set -->
+    <div class="type-section" id="Set">
+      <div class="type-header"><h3>Set&lt;T&gt;</h3><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">Sets the value, in place of the value before this modifier.</p>
+      <div class="member-group">
+        <div class="member-group-title">Properties</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t">T</span> <span class="mn">Value</span> { get; set; }</th><td>The value to set.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- AtMost -->
+    <div class="type-section" id="AtMost">
+      <div class="type-header"><h3>AtMost&lt;T&gt;</h3><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">Caps the value before this modifier: a value above the maximum becomes the maximum. <span class="ex">Apply throws InvalidOperationException when no &lt; operator is registered for T.</span></p>
+      <div class="member-group">
+        <div class="member-group-title">Properties</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t">T</span> <span class="mn">Max</span> { get; set; }</th><td>The highest value let through.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- AtLeast -->
+    <div class="type-section" id="AtLeast">
+      <div class="type-header"><h3>AtLeast&lt;T&gt;</h3><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">Raises the value before this modifier: a value below the minimum becomes the minimum. <span class="ex">Apply throws InvalidOperationException when no &lt; operator is registered for T.</span></p>
+      <div class="member-group">
+        <div class="member-group-title">Properties</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t">T</span> <span class="mn">Min</span> { get; set; }</th><td>The lowest value let through.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- Clamp -->
+    <div class="type-section" id="Clamp">
+      <div class="type-header"><h3>Clamp&lt;T&gt;</h3><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">Keeps the value before this modifier between a lowest and a highest value. When the lowest value is above the highest, the result is the lowest. <span class="ex">Apply throws InvalidOperationException when no &lt; operator is registered for T.</span></p>
+      <div class="member-group">
+        <div class="member-group-title">Properties</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t">T</span> <span class="mn">Min</span> { get; set; }</th><td>The lowest value let through.</td></tr>
+          <tr><th scope="row"><span class="t">T</span> <span class="mn">Max</span> { get; set; }</th><td>The highest value let through.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- Abs -->
+    <div class="type-section" id="Abs">
+      <div class="type-header"><h3>Abs&lt;T&gt;</h3><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">Turns the value before this modifier into its absolute value: a value below the default, zero for numbers, is negated. <span class="ex">Apply throws InvalidOperationException when no &lt; or unary - operator is registered for T.</span></p>
+    </div>
+
+    <!-- Snap -->
+    <div class="type-section" id="Snap">
+      <div class="type-header"><h3>Snap</h3><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">Rounds the value before this modifier to the nearest multiple of the step. Modifies a <code>float</code>.</p>
+      <div class="member-group">
+        <div class="member-group-title">Properties</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t">float</span> <span class="mn">Step</span> { get; set; }</th><td>The multiple rounded to. Zero or less leaves the value unchanged. 1 by default.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- Remap -->
+    <div class="type-section" id="Remap">
+      <div class="type-header"><h3>Remap</h3><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">Replaces the value before this modifier with the curve's value at that point. Modifies a <code>float</code>.</p>
+      <div class="member-group">
+        <div class="member-group-title">Properties</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t">AnimationCurve</span> <span class="mn">Curve</span> { get; set; }</th><td>The mapping, from the value before this modifier to the value after it. Null leaves the value unchanged. A linear curve from (0, 0) to (1, 1) by default.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- Blend -->
+    <div class="type-section" id="Blend">
+      <div class="type-header"><h3>Blend functions</h3><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc"><code>FloatBlend</code>, <code>Vector2Blend</code>, <code>Vector3Blend</code>, <code>Vector4Blend</code>, <code>ColorBlend</code> and <code>QuaternionBlend</code>, labelled <strong>Blend</strong> in the dropdown. Each moves the value before this modifier toward a target, by a weight from 0 (unchanged) to 1 (the target), with the type's <code>Lerp</code>, or <code>Quaternion.Slerp</code>.</p>
+      <div class="member-group">
+        <div class="member-group-title">Properties</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t">T</span> <span class="mn">Target</span> { get; set; }</th><td>The value moved toward. <code>Quaternion.identity</code> by default for <code>QuaternionBlend</code>.</td></tr>
+          <tr><th scope="row"><span class="t">float</span> <span class="mn">Weight</span> { get; set; }</th><td>How far toward the target: 0 keeps the value, 1 reaches the target. <code>Apply</code> clamps it between 0 and 1. 0.5 by default.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- Scale -->
+    <div class="type-section" id="Scale">
+      <div class="type-header"><h3>Scale functions</h3><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc"><code>Vector2Scale</code>, <code>Vector3Scale</code> and <code>Vector4Scale</code>, labelled <strong>Scale</strong> in the dropdown. Each multiplies the value before this modifier by a factor per axis.</p>
+      <div class="member-group">
+        <div class="member-group-title">Properties</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t">T</span> <span class="mn">Factor</span> { get; set; }</th><td>The factor of each axis. One on every axis by default.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- BinaryOperation -->
+    <div class="type-section" id="BinaryOperation">
+      <div class="type-header"><h3>BinaryOperation&lt;T, TOperand&gt;</h3><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">Applies a binary operator to the value before this modifier and the operand. A function field's dropdown lists one entry per operator and operand type the member's type has, such as <strong>Multiply (Single)</strong> on a <code>Vector3</code>. <span class="ex">Apply throws InvalidOperationException when the operator is not registered for the two types.</span></p>
+      <div class="member-group">
+        <div class="member-group-title">Properties</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t">BinaryOperator</span> <span class="mn">Operator</span> { get; set; }</th><td>The operator applied, chosen with the function in the dropdown.</td></tr>
+          <tr><th scope="row"><span class="t">TOperand</span> <span class="mn">Operand</span> { get; set; }</th><td>The right operand.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- UnaryOperation -->
+    <div class="type-section" id="UnaryOperation">
+      <div class="type-header"><h3>UnaryOperation&lt;T&gt;</h3><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">Applies a unary operator to the value before this modifier. <span class="ex">Apply throws InvalidOperationException when the operator is not registered for T.</span></p>
+      <div class="member-group">
+        <div class="member-group-title">Properties</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t">UnaryOperator</span> <span class="mn">Operator</span> { get; set; }</th><td>The operator applied, chosen with the function in the dropdown.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <h2 class="api-group">Operators</h2>
+
+    <!-- BinaryOperator -->
+    <div class="type-section" id="BinaryOperator">
+      <div class="type-header"><h3>BinaryOperator</h3><span class="badge badge-enum">enum</span></div>
+      <p class="type-desc">A C# binary operator, which <code>BinaryOperation&lt;T, TOperand&gt;</code> applies to the value before a modifier and an operand. Every C# binary operator a type can overload, except the comparisons.</p>
+      <div class="member-group">
+        <div class="member-group-title">Values</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="mn">Add</span></th><td>The <code>+</code> operator.</td></tr>
+          <tr><th scope="row"><span class="mn">Subtract</span></th><td>The <code>-</code> operator.</td></tr>
+          <tr><th scope="row"><span class="mn">Multiply</span></th><td>The <code>*</code> operator.</td></tr>
+          <tr><th scope="row"><span class="mn">Divide</span></th><td>The <code>/</code> operator.</td></tr>
+          <tr><th scope="row"><span class="mn">Remainder</span></th><td>The <code>%</code> operator.</td></tr>
+          <tr><th scope="row"><span class="mn">And</span></th><td>The <code>&amp;</code> operator.</td></tr>
+          <tr><th scope="row"><span class="mn">Or</span></th><td>The <code>|</code> operator.</td></tr>
+          <tr><th scope="row"><span class="mn">Xor</span></th><td>The <code>^</code> operator.</td></tr>
+          <tr><th scope="row"><span class="mn">LeftShift</span></th><td>The <code>&lt;&lt;</code> operator.</td></tr>
+          <tr><th scope="row"><span class="mn">RightShift</span></th><td>The <code>&gt;&gt;</code> operator.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- UnaryOperator -->
+    <div class="type-section" id="UnaryOperator">
+      <div class="type-header"><h3>UnaryOperator</h3><span class="badge badge-enum">enum</span></div>
+      <p class="type-desc">A C# unary operator, which <code>UnaryOperation&lt;T&gt;</code> applies to the value before a modifier.</p>
+      <div class="member-group">
+        <div class="member-group-title">Values</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="mn">Plus</span></th><td>The unary <code>+</code> operator.</td></tr>
+          <tr><th scope="row"><span class="mn">Negate</span></th><td>The unary <code>-</code> operator.</td></tr>
+          <tr><th scope="row"><span class="mn">Not</span></th><td>The <code>!</code> operator.</td></tr>
+          <tr><th scope="row"><span class="mn">Complement</span></th><td>The <code>~</code> operator.</td></tr>
+          <tr><th scope="row"><span class="mn">Increment</span></th><td>The <code>++</code> operator.</td></tr>
+          <tr><th scope="row"><span class="mn">Decrement</span></th><td>The <code>--</code> operator.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- Operators<T, TOperand> -->
+    <div class="type-section" id="OperatorsOfTOperand">
+      <div class="type-header"><h3>Operators&lt;T, TOperand&gt;</h3><span class="badge badge-static">static</span></div>
+      <p class="type-desc">The C# binary operators taking <code>T</code> and <code>TOperand</code>, for functions written once for every member type. Operators are registered for the type of each <code>ModifierFunction&lt;T&gt;</code> field and of each built-in function created in code, and only the operators the types have.</p>
+      <div class="member-group">
+        <div class="member-group-title">Static methods</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t">T</span> <span class="mn">Apply</span>(<span class="t">BinaryOperator</span> @operator, <span class="t">T</span> left, <span class="t">TOperand</span> right)</th><td>Returns <code>left</code> combined with <code>right</code> by the operator, converted to <code>T</code> as a compound assignment converts it. <span class="ex">Throws InvalidOperationException when the operator is not registered for the two types, and ArgumentOutOfRangeException when operator is not a defined value.</span></td></tr>
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">Has</span>(<span class="t">BinaryOperator</span> @operator)</th><td>Returns whether the operator is registered for the two types.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- Operators<T> -->
+    <div class="type-section" id="OperatorsOfT">
+      <div class="type-header"><h3>Operators&lt;T&gt;</h3><span class="badge badge-static">static</span></div>
+      <p class="type-desc">The C# unary operators of <code>T</code>, for functions written once for every member type. Operators are registered for the type of each <code>ModifierFunction&lt;T&gt;</code> field and of each built-in function created in code, and only the operators the type has.</p>
+      <div class="member-group">
+        <div class="member-group-title">Static methods</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t">T</span> <span class="mn">Apply</span>(<span class="t">UnaryOperator</span> @operator, <span class="t">T</span> value)</th><td>Returns the operator applied to <code>value</code>, converted to <code>T</code> as a compound assignment converts it. <span class="ex">Throws InvalidOperationException when the operator is not registered for T, and ArgumentOutOfRangeException when operator is not a defined value.</span></td></tr>
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">Has</span>(<span class="t">UnaryOperator</span> @operator)</th><td>Returns whether the operator is registered for <code>T</code>.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="doc-footer">Concordance v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>
