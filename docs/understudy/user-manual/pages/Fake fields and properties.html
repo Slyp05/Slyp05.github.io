@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Give a field or property a stored value the code under test reads and writes instead of the real one." />
+  <title>Understudy - Fake fields and properties</title>
+  <link rel="stylesheet" href="/assets/css/understudy.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Understudy</div><a href="../index.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Fake fields and properties</h1>
+      <div class="sub">Give a field or property a stored value the code under test reads and writes instead of the real one.</div>
+      <div class="guide-index">
+        <a href="#value">Fake a field or property</a>
+        <a href="#singletons">Fake a singleton</a>
+        <a href="#instances">One stored value per instance</a>
+        <a href="#collections">Fake a collection</a>
+        <a href="#structs">Structs changed in place</a>
+        <a href="#limits">What a fake doesn&#x27;t change</a>
+      </div>
+    </div>
+
+<!-- ====================================== value ==== -->
+<section id="value">
+  <h2>Fake a field or property</h2>
+<p>A fake replaces a field's or property's storage with a stored value of its own. Reads and writes in the code under test reach
+  the stored value instead of the real member, which keeps its own value. The stored value starts at the
+  <code>initial</code> argument, or at <code>default</code> without one. Read <code>Value</code> to check what the code under test
+  wrote, and assign <code>Value</code> to change it during the test:</p>
+<pre><code><span class="ty">FakedProperty</span>&lt;<span class="kw">float</span>&gt; timeScale = <span class="ty">Fake</span>.Property(() =&gt; <span class="ty">Time</span>.timeScale, initial: <span class="nu">1f</span>);
+
+pauseMenu.Open();
+
+<span class="ty">Assert</span>.That(timeScale.Value, <span class="ty">Is</span>.EqualTo(<span class="nu">0f</span>));   <span class="cm">// the real engine was never paused</span></code></pre>
+<p>A get-only property and a <code>readonly</code> field can be faked too. Your test writes their stored value through <code>Value</code>, and writes from the member's own constructor or
+  private setter also reach it.</p>
+<p>A direct read in the test, such as <code>Time.timeScale</code>, reaches the real member, since tests aren't woven:
+  read <code>Value</code> instead. Code analysis points such a read out.</p>
+
+</section>
+
+<!-- ====================================== singletons ==== -->
+<section id="singletons">
+  <h2>Fake a singleton</h2>
+<p>A static field or property holds a singleton, so a test replaces it without changing the code under test:</p>
+<pre><code><span class="ty">Fake</span>.Field(() =&gt; <span class="ty">GameManager</span>.Instance, initial: testManager);   <span class="cm">// Fake.Property for a property</span></code></pre>
+<p>For a complete example, refer to <a href="Test%20common%20Unity%20code.html#singleton">Replace a singleton</a>.</p>
+
+</section>
+
+<!-- ====================================== instances ==== -->
+<section id="instances">
+  <h2>One stored value per instance</h2>
+<p>A fake keeps one stored value per instance it reaches. On a
+  <a href="Select%20a%20member.html#instance">table</a>, each instance's stored value starts at the initial value, or at
+  what a factory computes for it:</p>
+<pre><code><span class="ty">FakedPropertyTable</span>&lt;<span class="ty">Rigidbody</span>, <span class="ty">Vector3</span>&gt; velocities = <span class="ty">Fake</span>.Property((<span class="ty">Rigidbody</span> b) =&gt; b.linearVelocity, initial: <span class="ty">Vector3</span>.zero);
+velocities[boss].Value = <span class="ty">Vector3</span>.up;   <span class="cm">// the boss only</span>
+
+<span class="ty">Fake</span>.Field((<span class="ty">Enemy</span> e) =&gt; e.health, initial: (<span class="ty">Enemy</span> e) =&gt; e.maxHealth);   <span class="cm">// each enemy starts full</span></code></pre>
+<p>A selection through a chain, such as <code>() =&gt; hero.gun.ammo</code>, keeps a stored value for each gun the hero
+  holds over the test. <code>Value</code> is the one of the gun held at that moment:</p>
+<pre><code><span class="ty">FakedField</span>&lt;<span class="kw">int</span>&gt; ammo = <span class="ty">Fake</span>.Field(() =&gt; hero.gun.ammo, initial: <span class="nu">10</span>);
+hero.Equip(rifle);   <span class="cm">// the rifle starts at 10</span>
+ammo.Value = <span class="nu">2</span>;      <span class="cm">// the rifle only: the pistol keeps its own</span></code></pre>
+<p>When the chain reaches no instance, such as while <code>hero.gun</code> is <code>null</code>, reading
+  <code>Value</code> throws <code>InvalidOperationException</code>.</p>
+<p>Each test starts every fake over at its initial value, also when the fake is declared once for a whole fixture. For
+  more information, refer to <a href="Lifetime.html">Lifetime</a>.</p>
+
+</section>
+
+<!-- ====================================== collections ==== -->
+<section id="collections">
+  <h2>Fake a collection</h2>
+<p>A fake stores whole values, never one entry per index. To control what a collection holds, fake the field or
+  property that holds it with one your test builds:</p>
+<pre><code><span class="ty">Tile</span>[] tiles = { <span class="ty">Tile</span>.Floor, <span class="ty">Tile</span>.Wall, <span class="ty">Tile</span>.Floor };
+<span class="ty">Fake</span>.Field(() =&gt; level.tiles, initial: tiles);
+
+level.Dig(<span class="nu">1</span>);
+
+<span class="ty">Assert</span>.That(tiles[<span class="nu">1</span>], <span class="ty">Is</span>.EqualTo(<span class="ty">Tile</span>.Floor));</code></pre>
+<p>An <code>initial</code> object, such as this array, is the same object in every test and for every instance. To
+  give each its own, pass a factory instead: <code>initial: () =&gt; new List&lt;Item&gt;()</code>.</p>
+<p>To answer reads of single elements, stub the indexer instead. For more information, refer to
+  <a href="Stub%20members.html">Stub members</a>.</p>
+
+</section>
+
+<!-- ====================================== structs ==== -->
+<section id="structs">
+  <h2>Structs changed in place</h2>
+<p>A fake stores a struct whole. Code that changes one part in place, such as <code>position.x = 5f</code> or
+  <code>velocity.Normalize()</code>, reads the whole value, changes the copy, and writes it back, so the fake sees each
+  of those reads and writes:</p>
+<pre><code><span class="ty">FakedField</span>&lt;<span class="ty">Vector3</span>&gt; position = <span class="ty">Fake</span>.Field(() =&gt; player.position);
+player.Teleport();   <span class="cm">// position.x = 5f</span>
+<span class="ty">Assert</span>.That(position.Value.x, <span class="ty">Is</span>.EqualTo(<span class="nu">5f</span>));</code></pre>
+<p>To set one part from the test, copy the value, change it and assign it back:</p>
+<pre><code><span class="ty">Vector3</span> value = position.Value;
+value.x = <span class="nu">5f</span>;
+position.Value = value;</code></pre>
+<div class="note"><strong>Note:</strong> A <code>ref</code> argument is copied in and out. A <code>ref</code> local, a
+  <code>ref</code> return or a pointer that holds the member across statements reaches the stored value, but those
+  accesses aren't recorded.</div>
+
+</section>
+
+<!-- ====================================== limits ==== -->
+<section id="limits">
+  <h2>What a fake doesn&#x27;t change</h2>
+<p>A fake covers what the code under test sees: a faked <code>transform.position</code> moves nothing for physics or rendering.
+  For everything a fake doesn't change, refer to <a href="Woven%20code.html#reach">What a double doesn't reach</a>.</p>
+
+</section>
+
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="Stub%20members.html">Stub members</a></li>
+    <li><a href="Check%20what%20the%20code%20under%20test%20did.html">Check what the code under test did</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="Check%20what%20the%20code%20under%20test%20did.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Check what the code under test did</div>
+  </a>
+  <a class="next" href="Fake%20events.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Fake events</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Understudy v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="frame.css">
+<style>
+  svg { display: block; overflow: visible; font-family: Bahnschrift, "Segoe UI", sans-serif; }
+  svg .mono { font-family: "Cascadia Code", Consolas, monospace; }
+table { width: 1260px; align-self: center; border-collapse: separate; border-spacing: 0; table-layout: fixed; }
+  table th:first-child { width: 450px; }
+  thead td { font-size: 36px; font-weight: 700; color: var(--dim); text-align: center; vertical-align: bottom; padding: 22px 0 20px; }
+  thead td.us { color: var(--card); border-radius: 18px 18px 0 0; }
+  tbody th { text-align: left; font-size: 38px; font-weight: 600; color: var(--title); padding: 0 0 0 10px; height: 92px; border-top: 2px solid var(--line); }
+  tbody td { text-align: center; vertical-align: middle; font-size: 50px; font-weight: 700; line-height: 1; height: 92px; border-top: 2px solid var(--line); }
+  td.us { background: rgba(217, 180, 124, 0.09); }
+  tbody tr:last-child td.us { border-radius: 0 0 18px 18px; }
+  .y { color: var(--pass); } .n { color: var(--fail); opacity: 0.85; }
+</style>
+</head>
+<body>
+<div class="head">
+  <h1>Already know NSubstitute or Moq?</h1>
+  <p>Same ideas, on everything Unity code touches.</p>
+</div>
+<div class="stage">
+<table><thead><tr><th></th><td>NSubstitute</td><td>Moq</td><td class="us">Understudy</td></tr></thead><tbody><tr><th>Interfaces</th><td><span class="y">&#10003;</span></td><td><span class="y">&#10003;</span></td><td class="us"><span class="y">&#10003;</span></td></tr><tr><th>Virtual methods</th><td><span class="y">&#10003;</span></td><td><span class="y">&#10003;</span></td><td class="us"><span class="y">&#10003;</span></td></tr><tr><th>Static members</th><td><span class="n">&#10005;</span></td><td><span class="n">&#10005;</span></td><td class="us"><span class="y">&#10003;</span></td></tr><tr><th>Fields</th><td><span class="n">&#10005;</span></td><td><span class="n">&#10005;</span></td><td class="us"><span class="y">&#10003;</span></td></tr><tr><th>new</th><td><span class="n">&#10005;</span></td><td><span class="n">&#10005;</span></td><td class="us"><span class="y">&#10003;</span></td></tr><tr><th>Unity engine types</th><td><span class="n">&#10005;</span></td><td><span class="n">&#10005;</span></td><td class="us"><span class="y">&#10003;</span></td></tr></tbody></table>
+</div>
+<script src="highlight.js"></script>
+</body>
+</html>

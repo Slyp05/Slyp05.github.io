@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Learn what spies, stubs, fakes, woven code and leaks are." />
+  <title>Understudy - Introduction to Understudy</title>
+  <link rel="stylesheet" href="/assets/css/understudy.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Understudy</div><a href="../index.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Introduction to Understudy</h1>
+      <div class="sub">Learn what spies, stubs, fakes, woven code and leaks are.</div>
+    </div>
+
+<!-- ====================================== overview ==== -->
+<section id="overview">
+  <h2>Overview</h2>
+<p>A unit test runs a piece of code and checks what it did. Game code is hard to test this way, because it
+  reaches things a test can't control: the frame time, random numbers, physics, the scene, other objects' singletons.
+  The usual answer is to rewrite the code first, hiding each of those behind an interface that a test can replace.</p>
+<p>Understudy removes that step. A test names a member with a lambda, written as the code under test reaches it, and decides
+  what that member does for the rest of the test. For example, this method computes how far an object moves in one
+  frame:</p>
+<pre><code><span class="kw">public</span> <span class="kw">static</span> <span class="kw">float</span> Step(<span class="kw">float</span> speed) =&gt; speed * <span class="ty">Time</span>.deltaTime;</code></pre>
+<p>A test fixes the frame time, and checks the distance:</p>
+<pre><code><span class="ty">Stub</span>.Property(() =&gt; <span class="ty">Time</span>.deltaTime).Returns(<span class="nu">0.5f</span>);
+
+<span class="ty">Assert</span>.That(<span class="ty">Movement</span>.Step(<span class="nu">2f</span>), <span class="ty">Is</span>.EqualTo(<span class="nu">1f</span>));</code></pre>
+<p>The lambda is called a selection. Everything it doesn't name runs for real. When the test ends, the stub ends with
+  it.</p>
+<p>The code under test still needs to be in an assembly definition, which the Test Framework requires with or without
+  Understudy, and a test can only name members it can see: make a private member <code>internal</code>. For more
+  information, refer to <a href="Set%20up%20a%20test%20assembly.html">Set up a test assembly</a>.</p>
+
+</section>
+
+<!-- ====================================== doubles ==== -->
+<section id="doubles">
+  <h2>Spies, stubs, fakes and Real</h2>
+<p>A test double is anything that stands in for a member during a test. Understudy has three kinds of test double,
+  and <code>Real</code>, which declares that a member runs for real:</p>
+<div class="table-scroll">
+  <table class="cmp">
+    <tr><th scope="col">Class</th><th scope="col">What happens to the member</th><th scope="col">Records what the code under test did</th></tr>
+    <tr><td><code>Spy</code></td><td>Runs for real.</td><td>Yes</td></tr>
+    <tr><td><code>Stub</code></td><td>Is replaced with the answers your test sets with <code>Returns</code> and <code>Do</code>. With nothing declared, it does the C# default: a call or read returns <code>default</code>, a void call or write does nothing.</td><td>Yes</td></tr>
+    <tr><td><code>Fake</code></td><td>Is replaced with a working stand-in: a field or property keeps the values the code under test writes, an event keeps the handlers the code under test subscribes.</td><td>Yes</td></tr>
+    <tr><td><code>Real</code></td><td>Runs for real on purpose, even where a stub or fake was declared before.</td><td>No</td></tr>
+  </table>
+</div>
+<p>Each class has an entry point for each kind of member it covers, such as <code>Stub.Method</code> or
+  <code>Fake.Field</code>. For the full list, refer to <a href="Select%20a%20member.html#entry">Choose the entry point</a>.</p>
+<p>A test checks what a double recorded with ordinary NUnit constraints. Spying on a caught exception has its own entry point, <code>Spy.Catch</code>. For more information, refer to
+  <a href="Spy%20on%20caught%20exceptions.html">Spy on caught exceptions</a>.</p>
+
+</section>
+
+<!-- ====================================== woven ==== -->
+<section id="woven">
+  <h2>Woven code</h2>
+<p>Understudy rewrites your assemblies when the Editor compiles them, so that each access to a member first
+  checks whether a test has a spy, stub or fake on it. This rewriting is called weaving, and code it rewrote is woven.</p>
+<p>The game you release is unchanged: a player build without tests is never woven and contains none of Understudy,
+  and the build fails if woven code ever reaches it. In the Editor, outside a test, woven code behaves as it did before:
+  no double applies, and each access costs one extra check. For more information, refer to
+  <a href="Woven%20code.html">Woven code</a>.</p>
+<p>Your test assemblies aren't woven. A test's own read of a member reaches the real one, even while a stub or fake
+  covers it: the double decides what the code under test sees, and the test checks it through the double, such as a fake's
+  <code>Value</code>.</p>
+
+</section>
+
+<!-- ====================================== leaks ==== -->
+<section id="leaks">
+  <h2>Leak detection</h2>
+<p>A test that reads the real clock or a real random number passes or fails depending on when and where it runs. A
+  test that writes a static field changes what the next test sees. Understudy calls these leaks, and logs a warning with
+  the line that caused each one:</p>
+<pre><code>Leak in EnemyTests.Spawns: Random.Range(int, int) ran for real at Enemy.cs:42. Stub it, or declare it real with Real.</code></pre>
+<p>A member the test spies on, stubs, fakes or declares <code>Real</code> never leaks. For more information, refer to
+  <a href="Detect%20leaks.html">Detect leaks</a>.</p>
+
+</section>
+
+<!-- ====================================== compare ==== -->
+<section id="compare">
+  <h2>Compared with other mocking libraries</h2>
+<p>NSubstitute and Moq create stand-in objects, and the code under test must receive those objects instead of the real ones.
+  Understudy replaces members where the code under test reaches them, so it also covers static members, engine types, fields,
+  events and <code>new</code>, and the code under test keeps its real objects. Other differences to expect:</p>
+<ul>
+  <li>The test itself isn't woven: a read of a member in the test gets the real value. Check what happened through the
+    double, such as a fake's <code>Value</code> or a stub's <code>Calls</code>.</li>
+  <li>A stub has no automatic values: with nothing declared, it returns the C# default, so a stubbed method that returns
+    a <code>Task</code> returns <code>null</code>. Give it <code>Returns(Task.CompletedTask)</code>.</li>
+  <li>Doubles need no cleanup, and a double declared in <code>[OneTimeSetUp]</code> starts fresh in every test.</li>
+  <li><code>Arg</code> is in the <code>Understudy</code> namespace. In a file that also has <code>using NSubstitute;</code>, add
+    <code>using Arg = Understudy.Arg;</code>.</li>
+</ul>
+<p>The following table lists how common calls translate, where <code>buy</code> is the <code>Stub.Method</code> or
+  <code>Spy.Method</code> of <code>shop.Buy</code>:</p>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">NSubstitute</th><th scope="col">Moq</th><th scope="col">Understudy</th></tr>
+    <tr><td><code>Substitute.For&lt;IShop&gt;()</code></td><td><code>new Mock&lt;IShop&gt;()</code></td><td>Write a small class that implements <code>IShop</code> in the test, pass it to the code under test, and stub through the interface: <code>Stub.Method((IShop s) =&gt; s.Price(Arg.Any&lt;int&gt;()))</code>.</td></tr>
+    <tr><td><code>Substitute.ForPartsOf&lt;Shop&gt;()</code></td><td><code>CallBase = true</code></td><td>Stub only the members the test controls. Every other member runs for real.</td></tr>
+    <tr><td><code>shop.Price(5).Returns(10)</code></td><td><code>Setup(s =&gt; s.Price(5)).Returns(10)</code></td><td><code>Stub.Method(() =&gt; shop.Price(5)).Returns(10)</code></td></tr>
+    <tr><td><code>Returns(1, 2, 3)</code></td><td><code>SetupSequence(...)</code></td><td><code>Returns(1, 2, 3)</code></td></tr>
+    <tr><td><code>Returns(x =&gt; (int)x[0] * 2)</code></td><td><code>Returns&lt;int&gt;(id =&gt; id * 2)</code></td><td><code>Returns((int id) =&gt; id * 2)</code></td></tr>
+    <tr><td><code>Arg.Any&lt;int&gt;()</code></td><td><code>It.IsAny&lt;int&gt;()</code></td><td><code>Arg.Any&lt;int&gt;()</code></td></tr>
+    <tr><td><code>Arg.Is&lt;int&gt;(x =&gt; x &gt; 5)</code></td><td><code>It.Is&lt;int&gt;(x =&gt; x &gt; 5)</code></td><td><code>Arg.That&lt;int&gt;(Is.GreaterThan(5))</code>, or <code>Arg.That&lt;int&gt;(new PredicateConstraint&lt;int&gt;(x =&gt; x &gt; 5))</code> for any predicate</td></tr>
+    <tr><td><code>When(...).Do(...)</code>, <code>Arg.Do</code>, <code>AndDoes</code></td><td><code>Callback(...)</code></td><td><code>Do((int item) =&gt; ...)</code> on a void method. On a method with a result, run the code inside <code>Returns</code>.</td></tr>
+    <tr><td><code>Throws(new IOException())</code></td><td><code>Throws(new IOException())</code></td><td><code>Do(() =&gt; throw new IOException())</code>, or <code>Returns(() =&gt; throw new IOException())</code> on a method with a result</td></tr>
+    <tr><td><code>Received(2).Buy(1)</code></td><td><code>Verify(..., Times.Exactly(2))</code></td><td><code>Assert.That(buy.Calls, Has.Count.EqualTo(2))</code></td></tr>
+    <tr><td><code>DidNotReceive().Buy(1)</code></td><td><code>Verify(..., Times.Never())</code></td><td><code>Assert.That(buy.Calls, Is.Empty)</code></td></tr>
+    <tr><td><code>Received.InOrder(...)</code></td><td><code>MockSequence</code></td><td>Compare the recorded calls' <code>Order</code>. For more information, refer to <a href="Check%20what%20the%20code%20under%20test%20did.html#order">Check the order of calls</a>.</td></tr>
+    <tr><td>A property that keeps what is set</td><td><code>SetupProperty(...)</code></td><td><code>Fake.Property(() =&gt; settings.Volume, initial: 1f)</code>, read through <code>Value</code></td></tr>
+    <tr><td><code>Raise.Event(...)</code></td><td><code>Raise(...)</code></td><td><code>Fake.Event(() =&gt; shop.Sold += Arg.Ignored).Raise(...)</code>, declared before the code under test subscribes</td></tr>
+    <tr><td><code>ClearReceivedCalls()</code></td><td><code>Invocations.Clear()</code></td><td>A spy created later records only what follows.</td></tr>
+    <tr><td>Strict mocks</td><td><code>VerifyNoOtherCalls()</code></td><td>No equivalent. Leak detection reports the non-deterministic calls and global writes a test didn't declare.</td></tr>
+  </table>
+</div>
+
+</section>
+
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="Set%20up%20a%20test%20assembly.html">Set up a test assembly</a></li>
+    <li><a href="Select%20a%20member.html">Select a member</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="Installation.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Install Understudy</div>
+  </a>
+  <a class="next" href="Set%20up%20a%20test%20assembly.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Set up a test assembly</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Understudy v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

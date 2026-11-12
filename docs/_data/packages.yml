@@ -117,3 +117,17 @@
   blurb: >-
     Coordinate every script that writes the same value: changes combine instead of
     overwriting, any field or property becomes a change event, and every write is tracked.
+
+# Unreleased: hidden from the home page and the nav until `released` is true.
+# Artwork is in place, exported from Sources/Understudy/_Store Images & Text/.
+- title: Understudy
+  url: /understudy/
+  released: false
+  free: false
+  meta: Coming soon
+  card: /assets/images/understudy-card.jpg
+  icon: /assets/images/US.png
+  blurb: >-
+    Stop rearchitecting your game to test it. Stub Time.deltaTime, Random, physics, singletons
+    and constructors in your unit tests, with no interfaces or wrappers, and catch tests that
+    leak real state.

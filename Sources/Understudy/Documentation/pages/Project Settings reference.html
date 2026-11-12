@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="The settings on the Understudy page of the Project Settings window." />
+  <title>Understudy - Project Settings reference</title>
+  <link rel="stylesheet" href="../shared/styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Understudy</div><a href="../User%20Manual.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Project Settings reference</h1>
+      <div class="sub">The settings on the Understudy page of the Project Settings window.</div>
+    </div>
+
+<!-- ====================================== page ==== -->
+<section id="page">
+  <h2>Understudy page</h2>
+<p>To open the page, go to <strong>Tools</strong> &gt; <strong>Understudy</strong> &gt; <strong>Settings</strong>, or
+  <strong>Edit</strong> &gt; <strong>Project Settings</strong> &gt; <strong>Understudy</strong>.</p>
+<div class="img-block">
+  <img src="../img/project_settings_page" alt="The Understudy page of the Project Settings window, with Report Leaks as Errors and Excluded Assemblies" />
+</div>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Property</th><th scope="col">Description</th></tr>
+    <tr><td><strong>Report Leaks as Errors</strong></td><td>Logs each leak as an error instead of a warning. The Test Runner fails a test that logs an unexpected error, so each leak fails its test. For more information, refer to <a href="Detect%20leaks.html">Detect leaks</a>.</td></tr>
+    <tr><td><strong>Excluded Assemblies</strong></td><td>The assemblies Understudy never weaves: spies, stubs and fakes don't reach their code. <strong>Remove</strong> takes an assembly off the list. An entry that names no assembly in the project stays on the list, marked <strong>(not in the project)</strong>, in case the assembly comes back. A change stays pending until you select <strong>Apply</strong>, which recompiles every script, or <strong>Revert</strong>, which discards it. Leaving the page with a pending change asks whether to apply or revert
+  it. For more information, refer to <a href="Woven%20code.html#exclude">Exclude an assembly</a>.</td></tr>
+    <tr><td><strong>Exclude Assembly</strong></td><td>Adds an assembly to <strong>Excluded Assemblies</strong>. It lists only assemblies Understudy weaves, and is unavailable when all of them are already excluded.</td></tr>
+  </table>
+</div>
+
+</section>
+
+<!-- ====================================== file ==== -->
+<section id="file">
+  <h2>Settings file</h2>
+<p>The settings are saved in <code>ProjectSettings/Understudy.json</code>. Commit it with your project, so every
+  machine and your continuous integration use the same settings.</p>
+
+</section>
+
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="Detect%20leaks.html">Detect leaks</a></li>
+    <li><a href="Woven%20code.html">Woven code</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="Reference.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Reference</div>
+  </a>
+  <a class="next" href="Diagnostics.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Code analysis reference</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Understudy v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

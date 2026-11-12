@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="frame.css">
+<style>
+  svg { display: block; overflow: visible; font-family: Bahnschrift, "Segoe UI", sans-serif; }
+  svg .mono { font-family: "Cascadia Code", Consolas, monospace; }
+.stage { gap: 70px; }
+</style>
+</head>
+<body>
+<div class="head">
+  <h1>Replace a singleton in one line</h1>
+</div>
+<div class="stage">
+<div class="code line"><pre class="cs" style="font-size: 34px;">Fake.Field(() => GameManager.Instance, initial: testManager);</pre></div><svg width="1460" height="420" viewBox="0 0 1460 420" style="align-self: center;"><rect x="0" y="40" width="340" height="110" rx="16" fill="#4a4e59"/><text class="mono" x="170.0" y="106.9" text-anchor="middle" font-size="34" fill="#e8e6e1">ScoreLabel</text><line x1="340" y1="95" x2="428.0" y2="95.0" stroke="#e4e2dc" stroke-width="4"/><polygon points="450,95 428.0,84.0 428.0,106.0" fill="#e4e2dc"/><rect x="460" y="40" width="480" height="110" rx="16" fill="#4a4e59"/><text class="mono" x="700.0" y="106.9" text-anchor="middle" font-size="34" fill="#e8e6e1">GameManager.Instance</text><line x1="940" y1="95" x2="1028.0" y2="95.0" stroke="#d9b47c" stroke-width="5"/><polygon points="1050,95 1028.0,84.0 1028.0,106.0" fill="#d9b47c"/><rect x="1060" y="40" width="400" height="110" rx="16" fill="#d9b47c"/><text x="1260.0" y="106.9" text-anchor="middle" font-size="34" fill="#2b2420" font-weight="600">test manager</text><rect x="1060" y="250" width="400" height="110" rx="16" fill="#2a2d36"/><text x="1260.0" y="316.9" text-anchor="middle" font-size="34" fill="#8b909b">real manager</text><text x="1260" y="410" text-anchor="middle" font-size="30" fill="#8b909b">never touched</text></svg>
+</div>
+<script src="highlight.js"></script>
+</body>
+</html>

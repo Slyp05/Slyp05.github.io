@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Every public type of Understudy, in namespace Understudy, by area." />
+  <title>Understudy - Public API</title>
+  <link rel="stylesheet" href="shared/styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <!-- Sidebar: the API overview lists the reference pages -->
+  <script src="shared/nav.js"></script>
+  <nav>
+    <a href="Public%20API.html" class="active">Overview</a>
+    <a class="nav-band" href="pages/API%20-%20Entry%20points.html">Entry points</a>
+    <a class="nav-band" href="pages/API%20-%20Spies.html">Spies</a>
+    <a class="nav-band" href="pages/API%20-%20Stubs.html">Stubs</a>
+    <a class="nav-band" href="pages/API%20-%20Fakes.html">Fakes</a>
+    <a class="nav-band" href="pages/API%20-%20Recordings.html">Recordings</a>
+  </nav>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Public API</h1>
+      <div class="sub">Every public type of Understudy, by area. Namespace <code>Understudy</code>, assembly <code>Understudy</code>, except <code>Arg</code>, also in namespace <code>Understudy</code>, which is added to each of your test assemblies.</div>
+    </div>
+
+    <div class="module-band band-first"><span class="band-name">Entry points</span><span class="band-desc">Declare spies, stubs, fakes and Real, match arguments, and declare non-deterministic members.</span></div>
+    <p class="api-open"><a class="nav-ext" href="pages/API%20-%20Entry%20points.html">Open the Entry points reference &rarr;</a></p>
+    <div class="summary-index">
+    <div class="summary-group">Roles</div>
+    <a href="pages/API%20-%20Entry%20points.html#Spy"><span class="badge badge-static">static</span>Spy</a>
+    <a href="pages/API%20-%20Entry%20points.html#Stub"><span class="badge badge-static">static</span>Stub</a>
+    <a href="pages/API%20-%20Entry%20points.html#Fake"><span class="badge badge-static">static</span>Fake</a>
+    <a href="pages/API%20-%20Entry%20points.html#Real"><span class="badge badge-static">static</span>Real</a>
+    <div class="summary-group">Matchers</div>
+    <a href="pages/API%20-%20Entry%20points.html#Arg"><span class="badge badge-static">static</span>Arg</a>
+    <div class="summary-group">Leak detection</div>
+    <a href="pages/API%20-%20Entry%20points.html#NonDeterministicAttribute"><span class="badge badge-class">attr</span>NonDeterministicAttribute</a>
+    </div>
+
+    <div class="module-band"><span class="band-name">Spies</span><span class="band-desc">What Spy entry points return: the real member runs, and the spy records what the code under test does with it.</span></div>
+    <p class="api-open"><a class="nav-ext" href="pages/API%20-%20Spies.html">Open the Spies reference &rarr;</a></p>
+    <div class="summary-index">
+    <div class="summary-group">Methods</div>
+    <a href="pages/API%20-%20Spies.html#SpiedMethod"><span class="badge badge-class">sealed</span>SpiedMethod</a>
+    <a href="pages/API%20-%20Spies.html#SpiedMethodOfTResult"><span class="badge badge-class">sealed</span>SpiedMethod&lt;TResult&gt;</a>
+    <a href="pages/API%20-%20Spies.html#SpiedMethodTableOfTInstance"><span class="badge badge-class">sealed</span>SpiedMethodTable&lt;TInstance&gt;</a>
+    <a href="pages/API%20-%20Spies.html#SpiedMethodTableOfTInstanceTResult"><span class="badge badge-class">sealed</span>SpiedMethodTable&lt;TInstance, TResult&gt;</a>
+    <div class="summary-group">Constructors</div>
+    <a href="pages/API%20-%20Spies.html#SpiedConstructorOfTResult"><span class="badge badge-class">sealed</span>SpiedConstructor&lt;TResult&gt;</a>
+    <div class="summary-group">Fields</div>
+    <a href="pages/API%20-%20Spies.html#SpiedFieldOfTValue"><span class="badge badge-class">sealed</span>SpiedField&lt;TValue&gt;</a>
+    <a href="pages/API%20-%20Spies.html#SpiedFieldTableOfTInstanceTValue"><span class="badge badge-class">sealed</span>SpiedFieldTable&lt;TInstance, TValue&gt;</a>
+    <div class="summary-group">Properties</div>
+    <a href="pages/API%20-%20Spies.html#SpiedPropertyOfTValue"><span class="badge badge-class">sealed</span>SpiedProperty&lt;TValue&gt;</a>
+    <a href="pages/API%20-%20Spies.html#SpiedPropertyTableOfTInstanceTValue"><span class="badge badge-class">sealed</span>SpiedPropertyTable&lt;TInstance, TValue&gt;</a>
+    <div class="summary-group">Indexers</div>
+    <a href="pages/API%20-%20Spies.html#SpiedIndexerOfTValue"><span class="badge badge-class">sealed</span>SpiedIndexer&lt;TValue&gt;</a>
+    <a href="pages/API%20-%20Spies.html#SpiedIndexerTableOfTInstanceTValue"><span class="badge badge-class">sealed</span>SpiedIndexerTable&lt;TInstance, TValue&gt;</a>
+    <div class="summary-group">Events</div>
+    <a href="pages/API%20-%20Spies.html#SpiedEvent"><span class="badge badge-class">sealed</span>SpiedEvent</a>
+    <a href="pages/API%20-%20Spies.html#SpiedEventTableOfTInstance"><span class="badge badge-class">sealed</span>SpiedEventTable&lt;TInstance&gt;</a>
+    <div class="summary-group">Catch blocks</div>
+    <a href="pages/API%20-%20Spies.html#SpiedCatchOfTException"><span class="badge badge-class">sealed</span>SpiedCatch&lt;TException&gt;</a>
+    </div>
+
+    <div class="module-band"><span class="band-name">Stubs</span><span class="band-desc">What Stub entry points return: the member is replaced with the answers your test sets.</span></div>
+    <p class="api-open"><a class="nav-ext" href="pages/API%20-%20Stubs.html">Open the Stubs reference &rarr;</a></p>
+    <div class="summary-index">
+    <div class="summary-group">Methods</div>
+    <a href="pages/API%20-%20Stubs.html#StubbedMethod"><span class="badge badge-class">sealed</span>StubbedMethod</a>
+    <a href="pages/API%20-%20Stubs.html#StubbedMethodOfTResult"><span class="badge badge-class">sealed</span>StubbedMethod&lt;TResult&gt;</a>
+    <a href="pages/API%20-%20Stubs.html#StubbedMethodTableOfTInstance"><span class="badge badge-class">sealed</span>StubbedMethodTable&lt;TInstance&gt;</a>
+    <a href="pages/API%20-%20Stubs.html#StubbedMethodTableOfTInstanceTResult"><span class="badge badge-class">sealed</span>StubbedMethodTable&lt;TInstance, TResult&gt;</a>
+    <div class="summary-group">Constructors</div>
+    <a href="pages/API%20-%20Stubs.html#StubbedConstructorOfTResult"><span class="badge badge-class">sealed</span>StubbedConstructor&lt;TResult&gt;</a>
+    <div class="summary-group">Fields</div>
+    <a href="pages/API%20-%20Stubs.html#StubbedFieldOfTValue"><span class="badge badge-class">sealed</span>StubbedField&lt;TValue&gt;</a>
+    <a href="pages/API%20-%20Stubs.html#StubbedFieldTableOfTInstanceTValue"><span class="badge badge-class">sealed</span>StubbedFieldTable&lt;TInstance, TValue&gt;</a>
+    <div class="summary-group">Properties</div>
+    <a href="pages/API%20-%20Stubs.html#StubbedPropertyOfTValue"><span class="badge badge-class">sealed</span>StubbedProperty&lt;TValue&gt;</a>
+    <a href="pages/API%20-%20Stubs.html#StubbedPropertyTableOfTInstanceTValue"><span class="badge badge-class">sealed</span>StubbedPropertyTable&lt;TInstance, TValue&gt;</a>
+    <div class="summary-group">Indexers</div>
+    <a href="pages/API%20-%20Stubs.html#StubbedIndexerOfTValue"><span class="badge badge-class">sealed</span>StubbedIndexer&lt;TValue&gt;</a>
+    <a href="pages/API%20-%20Stubs.html#StubbedIndexerTableOfTInstanceTValue"><span class="badge badge-class">sealed</span>StubbedIndexerTable&lt;TInstance, TValue&gt;</a>
+    </div>
+
+    <div class="module-band"><span class="band-name">Fakes</span><span class="band-desc">What Fake entry points return: a stored value for a field or property, stored handlers for an event.</span></div>
+    <p class="api-open"><a class="nav-ext" href="pages/API%20-%20Fakes.html">Open the Fakes reference &rarr;</a></p>
+    <div class="summary-index">
+    <div class="summary-group">Fields</div>
+    <a href="pages/API%20-%20Fakes.html#FakedFieldOfTValue"><span class="badge badge-class">sealed</span>FakedField&lt;TValue&gt;</a>
+    <a href="pages/API%20-%20Fakes.html#FakedFieldTableOfTInstanceTValue"><span class="badge badge-class">sealed</span>FakedFieldTable&lt;TInstance, TValue&gt;</a>
+    <div class="summary-group">Properties</div>
+    <a href="pages/API%20-%20Fakes.html#FakedPropertyOfTValue"><span class="badge badge-class">sealed</span>FakedProperty&lt;TValue&gt;</a>
+    <a href="pages/API%20-%20Fakes.html#FakedPropertyTableOfTInstanceTValue"><span class="badge badge-class">sealed</span>FakedPropertyTable&lt;TInstance, TValue&gt;</a>
+    <div class="summary-group">Events</div>
+    <a href="pages/API%20-%20Fakes.html#FakedEvent"><span class="badge badge-class">sealed</span>FakedEvent</a>
+    <a href="pages/API%20-%20Fakes.html#FakedEventTableOfTInstance"><span class="badge badge-class">sealed</span>FakedEventTable&lt;TInstance&gt;</a>
+    </div>
+
+    <div class="module-band"><span class="band-name">Recordings</span><span class="band-desc">What spies, stubs and fakes record of the calls, reads, writes, subscriptions, raises and catches the code under test makes.</span></div>
+    <p class="api-open"><a class="nav-ext" href="pages/API%20-%20Recordings.html">Open the Recordings reference &rarr;</a></p>
+    <div class="summary-index">
+    <div class="summary-group">Calls</div>
+    <a href="pages/API%20-%20Recordings.html#CallList"><span class="badge badge-class">sealed</span>CallList</a>
+    <a href="pages/API%20-%20Recordings.html#CallListOfTResult"><span class="badge badge-class">sealed</span>CallList&lt;TResult&gt;</a>
+    <a href="pages/API%20-%20Recordings.html#RecordedCall"><span class="badge badge-class">class</span>RecordedCall</a>
+    <a href="pages/API%20-%20Recordings.html#RecordedCallOfTResult"><span class="badge badge-class">sealed</span>RecordedCall&lt;TResult&gt;</a>
+    <div class="summary-group">Reads and writes</div>
+    <a href="pages/API%20-%20Recordings.html#AccessListOfTValue"><span class="badge badge-class">sealed</span>AccessList&lt;TValue&gt;</a>
+    <a href="pages/API%20-%20Recordings.html#RecordedAccessOfTValue"><span class="badge badge-class">sealed</span>RecordedAccess&lt;TValue&gt;</a>
+    <div class="summary-group">Events</div>
+    <a href="pages/API%20-%20Recordings.html#RecordedHandler"><span class="badge badge-class">sealed</span>RecordedHandler</a>
+    <a href="pages/API%20-%20Recordings.html#RecordedInvocation"><span class="badge badge-class">sealed</span>RecordedInvocation</a>
+    <div class="summary-group">Catch blocks</div>
+    <a href="pages/API%20-%20Recordings.html#RecordedCatch"><span class="badge badge-class">sealed</span>RecordedCatch</a>
+    </div>
+
+    <div class="doc-footer">Understudy v1.0.0 &nbsp;&middot;&nbsp; Your code editor shows the full signature of each overload.</div>
+
+  </main>
+</div>
+</body>
+</html>

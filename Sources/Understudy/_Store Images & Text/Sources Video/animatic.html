@@ -1,0 +1,556 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Understudy Store Video</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<style>
+:root
+{
+  --wall: #15171c; --wall-lt: #1f2128;
+  --title: #f2f0ea; --text: #c9ccd3; --dim: #8b909b; --line: #333743;
+  --card: #d9b47c; --card-ink: #2b2420; --real: #4a4e59; --real-lt: #6b707c;
+  --fail: #e0525f; --pass: #7fcf86;
+  --code-bg: #0e0f13; --code-text: #e4e2dc; --code-key: #c7a6f0; --code-type: #8fd3c8; --code-method: #9cc3f5; --code-num: #f5b48a;
+  --shadow: 0 34px 40px -28px rgba(0, 0, 0, 0.85);
+  --mono: "Cascadia Code", "Cascadia Mono", Consolas, monospace;
+}
+html, body { margin: 0; height: 100%; background: #0b0c0f; overflow: hidden; font-family: Bahnschrift, "Segoe UI", sans-serif; }
+#viewport { position: absolute; left: 0; top: 0; }
+#frame { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: hidden; transform-origin: 0 0; background: var(--wall); color: var(--text); }
+#frame > * { position: absolute; }
+svg { display: block; overflow: visible; }
+
+.caption
+{
+  left: 100px; right: 100px; top: 46px; text-align: center; z-index: 20; opacity: 0; white-space: nowrap;
+  font-size: 60px; font-weight: 700; font-stretch: 87.5%; color: var(--title); line-height: 1.1;
+  text-shadow: 0 3px 16px rgba(0, 0, 0, 0.7);
+}
+
+/* Code cards, as on the screenshots: the test file under a cardboard bar, the code under test under the real props' grey. */
+.code { background: var(--code-bg); border-radius: 18px; box-shadow: var(--shadow); overflow: hidden; border: 2px solid #262932; opacity: 0; z-index: 5; }
+.code .file { display: flex; align-items: center; gap: 12px; padding: 10px 26px; background: var(--card); font-size: 26px; font-weight: 600; color: var(--card-ink); }
+.code .file::before { content: ""; width: 13px; height: 13px; border-radius: 50%; background: var(--card-ink); opacity: 0.75; }
+.code.real .file { background: var(--real); color: #e8e6e1; }
+.code.real .file::before { background: #e8e6e1; }
+.code pre { margin: 0; padding: 18px 30px 20px; font-family: var(--mono); font-size: 34px; line-height: 1.4; color: var(--code-text); white-space: pre; font-variant-ligatures: none; }
+.code .k { color: var(--code-key); } .code .t { color: var(--code-type); } .code .m { color: var(--code-method); } .code .n { color: var(--code-num); }
+.code .u { color: var(--card); font-weight: 700; border-radius: 6px; background: rgba(217, 180, 124, 0.14); box-shadow: 0 0 0 4px rgba(217, 180, 124, 0.14); }
+/* The member the script reads, ringed in the colour of whatever plays it: grey for the real one, cardboard for the test's. */
+.reads { border-radius: 6px; box-shadow: 0 0 0 4px var(--ring, transparent); }
+#typed { display: inline-block; vertical-align: top; overflow: hidden; white-space: pre; }
+
+/* The results rail, on the front edge of the stage. */
+.chip
+{
+  top: 1014px; width: 190px; height: 52px; border-radius: 26px; display: flex; align-items: center; justify-content: center; gap: 12px;
+  font-size: 28px; font-weight: 600; color: var(--title); background: rgba(255, 255, 255, 0.06); border: 2px solid var(--line); opacity: 0; z-index: 6;
+}
+.chip b { font-size: 32px; }
+.chip.fail b { color: var(--fail); } .chip.pass b { color: var(--pass); }
+
+.tag { font-size: 30px; font-weight: 600; color: var(--card-ink); background: var(--card); padding: 9px 22px; border-radius: 10px; white-space: nowrap; box-shadow: var(--shadow); }
+
+#dim { inset: 0; background: rgba(10, 11, 14, 0.82); opacity: 0; z-index: 8; }
+#pages, #leak { z-index: 9; opacity: 0; }
+
+#end h1 { position: absolute; left: 0; right: 0; top: 118px; margin: 0; text-align: center; font-size: 170px; font-weight: 700; font-stretch: 75%; letter-spacing: 1px; color: var(--title); opacity: 0; }
+#end p { position: absolute; left: 0; right: 0; top: 330px; margin: 0; text-align: center; font-size: 50px; font-stretch: 87.5%; color: #a3a8b2; opacity: 0; }
+#end { inset: 0; z-index: 4; }
+
+/* The house curtains, closed between scenes. */
+.curtain { top: 0; width: 1000px; height: 1080px; z-index: 30; }
+#curtainL { left: 0; } #curtainR { left: 920px; }
+
+#controls
+{
+  position: absolute; left: 0; right: 0; bottom: 0; height: 64px; display: flex; align-items: center; gap: 14px; padding: 0 18px;
+  background: #101114; color: #c9ccd3; font: 14px "Segoe UI", sans-serif; box-sizing: border-box;
+}
+#controls button { background: #23262e; color: #fff; border: 1px solid #3a3e48; border-radius: 6px; padding: 6px 12px; font: inherit; cursor: pointer; }
+#controls input[type=range] { flex: 1; }
+#time { width: 92px; font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body>
+<div id="viewport">
+<div id="frame">
+  <!-- The cover's stage at 16:9: back wall, floor, front edge, spotlight, and a curtain wing at each side. -->
+  <svg id="stage" width="1920" height="1080" viewBox="0 0 1920 1080" style="left: 0; top: 0">
+    <defs>
+      <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#15171c"/><stop offset="1" stop-color="#1f2128"/></linearGradient>
+      <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5a3d27"/><stop offset="1" stop-color="#7a5434"/></linearGradient>
+      <pattern id="folds" width="70" height="1080" patternUnits="userSpaceOnUse"><rect width="70" height="1080" fill="url(#fold)"/></pattern>
+      <linearGradient id="fold" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#4e0d14"/><stop offset="0.35" stop-color="#9c1f2b"/><stop offset="0.55" stop-color="#b8303b"/><stop offset="1" stop-color="#4e0d14"/>
+      </linearGradient>
+      <linearGradient id="shadeL" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#000" stop-opacity="0.55"/><stop offset="1" stop-color="#000" stop-opacity="0"/></linearGradient>
+      <linearGradient id="shadeR" x1="1" y1="0" x2="0" y2="0"><stop offset="0" stop-color="#000" stop-opacity="0.55"/><stop offset="1" stop-color="#000" stop-opacity="0"/></linearGradient>
+      <linearGradient id="beam" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#fff3d6" stop-opacity="0.03"/><stop offset="0.8" stop-color="#fff3d6" stop-opacity="0.13"/><stop offset="1" stop-color="#fff3d6" stop-opacity="0.04"/>
+      </linearGradient>
+      <filter id="beamblur" x="-10%" y="-5%" width="120%" height="110%"><feGaussianBlur stdDeviation="14"/></filter>
+      <radialGradient id="pool" cx="0.5" cy="0.5" r="0.5">
+        <stop offset="0" stop-color="#ffe9bf" stop-opacity="0.55"/><stop offset="0.7" stop-color="#ffe0a8" stop-opacity="0.22"/><stop offset="1" stop-color="#ffe0a8" stop-opacity="0"/>
+      </radialGradient>
+      <linearGradient id="board" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d9b47c"/><stop offset="1" stop-color="#c49a5f"/></linearGradient>
+      <filter id="shade"><feComponentTransfer><feFuncR type="linear" slope="0.55"/><feFuncG type="linear" slope="0.55"/><feFuncB type="linear" slope="0.6"/></feComponentTransfer></filter>
+      <pattern id="flute" width="12" height="18" patternUnits="userSpaceOnUse">
+        <rect width="12" height="18" fill="#a77d47"/><path d="M0 9 q3 -7 6 0 t6 0" fill="none" stroke="#8a6334" stroke-width="2"/>
+      </pattern>
+    </defs>
+    <rect width="1920" height="1080" fill="url(#wall)"/>
+    <polygon points="250,640 1670,640 1920,1000 0,1000" fill="url(#floor)"/>
+    <g stroke="#3e2a1a" stroke-width="3" opacity="0.7">
+      <line x1="960" y1="640" x2="960" y2="1000"/>
+      <line x1="802" y1="640" x2="722" y2="1000"/><line x1="1118" y1="640" x2="1198" y2="1000"/>
+      <line x1="644" y1="640" x2="484" y2="1000"/><line x1="1276" y1="640" x2="1436" y2="1000"/>
+      <line x1="486" y1="640" x2="246" y2="1000"/><line x1="1434" y1="640" x2="1674" y2="1000"/>
+      <line x1="328" y1="640" x2="8" y2="1000"/><line x1="1592" y1="640" x2="1912" y2="1000"/>
+    </g>
+    <rect x="0" y="1000" width="1920" height="80" fill="#1a120c"/>
+    <rect x="0" y="996" width="1920" height="8" fill="#94673e"/>
+    <polygon points="890,-40 1030,-40 1430,880 490,880" fill="url(#beam)" filter="url(#beamblur)"/>
+    <ellipse id="poolLight" cx="960" cy="872" rx="520" ry="118" fill="url(#pool)"/>
+
+    <!-- Where the object should stop: a tape mark on the floor and its sign. -->
+    <g id="mark">
+      <path d="M1312 962 h96 M1360 942 v40" stroke="#d9b47c" stroke-width="10" stroke-linecap="round"/>
+      <line x1="1440" y1="958" x2="1440" y2="846" stroke="#8a6b47" stroke-width="8" stroke-linecap="round"/>
+      <rect x="1392" y="800" width="96" height="58" rx="8" fill="url(#board)"/>
+      <text x="1440" y="842" text-anchor="middle" font-family="Cascadia Code, Consolas, monospace" font-size="34" font-weight="700" fill="#2b2420">5</text>
+    </g>
+
+    <!-- The real alarm clock, as on the cover. Its second hand ticks at uneven times: the real frame time. -->
+    <g id="realClock">
+      <g id="realInner">
+        <ellipse cx="0" cy="118" rx="95" ry="16" fill="#000" opacity="0.5"/>
+        <path d="M-60 96 l-22 26 M60 96 l22 26" stroke="#2b2d33" stroke-width="12" stroke-linecap="round"/>
+        <circle cx="-62" cy="-86" r="34" fill="#b9bcc4"/><circle cx="62" cy="-86" r="34" fill="#b9bcc4"/>
+        <rect x="-8" y="-128" width="16" height="30" rx="5" fill="#8f939c"/>
+        <circle r="112" fill="#c8483e"/>
+        <circle r="88" fill="#f3efe6"/>
+        <g stroke="#2b2d33" stroke-width="5" stroke-linecap="round">
+          <line x1="0" y1="-74" x2="0" y2="-62"/><line x1="74" y1="0" x2="62" y2="0"/><line x1="0" y1="74" x2="0" y2="62"/><line x1="-74" y1="0" x2="-62" y2="0"/>
+        </g>
+        <line x1="0" y1="0" x2="34" y2="-40" stroke="#2b2d33" stroke-width="9" stroke-linecap="round"/>
+        <line x1="0" y1="0" x2="-48" y2="22" stroke="#2b2d33" stroke-width="7" stroke-linecap="round"/>
+        <g id="secHand"><line x1="0" y1="14" x2="0" y2="-76" stroke="#c8483e" stroke-width="4" stroke-linecap="round"/></g>
+        <circle r="9" fill="#2b2d33"/>
+        <g id="ticks" fill="none" stroke="#e8e2d4" stroke-width="7" stroke-linecap="round" opacity="0.3">
+          <path d="M-150 -60 q-18 30 0 60"/><path d="M-178 -78 q-28 48 0 96"/>
+          <path d="M150 -60 q18 30 0 60"/><path d="M178 -78 q28 48 0 96"/>
+        </g>
+      </g>
+    </g>
+
+    <!-- The cardboard clock, its hands painted on: it shows the same time on every run. -->
+    <g id="cardClock">
+      <ellipse cx="8" cy="183" rx="120" ry="18" fill="#000" opacity="0.45"/>
+      <g id="cardInner">
+        <path d="M32 -32 L104 178" stroke="#8a6b47" stroke-width="16" stroke-linecap="round"/>
+        <g transform="translate(8 6)">
+          <circle cx="-50" cy="-94" r="30" fill="url(#flute)"/><circle cx="50" cy="-94" r="30" fill="url(#flute)"/>
+          <circle r="112" fill="url(#flute)"/>
+          <rect x="-19" y="96" width="38" height="83" fill="url(#flute)"/>
+        </g>
+        <rect x="-19" y="96" width="38" height="83" fill="url(#board)"/>
+        <circle cx="-50" cy="-94" r="30" fill="url(#board)"/><circle cx="50" cy="-94" r="30" fill="url(#board)"/>
+        <circle r="112" fill="url(#board)"/>
+        <circle r="86" fill="#efe6d2"/>
+        <g stroke="#2b2420" stroke-width="6" stroke-linecap="round" fill="none">
+          <path d="M0 -75 l1 13 M75 2 l-13 -1 M-1 75 l1 -13 M-75 -2 l13 1"/>
+          <path d="M0 2 l2 -53"/>
+          <path d="M0 2 l37 2"/>
+        </g>
+        <circle r="8" fill="#2b2420"/>
+      </g>
+    </g>
+
+    <!-- The object the script moves: one of the game's real props. -->
+    <g id="cube">
+      <ellipse cx="0" cy="40" rx="48" ry="10" fill="#000" opacity="0.45"/>
+      <rect x="-38" y="-38" width="76" height="76" rx="8" fill="#6b707c"/>
+      <rect x="-38" y="-38" width="76" height="20" rx="8" fill="#8a8f9b"/>
+      <rect x="-38" y="-26" width="76" height="8" fill="#8a8f9b"/>
+    </g>
+
+    <!-- What links the line of code to the clock that plays it. -->
+    <line id="link" x1="1306" y1="236" x2="1010" y2="610" stroke="#8b909b" stroke-width="4" stroke-dasharray="4 12" stroke-linecap="round" opacity="0"/>
+
+    <!-- Curtain wings. -->
+    <path d="M0 0 H215 C200 260 236 520 208 760 C200 870 222 950 214 1000 H0 Z" fill="url(#folds)"/>
+    <path d="M0 0 H215 C200 260 236 520 208 760 C200 870 222 950 214 1000 H0 Z" fill="url(#shadeL)"/>
+    <path d="M1920 0 H1705 C1720 260 1684 520 1712 760 C1720 870 1698 950 1706 1000 H1920 Z" fill="url(#folds)"/>
+    <path d="M1920 0 H1705 C1720 260 1684 520 1712 760 C1720 870 1698 950 1706 1000 H1920 Z" fill="url(#shadeR)"/>
+  </svg>
+
+  <div class="code real" id="moverCard" style="left: 0; top: 150px">
+    <div class="file">Mover.cs</div>
+<pre>transform.position += Vector3.right * speed * <span class="reads" id="reads"><span class="t">Time</span>.deltaTime</span>;</pre>
+  </div>
+  <div class="code" id="testCard" style="left: 0; top: 300px">
+    <div class="file">MoverTests.cs</div>
+<pre><span id="typed"><span class="u">Stub</span>.<span class="m">Property</span>(() => <span class="t">Time</span>.deltaTime).<span class="u">Returns</span>(<span class="n">0.5f</span>);</span></pre>
+  </div>
+
+  <div class="chip" id="chip0" style="left: 655px"><span>Run 1</span><b></b></div>
+  <div class="chip" id="chip1" style="left: 865px"><span>Run 2</span><b></b></div>
+  <div class="chip" id="chip2" style="left: 1075px"><span>Run 3</span><b></b></div>
+
+  <div id="dim"></div>
+
+  <!-- The usual fix, drawn as on screenshot 01: the script rewritten (green lines added, red removed) and three files added. -->
+  <svg id="pages" width="1120" height="658" viewBox="0 0 800 470" style="left: 400px; top: 250px">
+    <path d="M20 30 h320 l40 40 v380 h-360 Z" fill="#2a2d36" stroke="#4a4e59" stroke-width="4" stroke-linejoin="round"/>
+    <path d="M340 30 v40 h40" fill="none" stroke="#4a4e59" stroke-width="4" stroke-linejoin="round"/>
+    <text x="48" y="80" font-family="Cascadia Code, Consolas, monospace" font-size="30" fill="#c9ccd3">Mover.cs</text>
+    <g id="diff">
+      <rect x="48" y="116" width="200" height="15" rx="7.5" fill="#5a5f6b"/>
+      <rect x="48" y="148" width="30" height="15" rx="7.5" fill="#5a5f6b"/>
+      <rect class="edit" data-to="#7fcf86" x="88" y="180" width="170" height="15" rx="7.5" fill="#5a5f6b"/>
+      <rect class="edit" data-to="#e0525f" x="88" y="212" width="120" height="15" rx="7.5" fill="#5a5f6b"/>
+      <rect class="edit" data-to="#7fcf86" x="88" y="244" width="190" height="15" rx="7.5" fill="#5a5f6b"/>
+      <rect class="edit" data-to="#e0525f" x="128" y="276" width="150" height="15" rx="7.5" fill="#5a5f6b"/>
+      <rect class="edit" data-to="#7fcf86" x="128" y="308" width="160" height="15" rx="7.5" fill="#5a5f6b"/>
+      <rect class="edit" data-to="#7fcf86" x="88" y="340" width="140" height="15" rx="7.5" fill="#5a5f6b"/>
+      <rect x="48" y="372" width="30" height="15" rx="7.5" fill="#5a5f6b"/>
+    </g>
+    <g id="rewriteCross"><circle cx="380" cy="30" r="30" fill="#e0525f"/><path d="M368 18 l24 24 M392 18 l-24 24" stroke="#15171c" stroke-width="7" stroke-linecap="round"/></g>
+    <g class="newPage">
+      <path d="M440 30 h260 l40 40 v80 h-300 Z" fill="#2a2d36" stroke="#4a4e59" stroke-width="4" stroke-linejoin="round"/>
+      <path d="M700 30 v40 h40" fill="none" stroke="#4a4e59" stroke-width="4" stroke-linejoin="round"/>
+      <text x="468" y="80" font-family="Cascadia Code, Consolas, monospace" font-size="26" fill="#c9ccd3">IClock.cs</text>
+      <rect x="468" y="116" width="170" height="15" rx="7.5" fill="#7fcf86"/>
+      <text x="760" y="102" font-size="44" font-weight="700" fill="#7fcf86">+</text>
+    </g>
+    <g class="newPage">
+      <path d="M440 175 h260 l40 40 v80 h-300 Z" fill="#2a2d36" stroke="#4a4e59" stroke-width="4" stroke-linejoin="round"/>
+      <path d="M700 175 v40 h40" fill="none" stroke="#4a4e59" stroke-width="4" stroke-linejoin="round"/>
+      <text x="468" y="225" font-family="Cascadia Code, Consolas, monospace" font-size="26" fill="#c9ccd3">UnityClock.cs</text>
+      <rect x="468" y="261" width="170" height="15" rx="7.5" fill="#7fcf86"/>
+      <text x="760" y="247" font-size="44" font-weight="700" fill="#7fcf86">+</text>
+    </g>
+    <g class="newPage">
+      <path d="M440 320 h260 l40 40 v80 h-300 Z" fill="#2a2d36" stroke="#4a4e59" stroke-width="4" stroke-linejoin="round"/>
+      <path d="M700 320 v40 h40" fill="none" stroke="#4a4e59" stroke-width="4" stroke-linejoin="round"/>
+      <text x="468" y="370" font-family="Cascadia Code, Consolas, monospace" font-size="26" fill="#c9ccd3">FakeClock.cs</text>
+      <rect x="468" y="406" width="170" height="15" rx="7.5" fill="#7fcf86"/>
+      <text x="760" y="392" font-size="44" font-weight="700" fill="#7fcf86">+</text>
+    </g>
+  </svg>
+
+  <div id="leak" style="left: 260px; top: 300px; width: 1400px; height: 168px">
+    <img src="Captures/console-leaks.png" alt="" style="position: absolute; left: 0; top: 0; width: 1400px; border-radius: 14px; box-shadow: var(--shadow)">
+  </div>
+
+  <div id="end"><h1>Understudy</h1><p>Stop rearchitecting your game to test it.</p></div>
+
+  <svg class="curtain" id="curtainL" width="1000" height="1080" viewBox="0 0 1000 1080">
+    <path d="M0 0 H1000 C980 300 1012 640 990 900 C984 980 996 1040 992 1080 H0 Z" fill="url(#folds)"/>
+    <path d="M0 0 H1000 C980 300 1012 640 990 900 C984 980 996 1040 992 1080 H0 Z" fill="url(#shadeL)" opacity="0.6"/>
+  </svg>
+  <svg class="curtain" id="curtainR" width="1000" height="1080" viewBox="0 0 1000 1080">
+    <path d="M1000 0 H0 C20 300 -12 640 10 900 C16 980 4 1040 8 1080 H1000 Z" fill="url(#folds)"/>
+    <path d="M1000 0 H0 C20 300 -12 640 10 900 C16 980 4 1040 8 1080 H1000 Z" fill="url(#shadeR)" opacity="0.6"/>
+  </svg>
+</div>
+</div>
+
+<div id="controls">
+  <button id="playBtn">Play</button>
+  <span id="time">0.00 s</span>
+  <input type="range" id="scrub" min="0" max="39" step="0.01" value="0">
+  <span id="scenes"></span>
+</div>
+
+<script>
+// The score (sound.py) is in 3/4 at 120 BPM from 0 s, a bar every 1.5 s: every section and every run starts on a bar, the
+// band comes in on the bar at 19.5 s, and the end title lands on the bar at 34.5 s.
+const W = 1920, H = 1080, END = 39.0;
+const HOOK = 0, USUAL = 10.5, CURTAIN1 = 15.0, WITH = 16.5, LEAK = 28.5, CURTAIN2 = 32.4, FINAL = 33.7;
+
+const frame = document.getElementById('frame');
+const tl = gsap.timeline({ paused: true });
+
+// Layout reads text widths, so the timeline is built once the fonts are in.
+document.fonts.ready.then(() =>
+{
+
+// Code cards sit centred at their own width.
+for (const id of ['moverCard', 'testCard'])
+{
+  const el = document.getElementById(id);
+  el.style.left = ((W - el.offsetWidth) / 2) + 'px';
+}
+
+// Captions: [start, end, text]. Each holds at least 0.3 s per word plus 1 s.
+const captions = [
+  [1.9, 5.2, 'This script reads the real frame time.'],
+  [5.6, 9.9, 'Its test passes on one run and fails the next.'],
+  [11.0, 15.0, 'Without Understudy: rewrite the script around an interface.'],
+  [17.2, 20.4, 'With Understudy, one line in the test.'],
+  [20.8, 23.8, 'The test now sets the frame time.'],
+  [24.2, 28.1, 'Same result on every run, with the script unchanged.'],
+  [28.9, 32.2, 'Miss one, and Understudy names the line.'],
+];
+for (const [t0, t1, txt] of captions)
+{
+  const el = document.createElement('div');
+  el.className = 'caption';
+  el.textContent = txt;
+  frame.appendChild(el);
+  tl.fromTo(el, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' }, t0);
+  tl.to(el, { opacity: 0, duration: 0.3 }, t1);
+}
+
+// Discrete states (a chip's result, a ring's colour): each key takes its latest state at or before the time, on every seek.
+const states = new Map();
+function state(key, t, apply)
+{
+  if (states.has(key) === false)
+    states.set(key, []);
+  states.get(key).push([t, apply]);
+}
+function applyStates(time)
+{
+  for (const list of states.values())
+  {
+    let last = null;
+    for (const [t, apply] of list)
+      if (t <= time)
+        last = apply;
+    if (last)
+      last();
+  }
+}
+
+// Places: the clock centre stage, the real one in the left wing in shadow, the cardboard one waiting off the right.
+const CENTRE = { x: 960, y: 744 }, WING = { x: 330, y: 760 }, OFF = { x: 2150, y: 744 };
+const shadeOn = () => document.getElementById('realInner').setAttribute('filter', 'url(#shade)');
+const shadeOff = () => document.getElementById('realInner').setAttribute('filter', '');
+
+// Curtains: closed at the start, and between scenes.
+const CLOSED = { x: 0 }, OPEN_L = { x: -1000 }, OPEN_R = { x: 1000 };
+function curtains(close, open)
+{
+  if (close !== null)
+    tl.fromTo('#curtainL', OPEN_L, { ...CLOSED, duration: 0.6, ease: 'power2.inOut', immediateRender: false }, close)
+      .fromTo('#curtainR', OPEN_R, { ...CLOSED, duration: 0.6, ease: 'power2.inOut', immediateRender: false }, close);
+  tl.fromTo('#curtainL', CLOSED, { ...OPEN_L, duration: 0.8, ease: 'power2.inOut', immediateRender: false }, open)
+    .fromTo('#curtainR', CLOSED, { ...OPEN_R, duration: 0.8, ease: 'power2.inOut', immediateRender: false }, open);
+}
+tl.set('#curtainL, #curtainR', CLOSED, 0);
+curtains(null, 0.5);
+
+// The real clock ticks all through, at uneven times, with a shake and its motion strokes on each tick.
+let seed = 7;
+const rand = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+let angle = 0;
+for (let t = 0.3; t < END; t += 0.22 + rand() * 0.55)
+{
+  tl.fromTo('#secHand', { rotation: angle, svgOrigin: '0 0' }, { rotation: angle + 6, svgOrigin: '0 0', duration: 0.06, ease: 'power3.out', immediateRender: false }, t);
+  tl.fromTo('#realInner', { rotation: (rand() < 0.5) ? -1.6 : 1.6, svgOrigin: '0 118' }, { rotation: 0, svgOrigin: '0 118', duration: 0.18, ease: 'power2.out', immediateRender: false }, t);
+  tl.fromTo('#ticks', { opacity: 0.9 }, { opacity: 0.25, duration: 0.25, immediateRender: false }, t);
+  angle += 6;
+}
+
+// The object the script moves: three runs, each from the same start. ends: where it stops; real: moved by the real frame time.
+const START_X = 380, MARK_X = 1360, CUBE_Y = 924;
+tl.set('#cube', { x: START_X, y: CUBE_Y, opacity: 0 }, 0);
+function runs(t0, ends, real)
+{
+  ends.forEach((endX, i) =>
+  {
+    const t = t0 + i * 1.5;
+    const pass = (endX === MARK_X);
+    tl.fromTo('#cube', { x: START_X, opacity: 0 }, { x: START_X, opacity: 1, duration: 0.15, immediateRender: false }, t);
+    if (real)
+    {
+      // Uneven steps: the frame time changes from one frame to the next.
+      const steps = 6;
+      let x = START_X;
+      for (let s = 1; s <= steps; s++)
+      {
+        const to = START_X + (endX - START_X) * Math.min(1, s / steps + ((s < steps) ? (rand() - 0.5) * 0.12 : 0));
+        tl.fromTo('#cube', { x }, { x: to, duration: 0.15, ease: 'power1.inOut', immediateRender: false }, t + 0.15 + (s - 1) * 0.15);
+        x = to;
+      }
+    }
+    else
+      tl.fromTo('#cube', { x: START_X }, { x: endX, duration: 0.9, ease: 'power1.inOut', immediateRender: false }, t + 0.15);
+    const chip = document.getElementById('chip' + i);
+    state('chip' + i, t0 - 0.1, () => { chip.className = 'chip'; chip.querySelector('b').textContent = ''; });
+    state('chip' + i, t + 1.05, () => { chip.className = 'chip ' + ((pass) ? 'pass' : 'fail'); chip.querySelector('b').textContent = (pass) ? '✓' : '✕'; });
+    tl.fromTo(chip, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.25, ease: 'back.out(2)', immediateRender: false }, t + 1.05);
+    tl.to('#cube', { opacity: 0, duration: 0.15 }, t + 1.35);
+  });
+}
+
+// Hook: the script reads the real frame time, played by the real clock centre stage; its test gives a new result every run.
+const ring = (t, colour) => state('ring', t, () => document.getElementById('reads').style.setProperty('--ring', colour));
+ring(0, 'transparent');
+tl.set('#realClock', CENTRE, 0)
+  .set('#cardClock', OFF, 0);
+state('shade', 0, shadeOff);
+tl.fromTo('#moverCard', { opacity: 0, y: -16 }, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }, 1.5);
+ring(2.4, 'rgba(139, 144, 155, 0.6)');
+{
+  // The link runs from the member the script reads down to the top of the clock.
+  const r = document.getElementById('reads').getBoundingClientRect(), f = frame.getBoundingClientRect();
+  const link = document.getElementById('link');
+  link.setAttribute('x1', r.left - f.left + r.width / 2);
+  link.setAttribute('y1', r.bottom - f.top + 12);
+}
+tl.fromTo('#link', { opacity: 0 }, { opacity: 1, duration: 0.4 }, 2.4);
+runs(4.5, [1170, MARK_X, 1540], true);
+
+// Without Understudy: the stage dims, the script is rewritten and three files are added.
+tl.to('#link', { opacity: 0, duration: 0.3 }, USUAL)
+  .to('#moverCard, .chip', { opacity: 0, duration: 0.3 }, USUAL)
+  .fromTo('#dim', { opacity: 0 }, { opacity: 1, duration: 0.4 }, USUAL)
+  .fromTo('#pages', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.45, ease: 'power2.out' }, USUAL + 0.2);
+document.querySelectorAll('#diff .edit').forEach((el, i) =>
+  tl.fromTo(el, { attr: { fill: '#5a5f6b' } }, { attr: { fill: el.dataset.to }, duration: 0.15, immediateRender: false }, USUAL + 0.8 + i * 0.18));
+document.querySelectorAll('#pages .newPage').forEach((el, i) =>
+  tl.fromTo(el, { opacity: 0, y: -30 }, { opacity: 1, y: 0, duration: 0.3, ease: 'back.out(2)' }, USUAL + 2.0 + i * 0.5));
+// The script had to change: the red cross of screenshot 01.
+tl.fromTo('#rewriteCross', { opacity: 0, scale: 0.4, svgOrigin: '380 30' }, { opacity: 1, scale: 1, svgOrigin: '380 30', duration: 0.3, ease: 'back.out(2.5)' }, USUAL + 3.6);
+
+// Curtain. Behind it, the stage resets: the real clock centre stage again, the object and the chips cleared.
+curtains(CURTAIN1, CURTAIN1 + 1.2);
+tl.set('#dim, #pages', { opacity: 0 }, CURTAIN1 + 0.7)
+  .set('#moverCard', { opacity: 1 }, CURTAIN1 + 0.7);
+
+// With Understudy: one line in the test, typed. The real clock steps into the wings, still ticking; the cardboard one takes
+// its place, and the ring and the link turn cardboard.
+const typed = document.getElementById('typed');
+const typedWidth = typed.scrollWidth;
+// The card keeps its full width while the line is typed.
+document.getElementById('testCard').style.width = document.getElementById('testCard').offsetWidth + 'px';
+tl.fromTo('#testCard', { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' }, WITH + 0.3)
+  .fromTo(typed, { width: 0 }, { width: typedWidth, duration: 1.4, ease: 'steps(50)' }, WITH + 0.5);
+// The cardboard clock is most of the way in on the bar at 19.5 s, where the full band comes in.
+const SWAP = WITH + 2.0;
+tl.fromTo('#realClock', CENTRE, { ...WING, duration: 1.0, ease: 'power2.inOut', immediateRender: false }, SWAP)
+  .fromTo('#realClock', { scale: 1 }, { scale: 0.82, duration: 1.0, ease: 'power2.inOut', immediateRender: false }, SWAP);
+state('shade', SWAP + 0.6, shadeOn);
+tl.fromTo('#cardClock', OFF, { ...CENTRE, duration: 1.0, ease: 'power3.out', immediateRender: false }, SWAP + 0.5)
+  .fromTo('#cardInner', { rotation: 7, svgOrigin: '0 180' }, { rotation: 0, svgOrigin: '0 180', duration: 0.9, ease: 'elastic.out(1.2, 0.4)', immediateRender: false }, SWAP + 1.3);
+tl.to('#link', { opacity: 0, duration: 0.2 }, SWAP - 0.2);
+ring(SWAP + 1.4, 'rgba(217, 180, 124, 0.75)');
+state('linkColour', 0, () => document.getElementById('link').setAttribute('stroke', '#8b909b'));
+state('linkColour', SWAP + 1.4, () => document.getElementById('link').setAttribute('stroke', '#d9b47c'));
+tl.fromTo('#link', { opacity: 0 }, { opacity: 1, duration: 0.4, immediateRender: false }, SWAP + 1.4);
+runs(22.5, [MARK_X, MARK_X, MARK_X], false);
+
+// Leak detection: the stage dims under the Console's warning.
+tl.to('#link, #moverCard, #testCard, .chip', { opacity: 0, duration: 0.3 }, LEAK)
+  .fromTo('#dim', { opacity: 0 }, { opacity: 1, duration: 0.4, immediateRender: false }, LEAK)
+  .fromTo('#leak', { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.45, ease: 'power2.out' }, LEAK + 0.2);
+
+// End: the curtains close and open on the cover's scene, the real clock in the wings and the cardboard one under the light,
+// then the name and the tagline, and the cardboard clock takes a bow.
+curtains(CURTAIN2, FINAL);
+tl.set('#dim, #leak', { opacity: 0 }, CURTAIN2 + 0.7)
+  .set('#mark', { opacity: 0 }, CURTAIN2 + 0.7)
+  .fromTo('#end h1', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' }, FINAL + 0.8)
+  .fromTo('#end p', { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' }, FINAL + 1.3)
+  .fromTo('#cardInner', { rotation: 0, y: 0, svgOrigin: '0 180' }, { rotation: -9, y: 8, svgOrigin: '0 180', duration: 0.45, ease: 'power2.out', yoyo: true, repeat: 1, repeatDelay: 0.25, immediateRender: false }, FINAL + 2.3);
+tl.set({}, {}, END);
+
+// A backward jump goes back to the start, then forward to its time: several tweens animate the same element across sections.
+function jump(t)
+{
+  if (t < tl.time())
+    tl.seek(0, false);
+  tl.seek(t, false);
+}
+
+// Player. The soundtrack, once it exists, starts first and the timeline follows its clock, never seeking the audio.
+const scrub = document.getElementById('scrub'), time = document.getElementById('time'), playBtn = document.getElementById('playBtn');
+scrub.max = END;
+const audio = new Audio('soundtrack.wav?' + Date.now());
+audio.preload = 'auto';
+let playing = false, withSound = false, runId = 0;
+tl.eventCallback('onUpdate', () => { applyStates(tl.time()); scrub.value = tl.time(); time.textContent = tl.time().toFixed(2) + ' s'; });
+gsap.ticker.add(() =>
+{
+  if (playing && withSound && (tl.paused() === false))
+    tl.timeScale(1 + Math.max(-0.05, Math.min(0.05, (audio.currentTime - tl.time()) * 0.8)));
+  if (playing && (tl.progress() === 1))
+    stop();
+});
+function start(at)
+{
+  const id = ++runId;
+  tl.pause();
+  jump(at);
+  playing = true;
+  playBtn.textContent = 'Pause';
+  const go = () =>
+  {
+    if (id !== runId)
+      return;
+    if (withSound)
+      jump(audio.currentTime);
+    tl.play();
+  };
+  audio.pause();
+  audio.currentTime = at;
+  audio.addEventListener('playing', () => { withSound = true; go(); }, { once: true });
+  audio.play().catch(() => { withSound = false; go(); });
+}
+function stop()
+{
+  runId++;
+  playing = false;
+  tl.timeScale(1);
+  withSound = false;
+  audio.pause();
+  tl.pause();
+  playBtn.textContent = (tl.progress() === 1) ? 'Replay' : 'Play';
+}
+function toggle()
+{
+  if (playing)
+    stop();
+  else
+    start((tl.progress() === 1) ? 0 : tl.time());
+}
+scrub.oninput = () => { stop(); jump(+scrub.value); applyStates(+scrub.value); };
+playBtn.onclick = toggle;
+document.addEventListener('keydown', e => { if (e.code === 'Space') { e.preventDefault(); toggle(); } });
+for (const [name, t] of [['Hook', 0], ['Usual fix', USUAL - 0.2], ['Understudy', CURTAIN1], ['Leak', LEAK - 0.2], ['End', CURTAIN2]])
+{
+  const b = document.createElement('button');
+  b.textContent = name;
+  b.onclick = () => start(t);
+  document.getElementById('scenes').appendChild(b);
+}
+const t0 = new URLSearchParams(location.search).get('t');
+const bar = (t0 === null) ? 64 : 0;
+function fit()
+{
+  const s = Math.min(innerWidth / W, (innerHeight - bar) / H);
+  frame.style.transform = 'scale(' + s + ')';
+  const vp = document.getElementById('viewport');
+  vp.style.left = ((innerWidth - W * s) / 2) + 'px';
+  vp.style.top = ((innerHeight - bar - H * s) / 2) + 'px';
+}
+addEventListener('resize', fit);
+// Frame rendering seeks with ?t=seconds and stays paused.
+window.seekTo = t => { jump(t); applyStates(t); };
+if (t0 !== null)
+{
+  seekTo(+t0);
+  document.getElementById('controls').style.display = 'none';
+}
+else
+  seekTo(0);
+fit();
+});
+</script>
+</body>
+</html>

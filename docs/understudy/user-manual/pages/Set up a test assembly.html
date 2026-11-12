@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Put the code you test in an assembly, and reference it from your tests." />
+  <title>Understudy - Set up a test assembly</title>
+  <link rel="stylesheet" href="/assets/css/understudy.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Understudy</div><a href="../index.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Set up a test assembly</h1>
+      <div class="sub">Put the code you test in an assembly, and reference it from your tests.</div>
+    </div>
+
+<!-- ====================================== why ==== -->
+<section id="why">
+  <h2>Assemblies for tests</h2>
+<p>The Unity Test Framework runs tests from test assemblies: assembly definitions that reference the test
+  framework. A test assembly can only reference code that is in an assembly definition too, so your scripts can't stay
+  in <code>Assembly-CSharp</code>, the assembly Unity compiles scripts into by default. This is a requirement of the
+  Test Framework, with or without Understudy.</p>
+<p>You need two assemblies:</p>
+<ul>
+  <li>One for the code you test, such as <code>Game</code>.</li>
+  <li>One for the tests, which references <code>Game</code> and <code>Understudy</code>.</li>
+</ul>
+
+</section>
+
+<!-- ====================================== code ==== -->
+<section id="code">
+  <h2>Create an assembly for the code under test</h2>
+<p>To put your scripts in an assembly, perform the following steps:</p>
+<ol>
+  <li>In the Project window, select the folder that holds your scripts.</li>
+  <li>Go to <strong>Assets</strong> &gt; <strong>Create</strong> &gt; <strong>Scripting</strong> &gt; <strong>Assembly Definition</strong>,
+    and name it, for example <code>Game</code>.</li>
+</ol>
+<p>Every script in the folder and its subfolders now compiles into <code>Game</code>. If the Console window shows errors
+  about missing types, your scripts use code from a package or from another assembly definition, such as
+  <code>Unity.TextMeshPro</code> or <code>Unity.InputSystem</code>. Select <code>Game</code>, add them to
+  <strong>Assembly Definition References</strong> in the Inspector, then select <strong>Apply</strong>.</p>
+<p>Inside an assembly definition's folder, a folder named <code>Editor</code> is no longer special. Give it an assembly
+  definition of its own, with <strong>Platforms</strong> set to <strong>Editor</strong> only and a reference to
+  <code>Game</code>. Scripts that stay outside every assembly definition, such as plugins in <code>Assets/Plugins</code>,
+  compile into <code>Assembly-CSharp</code> or <code>Assembly-CSharp-firstpass</code>, which <code>Game</code> can't reference.
+  When your scripts use them, give them an assembly definition too.</p>
+
+</section>
+
+<!-- ====================================== mode ==== -->
+<section id="mode">
+  <h2>Choose Edit mode or Play mode</h2>
+<p>Edit mode tests run without entering Play mode, and are the fastest. Unity calls no <code>Awake</code>,
+  <code>Start</code> or <code>Update</code> in them, so a test calls the methods it needs. Play mode tests run frames, for
+  code that needs the engine to run: coroutines that wait, physics, scene loading. Spies, stubs and fakes work the same
+  in both.</p>
+
+</section>
+
+<!-- ====================================== tests ==== -->
+<section id="tests">
+  <h2>Create a test assembly</h2>
+<p>To create a test assembly that uses Understudy, perform the following steps:</p>
+<ol>
+  <li>Go to <strong>Window</strong> &gt; <strong>General</strong> &gt; <strong>Test Runner</strong>.</li>
+  <li>Select <strong>EditMode</strong>.</li>
+  <li>In the Project window, select the folder where the tests go, such as <code>Assets</code>.</li>
+  <li>In the Test Runner window, select <strong>Create a new Test Assembly Folder in the active path</strong>. Unity creates
+    a <code>Tests</code> folder with a <code>Tests</code> assembly definition.</li>
+  <li>Select the <code>Tests</code> assembly definition. In the Inspector, under <strong>Assembly Definition References</strong>,
+    select <strong>+</strong> twice, set the two new entries to <code>Game</code> and <code>Understudy</code>, then select
+    <strong>Apply</strong>.</li>
+</ol>
+<div class="img-block">
+  <img src="../img/test_assembly_references.png" alt="The Inspector of the Tests assembly definition, with Game and Understudy in Assembly Definition References" />
+</div>
+<p>The Test Runner window shows the button only while its tab has no tests and the selected folder holds no test
+  assembly. Otherwise, use
+  <strong>Assets</strong> &gt; <strong>Create</strong> &gt; <strong>Testing</strong> &gt; <strong>Tests Assembly Folder</strong>, which
+  creates a test assembly for every platform: its tests run in Play mode, under <strong>PlayMode</strong> in the Test
+  Runner window. To run them in Edit mode instead, set its <strong>Platforms</strong> to <strong>Editor</strong> only.</p>
+<div class="note"><strong>Note:</strong> Only test assemblies reference Understudy. The Test Runner's test assembly
+  definitions carry the <code>UNITY_INCLUDE_TESTS</code> define constraint. An assembly of your own that references
+  Understudy, such as one holding <a href="Share%20doubles%20between%20tests.html">shared doubles</a>, needs it too, under <strong>Define Constraints</strong>. Without it,
+  the Console shows an error naming the assembly definition.</div>
+
+</section>
+
+<!-- ====================================== internal ==== -->
+<section id="internal">
+  <h2>Reach members that aren&#x27;t public</h2>
+<p>A test names a member in C#, so it can only name members it can see. A <code>private</code> member, such as
+  a <code>MonoBehaviour</code>'s <code>void Update()</code>, is out of a test's reach.</p>
+<p>To let a test call or select such a member, make it <code>internal</code>, and let the test assembly see the internal
+  members of the code under test with <code>InternalsVisibleTo</code>, in any script of the <code>Game</code> assembly:</p>
+<pre><code><span class="kw">using</span> System.Runtime.CompilerServices;
+
+[<span class="kw">assembly</span>: <span class="ty">InternalsVisibleTo</span>(<span class="st">"Tests"</span>)]</code></pre>
+<p>Replace <code>Tests</code> with the name of your test assembly. Unity still calls an <code>internal void Update()</code>
+  every frame, as it calls a private one.</p>
+
+</section>
+
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="../../quick-usage-guide/index.html">Quick Usage Guide</a></li>
+    <li><a href="https://docs.unity3d.com/Manual/test-framework/test-framework-introduction.html">Unity Test Framework (Unity Manual)</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="Introduction%20to%20Understudy.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Introduction to Understudy</div>
+  </a>
+  <a class="next" href="Write%20your%20first%20test.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Write your first test</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Understudy v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

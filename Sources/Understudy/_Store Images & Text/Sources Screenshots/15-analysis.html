@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="frame.css">
+<style>
+.ide { align-self: center; background: var(--code-bg); border: 2px solid #262932; border-radius: 18px; box-shadow: var(--shadow); padding: 36px 40px; }
+  .ide pre { margin: 0 0 22px; font-family: "Cascadia Code", Consolas, monospace; font-size: 44px; color: var(--code-text); font-variant-ligatures: none; }
+  .sq { text-decoration: underline wavy #ff5a5a; text-underline-offset: 8px; text-decoration-thickness: 3px; }
+  .tip { background: #252831; border: 2px solid #3a3e4a; border-radius: 12px; padding: 20px 26px; font-family: "Segoe UI", sans-serif; font-size: 34px; color: #d8dae0; display: flex; flex-direction: column; gap: 16px; }
+  .tip b { font-family: "Cascadia Code", Consolas, monospace; color: #ff7a7a; margin-right: 12px; }
+  .tip .fix { align-self: flex-start; background: #2f5597; color: #fff; padding: 8px 20px; border-radius: 8px; font-size: 28px; }
+</style>
+</head>
+<body>
+<div class="head">
+  <h1>Mistakes caught as you type</h1>
+  <p>With quick fixes, in Visual Studio, Rider and VS Code.</p>
+</div>
+<div class="stage">
+<div class="ide">
+  <pre>Stub.<span class="sq">Method</span>(() =&gt; Time.deltaTime).Returns(0.5f);</pre>
+  <div class="tip">
+    <div><b>UST0012</b> Method does not take a property: use Stub.Property</div>
+    <div class="fix">Use Stub.Property</div>
+  </div>
+</div>
+</div>
+<script src="highlight.js"></script>
+</body>
+</html>

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="What Spy entry points return: the real member runs, and the spy records what the code under test does with it. Explained in Check what the code under test did and Spy on caught exceptions." />
+  <title>Understudy - Public API - Spies</title>
+  <link rel="stylesheet" href="../shared/styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <nav>
+    <a href="../Public%20API.html">Overview</a>
+    <a class="nav-band" href="API%20-%20Entry%20points.html">Entry points</a>
+    <a class="nav-band active" href="API%20-%20Spies.html" aria-current="page">Spies</a>
+    <div class="nav-group">Methods</div>
+    <div class="nav-group-body">
+      <a href="#SpiedMethod"><span class="badge badge-class">sealed</span>SpiedMethod</a>
+      <a href="#SpiedMethodOfTResult"><span class="badge badge-class">sealed</span>SpiedMethod&lt;TResult&gt;</a>
+      <a href="#SpiedMethodTableOfTInstance"><span class="badge badge-class">sealed</span>SpiedMethodTable&lt;TInstance&gt;</a>
+      <a href="#SpiedMethodTableOfTInstanceTResult"><span class="badge badge-class">sealed</span>SpiedMethodTable&lt;TInstance, TResult&gt;</a>
+    </div>
+    <div class="nav-group">Constructors</div>
+    <div class="nav-group-body">
+      <a href="#SpiedConstructorOfTResult"><span class="badge badge-class">sealed</span>SpiedConstructor&lt;TResult&gt;</a>
+    </div>
+    <div class="nav-group">Fields</div>
+    <div class="nav-group-body">
+      <a href="#SpiedFieldOfTValue"><span class="badge badge-class">sealed</span>SpiedField&lt;TValue&gt;</a>
+      <a href="#SpiedFieldTableOfTInstanceTValue"><span class="badge badge-class">sealed</span>SpiedFieldTable&lt;TInstance, TValue&gt;</a>
+    </div>
+    <div class="nav-group">Properties</div>
+    <div class="nav-group-body">
+      <a href="#SpiedPropertyOfTValue"><span class="badge badge-class">sealed</span>SpiedProperty&lt;TValue&gt;</a>
+      <a href="#SpiedPropertyTableOfTInstanceTValue"><span class="badge badge-class">sealed</span>SpiedPropertyTable&lt;TInstance, TValue&gt;</a>
+    </div>
+    <div class="nav-group">Indexers</div>
+    <div class="nav-group-body">
+      <a href="#SpiedIndexerOfTValue"><span class="badge badge-class">sealed</span>SpiedIndexer&lt;TValue&gt;</a>
+      <a href="#SpiedIndexerTableOfTInstanceTValue"><span class="badge badge-class">sealed</span>SpiedIndexerTable&lt;TInstance, TValue&gt;</a>
+    </div>
+    <div class="nav-group">Events</div>
+    <div class="nav-group-body">
+      <a href="#SpiedEvent"><span class="badge badge-class">sealed</span>SpiedEvent</a>
+      <a href="#SpiedEventTableOfTInstance"><span class="badge badge-class">sealed</span>SpiedEventTable&lt;TInstance&gt;</a>
+    </div>
+    <div class="nav-group">Catch blocks</div>
+    <div class="nav-group-body">
+      <a href="#SpiedCatchOfTException"><span class="badge badge-class">sealed</span>SpiedCatch&lt;TException&gt;</a>
+    </div>
+    <a class="nav-band" href="API%20-%20Stubs.html">Stubs</a>
+    <a class="nav-band" href="API%20-%20Fakes.html">Fakes</a>
+    <a class="nav-band" href="API%20-%20Recordings.html">Recordings</a>
+  </nav>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Public API <span class="tag">Spies</span></h1>
+      <div class="sub">What Spy entry points return: the real member runs, and the spy records what the code under test does with it. Explained in <a href="Check%20what%20the%20code%20under%20test%20did.html">Check what the code under test did</a> and <a href="Spy%20on%20caught%20exceptions.html">Spy on caught exceptions</a>. Every list a spy returns is live: it follows what the code under test does as it runs.</div>
+    </div>
+
+    <h2 class="api-group">Methods</h2>
+    <!-- SpiedMethod -->
+    <div class="type-section" id="SpiedMethod">
+      <div class="type-header"><h3>SpiedMethod</h3><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">A spy on a void method: the real member runs, and each call the code under test makes that the selection matches is recorded. When it comes from a table, it covers its own instance only.</p>
+      <p class="type-desc"><span class="ex">Every member throws InvalidOperationException once the test or fixture this spy belongs to has finished.</span></p>
+      <div class="member-group">
+        <div class="member-group-title">Members</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Recordings.html#CallList">CallList</a></span> <span class="mn">Calls</span> { get; }</th><td>The calls recorded, in the order the code under test made them.</td></tr>
+        </table>
+      </div>
+    </div>
+    <!-- SpiedMethodOfTResult -->
+    <div class="type-section" id="SpiedMethodOfTResult">
+      <div class="type-header"><h3>SpiedMethod&lt;TResult&gt;</h3><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">A spy on a method with a result: the real member runs, and each call the code under test makes that the selection matches is recorded. When it comes from a table, it covers its own instance only.</p>
+      <p class="type-desc"><span class="ex">Every member throws InvalidOperationException once the test or fixture this spy belongs to has finished.</span></p>
+      <div class="member-group">
+        <div class="member-group-title">Members</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Recordings.html#CallListOfTResult">CallList&lt;TResult&gt;</a></span> <span class="mn">Calls</span> { get; }</th><td>The calls recorded, in the order the code under test made them.</td></tr>
+        </table>
+      </div>
+    </div>
+    <!-- SpiedMethodTableOfTInstance -->
+    <div class="type-section" id="SpiedMethodTableOfTInstance">
+      <div class="type-header"><h3>SpiedMethodTable&lt;TInstance&gt;</h3><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">Spies on a void method on any instance: one spy per instance, reached by the instance.</p>
+      <p class="type-desc"><span class="ex">Every member throws InvalidOperationException once the test or fixture this spy belongs to has finished.</span></p>
+      <div class="member-group">
+        <div class="member-group-title">Members</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t"><a href="#SpiedMethod">SpiedMethod</a></span> <span class="mn">this</span>[<span class="t">TInstance</span> instance]</th><td>The spy of one instance's calls. <span class="ex">Throws ArgumentNullException when the instance is null.</span></td></tr>
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Recordings.html#CallList">CallList</a></span> <span class="mn">Calls</span> { get; }</th><td>The calls recorded on every instance, in the order the code under test made them, each with its instance.</td></tr>
+        </table>
+      </div>
+    </div>
+    <!-- SpiedMethodTableOfTInstanceTResult -->
+    <div class="type-section" id="SpiedMethodTableOfTInstanceTResult">
+      <div class="type-header"><h3>SpiedMethodTable&lt;TInstance, TResult&gt;</h3><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">Spies on a method with a result on any instance: one spy per instance, reached by the instance.</p>
+      <p class="type-desc"><span class="ex">Every member throws InvalidOperationException once the test or fixture this spy belongs to has finished.</span></p>
+      <div class="member-group">
+        <div class="member-group-title">Members</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t"><a href="#SpiedMethodOfTResult">SpiedMethod&lt;TResult&gt;</a></span> <span class="mn">this</span>[<span class="t">TInstance</span> instance]</th><td>The spy of one instance's calls. <span class="ex">Throws ArgumentNullException when the instance is null.</span></td></tr>
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Recordings.html#CallListOfTResult">CallList&lt;TResult&gt;</a></span> <span class="mn">Calls</span> { get; }</th><td>The calls recorded on every instance, in the order the code under test made them, each with its instance.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <h2 class="api-group">Constructors</h2>
+    <!-- SpiedConstructorOfTResult -->
+    <div class="type-section" id="SpiedConstructorOfTResult">
+      <div class="type-header"><h3>SpiedConstructor&lt;TResult&gt;</h3><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">A spy on a constructor: the real member runs, and each call the code under test makes that the selection matches is recorded.</p>
+      <p class="type-desc"><span class="ex">Every member throws InvalidOperationException once the test or fixture this spy belongs to has finished.</span></p>
+      <div class="member-group">
+        <div class="member-group-title">Members</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Recordings.html#CallListOfTResult">CallList&lt;TResult&gt;</a></span> <span class="mn">Calls</span> { get; }</th><td>The calls recorded, in the order the code under test made them.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <h2 class="api-group">Fields</h2>
+    <!-- SpiedFieldOfTValue -->
+    <div class="type-section" id="SpiedFieldOfTValue">
+      <div class="type-header"><h3>SpiedField&lt;TValue&gt;</h3><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">A spy on a field: the real member is read and written, and each read and write the code under test makes that the selection matches is recorded. A selection through a chain follows the instance the chain reaches at each access; when it comes from a table, it covers its own instance only.</p>
+      <p class="type-desc"><span class="ex">Every member throws InvalidOperationException once the test or fixture this spy belongs to has finished.</span></p>
+      <div class="member-group">
+        <div class="member-group-title">Members</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Recordings.html#AccessListOfTValue">AccessList&lt;TValue&gt;</a></span> <span class="mn">Reads</span> { get; }</th><td>The reads recorded, in the order the code under test made them.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Recordings.html#AccessListOfTValue">AccessList&lt;TValue&gt;</a></span> <span class="mn">Writes</span> { get; }</th><td>The writes recorded, in the order the code under test made them.</td></tr>
+        </table>
+      </div>
+    </div>
+    <!-- SpiedFieldTableOfTInstanceTValue -->
+    <div class="type-section" id="SpiedFieldTableOfTInstanceTValue">
+      <div class="type-header"><h3>SpiedFieldTable&lt;TInstance, TValue&gt;</h3><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">Spies on a field on any instance: one spy per instance, reached by the instance.</p>
+      <p class="type-desc"><span class="ex">Every member throws InvalidOperationException once the test or fixture this spy belongs to has finished.</span></p>
+      <div class="member-group">
+        <div class="member-group-title">Members</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t"><a href="#SpiedFieldOfTValue">SpiedField&lt;TValue&gt;</a></span> <span class="mn">this</span>[<span class="t">TInstance</span> instance]</th><td>The spy of one instance. <span class="ex">Throws ArgumentNullException when the instance is null.</span></td></tr>
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Recordings.html#AccessListOfTValue">AccessList&lt;TValue&gt;</a></span> <span class="mn">Reads</span> { get; }</th><td>The reads recorded on every instance, in the order the code under test made them, each with its instance.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Recordings.html#AccessListOfTValue">AccessList&lt;TValue&gt;</a></span> <span class="mn">Writes</span> { get; }</th><td>The writes recorded on every instance, in the order the code under test made them, each with its instance.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <h2 class="api-group">Properties</h2>
+    <!-- SpiedPropertyOfTValue -->
+    <div class="type-section" id="SpiedPropertyOfTValue">
+      <div class="type-header"><h3>SpiedProperty&lt;TValue&gt;</h3><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">A spy on a property: the real member is read and written, and each read and write the code under test makes that the selection matches is recorded. A selection through a chain follows the instance the chain reaches at each access; when it comes from a table, it covers its own instance only.</p>
+      <p class="type-desc"><span class="ex">Every member throws InvalidOperationException once the test or fixture this spy belongs to has finished.</span></p>
+      <div class="member-group">
+        <div class="member-group-title">Members</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Recordings.html#AccessListOfTValue">AccessList&lt;TValue&gt;</a></span> <span class="mn">Reads</span> { get; }</th><td>The reads recorded, in the order the code under test made them.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Recordings.html#AccessListOfTValue">AccessList&lt;TValue&gt;</a></span> <span class="mn">Writes</span> { get; }</th><td>The writes recorded, in the order the code under test made them.</td></tr>
+        </table>
+      </div>
+    </div>
+    <!-- SpiedPropertyTableOfTInstanceTValue -->
+    <div class="type-section" id="SpiedPropertyTableOfTInstanceTValue">
+      <div class="type-header"><h3>SpiedPropertyTable&lt;TInstance, TValue&gt;</h3><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">Spies on a property on any instance: one spy per instance, reached by the instance.</p>
+      <p class="type-desc"><span class="ex">Every member throws InvalidOperationException once the test or fixture this spy belongs to has finished.</span></p>
+      <div class="member-group">
+        <div class="member-group-title">Members</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t"><a href="#SpiedPropertyOfTValue">SpiedProperty&lt;TValue&gt;</a></span> <span class="mn">this</span>[<span class="t">TInstance</span> instance]</th><td>The spy of one instance. <span class="ex">Throws ArgumentNullException when the instance is null.</span></td></tr>
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Recordings.html#AccessListOfTValue">AccessList&lt;TValue&gt;</a></span> <span class="mn">Reads</span> { get; }</th><td>The reads recorded on every instance, in the order the code under test made them, each with its instance.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Recordings.html#AccessListOfTValue">AccessList&lt;TValue&gt;</a></span> <span class="mn">Writes</span> { get; }</th><td>The writes recorded on every instance, in the order the code under test made them, each with its instance.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <h2 class="api-group">Indexers</h2>
+    <!-- SpiedIndexerOfTValue -->
+    <div class="type-section" id="SpiedIndexerOfTValue">
+      <div class="type-header"><h3>SpiedIndexer&lt;TValue&gt;</h3><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">A spy on an element written with []: the real member is read and written, and each read and write the code under test makes that the selection matches is recorded. A selection through a chain follows the instance the chain reaches at each access; when it comes from a table, it covers its own instance only.</p>
+      <p class="type-desc"><span class="ex">Every member throws InvalidOperationException once the test or fixture this spy belongs to has finished.</span></p>
+      <div class="member-group">
+        <div class="member-group-title">Members</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Recordings.html#AccessListOfTValue">AccessList&lt;TValue&gt;</a></span> <span class="mn">Reads</span> { get; }</th><td>The reads recorded, in the order the code under test made them.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Recordings.html#AccessListOfTValue">AccessList&lt;TValue&gt;</a></span> <span class="mn">Writes</span> { get; }</th><td>The writes recorded, in the order the code under test made them.</td></tr>
+        </table>
+      </div>
+    </div>
+    <!-- SpiedIndexerTableOfTInstanceTValue -->
+    <div class="type-section" id="SpiedIndexerTableOfTInstanceTValue">
+      <div class="type-header"><h3>SpiedIndexerTable&lt;TInstance, TValue&gt;</h3><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">Spies on an element written with [] on any instance: one spy per instance, reached by the instance.</p>
+      <p class="type-desc"><span class="ex">Every member throws InvalidOperationException once the test or fixture this spy belongs to has finished.</span></p>
+      <div class="member-group">
+        <div class="member-group-title">Members</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t"><a href="#SpiedIndexerOfTValue">SpiedIndexer&lt;TValue&gt;</a></span> <span class="mn">this</span>[<span class="t">TInstance</span> instance]</th><td>The spy of one instance. <span class="ex">Throws ArgumentNullException when the instance is null.</span></td></tr>
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Recordings.html#AccessListOfTValue">AccessList&lt;TValue&gt;</a></span> <span class="mn">Reads</span> { get; }</th><td>The reads recorded on every instance, in the order the code under test made them, each with its instance.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Recordings.html#AccessListOfTValue">AccessList&lt;TValue&gt;</a></span> <span class="mn">Writes</span> { get; }</th><td>The writes recorded on every instance, in the order the code under test made them, each with its instance.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <h2 class="api-group">Events</h2>
+    <!-- SpiedEvent -->
+    <div class="type-section" id="SpiedEvent">
+      <div class="type-header"><h3>SpiedEvent</h3><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">A spy on an event: the real event keeps its handlers, and the spy records the handlers the code under test subscribes and the raises it makes. Handlers are kept per instance: a selection through a chain follows the instance the chain reaches at each access; when it comes from a table, it covers its own instance only.</p>
+      <p class="type-desc"><span class="ex">Every member throws InvalidOperationException once the test or fixture this spy belongs to has finished.</span></p>
+      <div class="member-group">
+        <div class="member-group-title">Members</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t">IReadOnlyList&lt;<a href="API%20-%20Recordings.html#RecordedHandler">RecordedHandler</a>&gt;</span> <span class="mn">Handlers</span> { get; }</th><td>The handlers the code under test subscribed while this spy exists and has not unsubscribed, in subscription order.</td></tr>
+          <tr><th scope="row"><span class="t">IReadOnlyList&lt;<a href="API%20-%20Recordings.html#RecordedInvocation">RecordedInvocation</a>&gt;</span> <span class="mn">Invocations</span> { get; }</th><td>The raises the code under test made, in order.</td></tr>
+        </table>
+      </div>
+    </div>
+    <!-- SpiedEventTableOfTInstance -->
+    <div class="type-section" id="SpiedEventTableOfTInstance">
+      <div class="type-header"><h3>SpiedEventTable&lt;TInstance&gt;</h3><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">Spies on an event on any instance: one spy per instance, reached by the instance.</p>
+      <p class="type-desc"><span class="ex">Every member throws InvalidOperationException once the test or fixture this spy belongs to has finished.</span></p>
+      <div class="member-group">
+        <div class="member-group-title">Members</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t"><a href="#SpiedEvent">SpiedEvent</a></span> <span class="mn">this</span>[<span class="t">TInstance</span> instance]</th><td>The spy of one instance's event. <span class="ex">Throws ArgumentNullException when the instance is null.</span></td></tr>
+          <tr><th scope="row"><span class="t">IReadOnlyList&lt;<a href="API%20-%20Recordings.html#RecordedHandler">RecordedHandler</a>&gt;</span> <span class="mn">Handlers</span> { get; }</th><td>The handlers the code under test subscribed on every instance and has not unsubscribed, in subscription order, each with its instance.</td></tr>
+          <tr><th scope="row"><span class="t">IReadOnlyList&lt;<a href="API%20-%20Recordings.html#RecordedInvocation">RecordedInvocation</a>&gt;</span> <span class="mn">Invocations</span> { get; }</th><td>The raises the code under test made on every instance, in order, each with its instance.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <h2 class="api-group">Catch blocks</h2>
+    <!-- SpiedCatchOfTException -->
+    <div class="type-section" id="SpiedCatchOfTException">
+      <div class="type-header"><h3>SpiedCatch&lt;TException&gt;</h3><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">A spy on catch blocks: it records every catch block the code under test enters with an exception of its type, subtypes included, while it exists. <code>TException</code> derives from <code>Exception</code>.</p>
+      <p class="type-desc"><span class="ex">Every member throws InvalidOperationException once the test or fixture this spy belongs to has finished.</span></p>
+      <div class="member-group">
+        <div class="member-group-title">Members</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t">IReadOnlyList&lt;<a href="API%20-%20Recordings.html#RecordedCatch">RecordedCatch</a>&gt;</span> <span class="mn">Catches</span> { get; }</th><td>The catch blocks entered, in order.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="doc-footer">Understudy v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

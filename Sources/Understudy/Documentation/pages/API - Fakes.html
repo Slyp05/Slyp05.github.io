@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="What Fake entry points return: a stored value for a field or property, stored handlers for an event. Explained in Fake fields and properties and Fake events." />
+  <title>Understudy - Public API - Fakes</title>
+  <link rel="stylesheet" href="../shared/styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <nav>
+    <a href="../Public%20API.html">Overview</a>
+    <a class="nav-band" href="API%20-%20Entry%20points.html">Entry points</a>
+    <a class="nav-band" href="API%20-%20Spies.html">Spies</a>
+    <a class="nav-band" href="API%20-%20Stubs.html">Stubs</a>
+    <a class="nav-band active" href="API%20-%20Fakes.html" aria-current="page">Fakes</a>
+    <div class="nav-group">Fields</div>
+    <div class="nav-group-body">
+      <a href="#FakedFieldOfTValue"><span class="badge badge-class">sealed</span>FakedField&lt;TValue&gt;</a>
+      <a href="#FakedFieldTableOfTInstanceTValue"><span class="badge badge-class">sealed</span>FakedFieldTable&lt;TInstance, TValue&gt;</a>
+    </div>
+    <div class="nav-group">Properties</div>
+    <div class="nav-group-body">
+      <a href="#FakedPropertyOfTValue"><span class="badge badge-class">sealed</span>FakedProperty&lt;TValue&gt;</a>
+      <a href="#FakedPropertyTableOfTInstanceTValue"><span class="badge badge-class">sealed</span>FakedPropertyTable&lt;TInstance, TValue&gt;</a>
+    </div>
+    <div class="nav-group">Events</div>
+    <div class="nav-group-body">
+      <a href="#FakedEvent"><span class="badge badge-class">sealed</span>FakedEvent</a>
+      <a href="#FakedEventTableOfTInstance"><span class="badge badge-class">sealed</span>FakedEventTable&lt;TInstance&gt;</a>
+    </div>
+    <a class="nav-band" href="API%20-%20Recordings.html">Recordings</a>
+  </nav>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Public API <span class="tag">Fakes</span></h1>
+      <div class="sub">What Fake entry points return: a stored value for a field or property, stored handlers for an event. Explained in <a href="Fake%20fields%20and%20properties.html">Fake fields and properties</a> and <a href="Fake%20events.html">Fake events</a>. Every list a fake returns is live: it follows what the code under test does as it runs.</div>
+    </div>
+
+    <h2 class="api-group">Fields</h2>
+    <!-- FakedFieldOfTValue -->
+    <div class="type-section" id="FakedFieldOfTValue">
+      <div class="type-header"><h3>FakedField&lt;TValue&gt;</h3><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">A fake of a field: a stored value stands in for the member, one per instance. Reads in the code under test return it and its writes replace it; the test reads and writes it through <code>Value</code>. A selection through a chain follows the instance the chain reaches at each access; when it comes from a table, it covers its own instance only.</p>
+      <p class="type-desc"><span class="ex">Every member throws InvalidOperationException once the test or fixture this fake belongs to has finished.</span></p>
+      <div class="member-group">
+        <div class="member-group-title">Members</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Recordings.html#AccessListOfTValue">AccessList&lt;TValue&gt;</a></span> <span class="mn">Reads</span> { get; }</th><td>The reads recorded, in the order the code under test made them.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Recordings.html#AccessListOfTValue">AccessList&lt;TValue&gt;</a></span> <span class="mn">Writes</span> { get; }</th><td>The writes recorded, in the order the code under test made them.</td></tr>
+          <tr><th scope="row"><span class="t">TValue</span> <span class="mn">Value</span> { get; set; }</th><td>The stored value for the instance this fake reaches now: the initial value until the code under test or the test writes it. <span class="ex">Throws InvalidOperationException when the selection points to no instance now.</span></td></tr>
+        </table>
+      </div>
+    </div>
+    <!-- FakedFieldTableOfTInstanceTValue -->
+    <div class="type-section" id="FakedFieldTableOfTInstanceTValue">
+      <div class="type-header"><h3>FakedFieldTable&lt;TInstance, TValue&gt;</h3><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">Fakes a field on any instance: one fake per instance, reached by the instance, each with its own stored value starting at the declaration's initial value.</p>
+      <p class="type-desc"><span class="ex">Every member throws InvalidOperationException once the test or fixture this fake belongs to has finished.</span></p>
+      <div class="member-group">
+        <div class="member-group-title">Members</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t"><a href="#FakedFieldOfTValue">FakedField&lt;TValue&gt;</a></span> <span class="mn">this</span>[<span class="t">TInstance</span> instance]</th><td>The fake of one instance. <span class="ex">Throws ArgumentNullException when the instance is null.</span></td></tr>
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Recordings.html#AccessListOfTValue">AccessList&lt;TValue&gt;</a></span> <span class="mn">Reads</span> { get; }</th><td>The reads recorded on every instance, in the order the code under test made them, each with its instance.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Recordings.html#AccessListOfTValue">AccessList&lt;TValue&gt;</a></span> <span class="mn">Writes</span> { get; }</th><td>The writes recorded on every instance, in the order the code under test made them, each with its instance.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <h2 class="api-group">Properties</h2>
+    <!-- FakedPropertyOfTValue -->
+    <div class="type-section" id="FakedPropertyOfTValue">
+      <div class="type-header"><h3>FakedProperty&lt;TValue&gt;</h3><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">A fake of a property: a stored value stands in for the member, one per instance. Reads in the code under test return it and its writes replace it; the test reads and writes it through <code>Value</code>. A selection through a chain follows the instance the chain reaches at each access; when it comes from a table, it covers its own instance only.</p>
+      <p class="type-desc"><span class="ex">Every member throws InvalidOperationException once the test or fixture this fake belongs to has finished.</span></p>
+      <div class="member-group">
+        <div class="member-group-title">Members</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Recordings.html#AccessListOfTValue">AccessList&lt;TValue&gt;</a></span> <span class="mn">Reads</span> { get; }</th><td>The reads recorded, in the order the code under test made them.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Recordings.html#AccessListOfTValue">AccessList&lt;TValue&gt;</a></span> <span class="mn">Writes</span> { get; }</th><td>The writes recorded, in the order the code under test made them.</td></tr>
+          <tr><th scope="row"><span class="t">TValue</span> <span class="mn">Value</span> { get; set; }</th><td>The stored value for the instance this fake reaches now: the initial value until the code under test or the test writes it. <span class="ex">Throws InvalidOperationException when the selection points to no instance now.</span></td></tr>
+        </table>
+      </div>
+    </div>
+    <!-- FakedPropertyTableOfTInstanceTValue -->
+    <div class="type-section" id="FakedPropertyTableOfTInstanceTValue">
+      <div class="type-header"><h3>FakedPropertyTable&lt;TInstance, TValue&gt;</h3><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">Fakes a property on any instance: one fake per instance, reached by the instance, each with its own stored value starting at the declaration's initial value.</p>
+      <p class="type-desc"><span class="ex">Every member throws InvalidOperationException once the test or fixture this fake belongs to has finished.</span></p>
+      <div class="member-group">
+        <div class="member-group-title">Members</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t"><a href="#FakedPropertyOfTValue">FakedProperty&lt;TValue&gt;</a></span> <span class="mn">this</span>[<span class="t">TInstance</span> instance]</th><td>The fake of one instance. <span class="ex">Throws ArgumentNullException when the instance is null.</span></td></tr>
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Recordings.html#AccessListOfTValue">AccessList&lt;TValue&gt;</a></span> <span class="mn">Reads</span> { get; }</th><td>The reads recorded on every instance, in the order the code under test made them, each with its instance.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Recordings.html#AccessListOfTValue">AccessList&lt;TValue&gt;</a></span> <span class="mn">Writes</span> { get; }</th><td>The writes recorded on every instance, in the order the code under test made them, each with its instance.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <h2 class="api-group">Events</h2>
+    <!-- FakedEvent -->
+    <div class="type-section" id="FakedEvent">
+      <div class="type-header"><h3>FakedEvent</h3><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">A fake of an event: subscriptions from the code under test land in it and never reach the real event, a raise by the code under test invokes the handlers it holds, and the test raises it with <code>Raise</code>. It starts with no handlers. Handlers are kept per instance: a selection through a chain follows the instance the chain reaches at each access; when it comes from a table, it covers its own instance only.</p>
+      <p class="type-desc"><span class="ex">Every member throws InvalidOperationException once the test or fixture this fake belongs to has finished.</span></p>
+      <div class="member-group">
+        <div class="member-group-title">Members</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t">IReadOnlyList&lt;<a href="API%20-%20Recordings.html#RecordedHandler">RecordedHandler</a>&gt;</span> <span class="mn">Handlers</span> { get; }</th><td>The handlers the code under test subscribed while this fake exists and has not unsubscribed, in subscription order.</td></tr>
+          <tr><th scope="row"><span class="t">IReadOnlyList&lt;<a href="API%20-%20Recordings.html#RecordedInvocation">RecordedInvocation</a>&gt;</span> <span class="mn">Invocations</span> { get; }</th><td>The raises the code under test made, in order.</td></tr>
+          <tr><th scope="row"><span class="t">object</span> <span class="mn">Raise</span>()</th><td>Raises the event of the instance this fake reaches, as its owner would: invokes the handlers the fake holds for it with the arguments you pass, and returns what the invocation returns, the last handler's result for a delegate with a result. With no handler, it does nothing and returns null. Overloads take up to 16 parameters. <span class="ex">Throws ArgumentException when the arguments do not fit the event's delegate.</span> <span class="ex">Throws InvalidOperationException when the selection points to no instance now.</span></td></tr>
+        </table>
+      </div>
+    </div>
+    <!-- FakedEventTableOfTInstance -->
+    <div class="type-section" id="FakedEventTableOfTInstance">
+      <div class="type-header"><h3>FakedEventTable&lt;TInstance&gt;</h3><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">Fakes an event on any instance: one fake per instance, reached by the instance, each holding the handlers the code under test subscribes to that instance's event.</p>
+      <p class="type-desc"><span class="ex">Every member throws InvalidOperationException once the test or fixture this fake belongs to has finished.</span></p>
+      <div class="member-group">
+        <div class="member-group-title">Members</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t"><a href="#FakedEvent">FakedEvent</a></span> <span class="mn">this</span>[<span class="t">TInstance</span> instance]</th><td>The fake of one instance's event. <span class="ex">Throws ArgumentNullException when the instance is null.</span></td></tr>
+          <tr><th scope="row"><span class="t">IReadOnlyList&lt;<a href="API%20-%20Recordings.html#RecordedHandler">RecordedHandler</a>&gt;</span> <span class="mn">Handlers</span> { get; }</th><td>The handlers the code under test subscribed on every instance and has not unsubscribed, in subscription order, each with its instance.</td></tr>
+          <tr><th scope="row"><span class="t">IReadOnlyList&lt;<a href="API%20-%20Recordings.html#RecordedInvocation">RecordedInvocation</a>&gt;</span> <span class="mn">Invocations</span> { get; }</th><td>The raises the code under test made on every instance, in order, each with its instance.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="#FakedEventTableOfTInstance">FakedEventTable&lt;TInstance&gt;</a></span> <span class="mn">EachRaise</span>()</th><td>Raises the event of every instance whose fake holds handlers, as each owner would, with the arguments you pass. Overloads take up to 16 parameters. <span class="ex">Throws ArgumentException when the arguments do not fit the event's delegate.</span></td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="doc-footer">Understudy v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="frame.css">
+<style>
+  svg { display: block; overflow: visible; font-family: Bahnschrift, "Segoe UI", sans-serif; }
+  svg .mono { font-family: "Cascadia Code", Consolas, monospace; }
+.stage { gap: 40px; }
+</style>
+</head>
+<body>
+<div class="head">
+  <h1>Failures that read like code</h1>
+  <p>Every recorded call, with its result and its line.</p>
+</div>
+<div class="stage">
+<div class="code line"><pre class="cs" style="font-size: 34px;">Assert.That(damage.Calls, Is.Empty);</pre></div><img class="shot" src="Captures/testrunner-failure.png" alt="" style="width: 1424px; align-self: center;">
+</div>
+<script src="highlight.js"></script>
+</body>
+</html>

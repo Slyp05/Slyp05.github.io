@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Stub, spy on and catch leaks in Unity code from a test, without changing the code." />
+  <title>Understudy - Quick Usage Guide</title>
+  <link rel="stylesheet" href="/assets/css/understudy.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+
+  <script src="shared/nav.js"></script>
+
+  <main id="content" class="guide-standalone">
+
+    <div class="hero">
+      <h1>Quick Usage Guide</h1>
+      <p class="tagline">Stub, spy on and catch leaks in Unity code from a test, without changing the code.</p>
+    </div>
+
+<!-- ====================================== concept ==== -->
+<section id="concept">
+  <h2>Before you start</h2>
+<p>This guide assumes you write tests with the Unity Test Framework. If you don't, follow
+  <a href="../user-manual/pages/Write%20your%20first%20test.html">Write your first test</a> in the User Manual instead.</p>
+<p>Your test assembly needs a reference to Understudy: select its assembly definition, add <code>Understudy</code> under
+  <strong>Assembly Definition References</strong> in the Inspector, then select <strong>Apply</strong>. The code you test
+  must be in an assembly definition that the test assembly references, as the Test Framework requires. For more
+  information, refer to <a href="../user-manual/pages/Set%20up%20a%20test%20assembly.html">Set up a test assembly</a>.</p>
+
+</section>
+
+<!-- ====================================== stub ==== -->
+<section id="stub">
+  <h2>Step 1: Stub a member</h2>
+<p>This method reads the frame time, so a test can't predict its result:</p>
+<pre><code><span class="kw">using</span> UnityEngine;
+
+<span class="kw">public</span> <span class="kw">static</span> <span class="kw">class</span> <span class="ty">Movement</span>
+{
+    <span class="kw">public</span> <span class="kw">static</span> <span class="kw">float</span> Step(<span class="kw">float</span> speed)
+    {
+        <span class="kw">return</span> speed * <span class="ty">Time</span>.deltaTime;
+    }
+}</code></pre>
+<p>Stub <code>Time.deltaTime</code> in the test, and <code>Movement</code> stays as it is:</p>
+<pre><code><span class="kw">using</span> NUnit.Framework;
+<span class="kw">using</span> Understudy;
+<span class="kw">using</span> UnityEngine;
+
+<span class="kw">public</span> <span class="kw">class</span> <span class="ty">MovementTests</span>
+{
+    [<span class="ty">Test</span>]
+    <span class="kw">public</span> <span class="kw">void</span> StepMovesBySpeedTimesFrameTime()
+    {
+        <span class="ty">Stub</span>.Property(() =&gt; <span class="ty">Time</span>.deltaTime).Returns(<span class="nu">0.5f</span>);
+
+        <span class="kw">float</span> distance = <span class="ty">Movement</span>.Step(<span class="nu">2f</span>);
+
+        <span class="ty">Assert</span>.That(distance, <span class="ty">Is</span>.EqualTo(<span class="nu">1f</span>));
+    }
+}</code></pre>
+<p>Every read of <code>Time.deltaTime</code> in the code under test returns 0.5 until the test ends. The lambda, called a
+  selection, names the member as the code under test reaches it, and everything it doesn't name runs for real. No interface,
+  wrapper or injected clock is needed, and a read in the test itself still gets the real value.</p>
+<p>The same works for <code>Random.Range</code>, <code>Physics.Raycast</code>, your own singletons, constructors,
+  fields and events, with one entry point per kind of member: <code>Stub.Method</code>, <code>Stub.Constructor</code>,
+  <code>Stub.Field</code>, and so on.</p>
+
+</section>
+
+<!-- ====================================== spy ==== -->
+<section id="spy">
+  <h2>Step 2: Check what the code under test did</h2>
+<p>A stub also records what the code under test does with its member. This method saves a score only when it beats the best one:</p>
+<pre><code><span class="kw">using</span> UnityEngine;
+
+<span class="kw">public</span> <span class="kw">static</span> <span class="kw">class</span> <span class="ty">HighScore</span>
+{
+    <span class="kw">public</span> <span class="kw">static</span> <span class="kw">void</span> Submit(<span class="kw">int</span> score)
+    {
+        <span class="kw">if</span> (score &gt; <span class="ty">PlayerPrefs</span>.GetInt(<span class="st">"best"</span>))
+            <span class="ty">PlayerPrefs</span>.SetInt(<span class="st">"best"</span>, score);
+    }
+}</code></pre>
+<p>The test sets the best score, replaces the save so it never writes to your real <code>PlayerPrefs</code>, and checks
+  the recorded call:</p>
+<pre><code><span class="kw">using</span> NUnit.Framework;
+<span class="kw">using</span> Understudy;
+<span class="kw">using</span> UnityEngine;
+
+<span class="kw">public</span> <span class="kw">class</span> <span class="ty">HighScoreTests</span>
+{
+    [<span class="ty">Test</span>]
+    <span class="kw">public</span> <span class="kw">void</span> SavesANewBestScore()
+    {
+        <span class="ty">Stub</span>.Method(() =&gt; <span class="ty">PlayerPrefs</span>.GetInt(<span class="st">"best"</span>)).Returns(<span class="nu">10</span>);
+        <span class="ty">StubbedMethod</span> saved = <span class="ty">Stub</span>.Method(() =&gt; <span class="ty">PlayerPrefs</span>.SetInt(<span class="st">"best"</span>, <span class="ty">Arg</span>.Any&lt;<span class="kw">int</span>&gt;()));
+
+        <span class="ty">HighScore</span>.Submit(<span class="nu">25</span>);
+
+        <span class="ty">Assert</span>.That(saved.Calls, <span class="ty">Has</span>.Count.EqualTo(<span class="nu">1</span>));
+        <span class="ty">Assert</span>.That(saved.Calls[<span class="nu">0</span>].Arguments[<span class="nu">1</span>], <span class="ty">Is</span>.EqualTo(<span class="nu">25</span>));
+    }
+}</code></pre>
+<p><code>Arg.Any&lt;int&gt;()</code> matches any score, and <code>Arguments[1]</code> is the second argument of
+  <code>SetInt</code>. To record calls and let the real member run, use <code>Spy.Method</code> instead of a stub.</p>
+
+</section>
+
+<!-- ====================================== leak ==== -->
+<section id="leak">
+  <h2>Step 3: Read a leak warning</h2>
+<p>Delete the <code>Stub.Property</code> line from the first test and run it again. It fails, and the Console window
+  shows a warning:</p>
+<pre><code>Leak in MovementTests.StepMovesBySpeedTimesFrameTime: Time.deltaTime ran for real at Movement.cs:7. Stub it, or declare it real with Real.</code></pre>
+<p>Understudy warns whenever a test reaches a clock, a random value or global state that it didn't declare, the usual
+  causes of a test that passes on your machine and fails on another. <code>Real</code> declares a member that runs for real on
+  purpose.</p>
+
+</section>
+
+<!-- ====================================== next ==== -->
+<section id="next">
+  <h2>Next steps</h2>
+<ul>
+  <li><a href="../user-manual/pages/Test%20common%20Unity%20code.html">Test common Unity code</a>: components, singletons, input,
+    raycasts, events, coroutines, logs and scene loads.</li>
+  <li><a href="../user-manual/pages/Introduction%20to%20Understudy.html">Introduction to Understudy</a>: spies, stubs, fakes, woven code
+    and leaks, and how Understudy compares with NSubstitute and Moq.</li>
+  <li><a href="../user-manual/pages/Select%20a%20member.html">Select a member</a>: the entry point for each kind of member, one
+    instance or every instance, argument matchers.</li>
+  <li><a href="../user-manual/pages/Detect%20leaks.html">Detect leaks</a>: what leaks, and how to fix them.</li>
+  <li><a href="../user-manual/index.html">User Manual</a>: every feature of Understudy and its settings.</li>
+  <li><a href="../public-api/index.html">Public API</a>: every public type and member.</li>
+</ul>
+<p>For questions and bug reports, use the <a href="https://justetools.net/contact/">contact form</a> or email
+  <a href="mailto:justetools@gmail.com">justetools@gmail.com</a>. I answer within one business day.</p>
+
+</section>
+
+    <div class="doc-footer">Understudy v1.0.0</div>
+
+  </main>
+</body>
+</html>

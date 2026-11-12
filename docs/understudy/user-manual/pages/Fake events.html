@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Replace an event, raise it from the test, and check its handlers." />
+  <title>Understudy - Fake events</title>
+  <link rel="stylesheet" href="/assets/css/understudy.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Understudy</div><a href="../index.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Fake events</h1>
+      <div class="sub">Replace an event, raise it from the test, and check its handlers.</div>
+      <div class="guide-index">
+        <a href="#name">Name an event</a>
+        <a href="#fake">Fake an event</a>
+        <a href="#raise">Raise an event from the test</a>
+        <a href="#instances">Fake an event on every instance</a>
+        <a href="#spy">Check handlers and raises</a>
+        <a href="#delegates">Delegate fields and UnityEvents</a>
+      </div>
+    </div>
+
+<!-- ====================================== name ==== -->
+<section id="name">
+  <h2>Name an event</h2>
+<p>Outside its class, C# only lets you write an event before <code>+=</code> or <code>-=</code>. A selection
+  names an event the same way, with <code>Arg.Ignored</code> on the right:</p>
+<pre><code><span class="ty">Fake</span>.Event(() =&gt; <span class="ty">SceneManager</span>.sceneLoaded += <span class="ty">Arg</span>.Ignored);</code></pre>
+<p><code>Arg.Ignored</code> fits every event except one whose delegate returns a value and takes no parameters,
+  such as <code>Func&lt;bool&gt;</code>. For it, write the return type: <code>Arg.Ignored&lt;bool&gt;</code>. Code analysis
+  asks for it, with a fix.</p>
+
+</section>
+
+<!-- ====================================== fake ==== -->
+<section id="fake">
+  <h2>Fake an event</h2>
+<p>An event fake replaces the event's storage. Subscriptions in the code under test land in the fake and never reach the real
+  event, and when the code under test raises the event, the fake's handlers run. It starts with no handlers. An event the engine
+  raises, such as <code>Application.logMessageReceived</code>, never reaches the fake's handlers:</p>
+<pre><code><span class="cm">// User handlers never see the engine's own logs.</span>
+<span class="ty">Fake</span>.Event(() =&gt; <span class="ty">Application</span>.logMessageReceived += <span class="ty">Arg</span>.Ignored);</code></pre>
+<p>Declare the fake before the code under test subscribes: a handler subscribed earlier stays on the real event, where the
+  fake's <code>Raise</code> doesn't reach it.</p>
+
+</section>
+
+<!-- ====================================== raise ==== -->
+<section id="raise">
+  <h2>Raise an event from the test</h2>
+<p><code>Raise</code> invokes the handlers the code under test subscribed to the fake, and returns what the invocation
+  returns:</p>
+<pre><code><span class="ty">FakedEvent</span> sceneLoaded = <span class="ty">Fake</span>.Event(() =&gt; <span class="ty">SceneManager</span>.sceneLoaded += <span class="ty">Arg</span>.Ignored);
+hud.Init();
+sceneLoaded.Raise(scene, <span class="ty">LoadSceneMode</span>.Single);
+<span class="ty">Assert</span>.That(hud.Title, <span class="ty">Is</span>.EqualTo(<span class="st">"Level 1"</span>));</code></pre>
+<p>Its arguments must fit the event's delegate; code analysis checks them. With no handler subscribed, it does
+  nothing. A handler the test subscribes itself goes to the real event, since the test isn't woven: let the code under test
+  subscribe.</p>
+
+</section>
+
+<!-- ====================================== instances ==== -->
+<section id="instances">
+  <h2>Fake an event on every instance</h2>
+<p>On a <a href="Select%20a%20member.html#instance">table</a>, each instance's fake has its own handlers.
+  <code>EachRaise</code> raises the event on every instance:</p>
+<pre><code><span class="ty">FakedEventTable</span>&lt;<span class="ty">Enemy</span>&gt; killed = <span class="ty">Fake</span>.Event((<span class="ty">Enemy</span> enemy) =&gt; enemy.Killed += <span class="ty">Arg</span>.Ignored);
+wave.Spawn();
+killed[wave.Enemies[<span class="nu">2</span>]].Raise(<span class="nu">50</span>);   <span class="cm">// that enemy's handlers only</span>
+killed.EachRaise(<span class="nu">10</span>);                <span class="cm">// every enemy's handlers</span></code></pre>
+
+</section>
+
+<!-- ====================================== spy ==== -->
+<section id="spy">
+  <h2>Check handlers and raises</h2>
+<p>An event spy or fake has two lists. <code>Handlers</code> holds the handlers the code under test subscribed after the double
+  was created and hasn't unsubscribed. <code>Invocations</code> holds the raises the code under test made:</p>
+<pre><code><span class="ty">SpiedEvent</span> died = <span class="ty">Spy</span>.Event(() =&gt; player.Died += <span class="ty">Arg</span>.Ignored);
+hud.Show();
+hud.Hide();
+<span class="ty">Assert</span>.That(died.Handlers, <span class="ty">Is</span>.Empty);   <span class="cm">// the HUD unsubscribed when hidden</span>
+
+<span class="ty">SpiedEvent</span> changed = <span class="ty">Spy</span>.Event(() =&gt; score.Changed += <span class="ty">Arg</span>.Ignored);
+hud.Bind(score);
+score.Add(<span class="nu">10</span>);
+<span class="ty">Assert</span>.That(changed.Invocations[<span class="nu">0</span>].Arguments[<span class="nu">0</span>], <span class="ty">Is</span>.EqualTo(<span class="nu">10</span>));</code></pre>
+<p>Handlers subscribed before the spy existed are unknown to it. A raise is recorded even with no handler subscribed, but without its arguments, which C# never
+  evaluates then: <code>HadHandlers</code> is <code>false</code>, and reading <code>Arguments</code> throws. To check the arguments, subscribe a handler first.</p>
+<p>A raise from the test with <code>Raise</code> isn't an invocation: only what the code under test does is recorded.</p>
+
+</section>
+
+<!-- ====================================== delegates ==== -->
+<section id="delegates">
+  <h2>Delegate fields and UnityEvents</h2>
+<p>A field or property of a delegate type isn't an event. <code>Fake.Field</code> or <code>Fake.Property</code> stores
+  what it holds, and the test invokes it through <code>Value</code>. A <code>Method</code> selection on its
+  <code>Invoke</code> records its invocations:</p>
+<pre><code><span class="ty">SpiedMethod</span> deathInvoked = <span class="ty">Spy</span>.Method(() =&gt; player.OnDeath.Invoke(<span class="ty">Arg</span>.Any&lt;<span class="kw">int</span>&gt;()));</code></pre>
+<p>A <code>UnityEvent</code> isn't an event: select its <code>AddListener</code> and <code>Invoke</code> as methods, such
+  as
+  <code>() =&gt; button.onClick.AddListener(Arg.Any&lt;UnityAction&gt;())</code>. To check that an Inspector-wired
+  listener runs, refer to <a href="Check%20what%20the%20code%20under%20test%20did.html#engine">Calls from the engine</a>.</p>
+
+</section>
+
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="Check%20what%20the%20code%20under%20test%20did.html">Check what the code under test did</a></li>
+    <li><a href="../../public-api/index.html">Public API</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="Fake%20fields%20and%20properties.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Fake fields and properties</div>
+  </a>
+  <a class="next" href="Run%20members%20for%20real.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Run members for real</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Understudy v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

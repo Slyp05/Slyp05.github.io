@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="frame.css">
+<style>
+  svg { display: block; overflow: visible; font-family: Bahnschrift, "Segoe UI", sans-serif; }
+  svg .mono { font-family: "Cascadia Code", Consolas, monospace; }
+.stage { gap: 50px; }
+  .vs { display: grid; grid-template-columns: 800px 880px; gap: 20px; justify-content: center; align-items: start; }
+  .side { display: flex; flex-direction: column; align-items: center; gap: 22px; }
+  .label { font-size: 32px; margin: 0; }
+  .label.us { color: var(--card); }
+  .code.tline { align-self: center; margin-top: -10px; }
+  .side svg { height: 470px; }
+</style>
+</head>
+<body>
+<div class="head">
+  <h1>Test your game without rewriting it</h1>
+</div>
+<div class="stage">
+<div class="vs">
+  <div class="side">
+    <div class="label">Without Understudy</div>
+    <svg width="800" height="470" viewBox="0 0 800 470"><path d="M20 30 h320 l40 40 v380 h-360 Z" fill="#2a2d36" stroke="#4a4e59" stroke-width="4" stroke-linejoin="round"/><path d="M340 30 v40 h40" fill="none" stroke="#4a4e59" stroke-width="4" stroke-linejoin="round"/><text class="mono" x="48" y="80" font-size="30" fill="#c9ccd3">Mover.cs</text><rect x="48" y="116" width="200" height="15" rx="7.5" fill="#5a5f6b"/><rect x="48" y="148" width="30" height="15" rx="7.5" fill="#5a5f6b"/><rect x="88" y="180" width="170" height="15" rx="7.5" fill="#7fcf86"/><rect x="88" y="212" width="120" height="15" rx="7.5" fill="#e0525f"/><rect x="88" y="244" width="190" height="15" rx="7.5" fill="#7fcf86"/><rect x="128" y="276" width="150" height="15" rx="7.5" fill="#e0525f"/><rect x="128" y="308" width="160" height="15" rx="7.5" fill="#7fcf86"/><rect x="88" y="340" width="140" height="15" rx="7.5" fill="#7fcf86"/><rect x="48" y="372" width="30" height="15" rx="7.5" fill="#5a5f6b"/><circle cx="380" cy="30" r="30" fill="#e0525f"/><path d="M368 18 l24 24 M392 18 l-24 24" stroke="#15171c" stroke-width="7" stroke-linecap="round"/><path d="M440 30 h260 l40 40 v80 h-300 Z" fill="#2a2d36" stroke="#4a4e59" stroke-width="4" stroke-linejoin="round"/><path d="M700 30 v40 h40" fill="none" stroke="#4a4e59" stroke-width="4" stroke-linejoin="round"/><text class="mono" x="468" y="80" font-size="26" fill="#c9ccd3">IClock.cs</text><rect x="468" y="116" width="170" height="15" rx="7.5" fill="#7fcf86"/><text x="760" y="102" font-size="44" font-weight="700" fill="#7fcf86">+</text><path d="M440 175 h260 l40 40 v80 h-300 Z" fill="#2a2d36" stroke="#4a4e59" stroke-width="4" stroke-linejoin="round"/><path d="M700 175 v40 h40" fill="none" stroke="#4a4e59" stroke-width="4" stroke-linejoin="round"/><text class="mono" x="468" y="225" font-size="26" fill="#c9ccd3">UnityClock.cs</text><rect x="468" y="261" width="170" height="15" rx="7.5" fill="#7fcf86"/><text x="760" y="247" font-size="44" font-weight="700" fill="#7fcf86">+</text><path d="M440 320 h260 l40 40 v80 h-300 Z" fill="#2a2d36" stroke="#4a4e59" stroke-width="4" stroke-linejoin="round"/><path d="M700 320 v40 h40" fill="none" stroke="#4a4e59" stroke-width="4" stroke-linejoin="round"/><text class="mono" x="468" y="370" font-size="26" fill="#c9ccd3">FakeClock.cs</text><rect x="468" y="406" width="170" height="15" rx="7.5" fill="#7fcf86"/><text x="760" y="392" font-size="44" font-weight="700" fill="#7fcf86">+</text></svg>
+  </div>
+  <div class="side">
+    <div class="label us">With Understudy</div>
+    <svg width="800" height="470" viewBox="0 0 800 470"><path d="M220 30 h320 l40 40 v380 h-360 Z" fill="#2a2d36" stroke="#4a4e59" stroke-width="4" stroke-linejoin="round"/><path d="M540 30 v40 h40" fill="none" stroke="#4a4e59" stroke-width="4" stroke-linejoin="round"/><text class="mono" x="248" y="80" font-size="30" fill="#c9ccd3">Mover.cs</text><rect x="248" y="116" width="200" height="15" rx="7.5" fill="#5a5f6b"/><rect x="248" y="148" width="30" height="15" rx="7.5" fill="#5a5f6b"/><rect x="288" y="180" width="170" height="15" rx="7.5" fill="#5a5f6b"/><rect x="288" y="212" width="120" height="15" rx="7.5" fill="#5a5f6b"/><rect x="288" y="244" width="30" height="15" rx="7.5" fill="#5a5f6b"/><rect x="328" y="276" width="150" height="15" rx="7.5" fill="#5a5f6b"/><rect x="328" y="308" width="110" height="15" rx="7.5" fill="#5a5f6b"/><rect x="288" y="340" width="30" height="15" rx="7.5" fill="#5a5f6b"/><rect x="248" y="372" width="30" height="15" rx="7.5" fill="#5a5f6b"/><circle cx="580" cy="30" r="30" fill="#7fcf86"/><path d="M565 30 l10 11 l19 -22" stroke="#15171c" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <div class="code tline"><div class="file">MoverTests.cs</div><pre class="cs" style="font-size: 26px;">Stub.Property(() => Time.deltaTime).Returns(0.5f);</pre></div>
+  </div>
+</div>
+</div>
+<script src="highlight.js"></script>
+</body>
+</html>

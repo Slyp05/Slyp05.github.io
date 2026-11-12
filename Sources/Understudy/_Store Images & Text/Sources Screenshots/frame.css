@@ -1,0 +1,137 @@
+/* Shared frame for the Asset Store screenshots: a 1920x1280 page (3:2) on the cover's stage, rendered to 1950x1300. */
+:root {
+  /* The cover's back wall, spotlight and curtains. */
+  --wall: #15171c;
+  --wall-lt: #1f2128;
+  --beam: #fff3d6;
+  --velvet-dk: #4e0d14;
+  --velvet: #9c1f2b;
+  --velvet-lt: #b8303b;
+  /* Text on the wall. */
+  --title: #f2f0ea;
+  --text: #c9ccd3;
+  --dim: #8b909b;
+  --line: #333743;
+  /* Cardboard: the stand-in, so everything a test declares. */
+  --card: #d9b47c;
+  --card-dk: #c49a5f;
+  --card-ink: #2b2420;
+  /* The real props, so the code under test, which stays as it is. */
+  --real: #4a4e59;
+  --real-lt: #6b707c;
+  /* Outcomes. */
+  --fail: #e0525f;
+  --pass: #7fcf86;
+  /* Code card syntax colours. */
+  --code-bg: #0e0f13;
+  --code-text: #e4e2dc;
+  --code-key: #c7a6f0;
+  --code-type: #8fd3c8;
+  --code-method: #9cc3f5;
+  --code-num: #f5b48a;
+  --code-str: #a9dca1;
+  --code-comment: #7c8190;
+  --shadow: 0 34px 40px -28px rgba(0, 0, 0, 0.85);
+}
+html { margin: 0; padding: 0; width: 1920px; height: 1280px; overflow: hidden; background: var(--wall); }
+body {
+  margin: 0; padding: 0; width: 1920px; height: 1280px; overflow: hidden; position: relative;
+  font-family: Bahnschrift, "Segoe UI", sans-serif; color: var(--text);
+  background:
+    /* The spotlight beam from above, as on the cover. */
+    radial-gradient(ellipse 900px 1300px at 50% -200px, rgba(255, 243, 214, 0.075), transparent 70%),
+    linear-gradient(180deg, var(--wall) 0%, var(--wall-lt) 100%);
+}
+/* A strip of the cover's curtains at each side. */
+body::before, body::after {
+  content: ""; position: absolute; top: 0; bottom: 0; width: 46px; z-index: 0;
+  background: repeating-linear-gradient(90deg, var(--velvet-dk) 0px, var(--velvet) 9px, var(--velvet-lt) 15px, var(--velvet) 21px, var(--velvet-dk) 30px);
+}
+body::before { left: 0; box-shadow: inset -12px 0 18px -6px rgba(0, 0, 0, 0.55); }
+body::after { right: 0; box-shadow: inset 12px 0 18px -6px rgba(0, 0, 0, 0.55); }
+
+/* Headline block, top left: the title carries the slide, the optional line stays short. */
+.head { position: absolute; left: 110px; top: 96px; right: 110px; z-index: 1; }
+.head h1 { margin: 0; font-size: 92px; font-weight: 700; font-stretch: 75%; letter-spacing: 0.5px; line-height: 1.02; color: var(--title); }
+.head p { margin: 16px 0 0; font-size: 38px; font-weight: 400; font-stretch: 87.5%; color: #a3a8b2; line-height: 1.3; }
+
+/* Content stage under the headline. */
+.stage {
+  position: absolute; left: 110px; right: 110px; top: 330px; bottom: 100px; z-index: 1;
+  display: flex; flex-direction: column; justify-content: center; align-content: center;
+}
+
+/* Column labels, such as Without Understudy and With Understudy. */
+.label { font-size: 26px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--dim); margin: 0 0 16px; }
+
+/* Code card: a dark editor page with its file name on a bar. Test files take cardboard, the code under test the real props' grey. */
+.code { background: var(--code-bg); border-radius: 18px; box-shadow: var(--shadow); overflow: hidden; box-sizing: border-box; border: 2px solid #262932; }
+.code .file {
+  display: flex; align-items: center; gap: 12px; padding: 12px 26px; background: var(--card);
+  font-size: 25px; font-weight: 600; color: var(--card-ink); letter-spacing: 0.3px;
+}
+.code .file::before { content: ""; width: 13px; height: 13px; border-radius: 50%; background: var(--card-ink); opacity: 0.75; }
+.code.real .file { background: var(--real); color: #e8e6e1; }
+.code.real .file::before { background: #e8e6e1; }
+.code .file em { font-style: normal; font-weight: 400; opacity: 0.75; margin-left: auto; }
+.code pre {
+  margin: 0; padding: 22px 28px 24px; font-family: "Cascadia Code", "Cascadia Mono", Consolas, monospace; font-size: 27px;
+  line-height: 1.5; color: var(--code-text); white-space: pre; font-variant-ligatures: none;
+}
+.code.small pre { font-size: 23px; }
+.code pre .k { color: var(--code-key); }
+.code pre .t { color: var(--code-type); }
+.code pre .m { color: var(--code-method); }
+.code pre .n { color: var(--code-num); }
+.code pre .s { color: var(--code-str); }
+.code pre .c { color: var(--code-comment); font-style: italic; }
+.code pre .a { color: #ffffff; font-weight: 700; }
+/* What Understudy adds to a test: bold cardboard on a soft marker. */
+.code pre .u {
+  color: var(--card); font-weight: 700; border-radius: 6px;
+  background: rgba(217, 180, 124, 0.14); box-shadow: 0 0 0 4px rgba(217, 180, 124, 0.14);
+}
+.code pre .x { color: #7c8190; text-decoration: line-through; text-decoration-color: var(--fail); text-decoration-thickness: 3px; }
+.code pre .dim { opacity: 0.45; }
+
+/* Placeholder for an Editor capture still to take: the Unity dark skin's grey, labelled with the capture's name. */
+.ph {
+  position: relative; box-sizing: border-box; border-radius: 14px; background: #282828; border: 3px dashed #6e6e6e;
+  box-shadow: var(--shadow); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
+  color: #c4c4c4; text-align: center; padding: 30px;
+}
+.ph b { font-size: 32px; font-weight: 600; color: #e4e4e4; font-family: "Cascadia Code", Consolas, monospace; }
+.ph span { font-size: 24px; line-height: 1.4; color: #a8a8a8; max-width: 92%; font-family: "Segoe UI", sans-serif; }
+.ph::before { content: "Screenshot pending"; font-size: 19px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #8a8a8a; }
+
+/* An Editor or docs capture from Captures/, shown at its own aspect inside the box the slide gives it. */
+.shot { display: block; box-sizing: border-box; border-radius: 14px; box-shadow: var(--shadow); object-fit: contain; max-width: 100%; }
+.shot.cover { object-fit: cover; object-position: top left; }
+
+/* Outcome line under a visual. */
+.outcome { display: flex; align-items: center; gap: 16px; font-size: 32px; font-weight: 600; margin-top: 26px; color: var(--title); }
+.outcome::before { font-size: 36px; font-weight: 700; }
+.outcome.pass::before { content: "\2713"; color: var(--pass); }
+.outcome.fail { color: var(--fail); }
+.outcome.fail::before { content: "\2715"; color: var(--fail); }
+
+/* Short label pinned to a visual. */
+.tag {
+  position: absolute; font-size: 25px; font-weight: 600; color: var(--card-ink); background: var(--card); padding: 7px 18px; border-radius: 10px;
+  white-space: nowrap; box-shadow: var(--shadow);
+}
+.tag.real { background: var(--real); color: #e8e6e1; }
+
+/* Small caption. */
+.cap { font-size: 30px; font-weight: 600; color: var(--title); }
+.cap.dim { color: var(--dim); font-weight: 400; }
+
+/* A row of facts, each a short title and a line. */
+.facts { display: grid; gap: 26px 40px; }
+.fact { background: rgba(255, 255, 255, 0.035); border: 2px solid var(--line); border-radius: 16px; padding: 26px 30px; }
+.fact b { display: block; font-size: 34px; font-weight: 700; font-stretch: 87.5%; color: var(--title); margin-bottom: 8px; }
+.fact span { font-size: 27px; line-height: 1.35; color: var(--text); }
+.fact code { font-family: "Cascadia Code", Consolas, monospace; font-size: 0.9em; color: var(--card); }
+
+/* A lone line of code sits centred at its own width. */
+.code.line { align-self: center; max-width: 100%; }

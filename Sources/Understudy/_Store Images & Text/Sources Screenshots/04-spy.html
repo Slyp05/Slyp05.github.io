@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="frame.css">
+<style>
+  svg { display: block; overflow: visible; font-family: Bahnschrift, "Segoe UI", sans-serif; }
+  svg .mono { font-family: "Cascadia Code", Consolas, monospace; }
+.stage { gap: 50px; }
+</style>
+</head>
+<body>
+<div class="head">
+  <h1>Check what the code did</h1>
+</div>
+<div class="stage">
+<svg width="1200" height="360" viewBox="40 0 1200 360" style="align-self: center;"><rect x="40" y="60" width="420" height="100" rx="16" fill="#4a4e59"/><text class="mono" x="250.0" y="121.9" text-anchor="middle" font-size="34" fill="#e8e6e1">menu.Quit()</text><line x1="460" y1="110" x2="790.0" y2="110.0" stroke="#e4e2dc" stroke-width="4"/><polygon points="812,110 790.0,99.0 790.0,121.0" fill="#e4e2dc"/><rect x="820" y="60" width="420" height="100" rx="16" fill="#4a4e59"/><text class="mono" x="1030.0" y="121.9" text-anchor="middle" font-size="34" fill="#e8e6e1">game.Save()</text><text x="1030" y="200" text-anchor="middle" font-size="28" fill="#8b909b">runs for real</text><line x1="640" y1="110" x2="640" y2="250" stroke="#d9b47c" stroke-width="4" stroke-dasharray="10 8"/><rect x="470" y="250" width="340" height="90" rx="16" fill="#d9b47c"/><text x="640.0" y="305.5" text-anchor="middle" font-size="30" fill="#2b2420" font-weight="600">1 call recorded</text></svg><div class="code line"><pre class="cs" style="font-size: 34px;">saved = Spy.Method(() => game.Save());
+Assert.That(saved.Calls, Has.Count.EqualTo(1));</pre></div>
+</div>
+<script src="highlight.js"></script>
+</body>
+</html>

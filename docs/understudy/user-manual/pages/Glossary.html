@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="The terms the documentation uses." />
+  <title>Understudy - Glossary</title>
+  <link rel="stylesheet" href="/assets/css/understudy.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Understudy</div><a href="../index.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Glossary</h1>
+      <div class="sub">The terms the documentation uses.</div>
+    </div>
+
+<!-- ====================================== terms ==== -->
+<section id="terms">
+  <h2>Terms</h2>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Term</th><th scope="col">Definition</th></tr>
+    <tr><td>Access</td><td>A call, read or write the code under test makes to a member. A double records calls in <code>Calls</code>, and reads and writes in <code>Reads</code> and <code>Writes</code>.</td></tr>
+    <tr><td>Answer</td><td>What a stub does when it matches, set with <code>Returns</code> or <code>Do</code>, or <code>EachReturns</code> and <code>EachDo</code> on a table.</td></tr>
+    <tr><td>Assembly definition, test assembly</td><td>A file that compiles the scripts in its folder into an assembly of
+      their own. A test assembly is one that references the Test Framework.</td></tr>
+    <tr><td>Catch spy</td><td>A spy on the catch blocks the code under test enters with an exception type. Created with <code>Spy.Catch&lt;TException&gt;()</code>.</td></tr>
+    <tr><td>Compilation step</td><td>The part of Understudy that weaves your assemblies and reads the selections of test assemblies when Unity compiles scripts.</td></tr>
+    <tr><td>Content</td><td>The value one recorded read or write carried.</td></tr>
+    <tr><td>Declaration</td><td>A spy, stub, fake or <code>Real</code> a test creates. When several match an access, the last one declared decides.</td></tr>
+    <tr><td>Double</td><td>A spy, stub or fake, when the role doesn't matter.</td></tr>
+    <tr><td>Edit mode test, Play mode test</td><td>A test that runs in the Editor without entering Play mode, or one that
+      runs in Play mode, where Unity runs frames.</td></tr>
+    <tr><td>Element</td><td>An item written with <code>[]</code>: an array element or an indexer's value.</td></tr>
+    <tr><td>Entry point</td><td>The method of <code>Spy</code>, <code>Stub</code>, <code>Fake</code> or <code>Real</code> that names a kind of member: <code>Method</code>, <code>Constructor</code>, <code>Field</code>, <code>Property</code>, <code>Indexer</code> or <code>Event</code>.</td></tr>
+    <tr><td>Fake</td><td>A test double that replaces a member with a working in-memory stand-in: a stored value for a field or property, stored handlers for an event. Created with <code>Fake</code>.</td></tr>
+    <tr><td>Initial value</td><td>What a fake's stored value starts at in every test: its <code>initial</code> argument, a value or a factory.</td></tr>
+    <tr><td>Instance</td><td>The object a member is reached through.</td></tr>
+    <tr><td>Invocation</td><td>A raise of an event by the code under test, recorded in <code>Invocations</code>.</td></tr>
+    <tr><td>Leak</td><td>An access that ties a test to something outside it: a non-deterministic member or a global write the test didn't declare, or a real call to an overload of a member the test replaces.</td></tr>
+    <tr><td>Leak detection</td><td>The warnings about leaks.</td></tr>
+    <tr><td>Matcher</td><td>An argument or index that matches by rule: <code>Arg.Any</code>, <code>Arg.That</code>.</td></tr>
+    <tr><td>Member</td><td>A method, constructor, field, property, indexer, event or user-defined operator of a type.</td></tr>
+    <tr><td>Mock</td><td>No separate kind in Understudy: a stub replaces a member, and the test verifies calls through the
+      <code>Calls</code>, <code>Reads</code> and <code>Writes</code> any double records.</td></tr>
+    <tr><td>Narrow, broad</td><td>A selection that covers fewer accesses than another on the same member is narrower; one that covers more is broader.</td></tr>
+    <tr><td>Non-deterministic member</td><td>A member whose result differs between runs, machines or frames, declared with <code>[NonDeterministic]</code>.</td></tr>
+    <tr><td>Order</td><td>The sequence number of a recorded call, access, raise or catch, counted across every double in a test.</td></tr>
+    <tr><td>Real</td><td>A declaration that a member runs for real on purpose. It overrides the stubs and fakes declared before it, and leak detection doesn't warn about the accesses it covers.</td></tr>
+    <tr><td>Role</td><td>What a declaration does with a member: <code>Spy</code>, <code>Stub</code>, <code>Fake</code> or <code>Real</code>.</td></tr>
+    <tr><td>Selection</td><td>The lambda that names what a double or <code>Real</code> covers.</td></tr>
+    <tr><td>Spy</td><td>A test double that runs the real member and records what the code under test does with it. Created with <code>Spy</code>.</td></tr>
+    <tr><td>Stored value</td><td>What a field or property fake holds, read and written through <code>Value</code>.</td></tr>
+    <tr><td>Stub</td><td>A test double that replaces a member with answers your test sets, through <code>Returns</code> and <code>Do</code>. Created with <code>Stub</code>.</td></tr>
+    <tr><td>Table</td><td>The doubles of one member on every instance, one per instance, reached with the instance as its index. A selection whose lambda takes the instance as its parameter returns one.</td></tr>
+    <tr><td>Test double</td><td>Anything that stands in for a member during a test.</td></tr>
+    <tr><td>Test fixture</td><td>A class that holds tests. <code>[SetUp]</code> runs before each of its tests,
+      <code>[OneTimeSetUp]</code> once before all of them.</td></tr>
+    <tr><td>Woven</td><td>Code that Understudy rewrote so that tests can spy on, stub and fake its accesses.</td></tr>
+  </table>
+</div>
+
+</section>
+
+<div class="pager">
+  <a class="prev" href="Troubleshooting.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Troubleshooting</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Understudy v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

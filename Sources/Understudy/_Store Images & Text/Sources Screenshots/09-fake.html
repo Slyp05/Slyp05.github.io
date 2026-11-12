@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="frame.css">
+<style>
+.stage { gap: 60px; }
+  .values { display: grid; grid-template-columns: 480px 480px; gap: 80px; justify-content: center; }
+  .value { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 40px 30px; border-radius: 20px; border: 2px solid var(--line); background: rgba(255, 255, 255, 0.035); }
+  .value.card { border-color: rgba(217, 180, 124, 0.6); }
+  .value .k { font-size: 34px; color: var(--text); }
+  .value .v { font-family: "Cascadia Code", Consolas, monospace; font-size: 130px; font-weight: 700; color: #e4e2dc; line-height: 1; }
+  .value.card .v, .value.card .k { color: var(--card); }
+</style>
+</head>
+<body>
+<div class="head">
+  <h1>Global changes stay inside the test</h1>
+</div>
+<div class="stage">
+<div class="code line"><pre class="cs" style="font-size: 36px;">Fake.Property(() => Time.timeScale, initial: 1f);</pre></div>
+<div class="values">
+  <div class="value card"><svg width="90" height="90" viewBox="0 0 90 90"><rect x="14" y="10" width="22" height="70" rx="5" fill="#d9b47c"/><rect x="54" y="10" width="22" height="70" rx="5" fill="#d9b47c"/></svg><span class="v">0</span><span class="k">what the code sees</span></div>
+  <div class="value"><svg width="90" height="90" viewBox="0 0 90 90"><path d="M20 8 L80 45 L20 82 Z" fill="#e4e2dc"/></svg><span class="v">1</span><span class="k">the real time scale</span></div>
+</div>
+</div>
+<script src="highlight.js"></script>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Test common Unity code, select members, stub them, check what the code under test did, fake fields, properties and events, and run members for real." />
+  <title>Understudy - Write tests</title>
+  <link rel="stylesheet" href="/assets/css/understudy.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Understudy</div><a href="../index.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Write tests</h1>
+      <div class="sub">Test common Unity code, select members, stub them, check what the code under test did, fake fields, properties and events, and run members for real.</div>
+    </div>
+
+<p>A test with Understudy is an ordinary NUnit test: it declares spies, stubs and fakes, runs the code under test, and checks the
+  result with NUnit constraints. For ready examples of what game code reaches most often, start with
+  <a href="Test%20common%20Unity%20code.html">Test common Unity code</a>; each of its examples links to the page that
+  covers the feature in full.</p>
+
+<!-- ====================================== topics ==== -->
+<section id="topics">
+  <h2>Topics</h2>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Topic</th><th scope="col">Description</th></tr>
+    <tr><td><a href="Test%20common%20Unity%20code.html">Test common Unity code</a></td><td>Components, time, randomness, singletons, input, raycasts, events, coroutines, async code, logs, saves and scene loads.</td></tr>
+    <tr><td><a href="Select%20a%20member.html">Select a member</a></td><td>Name the member a spy, stub or fake covers, for one instance or every instance, with argument matchers.</td></tr>
+    <tr><td><a href="Stub%20members.html">Stub members</a></td><td>Replace methods, constructors, fields, properties and indexers with the answers your test sets.</td></tr>
+    <tr><td><a href="Check%20what%20the%20code%20under%20test%20did.html">Check what the code under test did</a></td><td>Spy on a member, and check what any spy, stub or fake recorded with NUnit constraints.</td></tr>
+    <tr><td><a href="Fake%20fields%20and%20properties.html">Fake fields and properties</a></td><td>Give a field or property a stored value the code under test reads and writes instead of the real one.</td></tr>
+    <tr><td><a href="Fake%20events.html">Fake events</a></td><td>Replace an event, raise it from the test, and check its handlers.</td></tr>
+    <tr><td><a href="Run%20members%20for%20real.html">Run members for real</a></td><td>Declare that a member runs for real on purpose, over a stub or fake or for leak detection.</td></tr>
+    <tr><td><a href="Spy%20on%20caught%20exceptions.html">Spy on caught exceptions</a></td><td>Check which exceptions the code under test catches, and what it does with them.</td></tr>
+    <tr><td><a href="Lifetime.html">Lifetime</a></td><td>When a spy, stub or fake starts and ends, and how each test starts it fresh.</td></tr>
+    <tr><td><a href="Share%20doubles%20between%20tests.html">Share doubles between tests</a></td><td>Group spies, stubs and fakes in a class of your own, and reuse it across tests and fixtures.</td></tr>
+  </table>
+</div>
+
+</section>
+
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="../../quick-usage-guide/index.html">Quick Usage Guide</a></li>
+    <li><a href="../../public-api/index.html">Public API</a></li>
+    <li><a href="Glossary.html">Glossary</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="Write%20your%20first%20test.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Write your first test</div>
+  </a>
+  <a class="next" href="Test%20common%20Unity%20code.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Test common Unity code</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Understudy v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

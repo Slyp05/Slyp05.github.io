@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="The errors, warnings and hints code analysis reports in your tests." />
+  <title>Understudy - Code analysis reference</title>
+  <link rel="stylesheet" href="/assets/css/understudy.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Understudy</div><a href="../index.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Code analysis reference</h1>
+      <div class="sub">The errors, warnings and hints code analysis reports in your tests.</div>
+      <div class="guide-index">
+        <a href="#reading">Diagnostic codes</a>
+        <a href="#errors">Errors</a>
+        <a href="#weaver">Errors from the compilation step</a>
+        <a href="#warnings">Warnings</a>
+        <a href="#suggestions">Hints</a>
+        <a href="#other">Other fixes</a>
+        <a href="#suppressing">Suppress a diagnostic</a>
+      </div>
+    </div>
+
+<!-- ====================================== reading ==== -->
+<section id="reading">
+  <h2>Diagnostic codes</h2>
+<p>Understudy checks the code of every test assembly, in your code editor as you type and in the
+  Console window when Unity compiles. Each message has a code: <code>UST00xx</code> codes are errors, <code>UST01xx</code> warnings and <code>UST02xx</code>
+  hints. Where a fix exists, your code editor offers it as a quick action.</p>
+<p>Your code editor shows these messages when it opens the project files Unity generates, as Visual Studio, Rider
+  and Visual Studio Code do with Unity's Visual Studio Editor or JetBrains Rider Editor package.</p>
+
+</section>
+
+<!-- ====================================== errors ==== -->
+<section id="errors">
+  <h2>Errors</h2>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Code</th><th scope="col">Message and fix</th></tr>
+    <tr id="ust0002"><td><code>UST0002</code></td><td><strong>A selection names a single member</strong><br>A selection is one method, constructor, field, property, element written with <code>[]</code>, event or user-defined operator. A built-in operator, such as <code>count + 1</code>, isn't a member, and a <code>const</code> is copied into the code, so no access to it remains. A local variable, a
+  method group, a block body, and a member that returns by reference, or takes or returns an open generic type, a pointer or a
+  <code>ref struct</code> such as <code>Span&lt;T&gt;</code>, can't be selected either.</td></tr>
+    <tr id="ust0005"><td><code>UST0005</code></td><td><strong>Arg.Ignored names an event in an Event selection</strong><br>An <code>Event</code> selection is a <code>+=</code> or <code>-=</code> of <code>Arg.Ignored</code> on an event, and <code>Arg.Ignored</code> means nothing anywhere else.</td></tr>
+    <tr id="ust0006"><td><code>UST0006</code></td><td><strong>A selection's lambda parameter stands for the instance</strong><br>A lambda parameter makes the selection cover every instance. It can't stand for an argument: use <code>Arg.Any</code> or <code>Arg.That</code>.</td></tr>
+    <tr id="ust0007"><td><code>UST0007</code></td><td><strong>Arg.Ignored cannot fit this event's delegate</strong><br>For a delegate with a return value and no parameters, write the return type: <code>Arg.Ignored&lt;bool&gt;</code>. Fix: <strong>Write Arg.Ignored&lt;T&gt;</strong>. When two events in an assembly have the same parameters and different return types, write every type argument.</td></tr>
+    <tr id="ust0008"><td><code>UST0008</code></td><td><strong>Raise's arguments do not fit the event</strong><br>The arguments of <code>Raise</code> and <code>EachRaise</code> must fit the event's delegate.</td></tr>
+    <tr id="ust0009"><td><code>UST0009</code></td><td><strong>An Arg matcher outside a selection</strong><br>A matcher only means something inside a selection's lambda. Anywhere else it does nothing, and it throws if it runs.</td></tr>
+    <tr id="ust0011"><td><code>UST0011</code></td><td><strong>An Arg matcher stands for a whole argument</strong><br>A matcher inside another expression, such as <code>new Ray(Arg.Any&lt;Vector3&gt;(), dir)</code>, or in place of the instance, matches nothing. Match the whole argument, and use a lambda parameter for every instance.</td></tr>
+    <tr id="ust0012"><td><code>UST0012</code></td><td><strong>The entry point names the kind of the member selected</strong><br><code>Method</code> takes a method, an operator or a conversion; <code>Constructor</code> a <code>new</code>; <code>Field</code> a field; <code>Property</code> a property; <code>Indexer</code> an element written with <code>[]</code>; <code>Event</code> a <code>+=</code> or <code>-=</code> of <code>Arg.Ignored</code>. A field selected with <code>Property</code>,
+  or a property with <code>Field</code>, is the most common case. Fix: <strong>Use</strong> followed by the entry point the message names, such as <strong>Use Property</strong>.</td></tr>
+    <tr id="ust0013"><td><code>UST0013</code></td><td><strong>A selection names a whole member</strong><br>A field of a struct, such as <code>player.stats.health</code>, is part of the member holding the struct: select <code>player.stats</code>. A field of the copy a property returns, such as <code>transform.position.x</code>, belongs to no code: select the property.</td></tr>
+    <tr id="ust0014"><td><code>UST0014</code></td><td><strong>A selection names a member as it is read</strong><br>Select <code>() =&gt; player.health</code>, not an assignment to it: the member's writes belong to the same double. A stub decides them with <code>Do</code>, a fake stores them, a spy records them in <code>Writes</code>.</td></tr>
+    <tr id="ust0015"><td><code>UST0015</code></td><td><strong>An answer's parameters do not fit the member</strong><br>An answer takes no parameters, or what each access passes: a call's arguments, an element's indices, then for <code>Do</code> on a field, a property or an element the value written. An answer set on a table with <code>EachReturns</code> or <code>EachDo</code> can also take the instance first.</td></tr>
+  </table>
+</div>
+
+</section>
+
+<!-- ====================================== weaver ==== -->
+<section id="weaver">
+  <h2>Errors from the compilation step</h2>
+<p>Understudy checks each selection again when Unity compiles your tests, so a mistake the code editor didn't show, such
+  as one in a file compiled outside it, still fails in the Console window with its UST code. <code>Fake.Method</code>,
+  <code>Stub.Event</code> and the other entry points a role doesn't have don't exist, so the C# compiler reports CS0117. Your code editor offers a fix that switches to a role that has the entry point,
+  such as <strong>Use Stub</strong>.</p>
+<p>The compilation step also reports two errors of its own:</p>
+<ul>
+  <li><code>Understudy: the definition of ... is missing, so no selection can name it.</code>: the compilation step can't load the assembly that declares the member. Restart the Editor. If the error persists, report the full message through the
+    <a href="https://justetools.net/contact/">contact form</a>.</li>
+  <li><code>Understudy: the type of this array is unknown here</code>: select the array through a field, a property or a
+    local of array type.</li>
+</ul>
+
+</section>
+
+<!-- ====================================== warnings ==== -->
+<section id="warnings">
+  <h2>Warnings</h2>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Code</th><th scope="col">Message and fix</th></tr>
+    <tr id="ust0101"><td><code>UST0101</code></td><td><strong>A constructor stub with no Returns</strong><br>A stub with nothing declared returns the C# default, so <code>new</code> returns <code>null</code>, which code never expects. Give it a <code>Returns</code>.</td></tr>
+  </table>
+</div>
+
+</section>
+
+<!-- ====================================== suggestions ==== -->
+<section id="suggestions">
+  <h2>Hints</h2>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Code</th><th scope="col">Message and fix</th></tr>
+    <tr id="ust0201"><td><code>UST0201</code></td><td><strong>A method call inside a selection</strong><br>A selection's expressions run at every access it is checked against. Hold the method's result in a local.</td></tr>
+    <tr id="ust0202"><td><code>UST0202</code></td><td><strong>An unused instance parameter</strong><br>Give a table's answer the instance as its first parameter only when it uses it. An answer with a single parameter of the instance's type receives the call's argument, not the instance.</td></tr>
+    <tr id="ust0203"><td><code>UST0203</code></td><td><strong>A broad declaration after a narrower one</strong><br>The last stub, fake or <code>Real</code> declared decides, so a broad one declared after a narrow one hides it. Declare the broad one first.</td></tr>
+    <tr id="ust0204"><td><code>UST0204</code></td><td><strong>A test reads a member it replaces</strong><br>A stub or fake decides the accesses the code under test makes, and the test's own read reaches the real member. Read the fake's <code>Value</code>, or check what the code under test did.</td></tr>
+  </table>
+</div>
+
+</section>
+
+<!-- ====================================== other ==== -->
+<section id="other">
+  <h2>Other fixes</h2>
+<p><code>Returns(null)</code> and <code>initial: null</code> don't compile (CS0121), since <code>null</code> fits both a
+  value and a computed value. Your code editor offers <strong>Write Returns((T)null)</strong> or
+  <strong>Write initial: (T)null</strong>.</p>
+<p>An answer's parameters need their types, since C# can't infer them from the selection.
+  <code>Returns(x =&gt; x + 1)</code> fails with CS1660, and <code>Do(x =&gt; { })</code> on a void call with CS1593. Your code editor
+  offers <strong>Write the parameter types</strong>.</p>
+
+</section>
+
+<!-- ====================================== suppressing ==== -->
+<section id="suppressing">
+  <h2>Suppress a diagnostic</h2>
+<p>Warnings and hints can be suppressed like any C# diagnostic, with <code>#pragma warning disable UST0201</code>
+  around the code, or with an <code>.editorconfig</code> rule. Errors mark code that can't work. Suppressing one only hides it: the compilation step still fails on a selection
+  error, and code with any other error throws when it runs.</p>
+
+</section>
+
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="Select%20a%20member.html">Select a member</a></li>
+    <li><a href="Stub%20members.html">Stub members</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="Project%20Settings%20reference.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Project Settings reference</div>
+  </a>
+  <a class="next" href="Troubleshooting.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Troubleshooting</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Understudy v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

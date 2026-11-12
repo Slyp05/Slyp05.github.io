@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Name the member a spy, stub or fake covers, for one instance or every instance, with argument matchers." />
+  <title>Understudy - Select a member</title>
+  <link rel="stylesheet" href="/assets/css/understudy.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Understudy</div><a href="../index.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Select a member</h1>
+      <div class="sub">Name the member a spy, stub or fake covers, for one instance or every instance, with argument matchers.</div>
+      <div class="guide-index">
+        <a href="#lambda">Selections</a>
+        <a href="#entry">Choose the entry point</a>
+        <a href="#instance">One instance or every instance</a>
+        <a href="#arguments">Match arguments</a>
+        <a href="#generic">Generic methods</a>
+        <a href="#inheritance">Virtual and interface members</a>
+        <a href="#structs">Fields of structs</a>
+        <a href="#private">Private members</a>
+      </div>
+    </div>
+
+<!-- ====================================== lambda ==== -->
+<section id="lambda">
+  <h2>Selections</h2>
+<p>Every spy, stub, fake and <code>Real</code> takes a selection: a lambda that contains one member, written the
+  way the code under test reaches it.</p>
+<pre><code><span class="ty">Stub</span>.Method(() =&gt; <span class="ty">Physics</span>.Raycast(origin, <span class="ty">Vector3</span>.down, <span class="nu">10f</span>));   <span class="cm">// a method</span>
+<span class="ty">Stub</span>.Property(() =&gt; <span class="ty">Camera</span>.main);                                <span class="cm">// a property</span>
+<span class="ty">Fake</span>.Field(() =&gt; player.health);                                 <span class="cm">// a field</span>
+<span class="ty">Spy</span>.Indexer(() =&gt; level.grid[<span class="nu">3</span>, <span class="nu">4</span>]);                             <span class="cm">// an element written with []</span>
+<span class="ty">Spy</span>.Event(() =&gt; player.Died += <span class="ty">Arg</span>.Ignored);                     <span class="cm">// an event</span></code></pre>
+<p>A selection names its outermost member: <code>() =&gt; Object.Destroy(enemy.gameObject)</code> selects <code>Destroy</code>, not
+  <code>gameObject</code>.</p>
+<p>The instance and the arguments inside the lambda are evaluated again at each access, so they see what the code under test
+  sees. <code>() =&gt; player.weapon.Fire()</code> covers the weapon the player holds at that moment, a stubbed weapon included.
+  To cover one weapon only, hold it in a local first:</p>
+<pre><code><span class="ty">Weapon</span> starter = player.weapon;
+<span class="ty">Stub</span>.Method(() =&gt; starter.Fire());</code></pre>
+<p>While a link in the chain is <code>null</code>, the selection covers nothing. For example, Edit mode tests often
+  run with no keyboard connected, so <code>Keyboard.current</code> is <code>null</code> and
+  <code>() =&gt; Keyboard.current.spaceKey.isPressed</code> has no key to cover. Add a keyboard in the test, and stub
+  <code>Keyboard.current</code> to return it:</p>
+<pre><code><span class="ty">Keyboard</span> keyboard = <span class="ty">InputSystem</span>.AddDevice&lt;<span class="ty">Keyboard</span>&gt;();
+<span class="ty">Stub</span>.Property(() =&gt; <span class="ty">Keyboard</span>.current).Returns(keyboard);
+<span class="ty">Stub</span>.Property(() =&gt; <span class="ty">Keyboard</span>.current.spaceKey.isPressed).Returns(<span class="kw">true</span>);
+
+<span class="cm">// ... run the code under test and check the result ...</span>
+
+<span class="ty">InputSystem</span>.RemoveDevice(keyboard);</code></pre>
+<p>Any other exception thrown inside the lambda also makes the selection cover nothing, and the Console shows a
+  warning that names the member and the exception.</p>
+
+</section>
+
+<!-- ====================================== entry ==== -->
+<section id="entry">
+  <h2>Choose the entry point</h2>
+<p>Each of <code>Spy</code>, <code>Stub</code>, <code>Fake</code> and <code>Real</code> has one entry point per kind of
+  member it covers, named after it:</p>
+<div class="table-scroll">
+  <table class="cmp">
+    <tr><th scope="col">Entry point</th><th scope="col">Selects</th><th scope="col">Spy</th><th scope="col">Stub</th><th scope="col">Fake</th><th scope="col">Real</th></tr>
+    <tr><td><code>Method</code></td><td>A method, a user-defined operator or conversion: <code>() =&gt; Random.Range(0, 10)</code>, <code>() =&gt; enemy == null</code></td><td>Yes</td><td>Yes</td><td></td><td>Yes</td></tr>
+    <tr><td><code>Constructor</code></td><td>A <code>new</code>: <code>() =&gt; new SaveSystem()</code></td><td>Yes</td><td>Yes</td><td></td><td>Yes</td></tr>
+    <tr><td><code>Field</code></td><td>A field, <code>readonly</code> included: <code>() =&gt; player.health</code></td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+    <tr><td><code>Property</code></td><td>A property, get-only included: <code>() =&gt; Time.deltaTime</code></td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+    <tr><td><code>Indexer</code></td><td>An element written with <code>[]</code>, arrays included: <code>() =&gt; level.grid[3, 4]</code></td><td>Yes</td><td>Yes</td><td></td><td>Yes</td></tr>
+    <tr><td><code>Event</code></td><td>An event, named by <code>+=</code> or <code>-=</code> with <code>Arg.Ignored</code>: <code>() =&gt; SceneManager.sceneLoaded += Arg.Ignored</code></td><td>Yes</td><td></td><td>Yes</td><td>Yes</td></tr>
+  </table>
+</div>
+<p>A field, a property or an element is selected as the code under test reads it, never as an assignment: its writes belong to
+  the same spy, stub or fake. Code analysis reports a wrong entry point as an error, with a fix that writes the right
+  one. For the list of errors, refer to <a href="Diagnostics.html">Code analysis reference</a>.</p>
+
+</section>
+
+<!-- ====================================== instance ==== -->
+<section id="instance">
+  <h2>One instance or every instance</h2>
+<p>A captured variable selects that instance only, and returns one spy, stub or fake. A lambda parameter selects every instance,
+  and returns a table: one double per instance, reached with the instance as its index.</p>
+<pre><code><span class="ty">StubbedMethod</span> stub = <span class="ty">Stub</span>.Method(() =&gt; playerBody.AddForce(<span class="ty">Arg</span>.Any&lt;<span class="ty">Vector3</span>&gt;()));                         <span class="cm">// this body only</span>
+<span class="ty">StubbedMethodTable</span>&lt;<span class="ty">Rigidbody</span>&gt; stubs = <span class="ty">Stub</span>.Method((<span class="ty">Rigidbody</span> body) =&gt; body.AddForce(<span class="ty">Arg</span>.Any&lt;<span class="ty">Vector3</span>&gt;()));   <span class="cm">// every body</span>
+stubs[enemyBody].Do(() =&gt; pushed++);                                                                    <span class="cm">// one of them</span></code></pre>
+<ul>
+  <li>A table lists what was recorded on every instance. To set one answer for every instance, refer to
+    <a href="Stub%20members.html#tables">Stub every instance</a>.</li>
+  <li>A selection takes at most one parameter: the instance. On a static member, it takes none.</li>
+  <li>For an extension method, the instance is its <code>this</code> argument:
+    <code>(List&lt;Enemy&gt; list) =&gt; list.Shuffle()</code>.</li>
+  <li>A struct instance matches by equality, like an argument.</li>
+</ul>
+
+</section>
+
+<!-- ====================================== arguments ==== -->
+<section id="arguments">
+  <h2>Match arguments</h2>
+<p>Every argument and index in a selection is a matcher:</p>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Argument</th><th scope="col">Matches</th></tr>
+    <tr><td>A value, such as <code>10f</code> or <code>Vector3.down</code></td><td>Arguments equal to it, as NUnit's <code>Is.EqualTo</code> compares them. Collections and <code>params</code> arrays compare item by item.</td></tr>
+    <tr><td><code>Arg.Any&lt;T&gt;()</code></td><td>Every argument.</td></tr>
+    <tr><td><code>Arg.That&lt;T&gt;(constraint)</code></td><td>Arguments that satisfy an NUnit constraint, such as <code>Arg.That&lt;float&gt;(Is.GreaterThan(50f))</code>.</td></tr>
+  </table>
+</div>
+<pre><code><span class="ty">Stub</span>.Method(() =&gt; <span class="ty">Physics</span>.Raycast(<span class="ty">Arg</span>.Any&lt;<span class="ty">Vector3</span>&gt;(), <span class="ty">Vector3</span>.down, <span class="ty">Arg</span>.Any&lt;<span class="kw">float</span>&gt;())).Returns(<span class="kw">false</span>);</code></pre>
+<p>An <code>out</code> or <code>ref</code> argument is written <code>out Arg.Any&lt;T&gt;()</code> or
+  <code>ref Arg.Any&lt;T&gt;()</code>, and never filters.</p>
+<p>A selection covers one overload: <code>Random.Range(0, 10)</code> and <code>Random.Range(0f, 1f)</code> are different
+  methods, and each needs a selection of its own. An optional parameter left out of a selection matches only its
+  default value. The calls a selection doesn't match run for real. A real call to another overload of a member the
+  test stubs or fakes is a leak. For more information, refer to <a href="Detect%20leaks.html">Detect leaks</a>.</p>
+<p>A matcher stands for a whole argument: <code>new Ray(Arg.Any&lt;Vector3&gt;(), dir)</code> is an error, and so is a
+  matcher in place of the instance or outside a selection.</p>
+
+</section>
+
+<!-- ====================================== generic ==== -->
+<section id="generic">
+  <h2>Generic methods</h2>
+<p>A generic method is selected with its type arguments. <code>(GameObject go) =&gt; go.GetComponent&lt;Rigidbody&gt;()</code>
+  covers <code>GetComponent&lt;Rigidbody&gt;</code> only, and each other type argument needs a selection of its own. A
+  call from generic code matches too: <code>GetComponent&lt;T&gt;()</code> inside a generic <code>Find&lt;T&gt;</code> of the code under test matches when
+  <code>T</code> is <code>Rigidbody</code>.</p>
+<p>The type of a matcher decides which overload the selection names. <code>Object.Instantiate</code> has a
+  non-generic overload, <code>Instantiate(Object)</code>, and a generic one, <code>Instantiate&lt;T&gt;(T)</code>. When
+  the code under test passes a <code>GameObject</code>, C# calls the generic one, so the selection must pass a
+  <code>GameObject</code> too:</p>
+<pre><code><span class="ty">GameObject</span> enemy = <span class="ty">Object</span>.Instantiate(enemyPrefab);           <span class="cm">// the code under test calls Instantiate&lt;GameObject&gt;</span>
+
+<span class="ty">Stub</span>.Method(() =&gt; <span class="ty">Object</span>.Instantiate(<span class="ty">Arg</span>.Any&lt;<span class="ty">GameObject</span>&gt;()));   <span class="cm">// selects Instantiate&lt;GameObject&gt;: matches</span>
+<span class="ty">Stub</span>.Method(() =&gt; <span class="ty">Object</span>.Instantiate(<span class="ty">Arg</span>.Any&lt;<span class="ty">Object</span>&gt;()));       <span class="cm">// selects Instantiate(Object): never matches</span></code></pre>
+
+</section>
+
+<!-- ====================================== inheritance ==== -->
+<section id="inheritance">
+  <h2>Virtual and interface members</h2>
+<p>A selection matches by the instance and by the method that runs, whatever type the call goes through:</p>
+<ul>
+  <li><code>(Weapon w) =&gt; w.Fire()</code> covers every weapon and every override of <code>Fire</code>.</li>
+  <li><code>(Pistol p) =&gt; p.Fire()</code> covers pistols only, also when the code under test calls them through a
+    <code>Weapon</code> variable.</li>
+  <li><code>(IDamageable d) =&gt; d.TakeDamage(Arg.Any&lt;int&gt;())</code> covers every implementation, also when the
+    code under test calls it on the concrete type.</li>
+</ul>
+<p>A <code>base.Fire()</code> inside an override is part of the call it extends, not a second call. A <code>new</code>
+  member that hides an inherited one is a different member.</p>
+
+</section>
+
+<!-- ====================================== structs ==== -->
+<section id="structs">
+  <h2>Fields of structs</h2>
+<p>A selection can't name a field inside a struct. Select the field or property that holds the struct instead:</p>
+<pre><code><span class="kw">public</span> <span class="kw">struct</span> <span class="ty">Stats</span> { <span class="kw">public</span> <span class="kw">int</span> health; <span class="kw">public</span> <span class="kw">int</span> armor; }
+<span class="kw">public</span> <span class="kw">class</span> <span class="ty">Player</span> { <span class="kw">public</span> <span class="ty">Stats</span> stats; }
+
+<span class="ty">Fake</span>.Field(() =&gt; player.stats.health);                                         <span class="cm">// error UST0013</span>
+<span class="ty">FakedField</span>&lt;<span class="ty">Stats</span>&gt; stats = <span class="ty">Fake</span>.Field(() =&gt; player.stats, initial: <span class="kw">new</span> <span class="ty">Stats</span> { health = <span class="nu">10</span> });</code></pre>
+<p>The fake holds the whole <code>Stats</code> value. When the code under test runs <code>stats.health += 5</code>, it
+  reads the fake's value, changes the copy and writes it back:</p>
+<pre><code>player.Heal(<span class="nu">5</span>);   <span class="cm">// stats.health += 5</span>
+<span class="ty">Assert</span>.That(stats.Value.health, <span class="ty">Is</span>.EqualTo(<span class="nu">15</span>));</code></pre>
+<p>A struct a property returns is a copy, so its fields belong to no member. Select the property:</p>
+<pre><code><span class="ty">Stub</span>.Field(() =&gt; enemy.transform.position.x);                                 <span class="cm">// error UST0013</span>
+<span class="ty">Stub</span>.Property(() =&gt; enemy.transform.position).Returns(<span class="kw">new</span> <span class="ty">Vector3</span>(<span class="nu">5f</span>, <span class="nu">0f</span>, <span class="nu">0f</span>));</code></pre>
+<p>For more information, refer to <a href="Fake%20fields%20and%20properties.html#structs">Structs changed in place</a>.</p>
+
+</section>
+
+<!-- ====================================== private ==== -->
+<section id="private">
+  <h2>Private members</h2>
+<p>A test can't name a <code>private</code> member, so it can't select one. Make the member
+  <code>internal</code>, and give the test assembly access with <code>InternalsVisibleTo</code>. For more information,
+  refer to <a href="Set%20up%20a%20test%20assembly.html#internal">Reach members that aren't public</a>.</p>
+
+</section>
+
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="Stub%20members.html">Stub members</a></li>
+    <li><a href="Diagnostics.html">Code analysis reference</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="Test%20common%20Unity%20code.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Test common Unity code</div>
+  </a>
+  <a class="next" href="Stub%20members.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Stub members</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Understudy v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

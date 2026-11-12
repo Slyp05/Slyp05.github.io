@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Spy on, stub and fake any member your Unity code reaches, without rearchitecting it for tests." />
+  <title>Understudy - Understudy User Manual</title>
+  <link rel="stylesheet" href="/assets/css/understudy.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Understudy</div><a href="index.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Understudy User Manual</h1>
+      <div class="sub">Spy on, stub and fake any member your Unity code reaches, without rearchitecting it for tests.</div>
+    </div>
+
+<p>Understudy is a mocking library for the Unity Test Framework. A test replaces any member the code under test reaches with a
+  stub or a fake, or watches it with a spy: <code>Time.deltaTime</code>, <code>Random.Range</code>, <code>Physics.Raycast</code>,
+  <code>Camera.main</code>, your own singletons, constructors, fields and events. The code under test needs no interfaces or
+  wrappers for it, because Understudy rewrites the code in the Editor so that each test decides how a member behaves. For what a
+  double can't reach, such as code Burst compiles or the engine's own state, refer to
+  <a href="pages/Woven%20code.html#reach">What a double doesn't reach</a>.</p>
+<p>Understudy also detects leaks: it warns when a test reaches a random value, a clock or global state that the test didn't declare, which makes the test depend on things outside it.</p>
+<p>This manual assumes you can write and run tests with the Unity Test Framework, which is based on NUnit. If you
+  can't, start with <a href="pages/Write%20your%20first%20test.html">Write your first test</a>, which writes a first test step by step, or refer to <a href="https://docs.unity3d.com/Manual/test-framework/test-framework-introduction.html">Unity Test
+  Framework</a> in the Unity Manual. If you already use NSubstitute or Moq, refer to
+  <a href="pages/Introduction%20to%20Understudy.html#compare">Compared with other mocking libraries</a>.</p>
+
+<!-- ====================================== sections ==== -->
+<section id="sections">
+  <h2>User Manual sections</h2>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Section</th><th scope="col">Description</th></tr>
+    <tr><td><a href="pages/Get%20started.html">Get started</a></td><td>Install Understudy, set up a test assembly, write a first test, and learn what spies, stubs, fakes and leaks are.</td></tr>
+    <tr><td><a href="pages/Write%20tests.html">Write tests</a></td><td>Test common Unity code, select members, stub them, check what the code under test did, fake fields, properties and events, run members for real, and control how long a double lasts.</td></tr>
+    <tr><td><a href="pages/Leaks%20and%20weaving.html">Leaks and weaving</a></td><td>Catch tests that depend on real global state, and understand how Understudy rewrites the code under test in the Editor.</td></tr>
+    <tr><td><a href="pages/Reference.html">Reference</a></td><td>Settings, code analysis messages, troubleshooting and terms.</td></tr>
+  </table>
+</div>
+
+</section>
+
+<!-- ====================================== contact ==== -->
+<section id="contact">
+  <h2>Contact</h2>
+<p>For questions and bug reports, use the <a href="https://justetools.net/contact/">contact form</a> or email
+  <a href="mailto:justetools@gmail.com">justetools@gmail.com</a>, with what you expected and what happened. I answer
+  within one business day.</p>
+<p>Understudy is distributed under the <a href="https://unity.com/legal/as-terms">Unity Asset Store EULA</a>.</p>
+
+</section>
+
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="../quick-usage-guide/index.html">Quick Usage Guide</a></li>
+    <li><a href="../public-api/index.html">Public API</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="next" href="pages/Get%20started.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Get started</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Understudy v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

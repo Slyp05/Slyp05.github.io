@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="What Stub entry points return: the member is replaced with the answers your test sets. Explained in Stub members." />
+  <title>Understudy - Public API - Stubs</title>
+  <link rel="stylesheet" href="/assets/css/understudy.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <nav>
+    <a href="../index.html">Overview</a>
+    <a class="nav-band" href="API%20-%20Entry%20points.html">Entry points</a>
+    <a class="nav-band" href="API%20-%20Spies.html">Spies</a>
+    <a class="nav-band active" href="API%20-%20Stubs.html" aria-current="page">Stubs</a>
+    <div class="nav-group">Methods</div>
+    <div class="nav-group-body">
+      <a href="#StubbedMethod"><span class="badge badge-class">sealed</span>StubbedMethod</a>
+      <a href="#StubbedMethodOfTResult"><span class="badge badge-class">sealed</span>StubbedMethod&lt;TResult&gt;</a>
+      <a href="#StubbedMethodTableOfTInstance"><span class="badge badge-class">sealed</span>StubbedMethodTable&lt;TInstance&gt;</a>
+      <a href="#StubbedMethodTableOfTInstanceTResult"><span class="badge badge-class">sealed</span>StubbedMethodTable&lt;TInstance, TResult&gt;</a>
+    </div>
+    <div class="nav-group">Constructors</div>
+    <div class="nav-group-body">
+      <a href="#StubbedConstructorOfTResult"><span class="badge badge-class">sealed</span>StubbedConstructor&lt;TResult&gt;</a>
+    </div>
+    <div class="nav-group">Fields</div>
+    <div class="nav-group-body">
+      <a href="#StubbedFieldOfTValue"><span class="badge badge-class">sealed</span>StubbedField&lt;TValue&gt;</a>
+      <a href="#StubbedFieldTableOfTInstanceTValue"><span class="badge badge-class">sealed</span>StubbedFieldTable&lt;TInstance, TValue&gt;</a>
+    </div>
+    <div class="nav-group">Properties</div>
+    <div class="nav-group-body">
+      <a href="#StubbedPropertyOfTValue"><span class="badge badge-class">sealed</span>StubbedProperty&lt;TValue&gt;</a>
+      <a href="#StubbedPropertyTableOfTInstanceTValue"><span class="badge badge-class">sealed</span>StubbedPropertyTable&lt;TInstance, TValue&gt;</a>
+    </div>
+    <div class="nav-group">Indexers</div>
+    <div class="nav-group-body">
+      <a href="#StubbedIndexerOfTValue"><span class="badge badge-class">sealed</span>StubbedIndexer&lt;TValue&gt;</a>
+      <a href="#StubbedIndexerTableOfTInstanceTValue"><span class="badge badge-class">sealed</span>StubbedIndexerTable&lt;TInstance, TValue&gt;</a>
+    </div>
+    <a class="nav-band" href="API%20-%20Fakes.html">Fakes</a>
+    <a class="nav-band" href="API%20-%20Recordings.html">Recordings</a>
+  </nav>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Public API <span class="tag">Stubs</span></h1>
+      <div class="sub">What Stub entry points return: the member is replaced with the answers your test sets. Explained in <a href="../../user-manual/pages/Stub%20members.html">Stub members</a>. Every list a stub returns is live: it follows what the code under test does as it runs. An answer with <code>out</code>, <code>ref</code> or <code>in</code> parameters binds to an overload Understudy generates into your test assembly: refer to <a href="../../user-manual/pages/Stub%20members.html#outref">Out and ref parameters</a>.</div>
+    </div>
+
+    <h2 class="api-group">Methods</h2>
+    <!-- StubbedMethod -->
+    <div class="type-section" id="StubbedMethod">
+      <div class="type-header"><h3>StubbedMethod</h3><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">A stub of a void method: the real member never runs, and each call the code under test makes that the selection matches is recorded. With nothing declared, a call does nothing. When it comes from a table, it covers its own instance only.</p>
+      <p class="type-desc"><span class="ex">Every member throws InvalidOperationException once the test or fixture this stub belongs to has finished. A method that takes an answer throws ArgumentNullException when it is null, and ArgumentException when its parameters fit none of the forms its row lists.</span></p>
+      <div class="member-group">
+        <div class="member-group-title">Members</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Recordings.html#CallList">CallList</a></span> <span class="mn">Calls</span> { get; }</th><td>The calls recorded, in the order the code under test made them.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="#StubbedMethod">StubbedMethod</a></span> <span class="mn">Do</span>(<span class="t">Action</span> replacement)</th><td>Replaces the call. The answer takes no parameters or the call's arguments. A throw in it makes the call throw. It replaces any previous answer. Overloads take up to 16 parameters.</td></tr>
+        </table>
+      </div>
+    </div>
+    <!-- StubbedMethodOfTResult -->
+    <div class="type-section" id="StubbedMethodOfTResult">
+      <div class="type-header"><h3>StubbedMethod&lt;TResult&gt;</h3><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">A stub of a method with a result: the real member never runs, and each call the code under test makes that the selection matches is recorded. With nothing declared, a call returns the type's default. When it comes from a table, it covers its own instance only.</p>
+      <p class="type-desc"><span class="ex">Every member throws InvalidOperationException once the test or fixture this stub belongs to has finished. A method that takes an answer throws ArgumentNullException when it is null, and ArgumentException when its parameters fit none of the forms its row lists.</span></p>
+      <div class="member-group">
+        <div class="member-group-title">Members</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Recordings.html#CallListOfTResult">CallList&lt;TResult&gt;</a></span> <span class="mn">Calls</span> { get; }</th><td>The calls recorded, in the order the code under test made them.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="#StubbedMethodOfTResult">StubbedMethod&lt;TResult&gt;</a></span> <span class="mn">Returns</span>(<span class="t">TResult</span> value, params <span class="t">TResult[]</span> then)</th><td>Returns these results, one per matched call on each instance; the last one repeats. It replaces any previous answer. <span class="ex">Throws ArgumentNullException when the second value is a <code>null</code> without a cast, as in <code>Returns(value, null)</code>: write <code>(T)null</code>.</span></td></tr>
+          <tr><th scope="row"><span class="t"><a href="#StubbedMethodOfTResult">StubbedMethod&lt;TResult&gt;</a></span> <span class="mn">Returns</span>(<span class="t">Func&lt;TResult&gt;</span> compute)</th><td>Returns a computed result. The answer takes no parameters or the call's arguments. A throw in it makes the call throw. It replaces any previous answer. Overloads take up to 16 parameters.</td></tr>
+        </table>
+      </div>
+    </div>
+    <!-- StubbedMethodTableOfTInstance -->
+    <div class="type-section" id="StubbedMethodTableOfTInstance">
+      <div class="type-header"><h3>StubbedMethodTable&lt;TInstance&gt;</h3><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">Stubs a void method on any instance: one stub per instance, reached by the instance. An answer set through the table serves every instance, existing and future, until one is set for a single instance; the last one set wins.</p>
+      <p class="type-desc"><span class="ex">Every member throws InvalidOperationException once the test or fixture this stub belongs to has finished. A method that takes an answer throws ArgumentNullException when it is null, and ArgumentException when its parameters fit none of the forms its row lists.</span></p>
+      <div class="member-group">
+        <div class="member-group-title">Members</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t"><a href="#StubbedMethod">StubbedMethod</a></span> <span class="mn">this</span>[<span class="t">TInstance</span> instance]</th><td>The stub of one instance's calls. <span class="ex">Throws ArgumentNullException when the instance is null.</span></td></tr>
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Recordings.html#CallList">CallList</a></span> <span class="mn">Calls</span> { get; }</th><td>The calls recorded on every instance, in the order the code under test made them, each with its instance.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="#StubbedMethodTableOfTInstance">StubbedMethodTable&lt;TInstance&gt;</a></span> <span class="mn">EachDo</span>(<span class="t">Action</span> replacement)</th><td>Replaces the call on every instance. The answer takes no parameters, the call's arguments, or the instance then the arguments. A throw in it makes the call throw. It replaces any previous answer, for every instance. Overloads take up to 16 parameters.</td></tr>
+        </table>
+      </div>
+    </div>
+    <!-- StubbedMethodTableOfTInstanceTResult -->
+    <div class="type-section" id="StubbedMethodTableOfTInstanceTResult">
+      <div class="type-header"><h3>StubbedMethodTable&lt;TInstance, TResult&gt;</h3><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">Stubs a method with a result on any instance: one stub per instance, reached by the instance. An answer set through the table serves every instance, existing and future, until one is set for a single instance; the last one set wins.</p>
+      <p class="type-desc"><span class="ex">Every member throws InvalidOperationException once the test or fixture this stub belongs to has finished. A method that takes an answer throws ArgumentNullException when it is null, and ArgumentException when its parameters fit none of the forms its row lists.</span></p>
+      <div class="member-group">
+        <div class="member-group-title">Members</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t"><a href="#StubbedMethodOfTResult">StubbedMethod&lt;TResult&gt;</a></span> <span class="mn">this</span>[<span class="t">TInstance</span> instance]</th><td>The stub of one instance's calls. <span class="ex">Throws ArgumentNullException when the instance is null.</span></td></tr>
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Recordings.html#CallListOfTResult">CallList&lt;TResult&gt;</a></span> <span class="mn">Calls</span> { get; }</th><td>The calls recorded on every instance, in the order the code under test made them, each with its instance.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="#StubbedMethodTableOfTInstanceTResult">StubbedMethodTable&lt;TInstance, TResult&gt;</a></span> <span class="mn">EachReturns</span>(<span class="t">TResult</span> value, params <span class="t">TResult[]</span> then)</th><td>Returns these results on every instance, each instance with its own sequence; the last one repeats. It replaces any previous answer, for every instance. <span class="ex">Throws ArgumentNullException when the second value is a <code>null</code> without a cast, as in <code>Returns(value, null)</code>: write <code>(T)null</code>.</span></td></tr>
+          <tr><th scope="row"><span class="t"><a href="#StubbedMethodTableOfTInstanceTResult">StubbedMethodTable&lt;TInstance, TResult&gt;</a></span> <span class="mn">EachReturns</span>(<span class="t">Func&lt;TResult&gt;</span> compute)</th><td>Returns a computed result on every instance. The answer takes no parameters, the call's arguments, or the instance then the arguments. A throw in it makes the call throw. It replaces any previous answer, for every instance. Overloads take up to 16 parameters.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <h2 class="api-group">Constructors</h2>
+    <!-- StubbedConstructorOfTResult -->
+    <div class="type-section" id="StubbedConstructorOfTResult">
+      <div class="type-header"><h3>StubbedConstructor&lt;TResult&gt;</h3><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">A stub of a constructor: the real member never runs, and each call the code under test makes that the selection matches is recorded. With nothing declared, a call returns null.</p>
+      <p class="type-desc"><span class="ex">Every member throws InvalidOperationException once the test or fixture this stub belongs to has finished. A method that takes an answer throws ArgumentNullException when it is null, and ArgumentException when its parameters fit none of the forms its row lists.</span></p>
+      <div class="member-group">
+        <div class="member-group-title">Members</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Recordings.html#CallListOfTResult">CallList&lt;TResult&gt;</a></span> <span class="mn">Calls</span> { get; }</th><td>The calls recorded, in the order the code under test made them.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="#StubbedConstructorOfTResult">StubbedConstructor&lt;TResult&gt;</a></span> <span class="mn">Returns</span>(<span class="t">TResult</span> value, params <span class="t">TResult[]</span> then)</th><td>Returns these results, one per matched call; the last one repeats. It replaces any previous answer. <span class="ex">Throws ArgumentNullException when the second value is a <code>null</code> without a cast, as in <code>Returns(value, null)</code>: write <code>(T)null</code>.</span></td></tr>
+          <tr><th scope="row"><span class="t"><a href="#StubbedConstructorOfTResult">StubbedConstructor&lt;TResult&gt;</a></span> <span class="mn">Returns</span>(<span class="t">Func&lt;TResult&gt;</span> compute)</th><td>Returns a computed result. The answer takes no parameters or the call's arguments. A throw in it makes the call throw. It replaces any previous answer. Overloads take up to 16 parameters.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <h2 class="api-group">Fields</h2>
+    <!-- StubbedFieldOfTValue -->
+    <div class="type-section" id="StubbedFieldOfTValue">
+      <div class="type-header"><h3>StubbedField&lt;TValue&gt;</h3><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">A stub of a field: the real member is never read or written. <code>Returns</code> decides what reads return and <code>Do</code> what writes do; with nothing declared, a read returns the type's default and a write does nothing. A selection through a chain follows the instance the chain reaches at each access; when it comes from a table, it covers its own instance only.</p>
+      <p class="type-desc"><span class="ex">Every member throws InvalidOperationException once the test or fixture this stub belongs to has finished. A method that takes an answer throws ArgumentNullException when it is null, and ArgumentException when its parameters fit none of the forms its row lists.</span></p>
+      <div class="member-group">
+        <div class="member-group-title">Members</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Recordings.html#AccessListOfTValue">AccessList&lt;TValue&gt;</a></span> <span class="mn">Reads</span> { get; }</th><td>The reads recorded, in the order the code under test made them.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Recordings.html#AccessListOfTValue">AccessList&lt;TValue&gt;</a></span> <span class="mn">Writes</span> { get; }</th><td>The writes recorded, in the order the code under test made them.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="#StubbedFieldOfTValue">StubbedField&lt;TValue&gt;</a></span> <span class="mn">Returns</span>(<span class="t">TValue</span> value, params <span class="t">TValue[]</span> then)</th><td>Reads return these values, one per read on each instance; the last one repeats. It replaces any previous answer on reads. <span class="ex">Throws ArgumentNullException when the second value is a <code>null</code> without a cast, as in <code>Returns(value, null)</code>: write <code>(T)null</code>.</span></td></tr>
+          <tr><th scope="row"><span class="t"><a href="#StubbedFieldOfTValue">StubbedField&lt;TValue&gt;</a></span> <span class="mn">Returns</span>(<span class="t">Func&lt;TValue&gt;</span> compute)</th><td>Reads return a computed value. The answer takes no parameters. A throw in it makes the read throw. It replaces any previous answer on reads.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="#StubbedFieldOfTValue">StubbedField&lt;TValue&gt;</a></span> <span class="mn">Do</span>(<span class="t">Action</span> replacement)</th><td>Replaces writes. The answer takes no parameters or the value written. A throw in it makes the write throw. It replaces any previous answer on writes.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="#StubbedFieldOfTValue">StubbedField&lt;TValue&gt;</a></span> <span class="mn">Do</span>(<span class="t">Action&lt;TValue&gt;</span> replacement)</th><td>Replaces writes. The answer takes no parameters or the value written. A throw in it makes the write throw. It replaces any previous answer on writes.</td></tr>
+        </table>
+      </div>
+    </div>
+    <!-- StubbedFieldTableOfTInstanceTValue -->
+    <div class="type-section" id="StubbedFieldTableOfTInstanceTValue">
+      <div class="type-header"><h3>StubbedFieldTable&lt;TInstance, TValue&gt;</h3><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">Stubs a field on any instance: one stub per instance, reached by the instance. An answer set through the table serves every instance, existing and future, until one is set for a single instance; the last one set wins.</p>
+      <p class="type-desc"><span class="ex">Every member throws InvalidOperationException once the test or fixture this stub belongs to has finished. A method that takes an answer throws ArgumentNullException when it is null, and ArgumentException when its parameters fit none of the forms its row lists.</span></p>
+      <div class="member-group">
+        <div class="member-group-title">Members</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t"><a href="#StubbedFieldOfTValue">StubbedField&lt;TValue&gt;</a></span> <span class="mn">this</span>[<span class="t">TInstance</span> instance]</th><td>The stub of one instance. <span class="ex">Throws ArgumentNullException when the instance is null.</span></td></tr>
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Recordings.html#AccessListOfTValue">AccessList&lt;TValue&gt;</a></span> <span class="mn">Reads</span> { get; }</th><td>The reads recorded on every instance, in the order the code under test made them, each with its instance.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Recordings.html#AccessListOfTValue">AccessList&lt;TValue&gt;</a></span> <span class="mn">Writes</span> { get; }</th><td>The writes recorded on every instance, in the order the code under test made them, each with its instance.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="#StubbedFieldTableOfTInstanceTValue">StubbedFieldTable&lt;TInstance, TValue&gt;</a></span> <span class="mn">EachReturns</span>(<span class="t">TValue</span> value, params <span class="t">TValue[]</span> then)</th><td>Reads on every instance return these values, each instance with its own sequence; the last one repeats. It replaces any previous answer on reads, for every instance. <span class="ex">Throws ArgumentNullException when the second value is a <code>null</code> without a cast, as in <code>Returns(value, null)</code>: write <code>(T)null</code>.</span></td></tr>
+          <tr><th scope="row"><span class="t"><a href="#StubbedFieldTableOfTInstanceTValue">StubbedFieldTable&lt;TInstance, TValue&gt;</a></span> <span class="mn">EachReturns</span>(<span class="t">Func&lt;TValue&gt;</span> compute)</th><td>Reads on every instance return a computed value. The answer takes no parameters or the instance. A throw in it makes the read throw. It replaces any previous answer on reads, for every instance.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="#StubbedFieldTableOfTInstanceTValue">StubbedFieldTable&lt;TInstance, TValue&gt;</a></span> <span class="mn">EachReturns</span>(<span class="t">Func&lt;TInstance, TValue&gt;</span> compute)</th><td>Reads on every instance return a computed value. The answer takes no parameters or the instance. A throw in it makes the read throw. It replaces any previous answer on reads, for every instance.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="#StubbedFieldTableOfTInstanceTValue">StubbedFieldTable&lt;TInstance, TValue&gt;</a></span> <span class="mn">EachDo</span>(<span class="t">Action</span> replacement)</th><td>Replaces writes on every instance. The answer takes no parameters, the value written, or the instance then the value. A throw in it makes the write throw. It replaces any previous answer on writes, for every instance.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="#StubbedFieldTableOfTInstanceTValue">StubbedFieldTable&lt;TInstance, TValue&gt;</a></span> <span class="mn">EachDo</span>(<span class="t">Action&lt;TValue&gt;</span> replacement)</th><td>Replaces writes on every instance. The answer takes no parameters, the value written, or the instance then the value. A throw in it makes the write throw. It replaces any previous answer on writes, for every instance.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="#StubbedFieldTableOfTInstanceTValue">StubbedFieldTable&lt;TInstance, TValue&gt;</a></span> <span class="mn">EachDo</span>(<span class="t">Action&lt;TInstance, TValue&gt;</span> replacement)</th><td>Replaces writes on every instance. The answer takes no parameters, the value written, or the instance then the value. A throw in it makes the write throw. It replaces any previous answer on writes, for every instance.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <h2 class="api-group">Properties</h2>
+    <!-- StubbedPropertyOfTValue -->
+    <div class="type-section" id="StubbedPropertyOfTValue">
+      <div class="type-header"><h3>StubbedProperty&lt;TValue&gt;</h3><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">A stub of a property: the real member is never read or written. <code>Returns</code> decides what reads return and <code>Do</code> what writes do; with nothing declared, a read returns the type's default and a write does nothing. A selection through a chain follows the instance the chain reaches at each access; when it comes from a table, it covers its own instance only.</p>
+      <p class="type-desc"><span class="ex">Every member throws InvalidOperationException once the test or fixture this stub belongs to has finished. A method that takes an answer throws ArgumentNullException when it is null, and ArgumentException when its parameters fit none of the forms its row lists.</span></p>
+      <div class="member-group">
+        <div class="member-group-title">Members</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Recordings.html#AccessListOfTValue">AccessList&lt;TValue&gt;</a></span> <span class="mn">Reads</span> { get; }</th><td>The reads recorded, in the order the code under test made them.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Recordings.html#AccessListOfTValue">AccessList&lt;TValue&gt;</a></span> <span class="mn">Writes</span> { get; }</th><td>The writes recorded, in the order the code under test made them.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="#StubbedPropertyOfTValue">StubbedProperty&lt;TValue&gt;</a></span> <span class="mn">Returns</span>(<span class="t">TValue</span> value, params <span class="t">TValue[]</span> then)</th><td>Reads return these values, one per read on each instance; the last one repeats. It replaces any previous answer on reads. <span class="ex">Throws ArgumentNullException when the second value is a <code>null</code> without a cast, as in <code>Returns(value, null)</code>: write <code>(T)null</code>.</span></td></tr>
+          <tr><th scope="row"><span class="t"><a href="#StubbedPropertyOfTValue">StubbedProperty&lt;TValue&gt;</a></span> <span class="mn">Returns</span>(<span class="t">Func&lt;TValue&gt;</span> compute)</th><td>Reads return a computed value. The answer takes no parameters. A throw in it makes the read throw. It replaces any previous answer on reads.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="#StubbedPropertyOfTValue">StubbedProperty&lt;TValue&gt;</a></span> <span class="mn">Do</span>(<span class="t">Action</span> replacement)</th><td>Replaces writes. The answer takes no parameters or the value written. A throw in it makes the write throw. It replaces any previous answer on writes.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="#StubbedPropertyOfTValue">StubbedProperty&lt;TValue&gt;</a></span> <span class="mn">Do</span>(<span class="t">Action&lt;TValue&gt;</span> replacement)</th><td>Replaces writes. The answer takes no parameters or the value written. A throw in it makes the write throw. It replaces any previous answer on writes.</td></tr>
+        </table>
+      </div>
+    </div>
+    <!-- StubbedPropertyTableOfTInstanceTValue -->
+    <div class="type-section" id="StubbedPropertyTableOfTInstanceTValue">
+      <div class="type-header"><h3>StubbedPropertyTable&lt;TInstance, TValue&gt;</h3><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">Stubs a property on any instance: one stub per instance, reached by the instance. An answer set through the table serves every instance, existing and future, until one is set for a single instance; the last one set wins.</p>
+      <p class="type-desc"><span class="ex">Every member throws InvalidOperationException once the test or fixture this stub belongs to has finished. A method that takes an answer throws ArgumentNullException when it is null, and ArgumentException when its parameters fit none of the forms its row lists.</span></p>
+      <div class="member-group">
+        <div class="member-group-title">Members</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t"><a href="#StubbedPropertyOfTValue">StubbedProperty&lt;TValue&gt;</a></span> <span class="mn">this</span>[<span class="t">TInstance</span> instance]</th><td>The stub of one instance. <span class="ex">Throws ArgumentNullException when the instance is null.</span></td></tr>
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Recordings.html#AccessListOfTValue">AccessList&lt;TValue&gt;</a></span> <span class="mn">Reads</span> { get; }</th><td>The reads recorded on every instance, in the order the code under test made them, each with its instance.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Recordings.html#AccessListOfTValue">AccessList&lt;TValue&gt;</a></span> <span class="mn">Writes</span> { get; }</th><td>The writes recorded on every instance, in the order the code under test made them, each with its instance.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="#StubbedPropertyTableOfTInstanceTValue">StubbedPropertyTable&lt;TInstance, TValue&gt;</a></span> <span class="mn">EachReturns</span>(<span class="t">TValue</span> value, params <span class="t">TValue[]</span> then)</th><td>Reads on every instance return these values, each instance with its own sequence; the last one repeats. It replaces any previous answer on reads, for every instance. <span class="ex">Throws ArgumentNullException when the second value is a <code>null</code> without a cast, as in <code>Returns(value, null)</code>: write <code>(T)null</code>.</span></td></tr>
+          <tr><th scope="row"><span class="t"><a href="#StubbedPropertyTableOfTInstanceTValue">StubbedPropertyTable&lt;TInstance, TValue&gt;</a></span> <span class="mn">EachReturns</span>(<span class="t">Func&lt;TValue&gt;</span> compute)</th><td>Reads on every instance return a computed value. The answer takes no parameters or the instance. A throw in it makes the read throw. It replaces any previous answer on reads, for every instance.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="#StubbedPropertyTableOfTInstanceTValue">StubbedPropertyTable&lt;TInstance, TValue&gt;</a></span> <span class="mn">EachReturns</span>(<span class="t">Func&lt;TInstance, TValue&gt;</span> compute)</th><td>Reads on every instance return a computed value. The answer takes no parameters or the instance. A throw in it makes the read throw. It replaces any previous answer on reads, for every instance.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="#StubbedPropertyTableOfTInstanceTValue">StubbedPropertyTable&lt;TInstance, TValue&gt;</a></span> <span class="mn">EachDo</span>(<span class="t">Action</span> replacement)</th><td>Replaces writes on every instance. The answer takes no parameters, the value written, or the instance then the value. A throw in it makes the write throw. It replaces any previous answer on writes, for every instance.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="#StubbedPropertyTableOfTInstanceTValue">StubbedPropertyTable&lt;TInstance, TValue&gt;</a></span> <span class="mn">EachDo</span>(<span class="t">Action&lt;TValue&gt;</span> replacement)</th><td>Replaces writes on every instance. The answer takes no parameters, the value written, or the instance then the value. A throw in it makes the write throw. It replaces any previous answer on writes, for every instance.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="#StubbedPropertyTableOfTInstanceTValue">StubbedPropertyTable&lt;TInstance, TValue&gt;</a></span> <span class="mn">EachDo</span>(<span class="t">Action&lt;TInstance, TValue&gt;</span> replacement)</th><td>Replaces writes on every instance. The answer takes no parameters, the value written, or the instance then the value. A throw in it makes the write throw. It replaces any previous answer on writes, for every instance.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <h2 class="api-group">Indexers</h2>
+    <!-- StubbedIndexerOfTValue -->
+    <div class="type-section" id="StubbedIndexerOfTValue">
+      <div class="type-header"><h3>StubbedIndexer&lt;TValue&gt;</h3><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">A stub of an element written with []: the real member is never read or written. <code>Returns</code> decides what reads return and <code>Do</code> what writes do; with nothing declared, a read returns the type's default and a write does nothing. A selection through a chain follows the instance the chain reaches at each access; when it comes from a table, it covers its own instance only.</p>
+      <p class="type-desc"><span class="ex">Every member throws InvalidOperationException once the test or fixture this stub belongs to has finished. A method that takes an answer throws ArgumentNullException when it is null, and ArgumentException when its parameters fit none of the forms its row lists.</span></p>
+      <div class="member-group">
+        <div class="member-group-title">Members</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Recordings.html#AccessListOfTValue">AccessList&lt;TValue&gt;</a></span> <span class="mn">Reads</span> { get; }</th><td>The reads recorded, in the order the code under test made them.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Recordings.html#AccessListOfTValue">AccessList&lt;TValue&gt;</a></span> <span class="mn">Writes</span> { get; }</th><td>The writes recorded, in the order the code under test made them.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="#StubbedIndexerOfTValue">StubbedIndexer&lt;TValue&gt;</a></span> <span class="mn">Returns</span>(<span class="t">TValue</span> value, params <span class="t">TValue[]</span> then)</th><td>Reads return these values, one per read on each instance; the last one repeats. It replaces any previous answer on reads. <span class="ex">Throws ArgumentNullException when the second value is a <code>null</code> without a cast, as in <code>Returns(value, null)</code>: write <code>(T)null</code>.</span></td></tr>
+          <tr><th scope="row"><span class="t"><a href="#StubbedIndexerOfTValue">StubbedIndexer&lt;TValue&gt;</a></span> <span class="mn">Returns</span>(<span class="t">Func&lt;TValue&gt;</span> compute)</th><td>Reads return a computed value. The answer takes no parameters or the indices. A throw in it makes the read throw. It replaces any previous answer on reads. Overloads take up to 16 parameters.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="#StubbedIndexerOfTValue">StubbedIndexer&lt;TValue&gt;</a></span> <span class="mn">Do</span>(<span class="t">Action</span> replacement)</th><td>Replaces writes. The answer takes no parameters, or the indices then the value written. A throw in it makes the write throw. It replaces any previous answer on writes. Overloads take up to 16 parameters.</td></tr>
+        </table>
+      </div>
+    </div>
+    <!-- StubbedIndexerTableOfTInstanceTValue -->
+    <div class="type-section" id="StubbedIndexerTableOfTInstanceTValue">
+      <div class="type-header"><h3>StubbedIndexerTable&lt;TInstance, TValue&gt;</h3><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">Stubs an element written with [] on any instance: one stub per instance, reached by the instance. An answer set through the table serves every instance, existing and future, until one is set for a single instance; the last one set wins.</p>
+      <p class="type-desc"><span class="ex">Every member throws InvalidOperationException once the test or fixture this stub belongs to has finished. A method that takes an answer throws ArgumentNullException when it is null, and ArgumentException when its parameters fit none of the forms its row lists.</span></p>
+      <div class="member-group">
+        <div class="member-group-title">Members</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t"><a href="#StubbedIndexerOfTValue">StubbedIndexer&lt;TValue&gt;</a></span> <span class="mn">this</span>[<span class="t">TInstance</span> instance]</th><td>The stub of one instance. <span class="ex">Throws ArgumentNullException when the instance is null.</span></td></tr>
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Recordings.html#AccessListOfTValue">AccessList&lt;TValue&gt;</a></span> <span class="mn">Reads</span> { get; }</th><td>The reads recorded on every instance, in the order the code under test made them, each with its instance.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Recordings.html#AccessListOfTValue">AccessList&lt;TValue&gt;</a></span> <span class="mn">Writes</span> { get; }</th><td>The writes recorded on every instance, in the order the code under test made them, each with its instance.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="#StubbedIndexerTableOfTInstanceTValue">StubbedIndexerTable&lt;TInstance, TValue&gt;</a></span> <span class="mn">EachReturns</span>(<span class="t">TValue</span> value, params <span class="t">TValue[]</span> then)</th><td>Reads on every instance return these values, each instance with its own sequence; the last one repeats. It replaces any previous answer on reads, for every instance. <span class="ex">Throws ArgumentNullException when the second value is a <code>null</code> without a cast, as in <code>Returns(value, null)</code>: write <code>(T)null</code>.</span></td></tr>
+          <tr><th scope="row"><span class="t"><a href="#StubbedIndexerTableOfTInstanceTValue">StubbedIndexerTable&lt;TInstance, TValue&gt;</a></span> <span class="mn">EachReturns</span>(<span class="t">Func&lt;TValue&gt;</span> compute)</th><td>Reads on every instance return a computed value. The answer takes no parameters, the indices, or the instance then the indices. A throw in it makes the read throw. It replaces any previous answer on reads, for every instance. Overloads take up to 16 parameters.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="#StubbedIndexerTableOfTInstanceTValue">StubbedIndexerTable&lt;TInstance, TValue&gt;</a></span> <span class="mn">EachDo</span>(<span class="t">Action</span> replacement)</th><td>Replaces writes on every instance. The answer takes no parameters, the indices then the value written, or the instance then the indices and the value. A throw in it makes the write throw. It replaces any previous answer on writes, for every instance. Overloads take up to 16 parameters.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="doc-footer">Understudy v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

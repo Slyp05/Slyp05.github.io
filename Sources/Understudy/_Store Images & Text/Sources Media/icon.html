@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<style>
+  html, body { margin: 0; padding: 0; background: #15171c; }
+  svg { display: block; }
+  .title { font-family: Bahnschrift, "Segoe UI", sans-serif; font-weight: 700; font-stretch: 75%; letter-spacing: 1px; }
+</style>
+</head>
+<body>
+<!-- Icon: drawn on a 320x320 canvas, shown at 160x160 and displayed at 80x80. The cardboard clock, no text. -->
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 320 320">
+  <defs>
+    <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#15171c"/><stop offset="1" stop-color="#1f2128"/></linearGradient>
+    <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5a3d27"/><stop offset="1" stop-color="#7a5434"/></linearGradient>
+    <linearGradient id="beam" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3d6" stop-opacity="0.02"/><stop offset="1" stop-color="#fff3d6" stop-opacity="0.16"/></linearGradient>
+    <radialGradient id="pool" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#ffe9bf" stop-opacity="0.55"/><stop offset="1" stop-color="#ffe0a8" stop-opacity="0"/></radialGradient>
+    <linearGradient id="board" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d9b47c"/><stop offset="1" stop-color="#c49a5f"/></linearGradient>
+    <pattern id="flute" width="12" height="18" patternUnits="userSpaceOnUse"><rect width="12" height="18" fill="#a77d47"/><path d="M0 9 q3 -7 6 0 t6 0" fill="none" stroke="#8a6334" stroke-width="2"/></pattern>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur in="SourceGraphic" stdDeviation="10" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="shade"><feComponentTransfer><feFuncR type="linear" slope="0.55"/><feFuncG type="linear" slope="0.55"/><feFuncB type="linear" slope="0.6"/></feComponentTransfer></filter>
+    <!-- The cardboard clock, centred: hands painted on, on its brace. -->
+    <g id="cutout">
+      <ellipse cx="10" cy="228" rx="150" ry="22" fill="#000" opacity="0.45"/>
+      <path d="M40 -40 L130 222" stroke="#8a6b47" stroke-width="20" stroke-linecap="round"/>
+      <g transform="translate(10 8)" fill="url(#flute)">
+        <circle cx="-62" cy="-118" r="38"/><circle cx="62" cy="-118" r="38"/><circle r="140"/>
+        <rect x="-24" y="120" width="48" height="104"/>
+      </g>
+      <rect x="-24" y="120" width="48" height="104" fill="url(#board)"/>
+      <circle cx="-62" cy="-118" r="38" fill="url(#board)"/><circle cx="62" cy="-118" r="38" fill="url(#board)"/>
+      <circle r="140" fill="url(#board)"/>
+      <circle r="108" fill="#efe6d2"/>
+      <g stroke="#2b2420" stroke-width="7" stroke-linecap="round" fill="none">
+        <path d="M0 -94 l1 16 M94 2 l-16 -1 M-1 94 l1 -16 M-94 -2 l16 1"/><path d="M0 2 l2 -66"/><path d="M0 2 l46 2"/>
+      </g>
+      <circle r="10" fill="#2b2420"/>
+    </g>
+    <!-- The real alarm clock, centred, still ticking. -->
+    <g id="real">
+      <ellipse cx="0" cy="118" rx="95" ry="16" fill="#000" opacity="0.5"/>
+      <path d="M-60 96 l-22 26 M60 96 l22 26" stroke="#2b2d33" stroke-width="12" stroke-linecap="round"/>
+      <circle cx="-62" cy="-86" r="34" fill="#b9bcc4"/><circle cx="62" cy="-86" r="34" fill="#b9bcc4"/>
+      <rect x="-8" y="-128" width="16" height="30" rx="5" fill="#8f939c"/>
+      <circle r="112" fill="#c8483e"/><circle r="88" fill="#f3efe6"/>
+      <line x1="0" y1="0" x2="34" y2="-40" stroke="#2b2d33" stroke-width="9" stroke-linecap="round"/>
+      <line x1="0" y1="0" x2="-48" y2="22" stroke="#2b2d33" stroke-width="7" stroke-linecap="round"/>
+      <circle r="9" fill="#2b2d33"/>
+      <g fill="none" stroke="#e8e2d4" stroke-width="7" stroke-linecap="round">
+        <path d="M-150 -60 q-18 30 0 60"/><path d="M150 -60 q18 30 0 60"/>
+      </g>
+    </g>
+  </defs>
+  <rect width="320" height="320" fill="url(#wall)"/>
+  <ellipse cx="160" cy="280" rx="190" ry="70" fill="url(#pool)"/>
+  <use href="#cutout" transform="translate(150 130) scale(0.68)"/>
+</svg>
+</body>
+</html>

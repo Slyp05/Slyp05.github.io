@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Group spies, stubs and fakes in a class of your own, and reuse it across tests and fixtures." />
+  <title>Understudy - Share doubles between tests</title>
+  <link rel="stylesheet" href="../shared/styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Understudy</div><a href="../User%20Manual.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Share doubles between tests</h1>
+      <div class="sub">Group spies, stubs and fakes in a class of your own, and reuse it across tests and fixtures.</div>
+    </div>
+
+<!-- ====================================== group ==== -->
+<section id="group">
+  <h2>Group doubles in a class</h2>
+<p>When several tests need the same spies, stubs and fakes, create them in a plain class, in its constructor or its
+  field initializers. The class can also hold the state its answers share, such as the keys a test holds down:</p>
+<pre><code><span class="kw">class</span> <span class="ty">TestInput</span>
+{
+    <span class="kw">readonly</span> <span class="ty">HashSet</span>&lt;<span class="ty">KeyCode</span>&gt; held = <span class="kw">new</span>();
+
+    <span class="kw">public</span> <span class="kw">readonly</span> <span class="ty">StubbedProperty</span>&lt;<span class="ty">Vector3</span>&gt; mousePosition = <span class="ty">Stub</span>.Property(() =&gt; <span class="ty">Input</span>.mousePosition);
+    <span class="kw">public</span> <span class="kw">readonly</span> <span class="ty">StubbedMethod</span>&lt;<span class="kw">bool</span>&gt; getKey;
+
+    <span class="kw">public</span> <span class="ty">TestInput</span>()
+    {
+        getKey = <span class="ty">Stub</span>.Method(() =&gt; <span class="ty">Input</span>.GetKey(<span class="ty">Arg</span>.Any&lt;<span class="ty">KeyCode</span>&gt;())).Returns((<span class="ty">KeyCode</span> key) =&gt; held.Contains(key));
+    }
+
+    <span class="kw">public</span> <span class="kw">void</span> Press(<span class="ty">KeyCode</span> key) =&gt; held.Add(key);
+
+    <span class="kw">public</span> <span class="kw">void</span> ReleaseAll() =&gt; held.Clear();
+}</code></pre>
+<p>A test creates an instance and uses it like any double:</p>
+<pre><code>[<span class="ty">Test</span>]
+<span class="kw">public</span> <span class="kw">void</span> JumpsWhenSpaceIsHeld()
+{
+    <span class="ty">TestInput</span> input = <span class="kw">new</span>();
+    input.Press(<span class="ty">KeyCode</span>.Space);
+
+    player.Update();
+
+    <span class="ty">Assert</span>.That(player.IsJumping, <span class="ty">Is</span>.True);
+}</code></pre>
+<p>The doubles belong to the test or fixture that creates the instance, and end with it, as every double does. The
+  next test that creates a <code>TestInput</code> gets new doubles with nothing recorded. For more information, refer
+  to <a href="Lifetime.html">Lifetime</a>.</p>
+
+</section>
+
+<!-- ====================================== instance ==== -->
+<section id="instance">
+  <h2>Cover one instance</h2>
+<p>To cover the members of one object only, pass that object to the constructor and select through it:</p>
+<pre><code><span class="kw">class</span> <span class="ty">TestEnemy</span>
+{
+    <span class="kw">public</span> <span class="kw">readonly</span> <span class="ty">FakedField</span>&lt;<span class="kw">int</span>&gt; health;
+    <span class="kw">public</span> <span class="kw">readonly</span> <span class="ty">SpiedMethod</span> hits;
+
+    <span class="kw">public</span> <span class="ty">TestEnemy</span>(<span class="ty">Enemy</span> enemy, <span class="kw">int</span> startHealth)
+    {
+        health = <span class="ty">Fake</span>.Field(() =&gt; enemy.health, initial: startHealth);
+        hits = <span class="ty">Spy</span>.Method(() =&gt; enemy.Hit(<span class="ty">Arg</span>.Any&lt;<span class="kw">int</span>&gt;()));
+    }
+}
+
+<span class="ty">TestEnemy</span> boss = <span class="kw">new</span>(bossEnemy, <span class="nu">100</span>);   <span class="cm">// covers bossEnemy only</span></code></pre>
+<p>A selection with a lambda parameter covers every instance instead. For more information, refer to
+  <a href="Select%20a%20member.html#instance">One instance or every instance</a>.</p>
+
+</section>
+
+<!-- ====================================== fixture ==== -->
+<section id="fixture">
+  <h2>Share one instance in a fixture</h2>
+<p>To share one instance with every test of a fixture, create it in a field initializer. Each test starts its
+  doubles fresh, but the class's own fields, such as <code>held</code>, keep their values between tests: reset them in
+  <code>[SetUp]</code>.</p>
+<pre><code><span class="kw">public</span> <span class="kw">class</span> <span class="ty">PlayerTests</span>
+{
+    <span class="kw">readonly</span> <span class="ty">TestInput</span> input = <span class="kw">new</span>();
+
+    [<span class="ty">SetUp</span>]
+    <span class="kw">public</span> <span class="kw">void</span> ReleaseKeys() =&gt; input.ReleaseAll();
+}</code></pre>
+
+</section>
+
+<!-- ====================================== overlap ==== -->
+<section id="overlap">
+  <h2>Two instances in one test</h2>
+<p>Two instances declare the same doubles twice, and they overlap like any other declarations: the instance created
+  last answers, and the spies, stubs and fakes of both record every access. For more information, refer to
+  <a href="Stub%20members.html#partial">Stub some calls and not others</a>.</p>
+
+</section>
+
+<!-- ====================================== assembly ==== -->
+<section id="assembly">
+  <h2>Share the classes between test assemblies</h2>
+<p>To use the same classes from several test assemblies, put them in an assembly definition of their own that
+  references <code>Understudy</code>, and reference it from each test assembly. That assembly needs the
+  <code>UNITY_INCLUDE_TESTS</code> define constraint, as test assemblies have. For more information, refer to
+  <a href="Set%20up%20a%20test%20assembly.html#tests">Create a test assembly</a>.</p>
+
+</section>
+
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="Lifetime.html">Lifetime</a></li>
+    <li><a href="Test%20common%20Unity%20code.html#input">Simulate input</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="Lifetime.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Lifetime</div>
+  </a>
+  <a class="next" href="Leaks%20and%20weaving.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Leaks and weaving</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Understudy v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

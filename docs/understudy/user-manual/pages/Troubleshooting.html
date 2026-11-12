@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Console messages, and what to do about them." />
+  <title>Understudy - Troubleshooting</title>
+  <link rel="stylesheet" href="/assets/css/understudy.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Understudy</div><a href="../index.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Troubleshooting</h1>
+      <div class="sub">Console messages, and what to do about them.</div>
+      <div class="guide-index">
+        <a href="#leak">A test leaks</a>
+        <a href="#matches">A stub or fake has no effect</a>
+        <a href="#realhandlers">Raise doesn't reach the handlers of the code under test</a>
+        <a href="#outside">A spy, stub or fake throws outside a test</a>
+        <a href="#notwoven">This selection is not woven</a>
+        <a href="#unreachable">A declaration never decides an access</a>
+        <a href="#fixturewrite">A write from OneTimeSetUp is discarded</a>
+        <a href="#reload">A domain reload during this test run</a>
+        <a href="#address">An address held across statements</a>
+        <a href="#burst">A member is also reached from code Burst compiles</a>
+        <a href="#compile">The test can't find Understudy or the code under test</a>
+        <a href="#notests">The Test Runner lists no tests</a>
+        <a href="#arg">Arg is ambiguous</a>
+        <a href="#cecil">Nothing is woven</a>
+        <a href="#weavefailed">Weaving an assembly failed</a>
+        <a href="#testonly">Understudy is for test code only</a>
+        <a href="#settings">The project settings cannot be read</a>
+        <a href="#nondeterministic">A NonDeterministic declaration names no member</a>
+        <a href="#concordance">Concordance is not supported in the same project</a>
+        <a href="#wovenbuild">A player build holds woven code</a>
+      </div>
+    </div>
+
+<!-- ====================================== leak ==== -->
+<section id="leak">
+  <h2>A test leaks</h2>
+<p><strong>Symptom</strong>: a warning that starts with <code>Leak in</code> and names a test, or an error when
+  <strong>Report Leaks as Errors</strong> is enabled. After the run, <code>Understudy: ... leaked</code> counts the
+  tests that leaked.</p>
+<p><strong>Cause</strong>: the test reached a non-deterministic member or wrote global state without declaring it,
+  or ran for real an overload of a member it replaces.</p>
+<p><strong>Resolution</strong>: apply the fix the warning ends with: stub or fake the member, or declare it real with
+  <code>Real</code>. For more information, refer to <a href="Detect%20leaks.html#fix">Fix a leak</a>.</p>
+
+</section>
+
+<!-- ====================================== matches ==== -->
+<section id="matches">
+  <h2>A stub or fake has no effect</h2>
+<p><strong>Symptom</strong>: the code under test still runs the real member, and the stub or fake records nothing.</p>
+<p><strong>Resolution</strong>: check the following:</p>
+<ul>
+  <li>The code under test is in an assembly that is woven: not a package from the package cache, not excluded in the
+    Project Settings, and not Burst code. For more information, refer to <a href="Woven%20code.html">Woven code</a>.</li>
+  <li>The selection's instance and arguments match what the code under test passes. A captured variable covers one instance;
+    use a lambda parameter for every instance.</li>
+  <li>The selection names the overload the code under test calls, with the same type arguments: a selection of
+    <code>Physics.Raycast(origin, direction, distance)</code> doesn't match a call that also passes a
+    <code>layerMask</code>, which is another overload.
+    A leak warning that names another overload points to this. For more information, refer to
+    <a href="Select%20a%20member.html#arguments">Match arguments</a>.</li>
+  <li>The access comes from the code under test, not from the test, which isn't woven: a test reads a fake through its
+    <code>Value</code>.</li>
+  <li>No declaration made after it covers the same accesses: the last one declared decides.</li>
+  <li>The selection's instance isn't <code>null</code> when the code under test runs: a selection whose instance chain holds
+    <code>null</code> matches nothing, without a warning.</li>
+  <li>The Console window shows no warning that the selection <code>matches nothing</code>. That warning means
+    evaluating the selection threw, or its weaving is incomplete.</li>
+</ul>
+
+</section>
+
+<!-- ====================================== realhandlers ==== -->
+<section id="realhandlers">
+  <h2>Raise doesn't reach the handlers of the code under test</h2>
+<p><strong>Symptom</strong>: at a <code>Raise</code>, a warning that the event <code>still holds handlers on the real
+  event</code>.</p>
+<p><strong>Cause</strong>: the code under test subscribed before the event fake existed, so those handlers stayed on the real
+  event, where the fake's <code>Raise</code> doesn't reach them.</p>
+<p><strong>Resolution</strong>: declare the event fake before the code subscribes, for example before creating the
+  object that subscribes in its <code>Awake</code>. A subscription made from <code>[OneTimeSetUp]</code> is discarded before
+  the first test: subscribe in <code>[SetUp]</code>. For more information, refer to
+  <a href="Fake%20events.html#fake">Fake an event</a>.</p>
+
+</section>
+
+<!-- ====================================== outside ==== -->
+<section id="outside">
+  <h2>A spy, stub or fake throws outside a test</h2>
+<p><strong>Symptom</strong>: creating a spy, stub or fake throws <code>InvalidOperationException</code>, or using one
+  throws with a message that names a finished test.</p>
+<p><strong>Cause</strong>: a double belongs to the NUnit test or fixture that created it. It can't be created
+  outside one, and it ends with it.</p>
+<p><strong>Resolution</strong>: create it in the test, in <code>[SetUp]</code> or in <code>[OneTimeSetUp]</code>. For more
+  information, refer to <a href="Lifetime.html">Lifetime</a>.</p>
+
+</section>
+
+<!-- ====================================== notwoven ==== -->
+<section id="notwoven">
+  <h2>This selection is not woven</h2>
+<p><strong>Symptom</strong>: creating a double throws <code>InvalidOperationException</code> with
+  <code>This selection is not woven</code>.</p>
+<p><strong>Cause</strong>: Understudy reads a selection when Unity compiles a test assembly, and only from a lambda
+  written in the call to the entry point. A delegate held in a variable, an assembly compiled outside Unity, or a test
+  assembly whose weaving failed has no woven selection.</p>
+<p><strong>Resolution</strong>: write the lambda in the call, and run the test from the Test Runner. If the Console
+  window also shows <code>Understudy: nothing is woven</code> or <code>Understudy: weaving</code>, fix that first.</p>
+
+</section>
+
+<!-- ====================================== unreachable ==== -->
+<section id="unreachable">
+  <h2>A declaration never decides an access</h2>
+<p><strong>Symptom</strong>: a warning that a stub, fake or <code>Real</code> never decides an access, or that an answer
+  never runs.</p>
+<p><strong>Cause</strong>: the last declaration decides an access. A broader declaration made later covers every
+  access of the earlier one, so the earlier one never decides.</p>
+<p><strong>Resolution</strong>: declare the broad one first, then the narrow one. For more information, refer to
+  <a href="Stub%20members.html#partial">Stub some calls and not others</a>.</p>
+
+</section>
+
+<!-- ====================================== fixturewrite ==== -->
+<section id="fixturewrite">
+  <h2>A write from OneTimeSetUp is discarded</h2>
+<p><strong>Symptom</strong>: a warning, before a fixture's first test, that a write into a fixture's double is gone.</p>
+<p><strong>Cause</strong>: code run from <code>[OneTimeSetUp]</code> wrote into a double declared for the fixture, such as
+  an object subscribing to its event fake, and every test starts that double fresh.</p>
+<p><strong>Resolution</strong>: run that code in <code>[SetUp]</code>, which runs before each test. For more information,
+  refer to <a href="Lifetime.html#fresh">Every test starts fresh</a>.</p>
+
+</section>
+
+<!-- ====================================== reload ==== -->
+<section id="reload">
+  <h2>A domain reload during this test run</h2>
+<p><strong>Symptom</strong>: the warning <code>Understudy: a domain reload during this test run ended every spy, stub
+  and fake.</code> Using a double afterwards throws <code>A domain reload ended this spy, stub or fake</code>.</p>
+<p><strong>Cause</strong>: a test entered Play mode with domain reload on. A reload ends every double, and a test's
+  locals don't survive it.</p>
+<p><strong>Resolution</strong>: create the doubles again after the reload, or go to <strong>Edit</strong> &gt;
+  <strong>Project Settings</strong> &gt; <strong>Editor</strong> and, under <strong>Enter Play Mode Settings</strong>, set
+  <strong>When entering Play Mode</strong> to <strong>Reload Scene only</strong>. For more information, refer to <a href="Lifetime.html#reload">Domain reloads</a>.</p>
+
+</section>
+
+<!-- ====================================== address ==== -->
+<section id="address">
+  <h2>An address held across statements</h2>
+<p><strong>Symptom</strong>: a warning that an address held across statements reaches a member directly.</p>
+<p><strong>Cause</strong>: a <code>ref</code> local, a <code>ref</code> return or a pointer holds the address of a stubbed
+  field or property. An address can't run a stub's <code>Returns</code> or <code>Do</code>, so those accesses reach the
+  real member.</p>
+<p><strong>Resolution</strong>: fake the member instead, which gives the address a stored value, or change the code to use
+  the member in place.</p>
+
+</section>
+
+<!-- ====================================== burst ==== -->
+<section id="burst">
+  <h2>A member is also reached from code Burst compiles</h2>
+<p><strong>Symptom</strong>: a warning that a member is also reached from code Burst compiles.</p>
+<p><strong>Cause</strong>: Burst code isn't woven, so the calls the warning lists run for real and aren't recorded.</p>
+<p><strong>Resolution</strong>: if the test depends on those calls, test that code another way, or move the call out of
+  the Burst code. For more information, refer to <a href="Woven%20code.html#burst">Code Burst compiles</a>.</p>
+
+</section>
+
+<!-- ====================================== compile ==== -->
+<section id="compile">
+  <h2>The test can't find Understudy or the code under test</h2>
+<p><strong>Symptom</strong>: the Console shows <code>CS0246: The type or namespace name 'Understudy' could not be
+  found</code>, or the same error for one of your own types.</p>
+<p><strong>Cause</strong>: the test assembly doesn't reference <code>Understudy</code> or the assembly of the
+  code under test, or the change to its references wasn't applied.</p>
+<p><strong>Resolution</strong>: select the test assembly definition, add both under <strong>Assembly Definition
+  References</strong> in the Inspector, then select <strong>Apply</strong>. For more information, refer to
+  <a href="Set%20up%20a%20test%20assembly.html">Set up a test assembly</a>.</p>
+
+</section>
+
+<!-- ====================================== notests ==== -->
+<section id="notests">
+  <h2>The Test Runner lists no tests</h2>
+<p><strong>Symptom</strong>: the Test Runner window shows no tests, or not the ones you wrote.</p>
+<p><strong>Cause</strong>: the test scripts aren't in a test assembly, the Console shows a compile error, or the
+  tests are on the other tab: an assembly for every platform runs in Play mode, one for the Editor only in Edit
+  mode.</p>
+<p><strong>Resolution</strong>: fix the compile errors first, then check the folder of your tests holds a test
+  assembly definition, and look under both <strong>EditMode</strong> and <strong>PlayMode</strong>. For more
+  information, refer to <a href="Set%20up%20a%20test%20assembly.html#tests">Create a test assembly</a>.</p>
+
+</section>
+
+<!-- ====================================== arg ==== -->
+<section id="arg">
+  <h2>Arg is ambiguous</h2>
+<p><strong>Symptom</strong>: <code>CS0104: 'Arg' is an ambiguous reference</code>.</p>
+<p><strong>Cause</strong>: the file also uses another mocking library with an <code>Arg</code> class, such as
+  NSubstitute.</p>
+<p><strong>Resolution</strong>: add <code>using Arg = Understudy.Arg;</code> at the top of the file.</p>
+
+</section>
+
+<!-- ====================================== cecil ==== -->
+<section id="cecil">
+  <h2>Nothing is woven</h2>
+<p><strong>Symptom</strong>: the Console window shows an error that starts with <code>Understudy: nothing is
+  woven</code>, and every selection throws.</p>
+<p><strong>Cause</strong>: the Mono Cecil package is missing, or older than 1.10, so Understudy's compilation step
+  didn't compile.</p>
+<p><strong>Resolution</strong>: install or update <code>com.unity.nuget.mono-cecil</code>, as the message says. For the
+  steps, refer to <a href="Installation.html#install">Install the package</a>.</p>
+
+</section>
+
+<!-- ====================================== weavefailed ==== -->
+<section id="weavefailed">
+  <h2>Weaving an assembly failed</h2>
+<p><strong>Symptom</strong>: an error or a warning that starts with <code>Understudy: weaving</code> and names an
+  assembly that failed.</p>
+<p><strong>Cause</strong>: Understudy's compilation step couldn't rewrite that assembly. In a test assembly, its
+  selections are unread, so every double it creates throws. In any other assembly, no spy, stub or fake reaches its
+  code.</p>
+<p><strong>Resolution</strong>: report the full message through the <a href="https://justetools.net/contact/">contact
+  form</a>. Until it is fixed, if the assembly isn't a test assembly, add it to <strong>Excluded Assemblies</strong>, so the
+  rest of the project is woven. For more information, refer to <a href="Woven%20code.html#exclude">Exclude an
+  assembly</a>.</p>
+
+</section>
+
+<!-- ====================================== testonly ==== -->
+<section id="testonly">
+  <h2>Understudy is for test code only</h2>
+<p><strong>Symptom</strong>: an error that an assembly <code>references Understudy, which is for test code only</code>,
+  or that an assembly definition <code>references Understudy without the UNITY_INCLUDE_TESTS define constraint</code>.</p>
+<p><strong>Cause</strong>: an assembly that isn't a test assembly references Understudy. An assembly that references
+  Understudy is never woven, so no double reaches its code. Without the define constraint, it also fails to compile in
+  a player build.</p>
+<p><strong>Resolution</strong>: add <code>UNITY_INCLUDE_TESTS</code> to the assembly definition's
+  <strong>Define Constraints</strong>, or move the code that uses Understudy into a test assembly. For more information,
+  refer to <a href="Set%20up%20a%20test%20assembly.html">Set up a test assembly</a>.</p>
+
+</section>
+
+<!-- ====================================== settings ==== -->
+<section id="settings">
+  <h2>The project settings cannot be read</h2>
+<p><strong>Symptom</strong>: an error that the project settings in <code>ProjectSettings/Understudy.json</code> cannot
+  be read, so the defaults apply.</p>
+<p><strong>Cause</strong>: the file isn't valid JSON, for example after a merge conflict.</p>
+<p><strong>Resolution</strong>: fix the file, or delete it and set the settings again on the <strong>Understudy</strong>
+  page of the Project Settings window.</p>
+
+</section>
+
+<!-- ====================================== nondeterministic ==== -->
+<section id="nondeterministic">
+  <h2>A NonDeterministic declaration names no member</h2>
+<p><strong>Symptom</strong>: an error that a <code>[NonDeterministic]</code> declaration names no member of its type.</p>
+<p><strong>Cause</strong>: the member name doesn't exist on the type, so leak detection ignores the declaration.</p>
+<p><strong>Resolution</strong>: fix the name in the declaration the error names. Use <code>nameof</code>, so that a
+  rename becomes a compile error.</p>
+
+</section>
+
+<!-- ====================================== concordance ==== -->
+<section id="concordance">
+  <h2>Concordance is not supported in the same project</h2>
+<p><strong>Symptom</strong>: an error, once per Editor session, that Concordance is not supported in the same
+  project.</p>
+<p><strong>Cause</strong>: Understudy leaves every assembly that references Concordance unwoven, so no double reaches
+  its code.</p>
+<p><strong>Resolution</strong>: remove one of the two packages.</p>
+
+</section>
+
+<!-- ====================================== wovenbuild ==== -->
+<section id="wovenbuild">
+  <h2>A player build holds woven code</h2>
+<p><strong>Symptom</strong>: a player build fails with an error that a file <code>holds woven code, which a player build
+  must never contain</code>.</p>
+<p><strong>Cause</strong>: a build without tests contains an assembly compiled for the Editor or for a build with tests,
+  for example one a custom build step reuses.</p>
+<p><strong>Resolution</strong>: delete the <code>Library/ScriptAssemblies</code> folder and build again. For more
+  information, refer to <a href="Woven%20code.html#builds">Player builds</a>.</p>
+
+</section>
+
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>    <li><a href="Diagnostics.html">Code analysis reference</a></li>
+    <li><a href="Detect%20leaks.html">Detect leaks</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="Diagnostics.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Code analysis reference</div>
+  </a>
+  <a class="next" href="Glossary.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Glossary</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Understudy v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Find the tests that depend on random values, clocks or global writes they didn&#x27;t declare, and fix them." />
+  <title>Understudy - Detect leaks</title>
+  <link rel="stylesheet" href="../shared/styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Understudy</div><a href="../User%20Manual.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Detect leaks</h1>
+      <div class="sub">Find the tests that depend on random values, clocks or global writes they didn&#x27;t declare, and fix them.</div>
+      <div class="guide-index">
+        <a href="#what">What a leak is</a>
+        <a href="#warning">Read a leak warning</a>
+        <a href="#fix">Fix a leak</a>        <a href="#accept">Accept a leak in many tests</a>
+        <a href="#errors">Fail tests on leaks</a>
+        <a href="#ci">Run tests in continuous integration</a>
+        <a href="#declare">Declare your own non-deterministic members</a>
+        <a href="#builtin">Members Understudy declares non-deterministic</a>
+      </div>
+    </div>
+
+<!-- ====================================== what ==== -->
+<section id="what">
+  <h2>What a leak is</h2>
+<p>A leak is an access that ties a test to something outside it. Leak detection watches what the code under test does while the Test Runner runs tests, in every test of the run, including tests that don't use Understudy, so an existing suite can show leaks as soon as
+  Understudy is imported. It reports three kinds:</p>
+<div class="table-scroll">
+  <table class="cmp">
+    <tr><th scope="col">Leak</th><th scope="col">Example</th><th scope="col">Why it matters</th></tr>
+    <tr><td>A call to a non-deterministic member the test didn't declare.</td><td><code>Random.Range</code>, <code>Time.deltaTime</code>, <code>DateTime.Now</code></td><td>The test's result depends on when and where it runs.</td></tr>
+    <tr><td>A write to global state the test didn't stub or fake: a static field, a static auto-property, or a Unity static property such as <code>Physics.gravity</code>.</td><td><code>GameManager.score = 0</code></td><td>The change outlives the test and reaches the next one.</td></tr>
+    <tr><td>A real call to an overload of a member the test replaces.</td><td>A stub on <code>Raycast(Vector3, Vector3, float)</code> while the code under test calls <code>Raycast(Ray, float)</code></td><td>The test thinks it controls the member, and doesn't.</td></tr>
+  </table>
+</div>
+
+</section>
+
+<!-- ====================================== warning ==== -->
+<section id="warning">
+  <h2>Read a leak warning</h2>
+<p>Each leak logs a warning in the Console window, once per test for each member and line of the code under test:</p>
+<pre><code>Leak in EnemyTests.Spawns: Random.Range(int, int) ran for real at Enemy.cs:42. Stub it, or declare it real with Real.
+Leak in EnemyTests.Spawns: Physics.gravity was written at Level.cs:12 and is not stubbed or faked; the change outlives the test. Fake it, or declare it real with Real.
+Leak in SensorTests.Detects: Physics.Raycast(Ray, float) ran for real at Sensor.cs:9, while the test replaces Physics.Raycast(Vector3, Vector3, float). Stub this overload too, or declare it real with Real.</code></pre>
+<div class="img-block">
+  <img src="../img/leak_warning_console" alt="A leak warning in the Console window, naming the test, the member and the line" />
+</div>
+<p>Select the file link in the warning to open the line. The warning also shows in the Test Runner window's output for the test,
+  and in the log of a command-line run. After the run, one more line counts the tests that leaked:</p>
+<pre><code>Understudy: 2 tests leaked. Each leak above names its line and its fix.</code></pre>
+
+</section>
+
+<!-- ====================================== fix ==== -->
+<section id="fix">
+  <h2>Fix a leak</h2>
+<p>A member the test spies on, stubs, fakes or declares <code>Real</code> never leaks. To fix a leak, choose the one that matches the test's intent:</p>
+<ul>
+  <li>Stub the member, when the test depends on its result: <code>Stub.Method(() =&gt; Random.Range(0, 10)).Returns(3)</code>.</li>
+  <li>Declare it <code>Real</code>, when the test is meant to use the real member:
+    <code>Real.Method(() =&gt; Random.Range(Arg.Any&lt;int&gt;(), Arg.Any&lt;int&gt;()))</code>.</li>
+  <li>Fake the static, when the test changes global state: <code>Fake.Property(() =&gt; Physics.gravity, initial: Physics.gravity)</code>.
+    A singleton whose <code>Awake</code> writes <code>Instance = this</code> is the most common case: refer to
+    <a href="Test%20common%20Unity%20code.html#singleton">Replace a singleton</a>.</li>
+</ul>
+<p>For more information, refer to <a href="Run%20members%20for%20real.html">Run members for real</a>.</p>
+
+</section>
+
+<!-- ====================================== accept ==== -->
+<section id="accept">
+  <h2>Accept a leak in many tests</h2>
+<p>A <code>Real</code> belongs to the test or fixture that declares it. To accept a leak in every fixture of a
+  namespace, declare it in an NUnit <code>[SetUpFixture]</code> of that namespace; a setup fixture outside any namespace
+  covers the whole test assembly:</p>
+<pre><code><span class="kw">namespace</span> MyGame.Tests
+{
+    [<span class="ty">SetUpFixture</span>]
+    <span class="kw">public</span> <span class="kw">class</span> <span class="ty">AcceptedLeaks</span>
+    {
+        [<span class="ty">OneTimeSetUp</span>]
+        <span class="kw">public</span> <span class="kw">void</span> Accept() =&gt; <span class="ty">Real</span>.Property(() =&gt; <span class="ty">Time</span>.realtimeSinceStartup);
+    }
+}</code></pre>
+
+</section>
+
+<!-- ====================================== errors ==== -->
+<section id="errors">
+  <h2>Fail tests on leaks</h2>
+<p>To make leaks fail their tests, enable <strong>Report Leaks as Errors</strong> on the <strong>Understudy</strong>
+  page of the Project Settings window. Each leak is then logged as an error, and the Test Runner fails a test that logs
+  an unexpected error. The setting is saved in <code>ProjectSettings/Understudy.json</code>: commit it, so your continuous
+  integration uses it too. For more
+  information, refer to <a href="Project%20Settings%20reference.html">Project Settings reference</a>.</p>
+
+</section>
+
+<!-- ====================================== ci ==== -->
+<section id="ci">
+  <h2>Run tests in continuous integration</h2>
+<p>Run the tests from the command line. Understudy weaves there as in the Editor. With <strong>Report Leaks as Errors</strong> enabled,
+  a test that leaks fails, and Unity exits with code 2, as for any failed test. Each leak is in the run's log and in
+  its test's output in the results file:</p>
+<pre><code>Unity -batchmode -projectPath MyProject -runTests -testPlatform EditMode -testResults results.xml</code></pre>
+<p>For every option, refer to the <a href="https://docs.unity3d.com/Manual/test-framework/reference-command-line.html">Test Framework command-line reference</a>.</p>
+
+</section>
+
+<!-- ====================================== declare ==== -->
+<section id="declare">
+  <h2>Declare your own non-deterministic members</h2>
+<p>Declare the members of your own code or of a library that give a different result between runs, such as a
+  server clock, with an assembly attribute in any assembly that references Understudy:</p>
+<pre><code>[<span class="kw">assembly</span>: <span class="ty">NonDeterministic</span>(<span class="kw">typeof</span>(<span class="ty">ServerClock</span>), <span class="kw">nameof</span>(<span class="ty">ServerClock</span>.Now))]</code></pre>
+<p>The declaration covers every overload of the name, for the whole project. A declaration that names no member of its type logs an error.</p>
+
+</section>
+
+<!-- ====================================== builtin ==== -->
+<section id="builtin">
+  <h2>Members Understudy declares non-deterministic</h2>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Type</th><th scope="col">Members</th></tr>
+    <tr><td><code>UnityEngine.Random</code></td><td><code>Range</code>, <code>value</code>, <code>insideUnitSphere</code>, <code>insideUnitCircle</code>, <code>onUnitSphere</code>, <code>onUnitCircle</code> (Unity 6.3 and later), <code>rotation</code>, <code>rotationUniform</code>, <code>ColorHSV</code>, <code>state</code></td></tr>
+    <tr><td><code>UnityEngine.Time</code></td><td><code>time</code>, <code>deltaTime</code>, <code>smoothDeltaTime</code>, <code>unscaledTime</code>, <code>unscaledDeltaTime</code>, <code>fixedTime</code>, <code>fixedUnscaledTime</code>, <code>fixedUnscaledDeltaTime</code>, <code>realtimeSinceStartup</code>, <code>timeSinceLevelLoad</code>, their <code>AsDouble</code> variants, <code>timeAsRational</code>, <code>frameCount</code>, <code>renderedFrameCount</code></td></tr>
+    <tr><td><code>UnityEngine.Input</code></td><td>The key, button, axis, mouse and touch queries (<code>GetKey</code>, <code>GetButton</code>, <code>GetAxis</code>, <code>GetMouseButton</code>, <code>GetTouch</code>, with their <code>Down</code>, <code>Up</code> and <code>Raw</code> forms), <code>mousePosition</code>, <code>mousePositionDelta</code>, <code>mouseScrollDelta</code>, <code>anyKey</code>, <code>anyKeyDown</code>, <code>inputString</code>, <code>compositionString</code>, <code>imeIsSelected</code>, <code>touchCount</code>, <code>touches</code>, the pen events (<code>GetPenEvent</code>, <code>penEventCount</code>, <code>GetLastPenContactEvent</code>), <code>GetJoystickNames</code>, <code>IsJoystickPreconfigured</code>, the hardware checks (<code>mousePresent</code>, <code>touchSupported</code>, <code>stylusTouchSupported</code>, <code>touchPressureSupported</code>), and the sensors: <code>acceleration</code>, <code>accelerationEvents</code>, <code>accelerationEventCount</code>, <code>GetAccelerationEvent</code>, <code>gyro</code>, <code>compass</code>, <code>location</code>, <code>deviceOrientation</code></td></tr>
+    <tr><td>Input System devices</td><td><code>current</code> of <code>Keyboard</code>, <code>Mouse</code>, <code>Gamepad</code>, <code>DualShockGamepad</code>, <code>Joystick</code>, <code>Pen</code>, <code>Touchscreen</code>, <code>Pointer</code> and every sensor, and <code>Touch.activeTouches</code> and <code>Touch.activeFingers</code>; the connected devices (<code>InputSystem.devices</code>, <code>disconnectedDevices</code>, <code>GetDevice</code>, <code>GetDeviceById</code>, <code>GetUnsupportedDevices</code>, <code>FindControl</code>, <code>FindControls</code>, <code>metrics</code>); and the Input System's clock, <code>InputState.currentTime</code> and <code>updateCount</code>. Only when the Input System package is installed.</td></tr>
+    <tr><td>System clock and entropy</td><td><code>DateTime.Now</code>, <code>DateTime.UtcNow</code>, <code>DateTime.Today</code>, <code>DateTimeOffset.Now</code>, <code>DateTimeOffset.UtcNow</code>, <code>Environment.TickCount</code>, <code>Stopwatch.GetTimestamp</code>, a stopwatch's <code>Elapsed</code>, <code>ElapsedMilliseconds</code> and <code>ElapsedTicks</code>, <code>Guid.NewGuid</code>, <code>Path.GetRandomFileName</code>, <code>Path.GetTempFileName</code>, <code>RandomNumberGenerator</code>'s <code>GetBytes</code>, <code>GetNonZeroBytes</code>, <code>Fill</code> and <code>GetInt32</code></td></tr>
+    <tr><td>The machine</td><td>The environment (<code>Environment</code>'s machine, user, operating system, processor, process, directory, command line, environment variable and <code>NewLine</code> members), the time zone (<code>TimeZoneInfo.Local</code>, <code>ToLocalTime</code>, <code>ToUniversalTime</code>, <code>DateTimeOffset.LocalDateTime</code>), <code>Path.GetTempPath</code>, the screen (<code>Screen.width</code>, <code>height</code>, <code>dpi</code>, <code>currentResolution</code>, <code>resolutions</code>, <code>safeArea</code>, <code>cutouts</code>, <code>orientation</code>, <code>brightness</code>, <code>fullScreen</code>, <code>fullScreenMode</code>, <code>mainWindowDisplayInfo</code>, <code>mainWindowPosition</code>, <code>GetDisplayLayout</code>), and every <code>SystemInfo</code> member</td></tr>
+  </table>
+</div>
+<p><code>System.Random</code> isn't declared: a seeded instance gives the same numbers on every run.</p>
+
+</section>
+
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="Run%20members%20for%20real.html">Run members for real</a></li>
+    <li><a href="Project%20Settings%20reference.html">Project Settings reference</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="Leaks%20and%20weaving.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Leaks and weaving</div>
+  </a>
+  <a class="next" href="Woven%20code.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Woven code</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Understudy v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Replace methods, constructors, fields, properties and indexers with the answers your test sets." />
+  <title>Understudy - Stub members</title>
+  <link rel="stylesheet" href="/assets/css/understudy.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Understudy</div><a href="../index.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Stub members</h1>
+      <div class="sub">Replace methods, constructors, fields, properties and indexers with the answers your test sets.</div>
+      <div class="guide-index">
+        <a href="#default">Stub a member</a>
+        <a href="#returns">Return a result</a>
+        <a href="#change">Change a stub during a test</a>
+        <a href="#throw">Throw an exception</a>
+        <a href="#do">Replace a void call or a write</a>
+        <a href="#outref">Out and ref parameters</a>
+        <a href="#tables">Stub every instance</a>
+        <a href="#constructors">Stub a constructor</a>
+        <a href="#operators">Make an object read as destroyed</a>
+        <a href="#partial">Stub some calls and not others</a>
+      </div>
+    </div>
+
+<!-- ====================================== default ==== -->
+<section id="default">
+  <h2>Stub a member</h2>
+<p>A stub replaces every access its selection matches with the answers your test sets. The real member never runs, and
+  everything outside the selection runs for real. With nothing declared, a stub does the C# default: a call or read
+  returns <code>default</code>, and a void call or a write does nothing.</p>
+<pre><code><span class="ty">Stub</span>.Method(() =&gt; <span class="ty">Object</span>.Destroy(<span class="ty">Arg</span>.Any&lt;<span class="ty">Object</span>&gt;()));    <span class="cm">// nothing is destroyed</span>
+<span class="ty">Stub</span>.Property(() =&gt; <span class="ty">Camera</span>.main);                       <span class="cm">// returns null</span>
+<span class="ty">Stub</span>.Field(() =&gt; sensor.distance);                      <span class="cm">// reads return 0, writes are dropped</span></code></pre>
+<p>A stub handles both the reads and the writes of a
+  field, property or indexer: <code>Returns</code> decides its reads, <code>Do</code> its writes.</p>
+<p>A stub also records each access it replaces, as a spy does. For more information, refer to
+  <a href="Check%20what%20the%20code%20under%20test%20did.html">Check what the code under test did</a>.</p>
+
+</section>
+
+<!-- ====================================== returns ==== -->
+<section id="returns">
+  <h2>Return a result</h2>
+<p><code>Returns</code> sets what a call or read returns. Several values form a sequence, one per access, and the last
+  one repeats:</p>
+<pre><code><span class="ty">Stub</span>.Property(() =&gt; <span class="ty">Time</span>.deltaTime).Returns(<span class="nu">0.016f</span>);
+<span class="ty">Stub</span>.Method(() =&gt; <span class="ty">Random</span>.Range(<span class="nu">0</span>, <span class="nu">10</span>)).Returns(<span class="nu">3</span>, <span class="nu">7</span>, <span class="nu">1</span>);   <span class="cm">// 3, 7, 1, 1, 1...</span></code></pre>
+<p>A selection through a chain, such as <code>() =&gt; player.weapon.Fire()</code>, runs a sequence for each instance
+  it reaches: a new weapon starts again from the first value.</p>
+<p>A lambda computes the result at each access. It takes no parameters, or what the access passes: a call's arguments,
+  or an indexer's indices, in order:</p>
+<pre><code><span class="ty">Stub</span>.Method(() =&gt; <span class="ty">Physics</span>.Raycast(<span class="ty">Arg</span>.Any&lt;<span class="ty">Vector3</span>&gt;(), <span class="ty">Arg</span>.Any&lt;<span class="ty">Vector3</span>&gt;(), <span class="ty">Arg</span>.Any&lt;<span class="kw">float</span>&gt;()))
+    .Returns((<span class="ty">Vector3</span> origin, <span class="ty">Vector3</span> direction, <span class="kw">float</span> distance) =&gt; origin.y &gt; <span class="nu">0f</span>);
+<span class="ty">Stub</span>.Indexer(() =&gt; level.grid[<span class="ty">Arg</span>.Any&lt;<span class="kw">int</span>&gt;(), <span class="ty">Arg</span>.Any&lt;<span class="kw">int</span>&gt;()]).Returns((<span class="kw">int</span> x, <span class="kw">int</span> y) =&gt; (x + y) % <span class="nu">2</span> == <span class="nu">0</span> ? <span class="ty">Tile</span>.Wall : <span class="ty">Tile</span>.Floor);</code></pre>
+<p>Write each parameter's type, as above: C# can't infer it from the selection, and code analysis offers the fix.
+  Code analysis also reports parameters that don't fit the member.</p>
+<p>To return <code>null</code>, cast it to the member's type, also inside a sequence: <code>Returns((Camera)null)</code>,
+  <code>Returns(camera, (Camera)null)</code>. Code analysis offers the fix.</p>
+
+</section>
+
+<!-- ====================================== change ==== -->
+<section id="change">
+  <h2>Change a stub during a test</h2>
+<p>A stub is an object you can keep. Calling <code>Returns</code> or <code>Do</code> again replaces its answer
+  from then on:</p>
+<pre><code><span class="ty">StubbedProperty</span>&lt;<span class="kw">float</span>&gt; deltaTime = <span class="ty">Stub</span>.Property(() =&gt; <span class="ty">Time</span>.deltaTime).Returns(<span class="nu">0.016f</span>);
+player.Tick();
+deltaTime.Returns(<span class="nu">0.1f</span>);
+player.Tick();</code></pre>
+<p>Once a later declaration covers the same accesses, such as a <code>Real</code>, calling <code>Returns</code> again
+  doesn't bring the stub back: declare it again. For more information, refer to
+  <a href="Run%20members%20for%20real.html#override">Go back to the real member</a>.</p>
+
+</section>
+
+<!-- ====================================== throw ==== -->
+<section id="throw">
+  <h2>Throw an exception</h2>
+<p>A throw expression in the answer makes the access throw:</p>
+<pre><code><span class="ty">Stub</span>.Method(() =&gt; <span class="ty">PlayerPrefs</span>.Save()).Do(() =&gt; <span class="kw">throw</span> <span class="kw">new</span> <span class="ty">IOException</span>());
+<span class="ty">Stub</span>.Property(() =&gt; <span class="ty">Camera</span>.main).Returns(() =&gt; <span class="kw">throw</span> <span class="kw">new</span> <span class="ty">InvalidOperationException</span>());
+<span class="ty">Stub</span>.Method(() =&gt; <span class="ty">File</span>.ReadAllText(<span class="ty">Arg</span>.Any&lt;<span class="kw">string</span>&gt;()))
+    .Returns((<span class="kw">string</span> path) =&gt; path.EndsWith(<span class="st">".corrupt"</span>) ? <span class="kw">throw</span> <span class="kw">new</span> <span class="ty">IOException</span>() : <span class="st">"{}"</span>);</code></pre>
+
+</section>
+
+<!-- ====================================== do ==== -->
+<section id="do">
+  <h2>Replace a void call or a write</h2>
+<p><code>Do</code> replaces a call with no result. It takes the same parameter forms as <code>Returns</code>:</p>
+<pre><code><span class="ty">List</span>&lt;<span class="kw">object</span>&gt; logged = <span class="kw">new</span>();
+<span class="ty">Stub</span>.Method(() =&gt; <span class="ty">Debug</span>.Log(<span class="ty">Arg</span>.Any&lt;<span class="kw">object</span>&gt;())).Do((<span class="kw">object</span> message) =&gt; logged.Add(message));</code></pre>
+<p>On a field, a property or an indexer, <code>Do</code> replaces each write, and takes nothing, or the value written
+  (after the indices for an indexer). A stub's reads and writes never reach the real member, so an answer that checks or changes the value keeps that value in a variable of your test:</p>
+<pre><code><span class="kw">float</span> volume = <span class="nu">1f</span>;
+<span class="ty">Stub</span>.Property(() =&gt; settings.Volume).Returns(() =&gt; volume).Do((<span class="kw">float</span> <span class="kw">value</span>) =&gt;
+{
+    <span class="kw">if</span> (<span class="kw">value</span> &gt; <span class="nu">1f</span>)
+        <span class="kw">throw</span> <span class="kw">new</span> <span class="ty">ArgumentOutOfRangeException</span>();
+    volume = <span class="kw">value</span>;
+});</code></pre>
+<p>When the member should hold what the code writes, use a fake instead. For more information, refer to
+  <a href="Fake%20fields%20and%20properties.html">Fake fields and properties</a>.</p>
+
+</section>
+
+<!-- ====================================== outref ==== -->
+<section id="outref">
+  <h2>Out and ref parameters</h2>
+<p>An answer writes <code>out</code> and <code>ref</code> arguments through parameters with the same
+  modifier:</p>
+<pre><code><span class="ty">Stub</span>.Method(() =&gt; <span class="ty">Physics</span>.Raycast(<span class="ty">Arg</span>.Any&lt;<span class="ty">Ray</span>&gt;(), <span class="kw">out</span> <span class="ty">Arg</span>.Any&lt;<span class="ty">RaycastHit</span>&gt;(), <span class="ty">Arg</span>.Any&lt;<span class="kw">float</span>&gt;()))
+    .Returns((<span class="ty">Ray</span> ray, <span class="kw">out</span> <span class="ty">RaycastHit</span> hit, <span class="kw">float</span> max) =&gt;
+    {
+        hit = <span class="kw">new</span> <span class="ty">RaycastHit</span> { point = ray.origin, distance = <span class="nu">1f</span> };
+        <span class="kw">return</span> <span class="kw">true</span>;
+    });</code></pre>
+
+</section>
+
+<!-- ====================================== tables ==== -->
+<section id="tables">
+  <h2>Stub every instance</h2>
+<p>On a <a href="Select%20a%20member.html#instance">table</a>, <code>EachReturns</code> and <code>EachDo</code> set an
+  answer for every instance, and the lambda can take the instance first:</p>
+<pre><code><span class="ty">StubbedMethodTable</span>&lt;<span class="ty">GameObject</span>, <span class="ty">Rigidbody</span>&gt; bodies = <span class="ty">Stub</span>.Method((<span class="ty">GameObject</span> go) =&gt; go.GetComponent&lt;<span class="ty">Rigidbody</span>&gt;())
+    .EachReturns((<span class="ty">GameObject</span> go) =&gt; lookup[go]);
+bodies[boss].Returns(bossBody);    <span class="cm">// this one instance answers differently</span></code></pre>
+<p>The last answer set wins for each instance: one set on <code>bodies[boss]</code> holds until the table sets a new
+  one for every instance. A sequence runs per instance.</p>
+
+</section>
+
+<!-- ====================================== constructors ==== -->
+<section id="constructors">
+  <h2>Stub a constructor</h2>
+<p>A stub on a constructor replaces the <code>new</code> in the code under test, and returns the object you give it:</p>
+<pre><code><span class="ty">Stub</span>.Constructor(() =&gt; <span class="kw">new</span> <span class="ty">SaveSystem</span>()).Returns(testSaveSystem);</code></pre>
+<p>Without <code>Returns</code>, the <code>new</code> returns <code>null</code>, which code never expects; code
+  analysis warns about it. Only a <code>new</code> in the code under test is replaced: an object Unity creates, such as with
+  <code>AddComponent</code>, is recorded but built for real.</p>
+
+</section>
+
+<!-- ====================================== operators ==== -->
+<section id="operators">
+  <h2>Make an object read as destroyed</h2>
+<p>User-defined operators and conversions are methods too. <code>UnityEngine.Object</code> checks for a destroyed
+  object with its <code>==</code> operator and its <code>bool</code> conversion, so a test can make an object read as
+  destroyed without destroying it:</p>
+<pre><code><span class="ty">Stub</span>.Method(() =&gt; (<span class="kw">bool</span>)enemy).Returns(<span class="kw">false</span>);
+<span class="ty">Stub</span>.Method(() =&gt; enemy == <span class="kw">null</span>).Returns(<span class="kw">true</span>);</code></pre>
+<p><code>enemy != null</code> calls a separate operator, which needs a selection of its own. <code>is null</code> and
+  <code>?.</code> call no operator, so no stub reaches them.</p>
+
+</section>
+
+<!-- ====================================== partial ==== -->
+<section id="partial">
+  <h2>Stub some calls and not others</h2>
+<p>A stub replaces only the accesses its matchers match, so a narrow selection stubs part of a member:</p>
+<pre><code><span class="cm">// Downward raycasts miss; every other raycast is real.</span>
+<span class="ty">Stub</span>.Method(() =&gt; <span class="ty">Physics</span>.Raycast(<span class="ty">Arg</span>.Any&lt;<span class="ty">Vector3</span>&gt;(), <span class="ty">Vector3</span>.down, <span class="ty">Arg</span>.Any&lt;<span class="kw">float</span>&gt;())).Returns(<span class="kw">false</span>);</code></pre>
+<p>When several stubs or fakes match an access, the last one declared decides. A spy never decides: it records
+  alongside them. A broad default followed by a narrow
+  override reads in order:</p>
+<pre><code><span class="ty">Stub</span>.Method(() =&gt; <span class="ty">Physics</span>.Raycast(<span class="ty">Arg</span>.Any&lt;<span class="ty">Vector3</span>&gt;(), <span class="ty">Arg</span>.Any&lt;<span class="ty">Vector3</span>&gt;(), <span class="ty">Arg</span>.Any&lt;<span class="kw">float</span>&gt;())).Returns(<span class="kw">true</span>);
+<span class="ty">Stub</span>.Method(() =&gt; <span class="ty">Physics</span>.Raycast(<span class="ty">Arg</span>.Any&lt;<span class="ty">Vector3</span>&gt;(), <span class="ty">Vector3</span>.down, <span class="ty">Arg</span>.Any&lt;<span class="kw">float</span>&gt;())).Returns(<span class="kw">false</span>);</code></pre>
+<p>In the reverse order, the broad stub hides the narrow one; code analysis points it out, and so does a warning in the
+  Console. To make part of a broad stub real again, refer to
+  <a href="Run%20members%20for%20real.html">Run members for real</a>.</p>
+<div class="note"><strong>Note:</strong> An answer can call into the code under test, and that code can reach the
+  member the stub replaces. That access runs the real member, not the answer again, so an answer never loops into
+  itself. Every other spy, stub and fake still applies inside the answer.</div>
+
+</section>
+
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="Select%20a%20member.html">Select a member</a></li>
+    <li><a href="Test%20common%20Unity%20code.html">Test common Unity code</a></li>
+    <li><a href="../../public-api/index.html">Public API</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="Select%20a%20member.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Select a member</div>
+  </a>
+  <a class="next" href="Check%20what%20the%20code%20under%20test%20did.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Check what the code under test did</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Understudy v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

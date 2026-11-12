@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Spy on a member, and check what any spy, stub or fake recorded with NUnit constraints." />
+  <title>Understudy - Check what the code under test did</title>
+  <link rel="stylesheet" href="/assets/css/understudy.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Understudy</div><a href="../index.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Check what the code under test did</h1>
+      <div class="sub">Spy on a member, and check what any spy, stub or fake recorded with NUnit constraints.</div>
+      <div class="guide-index">
+        <a href="#spy">Spy on a member</a>
+        <a href="#records">What a spy records</a>
+        <a href="#assert">Check records with NUnit</a>
+        <a href="#order">Check the order of calls</a>
+        <a href="#lines">Read a failed assertion</a>
+        <a href="#engine">Calls from the engine</a>
+      </div>
+    </div>
+
+<!-- ====================================== spy ==== -->
+<section id="spy">
+  <h2>Spy on a member</h2>
+<p>A spy lets the real member run, and records each access the code under test makes that its selection matches:</p>
+<pre><code><span class="ty">SpiedMethod</span>&lt;<span class="ty">GameObject</span>&gt; spawned = <span class="ty">Spy</span>.Method(() =&gt; <span class="ty">Object</span>.Instantiate(bulletPrefab));
+
+turret.Fire();
+
+<span class="ty">Assert</span>.That(spawned.Calls, <span class="ty">Has</span>.Count.EqualTo(<span class="nu">3</span>));
+<span class="ty">Assert</span>.That(spawned.Calls.Results, <span class="ty">Has</span>.All.Not.Null);</code></pre>
+<p>A spy records from the moment it is created, so a spy created after the test's setup code doesn't count the calls that code made. A stub and a fake record exactly what a spy of the same kind records.</p>
+
+</section>
+
+<!-- ====================================== records ==== -->
+<section id="records">
+  <h2>What a spy records</h2>
+<div class="table-scroll">
+  <table class="cmp">
+    <tr><th scope="col">Member kind</th><th scope="col">List</th><th scope="col">Each item holds</th></tr>
+    <tr><td>Method, constructor</td><td><code>Calls</code></td><td><code>Instance</code>, <code>Arguments</code>, <code>Exception</code>, <code>Order</code>, and <code>Result</code> for a call with a result</td></tr>
+    <tr><td>Field, property, indexer</td><td><code>Reads</code>, <code>Writes</code></td><td><code>Instance</code>, <code>Arguments</code> (the indices), <code>Content</code>, <code>Exception</code>, <code>Order</code></td></tr>
+    <tr><td>Event</td><td><code>Handlers</code></td><td><code>Instance</code>, <code>Handler</code>, <code>Order</code></td></tr>
+    <tr><td>Event</td><td><code>Invocations</code></td><td><code>Instance</code>, <code>Arguments</code>, <code>HadHandlers</code>, <code>Order</code></td></tr>
+    <tr><td>Catch spy</td><td><code>Catches</code></td><td><code>Exception</code>, <code>Rethrown</code>, <code>Method</code>, <code>Line</code>, <code>Order</code></td></tr>
+  </table>
+</div>
+<p><code>Calls.Results</code>, <code>Reads.Contents</code> and <code>Writes.Contents</code> list only the results or
+  contents, for a direct comparison:</p>
+<pre><code><span class="ty">SpiedField</span>&lt;<span class="kw">int</span>&gt; health = <span class="ty">Spy</span>.Field(() =&gt; player.health);
+
+player.TakeDamage(<span class="nu">50</span>);
+player.TakeDamage(<span class="nu">50</span>);
+
+<span class="ty">Assert</span>.That(health.Writes.Contents, <span class="ty">Is</span>.EqualTo(<span class="kw">new</span>[] { <span class="nu">50</span>, <span class="nu">0</span> }));</code></pre>
+<p>A call or access that throws is recorded too, with its exception in <code>Exception</code>, which is <code>null</code> otherwise:</p>
+<pre><code><span class="ty">SpiedProperty</span>&lt;<span class="kw">float</span>&gt; volume = <span class="ty">Spy</span>.Property(() =&gt; settings.Volume);
+
+menu.SetVolume(-<span class="nu">1f</span>);
+
+<span class="ty">Assert</span>.That(volume.Writes[<span class="nu">0</span>].Exception, <span class="ty">Is</span>.InstanceOf&lt;<span class="ty">ArgumentOutOfRangeException</span>&gt;());</code></pre>
+<p>A stub records the exception its answer throws the same way.</p>
+<p>A recorded call holds the arguments themselves, so an object the code under test changes after the call shows its new state.</p>
+<p>What the test itself does is never recorded: its <code>Raise</code>, its direct calls and reads. What the code under test does
+  in response is.</p>
+
+</section>
+
+<!-- ====================================== assert ==== -->
+<section id="assert">
+  <h2>Check records with NUnit</h2>
+<p>Understudy has no assertion API: every list is an ordinary read-only list, checked with NUnit constraints and
+  filtered with LINQ. A narrow selection is often the simplest filter, and a table's indexer gives what was recorded on one instance:</p>
+<pre><code><span class="ty">SpiedMethod</span> enemyDestroyed = <span class="ty">Spy</span>.Method(() =&gt; <span class="ty">Object</span>.Destroy(enemy.gameObject));
+wave.Clear();
+<span class="ty">Assert</span>.That(enemyDestroyed.Calls, <span class="ty">Is</span>.Empty);
+
+<span class="ty">SpiedPropertyTable</span>&lt;<span class="ty">Rigidbody</span>, <span class="ty">Vector3</span>&gt; velocities = <span class="ty">Spy</span>.Property((<span class="ty">Rigidbody</span> b) =&gt; b.linearVelocity);
+level.Run();
+<span class="ty">Assert</span>.That(velocities[boss].Writes, <span class="ty">Is</span>.Empty);</code></pre>
+<p>Every list is live: a list held in a local follows what is recorded as the code under test runs.</p>
+
+</section>
+
+<!-- ====================================== order ==== -->
+<section id="order">
+  <h2>Check the order of calls</h2>
+<p><code>Order</code> is a sequence number shared by every spy, stub and fake in the test, so it orders accesses to
+  different members:</p>
+<pre><code><span class="ty">SpiedMethod</span> save = <span class="ty">Spy</span>.Method(() =&gt; game.SaveGame());
+<span class="ty">SpiedMethod</span> quit = <span class="ty">Spy</span>.Method(() =&gt; game.Quit());
+
+menu.QuitToDesktop();
+
+<span class="ty">Assert</span>.That(save.Calls[<span class="nu">0</span>].Order, <span class="ty">Is</span>.LessThan(quit.Calls[<span class="nu">0</span>].Order));</code></pre>
+<p>The doubles that record one access give it the same <code>Order</code>.</p>
+
+</section>
+
+<!-- ====================================== lines ==== -->
+<section id="lines">
+  <h2>Read a failed assertion</h2>
+<p>Each recorded call, access, subscription, raise and catch prints as one line written the way the code reads, with its outcome, the line of the code under test that
+  made the access, and its order. A failed collection constraint, such as <code>Is.Empty</code>, prints every item of the list; <code>Has.Count</code> prints only the count:</p>
+<pre><code>Player.TakeDamage(5) returned 45  Player.cs:42  #7
+Tile[,][3, 4] read Wall (stubbed)  Level.cs:18  #8
+Physics.Raycast((0, 1, 0), (0, -1, 0), 10) threw IOException: disk full  Sensor.cs:9  #9</code></pre>
+<p>Values print at full precision, so two values an assertion tells apart never print the same. An access a stub
+  decided ends with <code>(stubbed)</code>, one a fake decided with <code>(faked)</code>. An instance that is a Unity
+  object prints as its name. An access Unity makes, such as calling a Unity message, prints no source line. Don't compare these lines in an assertion: their wording can change between versions.</p>
+<div class="img-block">
+  <img src="../img/test_runner_recorded_calls.png" alt="The Test Runner window, with a failed Is.Empty constraint listing two recorded Player.TakeDamage calls with their lines and order" />
+</div>
+
+</section>
+
+<!-- ====================================== engine ==== -->
+<section id="engine">
+  <h2>Calls from the engine</h2>
+<p>Your own members are also recorded when Unity or a package calls them: Unity messages, Inspector-wired
+  <code>UnityEvent</code>s, animation events, <code>SendMessage</code>, reflection, and package code.</p>
+<pre><code><span class="ty">SpiedMethod</span> opened = <span class="ty">Spy</span>.Method(() =&gt; door.Open());
+button.onClick.Invoke();   <span class="cm">// wired to door.Open in the Inspector</span>
+<span class="ty">Assert</span>.That(opened.Calls, <span class="ty">Has</span>.Count.EqualTo(<span class="nu">1</span>));</code></pre>
+<p>A member of the Unity API is recorded only where your own code calls it.</p>
+
+</section>
+
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="Spy%20on%20caught%20exceptions.html">Spy on caught exceptions</a></li>
+    <li><a href="../../public-api/index.html">Public API</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="Stub%20members.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Stub members</div>
+  </a>
+  <a class="next" href="Fake%20fields%20and%20properties.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Fake fields and properties</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Understudy v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

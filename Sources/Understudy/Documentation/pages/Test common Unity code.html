@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Stub, fake and spy on what most game code reaches: components, time, randomness, input, physics, singletons, events, coroutines, logs and saves." />
+  <title>Understudy - Test common Unity code</title>
+  <link rel="stylesheet" href="../shared/styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Understudy</div><a href="../User%20Manual.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Test common Unity code</h1>
+      <div class="sub">Stub, fake and spy on what most game code reaches: components, time, randomness, input, physics, singletons, events, coroutines, logs and saves.</div>
+      <div class="guide-index">
+        <a href="#component">Test a component</a>
+        <a href="#time">Fix the frame time and random values</a>
+        <a href="#singleton">Replace a singleton</a>
+        <a href="#input">Simulate input</a>
+        <a href="#raycast">Make a raycast hit</a>
+        <a href="#event">Check that an event fired</a>
+        <a href="#engineevent">Raise an engine event</a>
+        <a href="#coroutine">Test a coroutine</a>
+        <a href="#async">Stub async code</a>
+        <a href="#logs">Check what the code under test logs</a>
+        <a href="#prefs">Keep tests out of PlayerPrefs</a>
+        <a href="#scenes">Stub a scene load</a>
+        <a href="#dialog">Answer a dialog in Editor code</a>
+        <a href="#collision">Fill an engine type</a>
+      </div>
+    </div>
+
+<p>In these examples, the lambda passed to <code>Stub</code>, <code>Spy</code> or <code>Fake</code> is a
+  <a href="Select%20a%20member.html#lambda">selection</a>, which names the member as the code under test reaches it.
+  <code>Arg.Any</code> is a <a href="Select%20a%20member.html#arguments">matcher</a>, which matches any argument. The values
+  or lambda given to <code>Returns</code> or <code>Do</code> are the stub's <a href="Stub%20members.html">answer</a>.</p>
+
+<!-- ====================================== component ==== -->
+<section id="component">
+  <h2>Test a component</h2>
+<p>In an Edit mode test, Unity doesn't call <code>Awake</code>, <code>Start</code> or <code>Update</code> on your
+  components. Create the component with <code>AddComponent</code>, call the methods the test needs, and destroy the
+  object at the end with <code>DestroyImmediate</code>, since <code>Destroy</code> isn't allowed outside Play mode:</p>
+<pre><code><span class="kw">public</span> <span class="kw">class</span> <span class="ty">Mover</span> : <span class="ty">MonoBehaviour</span>
+{
+    <span class="kw">public</span> <span class="kw">float</span> speed = <span class="nu">2f</span>;
+
+    <span class="kw">internal</span> <span class="kw">void</span> Update()
+    {
+        transform.position += <span class="ty">Vector3</span>.right * (speed * <span class="ty">Time</span>.deltaTime);
+    }
+}</code></pre>
+<pre><code>[<span class="ty">Test</span>]
+<span class="kw">public</span> <span class="kw">void</span> MovesBySpeedTimesFrameTime()
+{
+    <span class="ty">Stub</span>.Property(() =&gt; <span class="ty">Time</span>.deltaTime).Returns(<span class="nu">0.5f</span>);
+    <span class="ty">Mover</span> mover = <span class="kw">new</span> <span class="ty">GameObject</span>().AddComponent&lt;<span class="ty">Mover</span>&gt;();
+
+    mover.Update();
+
+    <span class="ty">Assert</span>.That(mover.transform.position.x, <span class="ty">Is</span>.EqualTo(<span class="nu">1f</span>));
+    <span class="ty">Object</span>.DestroyImmediate(mover.gameObject);
+}</code></pre>
+<p>A test can only call what it can see, and Unity messages such as <code>Update</code> are usually private. Make the
+  method <code>internal</code>, and give the test assembly access with <code>InternalsVisibleTo</code>; Unity still calls
+  it every frame. For more information, refer to
+  <a href="Set%20up%20a%20test%20assembly.html#internal">Reach members that aren't public</a>. To let Unity call
+  <code>Update</code> over real frames instead, use a <code>[UnityTest]</code> in a Play mode test.</p>
+
+</section>
+
+<!-- ====================================== time ==== -->
+<section id="time">
+  <h2>Fix the frame time and random values</h2>
+<p>Stub each value the test depends on. Several values form a sequence, one per call, and the last one repeats. A selection covers one overload, so match the one the code under test calls: <code>Random.Range(-10f, 10f)</code> calls the <code>float</code> overload.</p>
+<pre><code><span class="ty">Stub</span>.Property(() =&gt; <span class="ty">Time</span>.deltaTime).Returns(<span class="nu">0.02f</span>);
+<span class="ty">Stub</span>.Method(() =&gt; <span class="ty">Random</span>.Range(<span class="ty">Arg</span>.Any&lt;<span class="kw">float</span>&gt;(), <span class="ty">Arg</span>.Any&lt;<span class="kw">float</span>&gt;())).Returns(<span class="nu">3f</span>, -<span class="nu">4f</span>);
+
+<span class="ty">Vector3</span> position = spawner.PickPosition();   <span class="cm">// new Vector3(Random.Range(-10f, 10f), 0f, Random.Range(-10f, 10f)): x is 3, z is -4</span></code></pre>
+
+</section>
+
+<!-- ====================================== singleton ==== -->
+<section id="singleton">
+  <h2>Replace a singleton</h2>
+<p>Fake the static field or property that holds the instance, with an instance the test creates. In an Edit mode test, <code>AddComponent</code> doesn't run <code>Awake</code>, so the component doesn't register itself and <code>Instance</code> stays <code>null</code>:</p>
+<pre><code><span class="ty">GameManager</span> manager = <span class="kw">new</span> <span class="ty">GameObject</span>().AddComponent&lt;<span class="ty">GameManager</span>&gt;();
+manager.score = <span class="nu">42</span>;
+<span class="ty">Fake</span>.Field(() =&gt; <span class="ty">GameManager</span>.Instance, initial: manager);
+
+<span class="ty">Assert</span>.That(<span class="ty">ScoreLabel</span>.Text(), <span class="ty">Is</span>.EqualTo(<span class="st">"Score: 42"</span>));
+<span class="ty">Object</span>.DestroyImmediate(manager.gameObject);</code></pre>
+<p>Use <code>Fake.Field</code> for a field, such as <code>public static GameManager Instance;</code>, and <code>Fake.Property</code> for a property. When the code under test assigns the singleton, as an <code>Awake</code> that writes <code>Instance = this</code> does, the write lands in the fake, and the real field keeps its value. For more information, refer to
+  <a href="Fake%20fields%20and%20properties.html">Fake fields and properties</a>.</p>
+
+</section>
+
+<!-- ====================================== input ==== -->
+<section id="input">
+  <h2>Simulate input</h2>
+<p>Stub <code>Input.GetKey</code> for every key with <code>Arg.Any</code>, so no key reads the real keyboard, and
+  return <code>true</code> for the keys the test holds down:</p>
+<pre><code><span class="ty">Stub</span>.Method(() =&gt; <span class="ty">Input</span>.GetKey(<span class="ty">Arg</span>.Any&lt;<span class="ty">KeyCode</span>&gt;())).Returns((<span class="ty">KeyCode</span> key) =&gt; key == <span class="ty">KeyCode</span>.Space);</code></pre>
+<p>Here Space is held down and every other key is up. To share pressed keys between tests, refer to <a href="Share%20doubles%20between%20tests.html">Share doubles between tests</a>.</p>
+
+</section>
+
+<!-- ====================================== raycast ==== -->
+<section id="raycast">
+  <h2>Make a raycast hit</h2>
+<p>Stub the overload the code under test calls, here <code>Physics.Raycast(ray, out hit, maxDistance)</code>, and
+  write the hit through the answer's <code>out</code> parameter:</p>
+<pre><code><span class="ty">Stub</span>.Method(() =&gt; <span class="ty">Physics</span>.Raycast(<span class="ty">Arg</span>.Any&lt;<span class="ty">Ray</span>&gt;(), <span class="kw">out</span> <span class="ty">Arg</span>.Any&lt;<span class="ty">RaycastHit</span>&gt;(), <span class="ty">Arg</span>.Any&lt;<span class="kw">float</span>&gt;()))
+    .Returns((<span class="ty">Ray</span> ray, <span class="kw">out</span> <span class="ty">RaycastHit</span> hit, <span class="kw">float</span> maxDistance) =&gt;
+    {
+        hit = <span class="kw">new</span> <span class="ty">RaycastHit</span> { point = <span class="kw">new</span> <span class="ty">Vector3</span>(<span class="nu">0f</span>, <span class="nu">2f</span>, <span class="nu">0f</span>), distance = <span class="nu">1f</span> };
+        <span class="kw">return</span> <span class="kw">true</span>;
+    });</code></pre>
+<p><code>Physics.Raycast</code> has a separate overload for each set of parameters, and a selection covers one
+  overload. If the code under test also calls a raycast with a <code>layerMask</code>, stub that overload too: a leak
+  warning names any overload that runs for real. For more information, refer to
+  <a href="Stub%20members.html#outref">Out and ref parameters</a>.</p>
+
+</section>
+
+<!-- ====================================== event ==== -->
+<section id="event">
+  <h2>Check that an event fired</h2>
+<p>Spy on the event, and check its raises in <code>Invocations</code>. A raise is recorded even when no handler is subscribed:</p>
+<pre><code><span class="ty">SpiedEvent</span> died = <span class="ty">Spy</span>.Event(() =&gt; player.Died += <span class="ty">Arg</span>.Ignored);
+
+player.TakeDamage(<span class="nu">100</span>);
+
+<span class="ty">Assert</span>.That(died.Invocations, <span class="ty">Has</span>.Count.EqualTo(<span class="nu">1</span>));</code></pre>
+<p>With no handler subscribed, C# doesn't evaluate a raise's arguments. To check them, subscribe a handler first. For more information, refer to <a href="Fake%20events.html#spy">Check handlers and raises</a>.</p>
+
+</section>
+
+<!-- ====================================== engineevent ==== -->
+<section id="engineevent">
+  <h2>Raise an engine event</h2>
+<p>Fake the event, let the code under test subscribe to it, then raise it from the test:</p>
+<pre><code><span class="ty">FakedEvent</span> sceneLoaded = <span class="ty">Fake</span>.Event(() =&gt; <span class="ty">SceneManager</span>.sceneLoaded += <span class="ty">Arg</span>.Ignored);
+hud.Init();
+
+sceneLoaded.Raise(<span class="ty">SceneManager</span>.GetActiveScene(), <span class="ty">LoadSceneMode</span>.Single);</code></pre>
+<p>Only subscriptions in the code under test reach the fake: a handler the test subscribes itself stays on the real event. For more information, refer to <a href="Fake%20events.html">Fake events</a>.</p>
+
+</section>
+
+<!-- ====================================== coroutine ==== -->
+<section id="coroutine">
+  <h2>Test a coroutine</h2>
+<p>In an Edit mode test, run a coroutine one step at a time with <code>MoveNext</code>: each call runs it to its next <code>yield</code>. A <code>WaitForSeconds</code> only waits when Unity runs the coroutine, so the next step runs at once:</p>
+<pre><code><span class="ty">SpiedConstructor</span>&lt;<span class="ty">WaitForSeconds</span>&gt; waits = <span class="ty">Spy</span>.Constructor(() =&gt; <span class="kw">new</span> <span class="ty">WaitForSeconds</span>(<span class="ty">Arg</span>.Any&lt;<span class="kw">float</span>&gt;()));
+<span class="ty">StubbedMethod</span>&lt;<span class="ty">GameObject</span>&gt; spawned = <span class="ty">Stub</span>.Method(() =&gt; <span class="ty">Object</span>.Instantiate(<span class="ty">Arg</span>.Any&lt;<span class="ty">GameObject</span>&gt;()));
+
+<span class="ty">IEnumerator</span> routine = spawner.SpawnAfterDelay();
+routine.MoveNext();   <span class="cm">// runs to the yield</span>
+<span class="ty">Assert</span>.That(waits.Calls[<span class="nu">0</span>].Arguments[<span class="nu">0</span>], <span class="ty">Is</span>.EqualTo(<span class="nu">2f</span>));
+
+routine.MoveNext();   <span class="cm">// runs the rest</span>
+<span class="ty">Assert</span>.That(spawned.Calls, <span class="ty">Has</span>.Count.EqualTo(<span class="nu">1</span>));</code></pre>
+<p>A stub on <code>Time.time</code> or <code>Time.deltaTime</code> doesn't shorten a <code>WaitForSeconds</code>, which Unity's own clock decides. To run a coroutine over real frames, use a <code>[UnityTest]</code> in a Play mode test.</p>
+
+</section>
+
+<!-- ====================================== async ==== -->
+<section id="async">
+  <h2>Stub async code</h2>
+<p>Return a finished task, or an <code>Awaitable</code> that is already complete:</p>
+<pre><code><span class="ty">Stub</span>.Method(() =&gt; loader.LoadAsync()).Returns(<span class="ty">Task</span>.FromResult(<span class="nu">21</span>));
+
+<span class="ty">Stub</span>.Method(() =&gt; <span class="ty">Awaitable</span>.WaitForSecondsAsync(<span class="ty">Arg</span>.Any&lt;<span class="kw">float</span>&gt;())).Returns(() =&gt;
+{
+    <span class="ty">AwaitableCompletionSource</span> done = <span class="kw">new</span>();
+    done.SetResult();
+    <span class="kw">return</span> done.<span class="ty">Awaitable</span>;
+});</code></pre>
+<p>An <code>Awaitable</code> can be awaited only once, so the answer creates a new one for each call. A test method
+  can be <code>async Task</code>, and awaits the code under test as any caller does.</p>
+
+</section>
+
+<!-- ====================================== logs ==== -->
+<section id="logs">
+  <h2>Check what the code under test logs</h2>
+<p>The Test Runner fails a test that logs an error it doesn't expect. To check an error without logging it, stub <code>Debug.LogError</code>:</p>
+<pre><code><span class="ty">StubbedMethod</span> logged = <span class="ty">Stub</span>.Method(() =&gt; <span class="ty">Debug</span>.LogError(<span class="ty">Arg</span>.That&lt;<span class="kw">object</span>&gt;(<span class="ty">Does</span>.Contain(<span class="st">"corrupt"</span>))));
+
+save.Load(<span class="st">"garbage"</span>);
+
+<span class="ty">Assert</span>.That(logged.Calls, <span class="ty">Has</span>.Count.EqualTo(<span class="nu">1</span>));</code></pre>
+<p>To let the error reach the Console instead, declare it expected with Unity's <code>LogAssert.Expect(LogType.Error, message)</code>.</p>
+
+</section>
+
+<!-- ====================================== prefs ==== -->
+<section id="prefs">
+  <h2>Keep tests out of PlayerPrefs</h2>
+<p>Back <code>PlayerPrefs</code> with a dictionary the test owns, so the calls you stub never read or write the real saves:</p>
+<pre><code><span class="ty">Dictionary</span>&lt;<span class="kw">string</span>, <span class="kw">int</span>&gt; prefs = <span class="kw">new</span>();
+<span class="ty">Stub</span>.Method(() =&gt; <span class="ty">PlayerPrefs</span>.SetInt(<span class="ty">Arg</span>.Any&lt;<span class="kw">string</span>&gt;(), <span class="ty">Arg</span>.Any&lt;<span class="kw">int</span>&gt;()))
+    .Do((<span class="kw">string</span> key, <span class="kw">int</span> value) =&gt; prefs[key] = value);
+<span class="ty">Stub</span>.Method(() =&gt; <span class="ty">PlayerPrefs</span>.GetInt(<span class="ty">Arg</span>.Any&lt;<span class="kw">string</span>&gt;(), <span class="ty">Arg</span>.Any&lt;<span class="kw">int</span>&gt;()))
+    .Returns((<span class="kw">string</span> key, <span class="kw">int</span> fallback) =&gt; prefs.TryGetValue(key, <span class="kw">out</span> <span class="kw">int</span> value) ? value : fallback);</code></pre>
+<p><code>GetInt(key)</code> and <code>GetInt(key, fallback)</code> are different overloads: stub each one the code under test calls.</p>
+
+</section>
+
+<!-- ====================================== scenes ==== -->
+<section id="scenes">
+  <h2>Stub a scene load</h2>
+<p>Stub <code>SceneManager.LoadScene</code> so that the test stays in its scene, and check which scene the code under test asked for:</p>
+<pre><code><span class="ty">StubbedMethod</span> loaded = <span class="ty">Stub</span>.Method(() =&gt; <span class="ty">SceneManager</span>.LoadScene(<span class="ty">Arg</span>.Any&lt;<span class="kw">string</span>&gt;()));
+
+flow.Win();
+
+<span class="ty">Assert</span>.That(loaded.Calls[<span class="nu">0</span>].Arguments[<span class="nu">0</span>], <span class="ty">Is</span>.EqualTo(<span class="st">"Level2"</span>));</code></pre>
+
+</section>
+
+<!-- ====================================== dialog ==== -->
+<section id="dialog">
+  <h2>Answer a dialog in Editor code</h2>
+<p>Stub <code>EditorUtility.DisplayDialog</code>, so that a dialog never blocks the test run. Stub each overload the code under test calls:</p>
+<pre><code><span class="ty">Stub</span>.Method(() =&gt; <span class="ty">EditorUtility</span>.DisplayDialog(<span class="ty">Arg</span>.Any&lt;<span class="kw">string</span>&gt;(), <span class="ty">Arg</span>.Any&lt;<span class="kw">string</span>&gt;(), <span class="ty">Arg</span>.Any&lt;<span class="kw">string</span>&gt;())).Returns(<span class="kw">true</span>);</code></pre>
+
+</section>
+
+<!-- ====================================== collision ==== -->
+<section id="collision">
+  <h2>Fill an engine type</h2>
+<p>To pass the code under test an engine type whose properties a test can't set, such as <code>Collision</code>, stub its reads
+  on every instance:</p>
+<pre><code><span class="ty">Stub</span>.Property((<span class="ty">Collision</span> c) =&gt; c.gameObject).EachReturns(enemyObject);
+sword.OnCollisionEnter(<span class="kw">new</span> <span class="ty">Collision</span>());</code></pre>
+<p>For more information, refer to <a href="Stub%20members.html#tables">Stub every instance</a>.</p>
+
+</section>
+
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="Stub%20members.html">Stub members</a></li>
+    <li><a href="Fake%20events.html">Fake events</a></li>
+    <li><a href="Check%20what%20the%20code%20under%20test%20did.html">Check what the code under test did</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="Write%20tests.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Write tests</div>
+  </a>
+  <a class="next" href="Select%20a%20member.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Select a member</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Understudy v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

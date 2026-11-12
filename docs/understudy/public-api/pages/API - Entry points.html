@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Declare spies, stubs, fakes and Real, match arguments, and declare non-deterministic members. Explained in Select a member and Detect leaks." />
+  <title>Understudy - Public API - Entry points</title>
+  <link rel="stylesheet" href="/assets/css/understudy.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <nav>
+    <a href="../index.html">Overview</a>
+    <a class="nav-band active" href="API%20-%20Entry%20points.html" aria-current="page">Entry points</a>
+    <div class="nav-group">Roles</div>
+    <div class="nav-group-body">
+      <a href="#Spy"><span class="badge badge-static">static</span>Spy</a>
+      <a href="#Stub"><span class="badge badge-static">static</span>Stub</a>
+      <a href="#Fake"><span class="badge badge-static">static</span>Fake</a>
+      <a href="#Real"><span class="badge badge-static">static</span>Real</a>
+    </div>
+    <div class="nav-group">Matchers</div>
+    <div class="nav-group-body">
+      <a href="#Arg"><span class="badge badge-static">static</span>Arg</a>
+    </div>
+    <div class="nav-group">Leak detection</div>
+    <div class="nav-group-body">
+      <a href="#NonDeterministicAttribute"><span class="badge badge-class">attr</span>NonDeterministicAttribute</a>
+    </div>
+    <a class="nav-band" href="API%20-%20Spies.html">Spies</a>
+    <a class="nav-band" href="API%20-%20Stubs.html">Stubs</a>
+    <a class="nav-band" href="API%20-%20Fakes.html">Fakes</a>
+    <a class="nav-band" href="API%20-%20Recordings.html">Recordings</a>
+  </nav>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Public API <span class="tag">Entry points</span></h1>
+      <div class="sub">Declare spies, stubs, fakes and Real, match arguments, and declare non-deterministic members. Explained in <a href="../../user-manual/pages/Select%20a%20member.html">Select a member</a> and <a href="../../user-manual/pages/Detect%20leaks.html">Detect leaks</a>.</div>
+    </div>
+
+    <h2 class="api-group">Roles</h2>
+    <!-- Spy -->
+    <div class="type-section" id="Spy">
+      <div class="type-header"><h3>Spy</h3><span class="badge badge-static">static</span></div>
+      <p class="type-desc">Creates spies: the real member runs, and what the code under test does with it is recorded. A spy belongs to the NUnit test or fixture that creates it, and starts fresh in every test. Explained in <a href="../../user-manual/pages/Check%20what%20the%20code%20under%20test%20did.html">Check what the code under test did</a> and <a href="../../user-manual/pages/Spy%20on%20caught%20exceptions.html">Spy on caught exceptions</a>.</p>
+      <p class="type-desc"><span class="ex">Every method throws InvalidOperationException outside an NUnit test, or when its selection was not woven (<code>Catch</code>, which takes no selection, only outside an NUnit test).</span></p>
+      <div class="member-group">
+        <div class="member-group-title">Static methods</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Spies.html#SpiedMethodOfTResult">SpiedMethod&lt;TResult&gt;</a></span> <span class="mn">Method</span>&lt;TResult&gt;(<span class="t">Func&lt;TResult&gt;</span> selection)</th><td>Spies on a method with a result, an operator or a conversion: <code>() =&gt; Object.Instantiate(bulletPrefab)</code>.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Spies.html#SpiedMethod">SpiedMethod</a></span> <span class="mn">Method</span>(<span class="t">Action</span> selection)</th><td>Spies on a void method: <code>() =&gt; Object.Destroy(enemy.gameObject)</code>.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Spies.html#SpiedMethodTableOfTInstanceTResult">SpiedMethodTable&lt;TInstance, TResult&gt;</a></span> <span class="mn">Method</span>&lt;TInstance, TResult&gt;(<span class="t">Func&lt;TInstance, TResult&gt;</span> selection)</th><td>Spies on a method with a result on any instance, one spy per instance: <code>(Weapon w) =&gt; w.Damage()</code>.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Spies.html#SpiedMethodTableOfTInstance">SpiedMethodTable&lt;TInstance&gt;</a></span> <span class="mn">Method</span>&lt;TInstance&gt;(<span class="t">Action&lt;TInstance&gt;</span> selection)</th><td>Spies on a void method on any instance, one spy per instance: <code>(Weapon w) =&gt; w.Fire()</code>.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Spies.html#SpiedConstructorOfTResult">SpiedConstructor&lt;TResult&gt;</a></span> <span class="mn">Constructor</span>&lt;TResult&gt;(<span class="t">Func&lt;TResult&gt;</span> selection)</th><td>Spies on a constructor: <code>() =&gt; new SaveSystem()</code>.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Spies.html#SpiedFieldOfTValue">SpiedField&lt;TValue&gt;</a></span> <span class="mn">Field</span>&lt;TValue&gt;(<span class="t">Func&lt;TValue&gt;</span> selection)</th><td>Spies on a field's reads and writes: <code>() =&gt; player.health</code>.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Spies.html#SpiedFieldTableOfTInstanceTValue">SpiedFieldTable&lt;TInstance, TValue&gt;</a></span> <span class="mn">Field</span>&lt;TInstance, TValue&gt;(<span class="t">Func&lt;TInstance, TValue&gt;</span> selection)</th><td>Spies on a field's reads and writes on any instance, one spy per instance: <code>(Enemy e) =&gt; e.health</code>.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Spies.html#SpiedPropertyOfTValue">SpiedProperty&lt;TValue&gt;</a></span> <span class="mn">Property</span>&lt;TValue&gt;(<span class="t">Func&lt;TValue&gt;</span> selection)</th><td>Spies on a property's reads and writes: <code>() =&gt; Time.timeScale</code>.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Spies.html#SpiedPropertyTableOfTInstanceTValue">SpiedPropertyTable&lt;TInstance, TValue&gt;</a></span> <span class="mn">Property</span>&lt;TInstance, TValue&gt;(<span class="t">Func&lt;TInstance, TValue&gt;</span> selection)</th><td>Spies on a property's reads and writes on any instance, one spy per instance: <code>(Rigidbody b) =&gt; b.linearVelocity</code>.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Spies.html#SpiedIndexerOfTValue">SpiedIndexer&lt;TValue&gt;</a></span> <span class="mn">Indexer</span>&lt;TValue&gt;(<span class="t">Func&lt;TValue&gt;</span> selection)</th><td>Spies on the reads and writes of an element written with []: an array element or an indexer, <code>() =&gt; level.tiles[Arg.Any&lt;int&gt;()]</code>.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Spies.html#SpiedIndexerTableOfTInstanceTValue">SpiedIndexerTable&lt;TInstance, TValue&gt;</a></span> <span class="mn">Indexer</span>&lt;TInstance, TValue&gt;(<span class="t">Func&lt;TInstance, TValue&gt;</span> selection)</th><td>Spies on the reads and writes of an element written with [] on any array or indexed object, one spy per instance: <code>(Tile[] t) =&gt; t[Arg.Any&lt;int&gt;()]</code>.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Spies.html#SpiedEvent">SpiedEvent</a></span> <span class="mn">Event</span>(<span class="t">Action</span> selection)</th><td>Spies on an event, named by a subscription of <code>Arg.Ignored</code>: <code>() =&gt; player.Died += Arg.Ignored</code>.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Spies.html#SpiedEventTableOfTInstance">SpiedEventTable&lt;TInstance&gt;</a></span> <span class="mn">Event</span>&lt;TInstance&gt;(<span class="t">Action&lt;TInstance&gt;</span> selection)</th><td>Spies on an event on any instance, one spy per instance: <code>(Enemy e) =&gt; e.Killed += Arg.Ignored</code>.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Spies.html#SpiedCatchOfTException">SpiedCatch&lt;TException&gt;</a></span> <span class="mn">Catch</span>&lt;TException&gt;() where TException : <span class="t">Exception</span></th><td>Spies on the catch blocks the code under test enters with an exception of this type, subtypes included.</td></tr>
+        </table>
+      </div>
+    </div>
+    <!-- Stub -->
+    <div class="type-section" id="Stub">
+      <div class="type-header"><h3>Stub</h3><span class="badge badge-static">static</span></div>
+      <p class="type-desc">Creates stubs: the member is replaced with the answers the test sets with <code>Returns</code> and <code>Do</code>, and each access the selection matches is recorded as a spy records it. With nothing declared, a stub does the C# default. A stub belongs to the NUnit test or fixture that creates it, starts fresh in every test, and the last stub, fake or <code>Real</code> declared on an access decides it. Explained in <a href="../../user-manual/pages/Stub%20members.html">Stub members</a>.</p>
+      <p class="type-desc"><span class="ex">Every method throws InvalidOperationException outside an NUnit test, or when its selection was not woven.</span></p>
+      <div class="member-group">
+        <div class="member-group-title">Static methods</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Stubs.html#StubbedMethodOfTResult">StubbedMethod&lt;TResult&gt;</a></span> <span class="mn">Method</span>&lt;TResult&gt;(<span class="t">Func&lt;TResult&gt;</span> selection)</th><td>Stubs a method with a result, an operator or a conversion: <code>() =&gt; Random.Range(0, 10)</code>.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Stubs.html#StubbedMethod">StubbedMethod</a></span> <span class="mn">Method</span>(<span class="t">Action</span> selection)</th><td>Stubs a void method: <code>() =&gt; Object.Destroy(Arg.Any&lt;Object&gt;())</code>.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Stubs.html#StubbedMethodTableOfTInstanceTResult">StubbedMethodTable&lt;TInstance, TResult&gt;</a></span> <span class="mn">Method</span>&lt;TInstance, TResult&gt;(<span class="t">Func&lt;TInstance, TResult&gt;</span> selection)</th><td>Stubs a method with a result on any instance, one stub per instance: <code>(Weapon w) =&gt; w.Damage()</code>.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Stubs.html#StubbedMethodTableOfTInstance">StubbedMethodTable&lt;TInstance&gt;</a></span> <span class="mn">Method</span>&lt;TInstance&gt;(<span class="t">Action&lt;TInstance&gt;</span> selection)</th><td>Stubs a void method on any instance, one stub per instance: <code>(Rigidbody b) =&gt; b.AddForce(Arg.Any&lt;Vector3&gt;())</code>.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Stubs.html#StubbedConstructorOfTResult">StubbedConstructor&lt;TResult&gt;</a></span> <span class="mn">Constructor</span>&lt;TResult&gt;(<span class="t">Func&lt;TResult&gt;</span> selection)</th><td>Stubs a constructor: <code>() =&gt; new SaveSystem()</code>. Code never expects null from <code>new</code>, so give it a <code>Returns</code>.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Stubs.html#StubbedFieldOfTValue">StubbedField&lt;TValue&gt;</a></span> <span class="mn">Field</span>&lt;TValue&gt;(<span class="t">Func&lt;TValue&gt;</span> selection)</th><td>Stubs a field's reads and writes: <code>() =&gt; sensor.distance</code>.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Stubs.html#StubbedFieldTableOfTInstanceTValue">StubbedFieldTable&lt;TInstance, TValue&gt;</a></span> <span class="mn">Field</span>&lt;TInstance, TValue&gt;(<span class="t">Func&lt;TInstance, TValue&gt;</span> selection)</th><td>Stubs a field's reads and writes on any instance, one stub per instance: <code>(Enemy e) =&gt; e.health</code>.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Stubs.html#StubbedPropertyOfTValue">StubbedProperty&lt;TValue&gt;</a></span> <span class="mn">Property</span>&lt;TValue&gt;(<span class="t">Func&lt;TValue&gt;</span> selection)</th><td>Stubs a property's reads and writes: <code>() =&gt; Time.deltaTime</code>.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Stubs.html#StubbedPropertyTableOfTInstanceTValue">StubbedPropertyTable&lt;TInstance, TValue&gt;</a></span> <span class="mn">Property</span>&lt;TInstance, TValue&gt;(<span class="t">Func&lt;TInstance, TValue&gt;</span> selection)</th><td>Stubs a property's reads and writes on any instance, one stub per instance: <code>(Collision c) =&gt; c.gameObject</code>.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Stubs.html#StubbedIndexerOfTValue">StubbedIndexer&lt;TValue&gt;</a></span> <span class="mn">Indexer</span>&lt;TValue&gt;(<span class="t">Func&lt;TValue&gt;</span> selection)</th><td>Stubs the reads and writes of an element written with []: an array element or an indexer, <code>() =&gt; level.grid[Arg.Any&lt;int&gt;(), Arg.Any&lt;int&gt;()]</code>.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Stubs.html#StubbedIndexerTableOfTInstanceTValue">StubbedIndexerTable&lt;TInstance, TValue&gt;</a></span> <span class="mn">Indexer</span>&lt;TInstance, TValue&gt;(<span class="t">Func&lt;TInstance, TValue&gt;</span> selection)</th><td>Stubs the reads and writes of an element written with [] on any array or indexed object, one stub per instance: <code>(Tile[] t) =&gt; t[Arg.Any&lt;int&gt;()]</code>.</td></tr>
+        </table>
+      </div>
+    </div>
+    <!-- Fake -->
+    <div class="type-section" id="Fake">
+      <div class="type-header"><h3>Fake</h3><span class="badge badge-static">static</span></div>
+      <p class="type-desc">Creates fakes: the member is replaced with a working in-memory stand-in, a stored value for a field or property, stored handlers for an event, and each access the selection matches is recorded as a spy records it. A fake belongs to the NUnit test or fixture that creates it, starts fresh in every test, and the last stub, fake or <code>Real</code> declared on an access decides it. Explained in <a href="../../user-manual/pages/Fake%20fields%20and%20properties.html">Fake fields and properties</a> and <a href="../../user-manual/pages/Fake%20events.html">Fake events</a>.</p>
+      <p class="type-desc"><span class="ex">Every method throws InvalidOperationException outside an NUnit test, or when its selection was not woven.</span></p>
+      <div class="member-group">
+        <div class="member-group-title">Static methods</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Fakes.html#FakedFieldOfTValue">FakedField&lt;TValue&gt;</a></span> <span class="mn">Field</span>&lt;TValue&gt;(<span class="t">Func&lt;TValue&gt;</span> selection, <span class="t">TValue</span> initial = default)</th><td>Fakes a field with a stored value, one per instance the selection reaches: <code>() =&gt; player.health</code>. <code>initial</code> is the initial value each stored value starts at, in every test.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Fakes.html#FakedFieldOfTValue">FakedField&lt;TValue&gt;</a></span> <span class="mn">Field</span>&lt;TValue&gt;(<span class="t">Func&lt;TValue&gt;</span> selection, <span class="t">Func&lt;TValue&gt;</span> initial)</th><td>Fakes a field with a stored value, one per instance the selection reaches, each created by a factory: <code>Fake.Field(() =&gt; player.inventory, initial: () =&gt; new List&lt;Item&gt;())</code>. <span class="ex">Throws ArgumentNullException when the factory is null.</span></td></tr>
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Fakes.html#FakedFieldTableOfTInstanceTValue">FakedFieldTable&lt;TInstance, TValue&gt;</a></span> <span class="mn">Field</span>&lt;TInstance, TValue&gt;(<span class="t">Func&lt;TInstance, TValue&gt;</span> selection, <span class="t">TValue</span> initial = default)</th><td>Fakes a field on any instance, one stored value per instance: <code>(Gun g) =&gt; g.ammo</code>.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Fakes.html#FakedFieldTableOfTInstanceTValue">FakedFieldTable&lt;TInstance, TValue&gt;</a></span> <span class="mn">Field</span>&lt;TInstance, TValue&gt;(<span class="t">Func&lt;TInstance, TValue&gt;</span> selection, <span class="t">Func&lt;TValue&gt;</span> initial)</th><td>Fakes a field on any instance, one stored value per instance, each created by a factory. <span class="ex">Throws ArgumentNullException when the factory is null.</span></td></tr>
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Fakes.html#FakedFieldTableOfTInstanceTValue">FakedFieldTable&lt;TInstance, TValue&gt;</a></span> <span class="mn">Field</span>&lt;TInstance, TValue&gt;(<span class="t">Func&lt;TInstance, TValue&gt;</span> selection, <span class="t">Func&lt;TInstance, TValue&gt;</span> initial)</th><td>Fakes a field on any instance, one stored value per instance, each created from its instance: <code>Fake.Field((Enemy e) =&gt; e.inventory, initial: (Enemy e) =&gt; new List&lt;Item&gt;())</code>. <span class="ex">Throws ArgumentNullException when the factory is null.</span></td></tr>
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Fakes.html#FakedPropertyOfTValue">FakedProperty&lt;TValue&gt;</a></span> <span class="mn">Property</span>&lt;TValue&gt;(<span class="t">Func&lt;TValue&gt;</span> selection, <span class="t">TValue</span> initial = default)</th><td>Fakes a property with a stored value, one per instance the selection reaches: <code>() =&gt; Time.timeScale</code>. <code>initial</code> is the initial value each stored value starts at, in every test.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Fakes.html#FakedPropertyOfTValue">FakedProperty&lt;TValue&gt;</a></span> <span class="mn">Property</span>&lt;TValue&gt;(<span class="t">Func&lt;TValue&gt;</span> selection, <span class="t">Func&lt;TValue&gt;</span> initial)</th><td>Fakes a property with a stored value, one per instance the selection reaches, each created by a factory. <span class="ex">Throws ArgumentNullException when the factory is null.</span></td></tr>
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Fakes.html#FakedPropertyTableOfTInstanceTValue">FakedPropertyTable&lt;TInstance, TValue&gt;</a></span> <span class="mn">Property</span>&lt;TInstance, TValue&gt;(<span class="t">Func&lt;TInstance, TValue&gt;</span> selection, <span class="t">TValue</span> initial = default)</th><td>Fakes a property on any instance, one stored value per instance: <code>(Rigidbody b) =&gt; b.linearVelocity</code>.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Fakes.html#FakedPropertyTableOfTInstanceTValue">FakedPropertyTable&lt;TInstance, TValue&gt;</a></span> <span class="mn">Property</span>&lt;TInstance, TValue&gt;(<span class="t">Func&lt;TInstance, TValue&gt;</span> selection, <span class="t">Func&lt;TValue&gt;</span> initial)</th><td>Fakes a property on any instance, one stored value per instance, each created by a factory. <span class="ex">Throws ArgumentNullException when the factory is null.</span></td></tr>
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Fakes.html#FakedPropertyTableOfTInstanceTValue">FakedPropertyTable&lt;TInstance, TValue&gt;</a></span> <span class="mn">Property</span>&lt;TInstance, TValue&gt;(<span class="t">Func&lt;TInstance, TValue&gt;</span> selection, <span class="t">Func&lt;TInstance, TValue&gt;</span> initial)</th><td>Fakes a property on any instance, one stored value per instance, each created from its instance. <span class="ex">Throws ArgumentNullException when the factory is null.</span></td></tr>
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Fakes.html#FakedEvent">FakedEvent</a></span> <span class="mn">Event</span>(<span class="t">Action</span> selection)</th><td>Fakes an event, named by a subscription of <code>Arg.Ignored</code>: <code>() =&gt; SceneManager.sceneLoaded += Arg.Ignored</code>. Subscriptions from the code under test land in the fake, and the test raises it with <code>Raise</code>.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="API%20-%20Fakes.html#FakedEventTableOfTInstance">FakedEventTable&lt;TInstance&gt;</a></span> <span class="mn">Event</span>&lt;TInstance&gt;(<span class="t">Action&lt;TInstance&gt;</span> selection)</th><td>Fakes an event on any instance, one fake per instance: <code>(Enemy e) =&gt; e.Killed += Arg.Ignored</code>.</td></tr>
+        </table>
+      </div>
+    </div>
+    <!-- Real -->
+    <div class="type-section" id="Real">
+      <div class="type-header"><h3>Real</h3><span class="badge badge-static">static</span></div>
+      <p class="type-desc">Declares that a member runs for real on purpose. Declared after a stub or fake, it sends the accesses it matches to the real member; leak detection doesn't warn about the accesses it covers. It records nothing, and belongs to the NUnit test or fixture that declares it. Explained in <a href="../../user-manual/pages/Run%20members%20for%20real.html">Run members for real</a>.</p>
+      <p class="type-desc"><span class="ex">Every method throws InvalidOperationException outside an NUnit test, or when its selection was not woven.</span></p>
+      <div class="member-group">
+        <div class="member-group-title">Static methods</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t">void</span> <span class="mn">Method</span>&lt;TResult&gt;(<span class="t">Func&lt;TResult&gt;</span> selection)</th><td>Runs a method with a result, an operator or a conversion for real: <code>() =&gt; Random.Range(0, 10)</code>.</td></tr>
+          <tr><th scope="row"><span class="t">void</span> <span class="mn">Method</span>(<span class="t">Action</span> selection)</th><td>Runs a void method for real.</td></tr>
+          <tr><th scope="row"><span class="t">void</span> <span class="mn">Method</span>&lt;TInstance, TResult&gt;(<span class="t">Func&lt;TInstance, TResult&gt;</span> selection)</th><td>Runs a method with a result for real, on any instance.</td></tr>
+          <tr><th scope="row"><span class="t">void</span> <span class="mn">Method</span>&lt;TInstance&gt;(<span class="t">Action&lt;TInstance&gt;</span> selection)</th><td>Runs a void method for real, on any instance.</td></tr>
+          <tr><th scope="row"><span class="t">void</span> <span class="mn">Constructor</span>&lt;TResult&gt;(<span class="t">Func&lt;TResult&gt;</span> selection)</th><td>Runs a constructor for real.</td></tr>
+          <tr><th scope="row"><span class="t">void</span> <span class="mn">Field</span>&lt;TValue&gt;(<span class="t">Func&lt;TValue&gt;</span> selection)</th><td>Reads and writes a field for real.</td></tr>
+          <tr><th scope="row"><span class="t">void</span> <span class="mn">Field</span>&lt;TInstance, TValue&gt;(<span class="t">Func&lt;TInstance, TValue&gt;</span> selection)</th><td>Reads and writes a field for real, on any instance.</td></tr>
+          <tr><th scope="row"><span class="t">void</span> <span class="mn">Property</span>&lt;TValue&gt;(<span class="t">Func&lt;TValue&gt;</span> selection)</th><td>Reads and writes a property for real: <code>() =&gt; Physics.gravity</code>.</td></tr>
+          <tr><th scope="row"><span class="t">void</span> <span class="mn">Property</span>&lt;TInstance, TValue&gt;(<span class="t">Func&lt;TInstance, TValue&gt;</span> selection)</th><td>Reads and writes a property for real, on any instance.</td></tr>
+          <tr><th scope="row"><span class="t">void</span> <span class="mn">Indexer</span>&lt;TValue&gt;(<span class="t">Func&lt;TValue&gt;</span> selection)</th><td>Reads and writes an element written with [] for real.</td></tr>
+          <tr><th scope="row"><span class="t">void</span> <span class="mn">Indexer</span>&lt;TInstance, TValue&gt;(<span class="t">Func&lt;TInstance, TValue&gt;</span> selection)</th><td>Reads and writes an element written with [] for real, on any array or indexed object.</td></tr>
+          <tr><th scope="row"><span class="t">void</span> <span class="mn">Event</span>(<span class="t">Action</span> selection)</th><td>Runs an event for real, named by a subscription of <code>Arg.Ignored</code>: <code>() =&gt; Application.logMessageReceived += Arg.Ignored</code>. Subscriptions reach the real event, and raises invoke its real handlers.</td></tr>
+          <tr><th scope="row"><span class="t">void</span> <span class="mn">Event</span>&lt;TInstance&gt;(<span class="t">Action&lt;TInstance&gt;</span> selection)</th><td>Runs an event for real, on any instance.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <h2 class="api-group">Matchers</h2>
+    <!-- Arg -->
+    <div class="type-section" id="Arg">
+      <div class="type-header"><h3>Arg</h3><span class="badge badge-static">static</span></div>
+      <p class="type-desc">Matchers for the arguments of a selection. Any other argument matches as NUnit's <code>Is.EqualTo</code> does. Understudy generates it as an internal class into each assembly that references Understudy, such as your test assembly, with the <code>Ignored</code> overloads its events need.</p>
+      <div class="member-group">
+        <div class="member-group-title">Static methods</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t">ref T</span> <span class="mn">Any</span>&lt;T&gt;()</th><td>Matches every value. In an <code>out</code> or <code>ref</code> position, it stands for the argument and never filters. <span class="ex">Throws InvalidOperationException when called anywhere but inside a selection.</span></td></tr>
+          <tr><th scope="row"><span class="t">ref T</span> <span class="mn">That</span>&lt;T&gt;(<span class="t">IResolveConstraint</span> constraint)</th><td>Matches the values that satisfy an NUnit constraint, such as <code>Arg.That&lt;float&gt;(Is.GreaterThan(50f))</code>. <span class="ex">Throws InvalidOperationException when called anywhere but inside a selection.</span></td></tr>
+          <tr><th scope="row"><span class="t">void</span> <span class="mn">Ignored</span>()</th><td>Names an event in an <code>Event</code> selection, as the right side of <code>+=</code> or <code>-=</code>: <code>Fake.Event(() =&gt; player.Died += Arg.Ignored)</code>. It fits a void delegate with up to 16 parameters, and Understudy generates the overloads an event with a result or with out, ref or in parameters needs. It never runs. <span class="ex">Throws InvalidOperationException when a delegate made from it outside a selection is invoked.</span></td></tr>
+          <tr><th scope="row"><span class="t">TResult</span> <span class="mn">Ignored</span>&lt;TResult&gt;()</th><td>Names an event whose delegate returns a value and takes no parameters: <code>() =&gt; bank.Asked += Arg.Ignored&lt;bool&gt;</code>. C# infers type arguments from a delegate's parameters only, so the return type is written out. <span class="ex">Throws InvalidOperationException when a delegate made from it outside a selection is invoked.</span></td></tr>
+          <tr><th scope="row"><span class="t">TResult</span> <span class="mn">Ignored</span>&lt;T1, TResult&gt;(<span class="t">T1</span> a)</th><td>Names an event whose delegate returns a value, with every type written out: <code>Arg.Ignored&lt;int, float&gt;</code>. Plain <code>Arg.Ignored</code> fits such an event; this form is for a second event in the assembly whose delegate has the same parameters and another return type. Overloads take up to 16 parameters. <span class="ex">Throws InvalidOperationException when a delegate made from it outside a selection is invoked.</span></td></tr>
+        </table>
+      </div>
+    </div>
+
+    <h2 class="api-group">Leak detection</h2>
+    <!-- NonDeterministicAttribute -->
+    <div class="type-section" id="NonDeterministicAttribute">
+      <div class="type-header"><h3>NonDeterministicAttribute</h3><span class="badge badge-class">attr</span></div>
+      <p class="type-desc">Declares a member non-deterministic: its result differs between runs, machines or frames, so leak detection warns when a test reaches it for real. Every overload of the name is covered, and the declaration applies to the whole project, from any assembly that references Understudy: <code>[assembly: NonDeterministic(typeof(ServerClock), nameof(ServerClock.Now))]</code>.</p>
+      <div class="member-group">
+        <div class="member-group-title">Members</div>
+        <table class="mt">
+          <tr><th scope="row">NonDeterministicAttribute(Type type, string member)</th><td>Declares the members named <code>member</code> on <code>type</code> non-deterministic.</td></tr>
+          <tr><th scope="row"><span class="t">Type</span> <span class="mn">Type</span> { get; }</th><td>The type that declares the member.</td></tr>
+          <tr><th scope="row"><span class="t">string</span> <span class="mn">Member</span> { get; }</th><td>The member's name.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="doc-footer">Understudy v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

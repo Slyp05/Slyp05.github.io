@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Check which exceptions the code under test catches, and what it does with them." />
+  <title>Understudy - Spy on caught exceptions</title>
+  <link rel="stylesheet" href="/assets/css/understudy.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Understudy</div><a href="../index.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Spy on caught exceptions</h1>
+      <div class="sub">Check which exceptions the code under test catches, and what it does with them.</div>
+    </div>
+
+<!-- ====================================== catch ==== -->
+<section id="catch">
+  <h2>Spy on catch blocks</h2>
+<p>An exception the code under test catches and ignores hides a bug from every test. <code>Spy.Catch</code> records each catch block the code under test enters with an exception of its type, subtypes included:</p>
+<pre><code><span class="ty">SpiedCatch</span>&lt;<span class="ty">IOException</span>&gt; swallowed = <span class="ty">Spy</span>.Catch&lt;<span class="ty">IOException</span>&gt;();
+
+saveSystem.Save();
+
+<span class="ty">Assert</span>.That(swallowed.Catches, <span class="ty">Is</span>.Empty);</code></pre>
+
+</section>
+
+<!-- ====================================== inject ==== -->
+<section id="inject">
+  <h2>Check how the code under test handles a failure</h2>
+<p>Combine it with a stub that throws, and check the catch block that handles the exception:</p>
+<pre><code><span class="ty">Stub</span>.Method(() =&gt; <span class="ty">File</span>.WriteAllText(<span class="ty">Arg</span>.Any&lt;<span class="kw">string</span>&gt;(), <span class="ty">Arg</span>.Any&lt;<span class="kw">string</span>&gt;())).Do(() =&gt; <span class="kw">throw</span> <span class="kw">new</span> <span class="ty">IOException</span>());
+<span class="ty">SpiedCatch</span>&lt;<span class="ty">IOException</span>&gt; handled = <span class="ty">Spy</span>.Catch&lt;<span class="ty">IOException</span>&gt;();
+
+saveSystem.Save();
+
+<span class="ty">Assert</span>.That(handled.Catches, <span class="ty">Has</span>.Count.EqualTo(<span class="nu">1</span>));</code></pre>
+
+</section>
+
+<!-- ====================================== where ==== -->
+<section id="where">
+  <h2>Check where an exception was caught and what left the block</h2>
+<p>Each <code>RecordedCatch</code> holds where the block is and what left it:</p>
+<ul>
+  <li><code>Method</code> is the method the catch block is written in, also for an <code>async</code> method or an
+    iterator. A block in a lambda or a local function names the member around it; <code>Line</code> tells them apart.</li>
+  <li><code>Rethrown</code> is the exception that left the block: the same one for <code>throw;</code>, another for a
+    wrapping throw, or <code>null</code> when the block handled it.</li>
+</ul>
+<pre><code><span class="ty">Assert</span>.That(swallowed.Catches.Where(c =&gt; c.Rethrown == <span class="kw">null</span>), <span class="ty">Is</span>.Empty);
+<span class="ty">Assert</span>.That(swallowed.Catches.Where(c =&gt; c.Method.Name == <span class="st">"Save"</span>).ToList(), <span class="ty">Has</span>.Count.EqualTo(<span class="nu">1</span>));</code></pre>
+
+</section>
+
+<!-- ====================================== limits ==== -->
+<section id="limits">
+  <h2>What isn&#x27;t recorded</h2>
+<ul>
+  <li>A <code>catch ... when (...)</code> whose filter is false, since the block isn't entered.</li>
+  <li>An exception left on a task nobody awaits. Await the task in the test, and check it with NUnit.</li>
+  <li>Catch blocks in test assemblies, which aren't woven, and catch blocks entered while a stub's answer runs.</li>
+</ul>
+<div class="note"><strong>Note:</strong> <code>Line</code> is 0 when the assembly was compiled without debug
+  symbols.</div>
+
+</section>
+
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="Stub%20members.html#throw">Throw an exception from a stub</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="Run%20members%20for%20real.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Run members for real</div>
+  </a>
+  <a class="next" href="Lifetime.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Lifetime</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Understudy v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

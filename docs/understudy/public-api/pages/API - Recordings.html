@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="What spies, stubs and fakes record of the calls, reads, writes, subscriptions, raises and catches the code under test makes. Explained in Check what the code under test did." />
+  <title>Understudy - Public API - Recordings</title>
+  <link rel="stylesheet" href="/assets/css/understudy.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <nav>
+    <a href="../index.html">Overview</a>
+    <a class="nav-band" href="API%20-%20Entry%20points.html">Entry points</a>
+    <a class="nav-band" href="API%20-%20Spies.html">Spies</a>
+    <a class="nav-band" href="API%20-%20Stubs.html">Stubs</a>
+    <a class="nav-band" href="API%20-%20Fakes.html">Fakes</a>
+    <a class="nav-band active" href="API%20-%20Recordings.html" aria-current="page">Recordings</a>
+    <div class="nav-group">Calls</div>
+    <div class="nav-group-body">
+      <a href="#CallList"><span class="badge badge-class">sealed</span>CallList</a>
+      <a href="#CallListOfTResult"><span class="badge badge-class">sealed</span>CallList&lt;TResult&gt;</a>
+      <a href="#RecordedCall"><span class="badge badge-class">class</span>RecordedCall</a>
+      <a href="#RecordedCallOfTResult"><span class="badge badge-class">sealed</span>RecordedCall&lt;TResult&gt;</a>
+    </div>
+    <div class="nav-group">Reads and writes</div>
+    <div class="nav-group-body">
+      <a href="#AccessListOfTValue"><span class="badge badge-class">sealed</span>AccessList&lt;TValue&gt;</a>
+      <a href="#RecordedAccessOfTValue"><span class="badge badge-class">sealed</span>RecordedAccess&lt;TValue&gt;</a>
+    </div>
+    <div class="nav-group">Events</div>
+    <div class="nav-group-body">
+      <a href="#RecordedHandler"><span class="badge badge-class">sealed</span>RecordedHandler</a>
+      <a href="#RecordedInvocation"><span class="badge badge-class">sealed</span>RecordedInvocation</a>
+    </div>
+    <div class="nav-group">Catch blocks</div>
+    <div class="nav-group-body">
+      <a href="#RecordedCatch"><span class="badge badge-class">sealed</span>RecordedCatch</a>
+    </div>
+  </nav>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Public API <span class="tag">Recordings</span></h1>
+      <div class="sub">What spies, stubs and fakes record of the calls, reads, writes, subscriptions, raises and catches the code under test makes. Explained in <a href="../../user-manual/pages/Check%20what%20the%20code%20under%20test%20did.html">Check what the code under test did</a>.</div>
+    </div>
+
+    <h2 class="api-group">Calls</h2>
+    <!-- CallList -->
+    <div class="type-section" id="CallList">
+      <div class="type-header"><h3>CallList</h3><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">The calls a spy or stub recorded, in the order the code under test made them, as an <code>IReadOnlyList&lt;<a href="#RecordedCall">RecordedCall</a>&gt;</code>. The list is live: it grows as the code under test runs.</p>
+      <div class="member-group">
+        <div class="member-group-title">Members</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t">int</span> <span class="mn">Count</span> { get; }</th><td>The number of calls recorded.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="#RecordedCall">RecordedCall</a></span> <span class="mn">this</span>[<span class="t">int</span> index]</th><td>The call at this position. <span class="ex">Throws ArgumentOutOfRangeException when the index is negative, or not less than <code>Count</code>.</span></td></tr>
+          <tr><th scope="row"><span class="t">IEnumerator&lt;RecordedCall&gt;</span> <span class="mn">GetEnumerator</span>()</th><td>Enumerates the calls recorded so far.</td></tr>
+        </table>
+      </div>
+    </div>
+    <!-- CallListOfTResult -->
+    <div class="type-section" id="CallListOfTResult">
+      <div class="type-header"><h3>CallList&lt;TResult&gt;</h3><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">The calls a spy or stub recorded, in the order the code under test made them, each with its result, as an <code>IReadOnlyList&lt;RecordedCall&lt;TResult&gt;&gt;</code>. The list is live: it grows as the code under test runs.</p>
+      <div class="member-group">
+        <div class="member-group-title">Members</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t">int</span> <span class="mn">Count</span> { get; }</th><td>The number of calls recorded.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="#RecordedCallOfTResult">RecordedCall&lt;TResult&gt;</a></span> <span class="mn">this</span>[<span class="t">int</span> index]</th><td>The call at this position. <span class="ex">Throws ArgumentOutOfRangeException when the index is negative, or not less than <code>Count</code>.</span></td></tr>
+          <tr><th scope="row"><span class="t">IReadOnlyList&lt;TResult&gt;</span> <span class="mn">Results</span> { get; }</th><td>The results of the calls recorded, in order.</td></tr>
+          <tr><th scope="row"><span class="t">IEnumerator&lt;RecordedCall&lt;TResult&gt;&gt;</span> <span class="mn">GetEnumerator</span>()</th><td>Enumerates the calls recorded so far.</td></tr>
+        </table>
+      </div>
+    </div>
+    <!-- RecordedCall -->
+    <div class="type-section" id="RecordedCall">
+      <div class="type-header"><h3>RecordedCall</h3><span class="badge badge-class">class</span></div>
+      <p class="type-desc">What a spy or stub recorded of one call the code under test made to a method or a constructor.</p>
+      <div class="member-group">
+        <div class="member-group-title">Members</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t">object</span> <span class="mn">Instance</span> { get; }</th><td>The object the method was called on, or null for a static method or a constructor.</td></tr>
+          <tr><th scope="row"><span class="t">IReadOnlyList&lt;object&gt;</span> <span class="mn">Arguments</span> { get; }</th><td>The arguments, ordered as the parameters are in the selection, with out and ref values as the call left them.</td></tr>
+          <tr><th scope="row"><span class="t">Exception</span> <span class="mn">Exception</span> { get; }</th><td>The exception the call threw, or null when it returned.</td></tr>
+          <tr><th scope="row"><span class="t">int</span> <span class="mn">Order</span> { get; }</th><td>The sequence number of this call, access, raise or catch, shared by every spy, stub and fake in the test: the doubles that record the same one give it the same number.</td></tr>
+          <tr><th scope="row"><span class="t">string</span> <span class="mn">ToString</span>()</th><td>The call as one line written the way the code reads, its outcome, the caller's source line and the order: <code>Player.TakeDamage(5) returned 45  Player.cs:42  #7</code>.</td></tr>
+        </table>
+      </div>
+    </div>
+    <!-- RecordedCallOfTResult -->
+    <div class="type-section" id="RecordedCallOfTResult">
+      <div class="type-header"><h3>RecordedCall&lt;TResult&gt;</h3><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">What a spy or stub recorded of one call the code under test made to a method with a result, or to a constructor. It inherits every member of <a href="#RecordedCall">RecordedCall</a>, and adds the result.</p>
+      <div class="member-group">
+        <div class="member-group-title">Members</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t">TResult</span> <span class="mn">Result</span> { get; }</th><td>What the call returned, or the object a constructor built; the type's default when the call threw.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <h2 class="api-group">Reads and writes</h2>
+    <!-- AccessListOfTValue -->
+    <div class="type-section" id="AccessListOfTValue">
+      <div class="type-header"><h3>AccessList&lt;TValue&gt;</h3><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">The reads or writes a spy, stub or fake recorded, in the order the code under test made them, as an <code>IReadOnlyList&lt;RecordedAccess&lt;TValue&gt;&gt;</code>. The list is live: it grows as the code under test runs.</p>
+      <div class="member-group">
+        <div class="member-group-title">Members</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t">int</span> <span class="mn">Count</span> { get; }</th><td>The number of accesses recorded.</td></tr>
+          <tr><th scope="row"><span class="t"><a href="#RecordedAccessOfTValue">RecordedAccess&lt;TValue&gt;</a></span> <span class="mn">this</span>[<span class="t">int</span> index]</th><td>The access at this position. <span class="ex">Throws ArgumentOutOfRangeException when the index is negative, or not less than <code>Count</code>.</span></td></tr>
+          <tr><th scope="row"><span class="t">IReadOnlyList&lt;TValue&gt;</span> <span class="mn">Contents</span> { get; }</th><td>What each access read or wrote, in order.</td></tr>
+          <tr><th scope="row"><span class="t">IEnumerator&lt;RecordedAccess&lt;TValue&gt;&gt;</span> <span class="mn">GetEnumerator</span>()</th><td>Enumerates the accesses recorded so far.</td></tr>
+        </table>
+      </div>
+    </div>
+    <!-- RecordedAccessOfTValue -->
+    <div class="type-section" id="RecordedAccessOfTValue">
+      <div class="type-header"><h3>RecordedAccess&lt;TValue&gt;</h3><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">What a spy, stub or fake recorded of one read or write the code under test made to a field, a property or an element written with [].</p>
+      <div class="member-group">
+        <div class="member-group-title">Members</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t">object</span> <span class="mn">Instance</span> { get; }</th><td>The object the member was reached through, or null for a static member. For an array element, the array.</td></tr>
+          <tr><th scope="row"><span class="t">IReadOnlyList&lt;object&gt;</span> <span class="mn">Arguments</span> { get; }</th><td>The indices of an element written with [], ordered as in the selection; empty for a field or property.</td></tr>
+          <tr><th scope="row"><span class="t">TValue</span> <span class="mn">Content</span> { get; }</th><td>What the read got or the write carried. The type's default when a read threw; a write that threw keeps the value it tried to write.</td></tr>
+          <tr><th scope="row"><span class="t">Exception</span> <span class="mn">Exception</span> { get; }</th><td>The exception the read or write threw, or null when it completed.</td></tr>
+          <tr><th scope="row"><span class="t">int</span> <span class="mn">Order</span> { get; }</th><td>The sequence number of this call, access, raise or catch, shared by every spy, stub and fake in the test: the doubles that record the same one give it the same number.</td></tr>
+          <tr><th scope="row"><span class="t">string</span> <span class="mn">ToString</span>()</th><td>The access as one line written the way the code reads, the caller's source line and the order: <code>Player.health written 50 (faked)  Player.cs:18  #8</code>.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <h2 class="api-group">Events</h2>
+    <!-- RecordedHandler -->
+    <div class="type-section" id="RecordedHandler">
+      <div class="type-header"><h3>RecordedHandler</h3><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">A handler the code under test subscribed to an event and has not unsubscribed.</p>
+      <div class="member-group">
+        <div class="member-group-title">Members</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t">object</span> <span class="mn">Instance</span> { get; }</th><td>The object whose event the handler is subscribed to, or null for a static event.</td></tr>
+          <tr><th scope="row"><span class="t">Delegate</span> <span class="mn">Handler</span> { get; }</th><td>The handler.</td></tr>
+          <tr><th scope="row"><span class="t">int</span> <span class="mn">Order</span> { get; }</th><td>The sequence number of the subscription, shared by every spy, stub and fake in the test, calls and accesses alike.</td></tr>
+          <tr><th scope="row"><span class="t">string</span> <span class="mn">ToString</span>()</th><td>The handler as the subscription reads, the subscriber's source line and the order: <code>Player.Died += Hud.OnDied  Hud.cs:12  #3</code>.</td></tr>
+        </table>
+      </div>
+    </div>
+    <!-- RecordedInvocation -->
+    <div class="type-section" id="RecordedInvocation">
+      <div class="type-header"><h3>RecordedInvocation</h3><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">What a spy or fake recorded of one raise of the event by the code under test.</p>
+      <div class="member-group">
+        <div class="member-group-title">Members</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t">object</span> <span class="mn">Instance</span> { get; }</th><td>The object that raised its event, or null for a static event.</td></tr>
+          <tr><th scope="row"><span class="t">IReadOnlyList&lt;object&gt;</span> <span class="mn">Arguments</span> { get; }</th><td>The arguments the event was raised with, ordered as the delegate's parameters. <span class="ex">Throws InvalidOperationException when no handler was subscribed at the raise, so C# never evaluated its arguments.</span></td></tr>
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">HadHandlers</span> { get; }</th><td>Whether a handler was subscribed when the code under test raised the event. With none, C# skips the raise and never evaluates its arguments, so <code>Arguments</code> has none to give.</td></tr>
+          <tr><th scope="row"><span class="t">int</span> <span class="mn">Order</span> { get; }</th><td>The sequence number of this call, access, raise or catch, shared by every spy, stub and fake in the test: the doubles that record the same one give it the same number.</td></tr>
+          <tr><th scope="row"><span class="t">string</span> <span class="mn">ToString</span>()</th><td>The raise as one line: the event, the arguments, the caller's source line and the order: <code>Player.Died raised(5)  Player.cs:30  #4</code>.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <h2 class="api-group">Catch blocks</h2>
+    <!-- RecordedCatch -->
+    <div class="type-section" id="RecordedCatch">
+      <div class="type-header"><h3>RecordedCatch</h3><span class="badge badge-class">sealed</span></div>
+      <p class="type-desc">What a catch spy recorded of one catch block the code under test entered. Explained in <a href="../../user-manual/pages/Spy%20on%20caught%20exceptions.html">Spy on caught exceptions</a>.</p>
+      <div class="member-group">
+        <div class="member-group-title">Members</div>
+        <table class="mt">
+          <tr><th scope="row"><span class="t">Exception</span> <span class="mn">Exception</span> { get; }</th><td>The exception the catch block caught.</td></tr>
+          <tr><th scope="row"><span class="t">Exception</span> <span class="mn">Rethrown</span> { get; }</th><td>The exception that left the catch block: the caught one for <code>throw;</code>, another for a wrapping throw, or null when the block handled it.</td></tr>
+          <tr><th scope="row"><span class="t">MethodBase</span> <span class="mn">Method</span> { get; }</th><td>The method holding the catch block, as written: an <code>async</code> method or an iterator, not the state machine the compiler generates for it.</td></tr>
+          <tr><th scope="row"><span class="t">int</span> <span class="mn">Line</span> { get; }</th><td>The source line of the catch block, or 0 when the assembly has no symbols.</td></tr>
+          <tr><th scope="row"><span class="t">int</span> <span class="mn">Order</span> { get; }</th><td>The sequence number of this call, access, raise or catch, shared by every spy, stub and fake in the test: the doubles that record the same one give it the same number.</td></tr>
+          <tr><th scope="row"><span class="t">string</span> <span class="mn">ToString</span>()</th><td>The catch as one line: the exception, where it was caught, what left the block, the catch block's source line and the order: <code>IOException: disk full caught in SaveSystem.Save, handled  SaveSystem.cs:21  #5</code>.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="doc-footer">Understudy v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

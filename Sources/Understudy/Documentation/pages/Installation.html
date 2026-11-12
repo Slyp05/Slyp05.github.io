@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Import Understudy into your project, and find its menus." />
+  <title>Understudy - Install Understudy</title>
+  <link rel="stylesheet" href="../shared/styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Understudy</div><a href="../User%20Manual.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Install Understudy</h1>
+      <div class="sub">Import Understudy into your project, update or remove it, and find its menus.</div>
+      <div class="guide-index">
+        <a href="#requirements">Requirements</a>
+        <a href="#install">Install the package</a>
+        <a href="#update">Update Understudy</a>
+        <a href="#remove">Remove Understudy</a>
+        <a href="#tools">Understudy menus</a>
+        <a href="#folders">Package contents</a>
+      </div>
+    </div>
+
+<!-- ====================================== requirements ==== -->
+<section id="requirements">
+  <h2>Requirements</h2>
+<p>Understudy has the following requirements:</p>
+<ul>
+  <li>Unity 6.0 or later.</li>
+  <li>The Test Framework package (<code>com.unity.test-framework</code>), which Unity installs in new projects.</li>
+  <li>The Mono Cecil package (<code>com.unity.nuget.mono-cecil</code>) 1.10 or later. Understudy's compilation step uses
+    it to rewrite the code under test. Importing Understudy installs it if your project doesn't have it.</li>
+</ul>
+<p>Spies, stubs and fakes work in tests the Editor runs, and in Play mode tests the Test Runner builds into a player.
+  The game you release is unchanged: a player build without tests is never woven and contains none of Understudy. For
+  more information, refer to
+  <a href="Woven%20code.html#builds">Player builds</a>.</p>
+<p>The Input System package (<code>com.unity.inputsystem</code>) is optional. When it is installed, leak detection also
+  covers its devices and sensors. For more information, refer to <a href="Detect%20leaks.html#builtin">Members Understudy
+  declares non-deterministic</a>.</p>
+<div class="note"><strong>Note:</strong> Understudy and Concordance, another Juste Tools package, aren't supported
+  in the same project. For more information, refer to
+  <a href="Troubleshooting.html#concordance">Concordance is not supported in the same project</a>.</div>
+
+</section>
+
+<!-- ====================================== install ==== -->
+<section id="install">
+  <h2>Install the package</h2>
+<p>To install Understudy, perform the following steps:</p>
+<ol>
+  <li>Go to <strong>Window</strong> &gt; <strong>Package Manager</strong>.</li>
+  <li>Select <strong>My Assets</strong>, then select <strong>Understudy</strong>.</li>
+  <li>If the package isn't downloaded yet, select <strong>Download</strong>.</li>
+  <li>Select <strong>Import</strong>.</li>
+  <li>In the <strong>Import Unity Package</strong> window, select <strong>Import</strong>.</li>
+</ol>
+<p>When the import finishes and your scripts recompile, Understudy is active.</p>
+<p>If the Console window shows an error that starts with <code>Understudy: nothing is woven</code> and names the
+  Mono Cecil package, the package is missing or older than 1.10, for example because it was cleared in the
+  <strong>Import Unity Package</strong> window. To install or update it, perform the following steps:</p>
+<ol>
+  <li>Go to <strong>Window</strong> &gt; <strong>Package Manager</strong>.</li>
+  <li>Select <strong>+</strong> &gt; <strong>Install package by name</strong>.</li>
+  <li>Enter <code>com.unity.nuget.mono-cecil</code>, then select <strong>Install</strong>.</li>
+</ol>
+
+</section>
+
+<!-- ====================================== update ==== -->
+<section id="update">
+  <h2>Update Understudy</h2>
+<p>To update Understudy to a new version, perform the following steps:</p>
+<ol>
+  <li>Delete the <code>Assets/Understudy</code> folder, so that no file the new version removed stays behind.</li>
+  <li>Import the new version, as in <a href="#install">Install the package</a>.</li>
+</ol>
+<p>Between the two steps, the Console window shows compile errors for the tests that use Understudy. They clear once
+  the import finishes.</p>
+<p>Your settings are in <code>ProjectSettings/Understudy.json</code>, outside the package folder, so they stay as they
+  are.</p>
+
+</section>
+
+<!-- ====================================== remove ==== -->
+<section id="remove">
+  <h2>Remove Understudy</h2>
+<p>To remove Understudy from your project, perform the following steps:</p>
+<ol>
+  <li>Delete the tests that use Understudy, or remove <code>Understudy</code> from the
+    <strong>Assembly Definition References</strong> of their test assemblies and delete the code that uses it.</li>
+  <li>Delete the <code>Assets/Understudy</code> folder. Unity recompiles every script, without weaving.</li>
+  <li>Optionally, delete <code>ProjectSettings/Understudy.json</code>.</li>
+</ol>
+<p>The Mono Cecil package stays installed, since other packages can depend on it.</p>
+
+</section>
+
+<!-- ====================================== tools ==== -->
+<section id="tools">
+  <h2>Understudy menus</h2>
+<p>Understudy adds the following menu items to the Unity Editor:</p>
+<div class="img-block">
+  <img src="../img/tools_menu" alt="The Tools &gt; Understudy menu, with Settings, Quick Usage Guide, User Manual and Public API" />
+</div>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Menu item</th><th scope="col">Description</th></tr>
+    <tr><td><strong>Tools</strong> &gt; <strong>Understudy</strong> &gt; <strong>Settings</strong></td><td>Opens the <strong>Understudy</strong> page of the Project Settings window. For more information, refer to <a href="Project%20Settings%20reference.html">Project Settings reference</a>.</td></tr>
+    <tr><td><strong>Tools</strong> &gt; <strong>Understudy</strong> &gt; <strong>Quick Usage Guide</strong></td><td>Opens the <a href="../Quick%20Usage%20Guide.html">Quick Usage Guide</a>.</td></tr>
+    <tr><td><strong>Tools</strong> &gt; <strong>Understudy</strong> &gt; <strong>User Manual</strong></td><td>Opens the <a href="../User%20Manual.html">User Manual</a>.</td></tr>
+    <tr><td><strong>Tools</strong> &gt; <strong>Understudy</strong> &gt; <strong>Public API</strong></td><td>Opens the <a href="../Public%20API.html">Public API</a> reference.</td></tr>
+  </table>
+</div>
+
+</section>
+
+<!-- ====================================== folders ==== -->
+<section id="folders">
+  <h2>Package contents</h2>
+<p>Understudy installs into <code>Assets/Understudy</code> as C# source, so it is committed with your project. The
+  folder contains the following:</p>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Folder</th><th scope="col">Contents</th></tr>
+    <tr><td><code>Runtime</code></td><td>Spies, stubs, fakes and leak detection, and the <a href="Diagnostics.html">code analysis</a> that checks your tests as you write them.</td></tr>
+    <tr><td><code>Runtime/Input System</code></td><td>The Input System members leak detection covers. Compiles only when the Input System package is installed.</td></tr>
+    <tr><td><code>CodeGen</code></td><td>The compilation step that rewrites the code under test in the Editor.</td></tr>
+    <tr><td><code>Editor</code></td><td>The <strong>Understudy</strong> page of the Project Settings window, and the checks that guard player builds.</td></tr>
+    <tr><td><code>Tests</code></td><td>Understudy's own tests, which don't compile in your project.</td></tr>
+    <tr><td><code>Documentation</code></td><td>The Quick Usage Guide, the User Manual, and the Public API reference.</td></tr>
+  </table>
+</div>
+
+</section>
+
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="../Quick%20Usage%20Guide.html">Quick Usage Guide</a></li>
+    <li><a href="Set%20up%20a%20test%20assembly.html">Set up a test assembly</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="Get%20started.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Get started</div>
+  </a>
+  <a class="next" href="Introduction%20to%20Understudy.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Introduction to Understudy</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Understudy v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

@@ -51,6 +51,12 @@ defaults:
       path: "concordance"
     values:
       sitemap: false
+  # Understudy is unreleased: keep its whole doc tree out of the sitemap.
+  # Remove this entry (and `sitemap: false` in understudy.md) on release.
+  - scope:
+      path: "understudy"
+    values:
+      sitemap: false
   # The manuals moved from /documentation/ to /user-manual/. The old tree only holds the
   # redirect stubs the build scripts write, which have no place in the sitemap.
   - scope:

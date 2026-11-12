@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Declare that a member runs for real on purpose, over a stub or fake or for leak detection." />
+  <title>Understudy - Run members for real</title>
+  <link rel="stylesheet" href="/assets/css/understudy.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Understudy</div><a href="../index.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Run members for real</h1>
+      <div class="sub">Declare that a member runs for real on purpose, over a stub or fake or for leak detection.</div>
+    </div>
+
+<!-- ====================================== real ==== -->
+<section id="real">
+  <h2>Declare a member real</h2>
+<p><code>Real</code> declares that the accesses its selection matches run for real on purpose. It takes the same
+  selections as <code>Spy</code>, except <code>Catch</code>, and records nothing. It has two uses:</p>
+<ul>
+  <li>Leak detection doesn't warn about the member it selects.</li>
+  <li>It overrides the stubs and fakes declared before it.</li>
+</ul>
+<pre><code><span class="ty">Real</span>.Method(() =&gt; <span class="ty">Random</span>.Range(<span class="ty">Arg</span>.Any&lt;<span class="kw">int</span>&gt;(), <span class="ty">Arg</span>.Any&lt;<span class="kw">int</span>&gt;()));   <span class="cm">// this test wants real randomness</span>
+spawner.SpawnWave();</code></pre>
+
+</section>
+
+<!-- ====================================== override ==== -->
+<section id="override">
+  <h2>Go back to the real member</h2>
+<p>When several declarations match an access, the last one declared decides, and <code>Real</code> is one of them:
+  declared after a stub or fake, it takes over the accesses it matches:</p>
+<pre><code><span class="ty">Stub</span>.Property(() =&gt; <span class="ty">Time</span>.deltaTime).Returns(<span class="nu">0.1f</span>);
+player.Tick();
+<span class="ty">Real</span>.Property(() =&gt; <span class="ty">Time</span>.deltaTime);
+player.Tick();   <span class="cm">// real deltaTime</span></code></pre>
+<p>To make the stub decide again, declare it again: calling <code>Returns</code> on it isn't enough, since the
+  <code>Real</code> stays the last one declared. The overridden stub keeps recording what it matches, as a spy does.
+  After a <code>Real.Property</code> or <code>Real.Field</code>, a fake keeps its stored value but no longer serves those
+  accesses; after a <code>Real.Event</code>, subscriptions reach the real event.</p>
+
+</section>
+
+<!-- ====================================== hole ==== -->
+<section id="hole">
+  <h2>Make part of a stub real</h2>
+<p>A narrow <code>Real</code> after a broad stub keeps some calls real:</p>
+<pre><code><span class="cm">// Every raycast misses, except downward ones.</span>
+<span class="ty">Stub</span>.Method(() =&gt; <span class="ty">Physics</span>.Raycast(<span class="ty">Arg</span>.Any&lt;<span class="ty">Vector3</span>&gt;(), <span class="ty">Arg</span>.Any&lt;<span class="ty">Vector3</span>&gt;(), <span class="ty">Arg</span>.Any&lt;<span class="kw">float</span>&gt;())).Returns(<span class="kw">false</span>);
+<span class="ty">Real</span>.Method(() =&gt; <span class="ty">Physics</span>.Raycast(<span class="ty">Arg</span>.Any&lt;<span class="ty">Vector3</span>&gt;(), <span class="ty">Vector3</span>.down, <span class="ty">Arg</span>.Any&lt;<span class="kw">float</span>&gt;()));</code></pre>
+
+</section>
+
+<!-- ====================================== fixture ==== -->
+<section id="fixture">
+  <h2>Lift a fixture&#x27;s fake for one test</h2>
+<p>A <code>Real</code> in a test ends with the test, so the fixture's fake applies again in the next one:</p>
+<pre><code>[<span class="ty">OneTimeSetUp</span>]
+<span class="kw">public</span> <span class="kw">void</span> <span class="ty">Quiet</span>() =&gt; <span class="ty">Fake</span>.Event(() =&gt; <span class="ty">Application</span>.logMessageReceived += <span class="ty">Arg</span>.Ignored);
+
+[<span class="ty">Test</span>]
+<span class="kw">public</span> <span class="kw">void</span> <span class="ty">ShowsErrors</span>()
+{
+    <span class="ty">Real</span>.Event(() =&gt; <span class="ty">Application</span>.logMessageReceived += <span class="ty">Arg</span>.Ignored);
+    console.Bind();
+}</code></pre>
+
+</section>
+
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="Detect%20leaks.html">Detect leaks</a></li>
+    <li><a href="Stub%20members.html#partial">Stub some calls and not others</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="Fake%20events.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Fake events</div>
+  </a>
+  <a class="next" href="Spy%20on%20caught%20exceptions.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Spy on caught exceptions</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Understudy v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

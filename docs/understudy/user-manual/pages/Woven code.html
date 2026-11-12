@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Which assemblies Understudy rewrites, what it costs, and what it doesn&#x27;t reach." />
+  <title>Understudy - Woven code</title>
+  <link rel="stylesheet" href="/assets/css/understudy.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Understudy</div><a href="../index.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Woven code</h1>
+      <div class="sub">Which assemblies Understudy rewrites, what it costs, and what it doesn&#x27;t reach.</div>
+      <div class="guide-index">
+        <a href="#what">What Understudy weaves</a>
+        <a href="#builds">Player builds</a>
+        <a href="#outside">Outside a test</a>
+        <a href="#cost">Performance cost</a>
+        <a href="#exclude">Exclude an assembly</a>
+        <a href="#burst">Code Burst compiles</a>
+        <a href="#reach">What a double doesn&#x27;t reach</a>
+      </div>
+    </div>
+
+<!-- ====================================== what ==== -->
+<section id="what">
+  <h2>What Understudy weaves</h2>
+<p>When the Editor compiles your scripts, Understudy rewrites every user assembly: each assembly compiled from
+  <code>Assets</code> or from an embedded or local package, runtime and Editor alike, <code>Assembly-CSharp</code> included. Each access to a member then checks whether a test has a spy, stub or fake on it.</p>
+<p>Understudy never weaves:</p>
+<ul>
+  <li>Your test assemblies: every assembly that references Understudy, and every assembly whose code uses NUnit or
+    the Test Framework, as tests written without Understudy do.</li>
+  <li>Understudy's own assemblies, and every assembly whose name ends in <code>.CodeGen</code>, such as compilation
+    steps.</li>
+  <li>Packages from the package cache, such as registry and Git packages, and the Unity API. Their members are covered
+    where woven code calls them.</li>
+  <li>The assemblies in the <strong>Excluded Assemblies</strong> list.</li>
+</ul>
+
+</section>
+
+<!-- ====================================== builds ==== -->
+<section id="builds">
+  <h2>Player builds</h2>
+<p>The game you release is unchanged: a build without tests is never woven and carries no cost. Every such build checks its scripts for woven code, so
+  woven code never ships unnoticed: if it finds any, for example from an assembly a custom build step reuses, the
+  build fails with an error that names the assembly. To fix it, delete the
+  <code>Library/ScriptAssemblies</code> folder and build again.</p>
+<p>Understudy's runtime and Editor assemblies compile only with the Test Framework's <code>UNITY_INCLUDE_TESTS</code>
+  define, as test assemblies do, so a build without tests contains none of Understudy.</p>
+<p>A player build that includes tests, which the Test Runner makes to run Play mode tests on a platform, is woven like
+  the Editor's scripts, so those tests use spies, stubs and fakes as in the Editor, on Mono and IL2CPP alike.</p>
+
+</section>
+
+<!-- ====================================== outside ==== -->
+<section id="outside">
+  <h2>Outside a test</h2>
+<p>Outside a test, woven code behaves exactly as before: no double applies, nothing is recorded, and leak detection stays silent. Stack traces, <code>Debug.Log</code> locations and debugger stepping stay on your lines.</p>
+
+</section>
+
+<!-- ====================================== cost ==== -->
+<section id="cost">
+  <h2>Performance cost</h2>
+<p>The game you release pays nothing, since it isn't woven. In the Editor and in player builds that include tests, a
+  woven access outside a test run costs one check of a static flag and one branch, about 3 ns, and allocates nothing.
+  In a benchmark frame that moves 1000 objects with vector math and clock reads, weaving adds 0.035 ms, 0.2% of a frame
+  at 60 fps. Every Play mode session in the Editor runs woven code.</p>
+<p>Weaving adds to compile time only for the assemblies Unity recompiles, usually the one holding the script you
+  changed: about 1.5 s for an assembly of about 4500 lines. Assemblies that didn't change aren't woven again. To skip an
+  assembly a test never needs, refer to <a href="#exclude">Exclude an assembly</a>. Weaving runs alongside Unity's
+  other compilation steps, such as Burst's.</p>
+
+</section>
+
+<!-- ====================================== exclude ==== -->
+<section id="exclude">
+  <h2>Exclude an assembly</h2>
+<p>To keep an assembly from being woven, such as an asset that breaks under weaving or takes long to compile, add it
+  to <strong>Excluded Assemblies</strong> on the <strong>Understudy</strong> page of the Project Settings window. Spies, stubs and
+  fakes then don't reach its own code, nor its calls to the Unity API and to packages. Its calls to the public and internal methods and properties of your other assemblies still reach their doubles; its
+  reads and writes of their fields don't. Changing the list recompiles every script. For more information, refer to <a href="Project%20Settings%20reference.html">Project Settings reference</a>.</p>
+
+</section>
+
+<!-- ====================================== burst ==== -->
+<section id="burst">
+  <h2>Code Burst compiles</h2>
+<p>Code that Burst compiles isn't woven: a <code>[BurstCompile]</code> method or type, and everything it calls in
+  the code under test. Its calls always run for real and aren't recorded. When a double covers a member that Burst code also
+  calls, Understudy logs a warning when the double is created, naming each of those calls. A <code>Real</code> stays silent. Methods of your other assemblies that Burst code calls stay unwoven too; when that
+  list changes, the Console says so and scripts recompile once.</p>
+
+</section>
+
+<!-- ====================================== reach ==== -->
+<section id="reach">
+  <h2>What a double doesn&#x27;t reach</h2>
+<ul>
+  <li>The engine's own state: a faked <code>transform.position</code> moves nothing for physics or rendering.</li>
+  <li>Related members: faking <code>position</code> leaves <code>localPosition</code> real.</li>
+  <li>Fields read without C#: reflection, Unity's serializer (the Inspector, saved scenes and prefabs) and
+    <code>JsonUtility</code> read the real field, not a fake's stored value.</li>
+  <li>An object built by code that isn't woven, such as <code>AddComponent</code>: a constructor stub records it, but the
+    real object is built.</li>
+  <li>The test assembly itself, which isn't woven: its direct reads reach the real member.</li>
+</ul>
+
+</section>
+
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="Detect%20leaks.html">Detect leaks</a></li>
+    <li><a href="Troubleshooting.html">Troubleshooting</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="Detect%20leaks.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Detect leaks</div>
+  </a>
+  <a class="next" href="Reference.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Reference</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Understudy v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

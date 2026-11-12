@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Learn when a spy, stub or fake starts and ends." />
+  <title>Understudy - Lifetime</title>
+  <link rel="stylesheet" href="../shared/styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Understudy</div><a href="../User%20Manual.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Lifetime</h1>
+      <div class="sub">Learn when a spy, stub or fake starts and ends.</div>
+      <div class="guide-index">
+        <a href="#scope">When a double ends</a>
+        <a href="#fresh">Every test starts fresh</a>
+        <a href="#async">UnityTest and async tests</a>
+        <a href="#reload">Domain reloads</a>
+        <a href="#parametrized">Parameterized tests</a>
+      </div>
+    </div>
+
+<!-- ====================================== scope ==== -->
+<section id="scope">
+  <h2>When a double ends</h2>
+<p>A spy, stub, fake or <code>Real</code> belongs to the test or fixture that creates it, and ends with it. Tests need no
+  attribute, base class or cleanup for it:</p>
+<div class="table-scroll">
+  <table class="cmp keycol">
+    <tr><th scope="col">Created in</th><th scope="col">Applies to</th></tr>
+    <tr><td>The test, <code>[SetUp]</code> or <code>[TearDown]</code></td><td>That test.</td></tr>
+    <tr><td>The fixture's constructor, a field initializer, or <code>[OneTimeSetUp]</code></td><td>Every test of the fixture, each starting it fresh.</td></tr>
+  </table>
+</div>
+<pre><code>[<span class="ty">OneTimeSetUp</span>] <span class="kw">public</span> <span class="kw">void</span> <span class="ty">Fixture</span>() =&gt; <span class="ty">Stub</span>.Property(() =&gt; <span class="ty">Time</span>.deltaTime).Returns(<span class="nu">0.02f</span>);   <span class="cm">// every test</span>
+[<span class="ty">SetUp</span>]        <span class="kw">public</span> <span class="kw">void</span> <span class="ty">Each</span>()    =&gt; <span class="ty">Stub</span>.Property(() =&gt; <span class="ty">Random</span>.<span class="kw">value</span>).Returns(<span class="nu">0.5f</span>);      <span class="cm">// each test</span>
+[<span class="ty">Test</span>] <span class="kw">public</span> <span class="kw">void</span> <span class="ty">SlowFrame</span>() { <span class="ty">Stub</span>.Property(() =&gt; <span class="ty">Time</span>.deltaTime).Returns(<span class="nu">0.1f</span>); }       <span class="cm">// this test only</span></code></pre>
+<p>Using a double after its owner finished throws. Creating one outside an NUnit test throws too.</p>
+
+</section>
+
+<!-- ====================================== fresh ==== -->
+<section id="fresh">
+  <h2>Every test starts fresh</h2>
+<p>A double declared for a fixture starts over in every test: its lists of recorded calls and accesses are empty, its sequences start from their
+  first value, a fake's stored value starts at its initial value, and an event fake holds no handlers. An answer a test
+  sets on it ends with that test:</p>
+<pre><code><span class="ty">StubbedMethod</span>&lt;<span class="kw">int</span>&gt; roll;
+
+[<span class="ty">OneTimeSetUp</span>]
+<span class="kw">public</span> <span class="kw">void</span> <span class="ty">Fixture</span>() =&gt; roll = <span class="ty">Stub</span>.Method(() =&gt; <span class="ty">Dice</span>.Roll(<span class="nu">6</span>)).Returns(<span class="nu">3</span>);
+
+[<span class="ty">Test</span>]
+<span class="kw">public</span> <span class="kw">void</span> <span class="ty">RollsHigh</span>()
+{
+    roll.Returns(<span class="nu">6</span>);   <span class="cm">// this test only: the next one rolls 3 again</span>
+}</code></pre>
+<p>Code that must write into a fixture's double before each test, such as an object subscribing to a fixture's event
+  fake, runs in <code>[SetUp]</code>. A write made from <code>[OneTimeSetUp]</code> is discarded before the first test,
+  with a warning in the Console.</p>
+
+</section>
+
+<!-- ====================================== async ==== -->
+<section id="async">
+  <h2>UnityTest and async tests</h2>
+<p>A <code>[UnityTest]</code> coroutine or an <code>async</code> test owns its doubles until it completes, not until its
+  method first returns. Doubles apply on every thread: an access from another thread belongs to the test running at
+  that moment, so finish or join background work before the test ends. A test that enters Play mode can also reload the domain:
+  refer to <a href="#reload">Domain reloads</a>.</p>
+
+</section>
+
+<!-- ====================================== reload ==== -->
+<section id="reload">
+  <h2>Domain reloads</h2>
+<p>A domain reload ends every double. With Unity's default settings, a test reloads the domain when it enters Play
+  mode itself, such as an Edit mode test that yields <code>EnterPlayMode</code>. Play mode tests aren't affected: the
+  Test Runner enters Play mode before they start. A reload during a test logs a warning, and a double created before
+  it no longer applies: using it throws. Create the doubles again after the reload.</p>
+<p>To avoid the reload instead, go to <strong>Edit</strong> &gt; <strong>Project Settings</strong> &gt;
+  <strong>Editor</strong>, and under <strong>Enter Play Mode Settings</strong>, set <strong>When entering Play Mode</strong>
+  to <strong>Reload Scene only</strong>. Your scripts' static fields then keep their values between Play mode
+  sessions, so your scripts reset them themselves. For more information, refer to Unity's
+  <a href="https://docs.unity3d.com/6000.0/Documentation/Manual/configurable-enter-play-mode.html">Configurable Enter Play
+  Mode</a> page.</p>
+
+</section>
+
+<!-- ====================================== parametrized ==== -->
+<section id="parametrized">
+  <h2>Parameterized tests</h2>
+<p>A stub can take a test's parameters like any other value:</p>
+<pre><code>[<span class="ty">Test</span>]
+<span class="kw">public</span> <span class="kw">void</span> <span class="ty">FallSpeedIsFrameRateIndependent</span>([<span class="ty">Values</span>(<span class="nu">0.016f</span>, <span class="nu">0.033f</span>, <span class="nu">0.1f</span>)] <span class="kw">float</span> deltaTime)
+{
+    <span class="ty">Stub</span>.Property(() =&gt; <span class="ty">Time</span>.deltaTime).Returns(deltaTime);
+    <span class="cm">// ...</span>
+}</code></pre>
+
+</section>
+
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="Share%20doubles%20between%20tests.html">Share doubles between tests</a></li>
+    <li><a href="Write%20tests.html">Write tests</a></li>
+    <li><a href="Woven%20code.html">Woven code</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="Spy%20on%20caught%20exceptions.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Spy on caught exceptions</div>
+  </a>
+  <a class="next" href="Share%20doubles%20between%20tests.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Share doubles between tests</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Understudy v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>

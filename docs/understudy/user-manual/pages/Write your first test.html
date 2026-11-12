@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Write and run a first unit test with the Unity Test Framework and Understudy, step by step." />
+  <title>Understudy - Write your first test</title>
+  <link rel="stylesheet" href="/assets/css/understudy.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Understudy</div><a href="../index.html">Home</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Write your first test</h1>
+      <div class="sub">Write and run a first unit test with the Unity Test Framework and Understudy, step by step.</div>
+      <div class="guide-index">
+        <a href="#concept">Before you start</a>
+        <a href="#code">Create the code to test</a>
+        <a href="#assemblies">Create the assemblies</a>
+        <a href="#test">Write the test</a>
+        <a href="#run">Run the test</a>
+        <a href="#leak">Read a leak warning</a>
+        <a href="#spy">Check what the code under test did</a>
+      </div>
+    </div>
+
+<!-- ====================================== concept ==== -->
+<section id="concept">
+  <h2>Before you start</h2>
+<p>A unit test is a method that runs one piece of code and checks the result. The Unity Test Framework runs tests from the Test Runner window, either in Edit mode, without entering Play mode,
+  or in Play mode, with frames running. This tutorial writes Edit mode tests.</p>
+<p>Game code is hard to test this way, because it reads values that change on every run: the frame time, random
+  numbers, saved data. A test can't expect a fixed result from code that reads <code>Time.deltaTime</code>. Understudy
+  lets the test decide what <code>Time.deltaTime</code> returns, and leaves the code under test as it is.</p>
+<p>Follow the sections in order: each one builds on the previous one.</p>
+
+</section>
+
+<!-- ====================================== code ==== -->
+<section id="code">
+  <h2>Create the code to test</h2>
+<p>The method to test computes how far an object moves in one frame, at a given speed. In the Project window, create a
+  folder named <code>Assets/Scripts</code>, and in it a C# script named <code>Movement</code>. Open it, and replace its
+  contents with the following code:</p>
+<pre><code><span class="kw">using</span> UnityEngine;
+
+<span class="kw">public</span> <span class="kw">static</span> <span class="kw">class</span> <span class="ty">Movement</span>
+{
+    <span class="kw">public</span> <span class="kw">static</span> <span class="kw">float</span> Step(<span class="kw">float</span> speed)
+    {
+        <span class="kw">return</span> speed * <span class="ty">Time</span>.deltaTime;
+    }
+}</code></pre>
+<p>A test of <code>Step</code> can't choose <code>Time.deltaTime</code>: it is whatever the last frame took, so the
+  result is never the same twice.</p>
+
+</section>
+
+<!-- ====================================== assemblies ==== -->
+<section id="assemblies">
+  <h2>Create the assemblies</h2>
+<p>The Test Framework runs tests from a test assembly, and a test assembly can only reach code that is in an assembly
+  definition of its own. This step is the same with or without Understudy.</p>
+<p>To put your scripts in an assembly, perform the following steps:</p>
+<ol>
+  <li>In the Project window, select the <code>Assets/Scripts</code> folder.</li>
+  <li>Go to <strong>Assets</strong> &gt; <strong>Create</strong> &gt; <strong>Scripting</strong> &gt; <strong>Assembly Definition</strong>,
+    and name it <code>Game</code>.</li>
+</ol>
+<p>Every script in <code>Assets/Scripts</code> and its subfolders now compiles into <code>Game</code>. If the Console window
+  then shows errors about missing types, your scripts use a package or another assembly definition, such as
+  <code>Unity.TextMeshPro</code>. Select <code>Game</code>, add what is missing to <strong>Assembly Definition
+  References</strong> in the Inspector, then select <strong>Apply</strong>.</p>
+<p>To create the test assembly, perform the following steps:</p>
+<ol>
+  <li>Go to <strong>Window</strong> &gt; <strong>General</strong> &gt; <strong>Test Runner</strong>, and select <strong>EditMode</strong>.</li>
+  <li>In the Project window, select the <code>Assets</code> folder.</li>
+  <li>In the Test Runner window, select <strong>Create a new Test Assembly Folder in the active path</strong>. Unity creates
+    <code>Assets/Tests</code>, with an assembly definition named <code>Tests</code>.</li>
+  <li>Select the <code>Tests</code> assembly definition. In the Inspector, under <strong>Assembly Definition References</strong>,
+    select <strong>+</strong> twice, set the two new entries to <code>Game</code> and <code>Understudy</code>, then select
+    <strong>Apply</strong>.</li>
+</ol>
+<div class="img-block">
+  <img src="../img/test_assembly_references.png" alt="The Inspector of the Tests assembly definition, with Game and Understudy in Assembly Definition References" />
+</div>
+<p>If the Test Runner window shows no button, its <strong>EditMode</strong> tab already lists tests, or the selected
+  folder already holds a test assembly. For the other ways to create a test assembly, refer to
+  <a href="Set%20up%20a%20test%20assembly.html">Set up a test assembly</a>.</p>
+
+</section>
+
+<!-- ====================================== test ==== -->
+<section id="test">
+  <h2>Write the test</h2>
+<p>In <code>Assets/Tests</code>, create a C# script named <code>MovementTests</code>, and replace its contents with the
+  following code:</p>
+<pre><code><span class="kw">using</span> NUnit.Framework;
+<span class="kw">using</span> Understudy;
+<span class="kw">using</span> UnityEngine;
+
+<span class="kw">public</span> <span class="kw">class</span> <span class="ty">MovementTests</span>
+{
+    [<span class="ty">Test</span>]
+    <span class="kw">public</span> <span class="kw">void</span> StepMovesBySpeedTimesFrameTime()
+    {
+        <span class="ty">Stub</span>.Property(() =&gt; <span class="ty">Time</span>.deltaTime).Returns(<span class="nu">0.5f</span>);
+
+        <span class="kw">float</span> distance = <span class="ty">Movement</span>.Step(<span class="nu">2f</span>);
+
+        <span class="ty">Assert</span>.That(distance, <span class="ty">Is</span>.EqualTo(<span class="nu">1f</span>));
+    }
+}</code></pre>
+<p>Each line does one thing:</p>
+<ul>
+  <li><code>[Test]</code> marks the method as a test.</li>
+  <li><code>Stub.Property(() =&gt; Time.deltaTime).Returns(0.5f)</code> makes every read of <code>Time.deltaTime</code> in the
+    code under test return 0.5 for the rest of this test. The lambda, <code>() =&gt; Time.deltaTime</code>, names the member as the
+    code under test reads it, and <code>Property</code> says which kind of member it is.</li>
+  <li><code>Movement.Step(2f)</code> runs the code under test.</li>
+  <li><code>Assert.That</code> checks the result: a speed of 2 for half a second covers a distance of 1.</li>
+</ul>
+<p>The stub applies to the code under test only: a read of <code>Time.deltaTime</code> written in the test itself gets the real
+  value. When the test ends, the stub ends with it, and the next test sees the real <code>Time.deltaTime</code> again.</p>
+
+</section>
+
+<!-- ====================================== run ==== -->
+<section id="run">
+  <h2>Run the test</h2>
+<p>In the Test Runner window, select <strong>Run All</strong>. The test shows a green check mark when it passes.</p>
+<div class="img-block">
+  <img src="../img/test_runner_passed.png" alt="The Test Runner window, with StepMovesBySpeedTimesFrameTime passed" />
+</div>
+<p>To see a failure, change <code>Is.EqualTo(1f)</code> to <code>Is.EqualTo(2f)</code> and run the test again: the Test
+  Runner window shows the expected and actual values. Change it back afterward.</p>
+<div class="img-block">
+  <img src="../img/test_runner_failed.png" alt="The Test Runner window, with StepMovesBySpeedTimesFrameTime failed: expected 2.0f, but was 1.0f" />
+</div>
+
+</section>
+
+<!-- ====================================== leak ==== -->
+<section id="leak">
+  <h2>Read a leak warning</h2>
+<p>Delete the <code>Stub.Property</code> line and run the test again. The test fails, and the Console window shows a warning:</p>
+<pre><code>Leak in MovementTests.StepMovesBySpeedTimesFrameTime: Time.deltaTime ran for real at Movement.cs:7. Stub it, or declare it real with Real.</code></pre>
+<p>The real frame time isn't 0.5, so the distance is wrong, and the warning tells you why. Understudy warns when a test
+  reaches a value that changes between runs, such as the frame time or a random number, without stubbing it. Such a test
+  can pass on your machine and fail on another. Put the <code>Stub.Property</code> line back to fix it.
+  <code>Real</code>, the other fix the warning names, is for a test that uses the real member on purpose.</p>
+
+</section>
+
+<!-- ====================================== spy ==== -->
+<section id="spy">
+  <h2>Check what the code under test did</h2>
+<p>A stub also records what the code under test does with the member. In <code>Assets/Scripts</code>, create a script named
+  <code>HighScore</code>, which saves a score only when it beats the best one saved:</p>
+<pre><code><span class="kw">using</span> UnityEngine;
+
+<span class="kw">public</span> <span class="kw">static</span> <span class="kw">class</span> <span class="ty">HighScore</span>
+{
+    <span class="kw">public</span> <span class="kw">static</span> <span class="kw">void</span> Submit(<span class="kw">int</span> score)
+    {
+        <span class="kw">if</span> (score &gt; <span class="ty">PlayerPrefs</span>.GetInt(<span class="st">"best"</span>))
+            <span class="ty">PlayerPrefs</span>.SetInt(<span class="st">"best"</span>, score);
+    }
+}</code></pre>
+<p>In <code>Assets/Tests</code>, create a script named <code>HighScoreTests</code>, and replace its contents with the
+  following code:</p>
+<pre><code><span class="kw">using</span> NUnit.Framework;
+<span class="kw">using</span> Understudy;
+<span class="kw">using</span> UnityEngine;
+
+<span class="kw">public</span> <span class="kw">class</span> <span class="ty">HighScoreTests</span>
+{
+    [<span class="ty">Test</span>]
+    <span class="kw">public</span> <span class="kw">void</span> SavesANewBestScore()
+    {
+        <span class="ty">Stub</span>.Method(() =&gt; <span class="ty">PlayerPrefs</span>.GetInt(<span class="st">"best"</span>)).Returns(<span class="nu">10</span>);
+        <span class="ty">StubbedMethod</span> saved = <span class="ty">Stub</span>.Method(() =&gt; <span class="ty">PlayerPrefs</span>.SetInt(<span class="st">"best"</span>, <span class="ty">Arg</span>.Any&lt;<span class="kw">int</span>&gt;()));
+
+        <span class="ty">HighScore</span>.Submit(<span class="nu">25</span>);
+
+        <span class="ty">Assert</span>.That(saved.Calls, <span class="ty">Has</span>.Count.EqualTo(<span class="nu">1</span>));
+        <span class="ty">Assert</span>.That(saved.Calls[<span class="nu">0</span>].Arguments[<span class="nu">1</span>], <span class="ty">Is</span>.EqualTo(<span class="nu">25</span>));
+    }
+
+    [<span class="ty">Test</span>]
+    <span class="kw">public</span> <span class="kw">void</span> KeepsAHigherBestScore()
+    {
+        <span class="ty">Stub</span>.Method(() =&gt; <span class="ty">PlayerPrefs</span>.GetInt(<span class="st">"best"</span>)).Returns(<span class="nu">10</span>);
+        <span class="ty">StubbedMethod</span> saved = <span class="ty">Stub</span>.Method(() =&gt; <span class="ty">PlayerPrefs</span>.SetInt(<span class="st">"best"</span>, <span class="ty">Arg</span>.Any&lt;<span class="kw">int</span>&gt;()));
+
+        <span class="ty">HighScore</span>.Submit(<span class="nu">5</span>);
+
+        <span class="ty">Assert</span>.That(saved.Calls, <span class="ty">Is</span>.Empty);
+    }
+}</code></pre>
+<ul>
+  <li>The stub on <code>GetInt</code> sets the best score the test starts from.</li>
+  <li>The stub on <code>SetInt</code> replaces the save, so the test never writes to your real <code>PlayerPrefs</code>,
+    and records each call the code under test makes. <code>Arg.Any&lt;int&gt;()</code> matches any score; to match one value only,
+    write the value instead.</li>
+  <li><code>saved.Calls</code> lists the recorded calls, and <code>Arguments</code> holds the arguments of each one, in
+    order: <code>Arguments[1]</code> is the second argument of <code>SetInt</code>, the score.</li>
+</ul>
+<p>To record calls and still let the real member run, use a spy, <code>Spy.Method</code>, instead of a stub. For more
+  information, refer to <a href="Check%20what%20the%20code%20under%20test%20did.html">Check what the code under test did</a>.</p>
+
+</section>
+
+<div class="resources">
+  <h2>Additional resources</h2>
+  <ul>
+    <li><a href="../../quick-usage-guide/index.html">Quick Usage Guide</a></li>
+    <li><a href="https://docs.unity3d.com/Manual/test-framework/test-framework-introduction.html">Unity Test Framework (Unity Manual)</a></li>
+  </ul>
+</div>
+
+<div class="pager">
+  <a class="prev" href="Set%20up%20a%20test%20assembly.html">
+    <div class="dir">Back</div>
+    <div class="pg-title">Set up a test assembly</div>
+  </a>
+  <a class="next" href="Write%20tests.html">
+    <div class="dir">Next</div>
+    <div class="pg-title">Write tests</div>
+  </a>
+</div>
+
+    <div class="doc-footer">Understudy v1.0.0</div>
+
+  </main>
+</div>
+</body>
+</html>
