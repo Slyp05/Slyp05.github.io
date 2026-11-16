@@ -9,7 +9,7 @@ layout: home
   <p>Each one is shaped by real production experience at top mobile studios, and built to fit into your project, not take it over.</p>
 </div>
 
-{%- assign live = site.data.packages | where: "released", true -%}
+{%- assign live = site.data.packages | where: "released", true | sort: "released_on" | reverse -%}
 {%- assign paid_packages = live | where_exp: "p", "p.free != true" -%}
 {%- assign free_packages = live | where_exp: "p", "p.free == true" -%}
 

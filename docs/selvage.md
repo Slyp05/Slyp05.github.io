@@ -3,11 +3,10 @@ layout: page
 title: Selvage
 permalink: /selvage/
 image: /assets/images/selvage-social.jpg
-sitemap: false
 description: "Selvage adapts to your project, not the other way around: it injects from your scenes, assets and code, checks every dependency before Play, and handles async loading, pooling, live updates and more."
 software:
   name: "Selvage - Native Dependency Injection for Unity"
-  store_url: ""
+  store_url: https://assetstore.unity.com/packages/slug/416836
 ---
 
 <img src="/assets/images/selvage.jpg" alt="Selvage" class="package-image" width="1200" height="800" decoding="async">
@@ -134,7 +133,6 @@ Don't let the ease of use fool you: everything you expect from a DI framework is
 
 ## Get It
 
-<!-- TODO: unreleased; on release set store_url in the front matter above (the button below switches to the store link) and remove `sitemap: false` (here and the selvage scope in _config.yml). -->
 {% include store-button.html %}
 
 ## Support
@@ -145,7 +143,7 @@ Don't let the ease of use fool you: everything you expect from a DI framework is
 ## Patch Notes
 
 <details class="patch-note" open>
-<summary><strong>v1.0.0</strong> <span class="patch-date">Initial release</span></summary>
+<summary><strong>v1.0.0</strong> <span class="patch-date">November 16, 2026</span></summary>
 <div class="patch-note-body" markdown="1">
 
 Initial release.

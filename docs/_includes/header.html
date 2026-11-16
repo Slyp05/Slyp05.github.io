@@ -3,7 +3,7 @@ Overrides minima's header to add an "Assets" dropdown built from _data/packages.
 so the nav stays three items wide no matter how many packages ship. Standalone pages
 (About, etc.) still come from `header_pages` in _config.yml.
 {%- endcomment -%}
-{%- assign live = site.data.packages | where: "released", true -%}
+{%- assign live = site.data.packages | where: "released", true | sort: "released_on" | reverse -%}
 {%- assign paid_packages = live | where_exp: "p", "p.free != true" -%}
 {%- assign free_packages = live | where_exp: "p", "p.free == true" -%}
 

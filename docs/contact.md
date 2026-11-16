@@ -23,7 +23,7 @@ The package dropdown is built from _data/packages.yml, so a newly released packa
 appears here with no edit. `?package=<slug>&category=<value>` preselects both, which
 is how the Support buttons on each package page link here.
 {%- endcomment -%}
-{%- assign live = site.data.packages | where: "released", true -%}
+{%- assign live = site.data.packages | where: "released", true | sort: "released_on" | reverse -%}
 
 <form id="contact-form" class="contact-form" action="https://api.web3forms.com/submit" method="POST" data-email="{{ site.email }}" novalidate>
   <input type="hidden" name="access_key" value="{{ site.web3forms_key }}">

@@ -13,38 +13,29 @@
 #   blurb     One or two sentences for the home card. Inline HTML is allowed.
 #   card      420x280 landscape image, shown on wide screens.
 #   icon      160x160 square icon, shown when cards stack on narrow screens.
-#   released  false hides the package from both the home page and the nav.
-#
-# Order within each price group is the order listed here.
+#   released     false hides the package from both the home page and the nav.
+#   released_on  Date of the first store release (YYYY-MM-DD). Every list of packages
+#                (home, nav, contact form) sorts by it, newest first, so the order in
+#                this file does not matter. Set it when flipping `released` to true.
 #
 # Releasing a package: flip `released` to true, then remove its `sitemap: false`
 # front matter and its entry under `defaults:` in _config.yml. Those two are
 # Jekyll config and can't be driven from this file.
 
-- title: Persistent Asset
-  url: /persistent-asset/
+- title: Selvage
+  released_on: 2026-11-16
+  url: /selvage/
   released: true
   free: false
-  meta: Updated October 2026
-  card: /assets/images/persistent-asset-card.jpg
-  icon: /assets/images/PA.png
+  meta: Released November 2026
+  card: /assets/images/selvage-card.jpg
+  icon: /assets/images/SV.png
   blurb: >-
-    A complete save system for Unity, with no save code to write. Automatic saving, scene
-    objects, save slots, cloud and Steam sync, AES-256 encryption and crash-safe writes,
-    all from the inspector.
-
-- title: Infinite Value
-  url: /infinite-value/
-  released: true
-  free: false
-  meta: Updated October 2026
-  card: /assets/images/infinite-value-card.jpg
-  icon: /assets/images/IV.png
-  blurb: >-
-    Numbers of any size and precision in Unity. Behaves like a primitive type, works in
-    real-time, and is fully configurable. Perfect for incremental games, RPGs, and monetary systems.
+    Dependency injection designed around how Unity works. Selvage gives your scripts what
+    they need from your scenes, assets and code, and checks every dependency before Play.
 
 - title: Settings Kit
+  released_on: 2026-10-14
   url: /settings-kit/
   released: true
   free: true
@@ -56,7 +47,21 @@
     their values anywhere, in the editor or in a build. No editor code, nothing under
     Resources/.
 
+- title: Persistent Asset
+  released_on: 2026-08-12
+  url: /persistent-asset/
+  released: true
+  free: false
+  meta: Updated October 2026
+  card: /assets/images/persistent-asset-card.jpg
+  icon: /assets/images/PA.png
+  blurb: >-
+    A complete save system for Unity, with no save code to write. Automatic saving, scene
+    objects, save slots, cloud and Steam sync, AES-256 encryption and crash-safe writes,
+    all from the inspector.
+
 - title: Generic Arithmetic
+  released_on: 2023-10-23
   url: /generic-arithmetic/
   released: true
   free: true
@@ -68,6 +73,7 @@
     no setup required; supports source generation for AOT-safe custom types.
 
 - title: Auto Singleton
+  released_on: 2023-10-19
   url: /auto-singleton/
   released: true
   free: true
@@ -78,18 +84,17 @@
     Add <code>[Singleton]</code> to any class and the asset handles everything: asset
     generation, cleanup, polymorphic access, and inspector integration.
 
-# Unreleased: hidden from the home page and the nav until `released` is true.
-# Artwork is in place, exported from Sources/Selvage/_Store Images & Text/.
-- title: Selvage
-  url: /selvage/
-  released: false
+- title: Infinite Value
+  released_on: 2021-05-06
+  url: /infinite-value/
+  released: true
   free: false
-  meta: Coming soon
-  card: /assets/images/selvage-card.jpg
-  icon: /assets/images/SV.png
+  meta: Updated October 2026
+  card: /assets/images/infinite-value-card.jpg
+  icon: /assets/images/IV.png
   blurb: >-
-    Dependency injection designed around how Unity works. Selvage gives your scripts what
-    they need from your scenes, assets and code, and checks every dependency before Play.
+    Numbers of any size and precision in Unity. Behaves like a primitive type, works in
+    real-time, and is fully configurable. Perfect for incremental games, RPGs, and monetary systems.
 
 # Unreleased: hidden from the home page and the nav until `released` is true.
 # Artwork is in place, exported from Sources/CloneBuster/_Store Images & Text/.
