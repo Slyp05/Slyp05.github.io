@@ -22,6 +22,19 @@
 # front matter and its entry under `defaults:` in _config.yml. Those two are
 # Jekyll config and can't be driven from this file.
 
+- title: CloneBuster
+  released_on: 2026-11-16
+  url: /clonebuster/
+  released: true
+  free: false
+  meta: Released November 2026
+  card: /assets/images/clonebuster-card.jpg
+  icon: /assets/images/CB.png
+  blurb: >-
+    Prove you made it first. CloneBuster timestamps every version of your project and source
+    art, and turns that history into a one-page proof and a dated timelapse when someone copies
+    your game.
+
 - title: Selvage
   released_on: 2026-11-16
   url: /selvage/
@@ -95,20 +108,6 @@
   blurb: >-
     Numbers of any size and precision in Unity. Behaves like a primitive type, works in
     real-time, and is fully configurable. Perfect for incremental games, RPGs, and monetary systems.
-
-# Unreleased: hidden from the home page and the nav until `released` is true.
-# Artwork is in place, exported from Sources/CloneBuster/_Store Images & Text/.
-- title: CloneBuster
-  url: /clonebuster/
-  released: false
-  free: false
-  meta: Coming soon
-  card: /assets/images/clonebuster-card.jpg
-  icon: /assets/images/CB.png
-  blurb: >-
-    Prove you made it first. CloneBuster timestamps every version of your project and source
-    art, and turns that history into a one-page proof and a dated timelapse when someone copies
-    your game.
 
 # Unreleased: hidden from the home page and the nav until `released` is true.
 # Artwork is in place, exported from Sources/Concordance/_Store Images & Text/.

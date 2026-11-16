@@ -33,12 +33,6 @@ defaults:
       path: ""
     values:
       image: /assets/images/home.jpg
-  # CloneBuster is unreleased: keep its whole doc tree out of the sitemap.
-  # Remove this entry (and `sitemap: false` in clonebuster.md) on release.
-  - scope:
-      path: "clonebuster"
-    values:
-      sitemap: false
   # Concordance is unreleased: keep its whole doc tree out of the sitemap.
   # Remove this entry (and `sitemap: false` in concordance.md) on release.
   - scope:

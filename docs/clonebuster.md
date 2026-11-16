@@ -3,11 +3,10 @@ layout: page
 title: CloneBuster
 permalink: /clonebuster/
 image: /assets/images/clonebuster-social.jpg
-sitemap: false
 description: "CloneBuster timestamps every version of your project and source art from the moment you import it, and turns that history into a one-page proof and a dated timelapse when someone copies your game."
 software:
   name: "CloneBuster: Anti-AI Proof of Creation"
-  store_url: ""
+  store_url: https://assetstore.unity.com/packages/slug/422340
 ---
 
 <img src="/assets/images/clonebuster.jpg" alt="CloneBuster" class="package-image" width="1200" height="800" decoding="async">
@@ -71,7 +70,6 @@ Each version existed by its timestamped date. CloneBuster doesn't stop copying, 
 
 ## Get It
 
-<!-- TODO: unreleased; on release set store_url in the front matter above (the button below switches to the store link) and remove `sitemap: false` (here and the clonebuster scope in _config.yml). -->
 {% include store-button.html %}
 
 ## Support
@@ -82,7 +80,7 @@ Each version existed by its timestamped date. CloneBuster doesn't stop copying, 
 ## Patch Notes
 
 <details class="patch-note" open>
-<summary><strong>v1.0.0</strong> <span class="patch-date">Initial release</span></summary>
+<summary><strong>v1.0.0</strong> <span class="patch-date">November 16, 2026</span></summary>
 <div class="patch-note-body" markdown="1">
 
 Initial release.
