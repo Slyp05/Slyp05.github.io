@@ -135,6 +135,8 @@ Any value more than one system wants a say in, such as:
 • Unity 6.0 or newer.
 • Unity's Mono Cecil package, added with the import.
 
+Asset uses Mono.Cecil under MIT License; see Third-Party Notices.txt file in package for details.
+
 💬 Support
 
 If you have any questions or feedback, use this [contact form](https://justetools.net/contact/), or [email me](mailto:justetools@gmail.com).

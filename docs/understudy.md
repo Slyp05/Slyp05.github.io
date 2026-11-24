@@ -107,6 +107,8 @@ Understudy only works inside your tests. Outside them, in the Editor and in the 
 - The Unity Test Framework package, installed by default.
 - Unity's Mono Cecil package, added with the import.
 
+Asset uses Mono.Cecil and NUnit under MIT License; see Third-Party Notices.txt file in package for details.
+
 ## Learn More
 
 <a href="/understudy/quick-usage-guide/" class="asset-store-btn">Quick Usage Guide</a>

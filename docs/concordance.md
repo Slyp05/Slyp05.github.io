@@ -117,6 +117,8 @@ Any value more than one system wants a say in, such as:
 - Unity 6.0 or newer.
 - Unity's Mono Cecil package, added with the import.
 
+Asset uses Mono.Cecil under MIT License; see Third-Party Notices.txt file in package for details.
+
 ## Learn More
 
 <a href="/concordance/quick-usage-guide/" class="asset-store-btn">Quick Usage Guide</a>
