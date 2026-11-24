@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Describe code Scry cannot read, such as a precompiled plugin." />
+  <title>Scry - Declaration files</title>
+  <link rel="stylesheet" href="/assets/css/scry.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Scry</div><a href="../index.html">User Manual</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Declaration files</h1>
+      <div class="sub">Describe code Scry cannot read, such as a precompiled plugin.</div>
+      <div class="guide-index">
+        <a href="#files">Write a declaration file</a>
+        <a href="#keys">Keys</a>
+        <a href="#facts">Facts</a>
+        <a href="#providers">Choice providers</a>
+      </div>
+    </div>
+
+    <section id="files">
+      <h2>Write a declaration file</h2>
+      <p>Code Scry cannot read, such as a precompiled DLL, adds nothing to what Scry knows: a method calling it asks before it runs, and the values passed to it get no minimum, maximum or dropdown. A declaration file states facts about such code. Each entry, a key line naming a method and the facts below it, is a declaration.</p>
+      <p>To create one, go to <strong>Assets</strong> &gt; <strong>Create</strong> &gt; <strong>Scry</strong> &gt; <strong>Declaration File</strong>, then edit it in your code editor. Select it to see its problems in the Inspector. A package can ship one; without Scry, it does nothing.</p>
+      <div class="img-block">
+        <img src="../img/declaration-problems.png" alt="A declaration file's Inspector, listing a key that matches nothing."
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">&#128247;</span>
+          <span><strong>img/declaration-problems</strong><br/>A declaration file's Inspector, listing a key that matches nothing.</span>
+        </div>
+      </div>
+      <p>A key line names what the facts apply to, and the indented lines below it are its facts. <code>#</code> starts a comment. Parameters are C# type names; in facts, <code>$0</code> or <code>$name</code> refers to a parameter.</p>
+      <pre><code>method MyGame.MathUtil.Saturate(float)
+    returns range [0, 1]
+    effect pure
+method MyPlugin.Audio.Play(string, float)
+    param $0 choices MyGame.Editor.SoundChoices
+    param $1 requires [0, 1]</code></pre>
+    </section>
+
+    <section id="keys">
+      <h2>Keys</h2>
+      <div class="table-scroll"><table class="cmp">
+        <tr><th>Key</th><th>Applies to</th></tr>
+        <tr><td><code>method Type.Name(params)</code></td><td>One overload, or every overload without the parameters.</td></tr>
+        <tr><td><code>get Type.Name</code>, <code>set Type.Name</code></td><td>A property's getter or setter.</td></tr>
+        <tr><td><code>type Type</code></td><td>Every member of the type without a declaration of its own.</td></tr>
+        <tr><td><code>attribute Type</code></td><td>Fields marked with the attribute.</td></tr>
+        <tr><td><code>override Type.Name</code></td><td>Every override of a method.</td></tr>
+      </table></div>
+    </section>
+
+    <section id="facts">
+      <h2>Facts</h2>
+      <div class="table-scroll"><table class="cmp">
+        <tr><th>Fact</th><th>Description</th></tr>
+        <tr><td><code>effect pure</code></td><td>The method changes nothing, so it runs freely.</td></tr>
+        <tr><td><code>effect undoable</code></td><td>The method changes only the object it is called on, so it runs as one undo step.</td></tr>
+        <tr><td><code>effect irreversible "message"</code></td><td>The method does something Scry cannot undo, so it asks before it runs, naming the effect with the message.</td></tr>
+        <tr><td><code>effect calledbyname</code></td><td>Something calls the method by name, as Unity calls <code>Update</code>, so Scry does not show it.</td></tr>
+        <tr><td><code>notlive</code></td><td>Scry does not read the method again at every refresh, because each call logs or returns something new.</td></tr>
+        <tr><td><code>messages</code></td><td>The call can run <code>OnEnable</code> and <code>OnDisable</code>.</td></tr>
+        <tr><td><code>lifecycle assigned-before-awake</code></td><td>Fields marked with this attribute are set before <code>Awake</code>, as an injection framework sets them, so Scry never flags them as missing.</td></tr>
+        <tr><td><code>returns range [lo, hi]</code>, <code>returns magnitude [lo, hi]</code></td><td>The result, or its length, is within the range.</td></tr>
+        <tr><td><code>returns clamp $p [lo, hi]</code>, <code>returns wrap $p [lo, hi)</code></td><td>The result is the parameter, clamped or wrapped.</td></tr>
+        <tr><td><code>returns min $a $b</code>, <code>max $a $b</code>, <code>oneof $a $b</code>, <code>copy $p</code></td><td>The result is one of the parameters.</td></tr>
+        <tr><td><code>returns excludes value</code></td><td>The result is never the value.</td></tr>
+        <tr><td><code>returns unit name</code>, <code>param $p unit name</code></td><td>The unit of the result or of the parameter.</td></tr>
+        <tr><td><code>param $p rejects value</code>, <code>requires [lo, hi]</code>, <code>nonempty</code></td><td>Values the call rejects: Scry warns on them.</td></tr>
+        <tr><td><code>param $p clamped [lo, hi]</code>, <code>wrapped period</code></td><td>Values the call clamps or wraps around: Scry shows the limits at the ends of the field instead of warning.</td></tr>
+        <tr><td><code>param $p fails</code></td><td>A rejected value makes the call throw or log an error, so Scry shows an error instead of a warning.</td></tr>
+        <tr><td><code>param $p choices provider</code></td><td>The parameter takes one of the values a choice provider lists, shown as a dropdown.</td></tr>
+      </table></div>
+    </section>
+
+    <section id="providers">
+      <h2>Choice providers</h2>
+      <p>A choice provider lists the values a string parameter accepts, so the field shows a dropdown of them instead of a text field. The built-in providers are <code>tags</code>, <code>layers</code>, <code>sorting-layers</code>, <code>scenes</code>, <code>animator-parameters</code>, <code>shader-properties</code>, <code>input-axes</code> and <code>methods</code>. For your own, implement <code>IScryChoiceProvider</code> in an editor assembly, and name its full type in the fact:</p>
+      <pre><code><span class="kw">public class</span> <span class="ty">SoundChoices</span> : <span class="ty">IScryChoiceProvider</span>
+{
+    <span class="kw">public</span> <span class="ty">IEnumerable</span>&lt;<span class="kw">string</span>&gt; GetChoices(<span class="ty">ScryChoiceContext</span> context)
+    {
+        <span class="kw">return</span> <span class="ty">SoundLibrary</span>.Names;
+    }
+}</code></pre>
+      <p>A package compiles its providers only when Scry is installed, through its assembly definition's <strong>Version Defines</strong>.</p>
+    </section>
+
+    <div class="resources">
+      <h2>Additional resources</h2>
+      <ul>
+        <li><a href="../../public-api/index.html#IScryChoiceProvider">IScryChoiceProvider API reference</a></li>
+      </ul>
+    </div>
+
+    <div class="pager">
+      <a class="prev" href="../pages/Compatibility.html">
+        <div class="dir">Back</div>
+        <div class="pg-title">Compatibility</div>
+      </a>
+      <a class="next" href="../pages/Inspector%20Reference.html">
+        <div class="dir">Next</div>
+        <div class="pg-title">Inspector reference</div>
+      </a>
+    </div>
+
+    <div class="doc-footer">Scry v1.0.0</div>
+  </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="frame.css">
+<script src="../Sources Media/parts.js"></script>
+</head>
+<body>
+<div class="head">
+  <h1>Edit the values Unity can't draw</h1>
+</div>
+<div class="stage vision"><div class="code"><pre class="cs">Dictionary&lt;string, int&gt; «stock»;</pre></div><div class="beam"></div><img class="shot" src="Captures/value-dictionary.png" style="width:560px" alt="Stock, on a ScriptableObject: keys and values, a duplicate key flagged"><div class="code"><pre class="cs">Queue&lt;Wave&gt; «waves»;</pre></div><div class="beam"></div><img class="shot" src="Captures/value-queue.png" style="width:560px" alt="Waves: front first"><div class="code"><pre class="cs">[SerializeReference] IWeapon «weapon»;</pre></div><div class="beam"></div><img class="shot" src="Captures/value-polymorphic.png" style="width:560px" alt="Weapon: pick Laser or Cannon, built in place"><div class="code"><pre class="cs">public float[] «resist»; // resist[(int)element]</pre></div><div class="beam"></div><img class="shot" src="Captures/value-enum-array.png" style="width:560px" alt="Resist: Fire, Ice, Poison"><div class="ball"><div class="halo"></div><div class="orb"></div></div></div>
+<script src="highlight.js"></script>
+<script src="slide.js"></script>
+</body>
+</html>

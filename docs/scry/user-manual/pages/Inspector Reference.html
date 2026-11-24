@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Every mark, button and panel item Scry draws." />
+  <title>Scry - Inspector reference</title>
+  <link rel="stylesheet" href="/assets/css/scry.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Scry</div><a href="../index.html">User Manual</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Inspector reference</h1>
+      <div class="sub">Every mark, button and panel item Scry draws.</div>
+      <div class="guide-index">
+        <a href="#marks">Row marks</a>
+        <a href="#code">Code marks</a>
+        <a href="#scry-button">Scry button</a>
+        <a href="#scry-panel">Scry panel</a>
+        <a href="#component">Component header</a>
+        <a href="#comments">Doc comments</a>
+      </div>
+    </div>
+
+    <section id="marks">
+      <h2>Row marks</h2>
+      <div class="img-block">
+        <img src="../img/row-marks.png" alt="Rows showing the saved bar, a prefab override, an underlined static, a struck-through label, bound boxes and a unit."
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">&#128247;</span>
+          <span><strong>img/row-marks</strong><br/>Rows showing the saved bar, a prefab override, an underlined static, a struck-through label, bound boxes and a unit.</span>
+        </div>
+      </div>
+      <div class="table-scroll"><table class="cmp">
+        <tr><th>Mark</th><th>Description</th></tr>
+        <tr><td>Grey bar at the left edge</td><td>Serialized: Unity saves the value with the object.</td></tr>
+        <tr><td>No bar on a field</td><td>Not serialized: an edit lasts until the next domain reload.</td></tr>
+        <tr><td>Underlined label</td><td>Static, shared by every instance.</td></tr>
+        <tr><td>Struck-through label</td><td>The value does not matter in the current state, such as a field the code uses only while a toggle is on, while the toggle is off.</td></tr>
+        <tr><td>Yellow or red outline</td><td>A value the code rejects.</td></tr>
+        <tr><td>Box at an end of a number field</td><td>The nearest limit the code sets on that side: a minimum or maximum (<em>0 &le;</em>), a range of values it excludes (<em>&notin; -1, 1</em>), the value where it wraps around (<em>360 &#8635;</em>), or a value it rejects (<em>&ne; 0</em>). A value typed or dragged past it becomes the value the code would make of it.</td></tr>
+        <tr><td>Muted suffix inside a field, such as <em>s</em></td><td>The value's unit, from how the code uses it: <em>s</em> for a value passed to <code>WaitForSeconds</code>.</td></tr>
+        <tr><td>Muted <em>editor</em> after a name</td><td>The member does nothing in a player build.</td></tr>
+        <tr><td>Muted <em>dev</em> after a name</td><td>The member does nothing in a release build.</td></tr>
+        <tr><td>Italic name, such as <em>Result</em></td><td>A name Scry gives, where the code has none.</td></tr>
+        <tr><td>Diagonal stripes across a row</td><td>A member that is hidden, or left out by <strong>Show</strong>, shown because the search found it or its Scry panel is open.</td></tr>
+        <tr><td>Dimmed name and value</td><td><a href="Use%20the%20Inspector.html#read-only">Read-only</a>.</td></tr>
+        <tr><td>Trash button at the right end of a line</td><td>Sets the value to None.</td></tr>
+        <tr><td>Spinner after a name</td><td>The member's code changed, and Scry is still analyzing it.</td></tr>
+        <tr><td>Pause icon after a name</td><td>A live value paused because one read takes too long for every refresh.</td></tr>
+      </table></div>
+    </section>
+
+    <section id="code">
+      <h2>Code marks</h2>
+      <div class="img-block">
+        <img src="../img/code-marks.png" alt="Method rows with the pure, undoable and clock icons, a method that asks first, and a larger method folded open to its outputs."
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">&#128247;</span>
+          <span><strong>img/code-marks</strong><br/>Method rows with the pure, undoable and clock icons, a method that asks first, and a larger method folded open to its outputs.</span>
+        </div>
+      </div>
+      <div class="table-scroll"><table class="cmp">
+        <tr><th>Mark</th><th>Description</th></tr>
+        <tr><td>Name on a faint fill</td><td>Code that runs when you select it: a method, an event to raise, a getter Scry reads only on request, or a property that has only a setter.</td></tr>
+        <tr><td>Name ending with <strong>()</strong></td><td>A method. One that takes or returns more than one value folds open to its parameters, its button and its results.</td></tr>
+        <tr><td>Eye icon</td><td>The code changes nothing, so it runs freely.</td></tr>
+        <tr><td>Circular arrows</td><td>The code changes only its object, so a run is one undo step.</td></tr>
+        <tr><td>Clock</td><td>A coroutine or an asynchronous method.</td></tr>
+        <tr><td>Ellipsis after the name</td><td>The code does more than Scry can undo, so it asks before it runs.</td></tr>
+        <tr><td>Light box, an outline with no fill</td><td>A value computed by code, such as a get-only property or a method's result.</td></tr>
+        <tr><td>Parameter types, <em>+=</em> and method names, for example <em>(int) += Take Damage</em></td><td>An event: the types it passes, then the methods listening to it.</td></tr>
+      </table></div>
+    </section>
+
+    <section id="scry-button">
+      <h2>Scry button</h2>
+      <div class="img-block">
+        <img src="../img/scry-buttons.png" alt="Rows whose Scry buttons are red for an error, yellow for a warning and white for information."
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">&#128247;</span>
+          <span><strong>img/scry-buttons</strong><br/>Rows whose Scry buttons are red for an error, yellow for a warning and white for information.</span>
+        </div>
+      </div>
+      <div class="table-scroll"><table class="cmp">
+        <tr><th>Color</th><th>Description</th></tr>
+        <tr><td>Red</td><td>An error: something that fails at runtime, or code that breaks builds.</td></tr>
+        <tr><td>Yellow</td><td>A warning: the code runs on with a result you may not intend.</td></tr>
+        <tr><td>White</td><td>Information only.</td></tr>
+      </table></div>
+    </section>
+
+    <section id="scry-panel">
+      <h2>Scry panel</h2>
+      <div class="img-block">
+        <img src="../img/scry-panel.png" alt="A row's Scry panel open: the declaration, a fact with its line and a fix button, and the Style and Visibility answers."
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">&#128247;</span>
+          <span><strong>img/scry-panel</strong><br/>A row's Scry panel open: the declaration, a fact with its line and a fix button, and the Style and Visibility answers.</span>
+        </div>
+      </div>
+      <div class="table-scroll"><table class="cmp">
+        <tr><th>Item</th><th>Description</th></tr>
+        <tr><td>Declaration</td><td>The member's declaration, with a link to its line in your code editor.</td></tr>
+        <tr><td>Remarks</td><td>The <code>&lt;remarks&gt;</code> of its doc comment.</td></tr>
+        <tr><td>Facts</td><td>What Scry knows, each with its line, and a fix where Scry has one, such as <strong>Add Tag "Enemy"</strong>.</td></tr>
+        <tr><td>Style</td><td><strong>Scry</strong> or <strong>Unity</strong>, for a serialized field.</td></tr>
+        <tr><td>Visibility</td><td><strong>Shown</strong>, <a href="Use%20the%20Inspector.html#read-only"><strong>Read-Only</strong></a> or <strong>Hidden</strong>.</td></tr>
+        <tr><td>Getter, Result</td><td><strong>Live</strong> reads the value again at every refresh; <strong>On Request</strong> reads it only when you select its name.</td></tr>
+        <tr><td>Before It Runs, Before the Setter Applies</td><td><strong>Ask</strong> or <strong>Don't Ask Again</strong>, for code that asks first.</td></tr>
+        <tr><td>Layout, Show</td><td>For a field holding a class or struct, which folds open to its members: their order and which kinds show.</td></tr>
+        <tr><td>Links</td><td>The <code>&lt;see href&gt;</code> links of its doc comment.</td></tr>
+      </table></div>
+    </section>
+
+    <section id="component">
+      <h2>Component header</h2>
+      <div class="img-block">
+        <img src="../img/component-header.png" alt="A component header with the magnifying glass, and the crystal ball counting the component's problems."
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">&#128247;</span>
+          <span><strong>img/component-header</strong><br/>A component header with the magnifying glass, and the crystal ball counting the component's problems.</span>
+        </div>
+      </div>
+      <div class="img-block">
+        <img src="../img/component-panel.png" alt="The component's Scry panel open, listing its problems, its hidden members, and the Style, Layout and Show answers."
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">&#128247;</span>
+          <span><strong>img/component-panel</strong><br/>The component's Scry panel open, listing its problems, its hidden members, and the Style, Layout and Show answers.</span>
+        </div>
+      </div>
+      <div class="table-scroll"><table class="cmp">
+        <tr><th>Item</th><th>Description</th></tr>
+        <tr><td>Magnifying glass</td><td>Searches the component's members by name, including hidden members and members of the values its fields hold.</td></tr>
+        <tr><td>Crystal ball</td><td>Opens the component's Scry panel. The number counts its warnings and errors.</td></tr>
+        <tr><td>Problems</td><td>Every warning and error, with a button that adds any component the code needs on the GameObject.</td></tr>
+        <tr><td>Hidden</td><td>Every hidden member, with <strong>Unhide</strong>.</td></tr>
+        <tr><td>Style</td><td><strong>Scry</strong>, or <strong>Unity</strong> for Unity's default Inspector, for every component of the type.</td></tr>
+        <tr><td>Layout</td><td><strong>As Written</strong>, in the order and structure the code declares, or <strong>Sorted</strong>, grouped by kind: serialized fields, other fields and properties, events and methods, then static members.</td></tr>
+        <tr><td>Show</td><td>Which kinds of member show: fields not serialized, properties, methods, events, and static members, which are off by default. Serialized fields always show.</td></tr>
+        <tr><td>Clear My Answers</td><td>Clears your answers for the type and its members.</td></tr>
+      </table></div>
+    </section>
+
+    <section id="comments">
+      <h2>Doc comments</h2>
+      <div class="img-block">
+        <img src="../img/doc-comments.png" alt="A script with a region, headers, a line and a hint, beside the Inspector it produces."
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">&#128247;</span>
+          <span><strong>img/doc-comments</strong><br/>A script with a region, headers, a line and a hint, beside the Inspector it produces.</span>
+        </div>
+      </div>
+      <div class="table-scroll"><table class="cmp">
+        <tr><th>In the script</th><th>In the Inspector</th></tr>
+        <tr><td><code>/// &lt;summary&gt;</code></td><td>The row's tooltip.</td></tr>
+        <tr><td><code>/// &lt;param&gt;</code>, <code>&lt;returns&gt;</code>, <code>&lt;typeparam&gt;</code></td><td>Tooltips on a method's parameters, result and type arguments.</td></tr>
+        <tr><td><code>/// &lt;remarks&gt;</code>, <code>&lt;exception&gt;</code>, <code>&lt;see href&gt;</code></td><td>The Scry panel.</td></tr>
+        <tr><td><code>///</code> <em>text</em> on its own line, above a member</td><td>A header.</td></tr>
+        <tr><td><code>///</code> <em>text</em> at the end of a member's line</td><td>A hint under the row.</td></tr>
+        <tr><td><code>///</code> and three or more of one symbol, for example <code>/// -----</code></td><td>A line.</td></tr>
+        <tr><td><code>///</code> and <em>text</em> between runs of one symbol, for example <code>/// ===== Combat =====</code></td><td>A line titled with the text.</td></tr>
+        <tr><td><code>#region</code></td><td>A group that folds.</td></tr>
+        <tr><td>Extra blank lines between members</td><td>Space between rows.</td></tr>
+      </table></div>
+      <p>Fields Scry draws ignore Unity's presentation attributes, such as <code>[Header]</code>, <code>[Tooltip]</code> and <code>[Space]</code>; fields whose <strong>Style</strong> is <strong>Unity</strong> keep them. To read <code>//</code> comments instead of <code>///</code>, refer to the <a href="Settings%20Reference.html#code-formatting">project settings</a>.</p>
+    </section>
+
+    <div class="resources">
+      <h2>Additional resources</h2>
+      <ul>
+        <li><a href="Scry%20Panels%20and%20Answers.html">Scry panels and answers</a></li>
+        <li><a href="Settings%20Reference.html">Settings reference</a></li>
+      </ul>
+    </div>
+
+    <div class="pager">
+      <a class="prev" href="../pages/Declaration%20Files.html">
+        <div class="dir">Back</div>
+        <div class="pg-title">Declaration files</div>
+      </a>
+      <a class="next" href="../pages/Settings%20Reference.html">
+        <div class="dir">Next</div>
+        <div class="pg-title">Settings reference</div>
+      </a>
+    </div>
+
+    <div class="doc-footer">Scry v1.0.0</div>
+  </main>
+</div>
+</body>
+</html>

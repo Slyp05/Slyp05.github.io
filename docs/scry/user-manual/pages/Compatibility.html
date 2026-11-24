@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="What happens to your editors, drawers, data and builds." />
+  <title>Scry - Compatibility</title>
+  <link rel="stylesheet" href="/assets/css/scry.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Scry</div><a href="../index.html">User Manual</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Compatibility</h1>
+      <div class="sub">What happens to your editors, drawers, data and builds.</div>
+      <div class="guide-index">
+        <a href="#custom-editors">Custom editors</a>
+        <a href="#drawers">Property drawers</a>
+        <a href="#attributes">Inspector attributes</a>
+        <a href="#unity-components">Unity's components</a>
+        <a href="#data">Your data</a>
+        <a href="#builds">Builds</a>
+        <a href="#performance">Performance</a>
+      </div>
+    </div>
+
+    <section id="custom-editors">
+      <h2>Custom editors</h2>
+      <p>A type with an editor of its own, whether your <code>[CustomEditor]</code>, Odin's or another package's, keeps it, with Scry's crystal ball added to its header. To use Scry's Inspector for that type instead, set <strong>Style</strong> to <strong>Scry</strong> in the crystal ball's panel. The editor's scene handles, previews and tools keep working either way.</p>
+      <div class="img-block">
+        <img src="../img/custom-editor.png" alt="A custom editor kept as it is, with Scry's crystal ball added to its header."
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">&#128247;</span>
+          <span><strong>img/custom-editor</strong><br/>A custom editor kept as it is, with Scry's crystal ball added to its header.</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="drawers">
+      <h2>Property drawers</h2>
+      <p>A field with a property drawer, yours, a package's or Unity's own such as <code>[Range]</code> and <code>[TextArea]</code>, keeps it: Scry draws that field exactly as Unity does.</p>
+      <div class="img-block">
+        <img src="../img/property-drawer.png" alt="A [Range] slider and a [TextArea] drawn by Unity, among rows Scry draws."
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">&#128247;</span>
+          <span><strong>img/property-drawer</strong><br/>A [Range] slider and a [TextArea] drawn by Unity, among rows Scry draws.</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="attributes">
+      <h2>Inspector attributes</h2>
+      <p>On fields Scry draws, Unity's presentation attributes, such as <code>[Header]</code>, <code>[Space]</code>, <code>[Tooltip]</code> and <code>[HideInInspector]</code>, have no effect: Scry takes headers and tooltips from your <code>///</code> comments, and hides members through <strong>Visibility</strong>. A field whose <strong>Style</strong> is <strong>Unity</strong> keeps them.</p>
+      <div class="img-block">
+        <img src="../img/inspector-attributes.png" alt="A header from a /// comment on a field Scry draws, beside a field whose Style is Unity keeping its [Header]."
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">&#128247;</span>
+          <span><strong>img/inspector-attributes</strong><br/>A header from a /// comment on a field Scry draws, beside a field whose Style is Unity keeping its [Header].</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="unity-components">
+      <h2>Unity's components</h2>
+      <p>Transform, Rigidbody and every other Unity component keep their Inspector, and so does a component whose script is missing.</p>
+      <div class="img-block">
+        <img src="../img/unity-components.png" alt="Transform and Rigidbody with their own Inspector and no crystal ball, above a component Scry draws."
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">&#128247;</span>
+          <span><strong>img/unity-components</strong><br/>Transform and Rigidbody with their own Inspector and no crystal ball, above a component Scry draws.</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="data">
+      <h2>Your data</h2>
+      <p>Scry edits serialized fields through Unity's serialization, so prefab overrides, multi-object editing and undo work as in Unity's Inspector. A field another serializer saves, such as Odin's, shows as not serialized, but that serializer still saves your edits.</p>
+      <div class="img-block">
+        <img src="../img/prefab-override.png" alt="A prefab instance in Scry's Inspector, with an overridden field marked as Unity marks it."
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">&#128247;</span>
+          <span><strong>img/prefab-override</strong><br/>A prefab instance in Scry's Inspector, with an overridden field marked as Unity marks it.</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="builds">
+      <h2>Builds</h2>
+      <p>Nothing of Scry runs in a player build: Scry's attributes are compiled out of your code there.</p>
+    </section>
+
+    <section id="performance">
+      <h2>Performance</h2>
+      <p>The analysis runs in the background without blocking the Editor. Live values are read again 10 times a second by default, within a fixed time budget per refresh. If the Inspector feels slow, lower <strong>Refresh Rate</strong> in <a href="Settings%20Reference.html#preferences"><strong>Edit</strong> &gt; <strong>Preferences</strong> &gt; <strong>Scry</strong></a>.</p>
+    </section>
+
+    <div class="resources">
+      <h2>Additional resources</h2>
+      <ul>
+        <li><a href="Scry%20Panels%20and%20Answers.html#answers">Answers and attributes</a></li>
+      </ul>
+    </div>
+
+    <div class="pager">
+      <a class="prev" href="../pages/Scry%20Panels%20and%20Answers.html">
+        <div class="dir">Back</div>
+        <div class="pg-title">Scry panels and answers</div>
+      </a>
+      <a class="next" href="../pages/Declaration%20Files.html">
+        <div class="dir">Next</div>
+        <div class="pg-title">Declaration files</div>
+      </a>
+    </div>
+
+    <div class="doc-footer">Scry v1.0.0</div>
+  </main>
+</div>
+</body>
+</html>

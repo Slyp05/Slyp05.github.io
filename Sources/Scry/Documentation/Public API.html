@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="The attributes Scry reads, in the Scry namespace, and the choice provider interface, in Scry.Editor." />
+  <title>Scry - Public API</title>
+  <link rel="stylesheet" href="shared/styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="shared/nav.js"></script>
+  <nav class="api-nav">
+    <a href="Public%20API.html" class="active">Overview</a>
+    <div class="nav-group">Answer attributes</div>
+    <a href="#AnswerAttribute"><span class="badge badge-class">abstract</span>AnswerAttribute</a>
+    <a href="#Scry.Layout"><span class="badge badge-class">abstract</span>Layout</a>
+    <a class="indent" href="#Scry.Layout.AsWritten"><span class="badge badge-class">attr</span>AsWritten</a>
+    <a class="indent" href="#Scry.Layout.Sorted"><span class="badge badge-class">attr</span>Sorted</a>
+    <a href="#Scry.Style"><span class="badge badge-class">abstract</span>Style</a>
+    <a class="indent" href="#Scry.Style.Scry"><span class="badge badge-class">attr</span>Scry</a>
+    <a class="indent" href="#Scry.Style.Unity"><span class="badge badge-class">attr</span>Unity</a>
+    <a href="#Scry.Visibility"><span class="badge badge-class">abstract</span>Visibility</a>
+    <a class="indent" href="#Scry.Visibility.Shown"><span class="badge badge-class">attr</span>Shown</a>
+    <a class="indent" href="#Scry.Visibility.ReadOnly"><span class="badge badge-class">attr</span>ReadOnly</a>
+    <a class="indent" href="#Scry.Visibility.Hidden"><span class="badge badge-class">attr</span>Hidden</a>
+    <a href="#EffectIntendedAttribute"><span class="badge badge-class">attr</span>EffectIntendedAttribute</a>
+    <a href="#NotLiveAttribute"><span class="badge badge-class">attr</span>NotLiveAttribute</a>
+    <div class="nav-group">Choice providers</div>
+    <a href="#IScryChoiceProvider"><span class="badge badge-interface">interface</span>IScryChoiceProvider</a>
+    <a href="#ScryChoiceContext"><span class="badge badge-struct">struct</span>ScryChoiceContext</a>
+  </nav>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Public API</h1>
+      <div class="sub">Namespace <code>Scry</code>, assembly <code>Scry</code>; choice providers in namespace <code>Scry.Editor</code>, assembly <code>Scry.Editor</code>.</div>
+    </div>
+
+    <h2 class="api-group">Answer attributes</h2>
+    <div class="type-section" id="AnswerAttribute">
+      <div class="type-header">
+        <h3>AnswerAttribute</h3>
+        <span class="badge badge-class">abstract class</span>
+        <span class="ns">Scry</span>
+      </div>
+      <p class="type-desc">Base of Scry's attributes: an answer given in the Inspector, written into the script so the team shares it. Every attribute exists in the editor only.</p>
+
+      <div class="member-group">
+        <table class="mt">
+          <tr><th scope="row"><span class="t">bool</span> <span class="mn">Force</span> { get; set; }</th><td>Makes the answer fixed: the Inspector shows a lock instead of the control that changes it. Unforced, the attribute only sets each user's default.</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="type-section" id="Scry.Layout">
+      <div class="type-header">
+        <h3>Layout</h3>
+        <span class="badge badge-class">abstract attr</span>
+        <span class="ns">Scry : AnswerAttribute</span>
+      </div>
+      <p class="type-desc">Sets how a type's members are laid out in Scry's Inspector, wherever they show: a component's or an asset's Inspector, or a value of the type folded open. On: classes and structs. Write one of its values. Two values on one member or type are an error on its row, and <code>[Scry.Layout.AsWritten]</code> holds.</p>
+      <div class="subtype" id="Scry.Layout.AsWritten">
+        <div class="type-header">
+          <h4>Layout.AsWrittenAttribute</h4>
+          <span class="badge badge-class">sealed attr</span>
+          <span class="ns">: Layout</span>
+        </div>
+        <p class="type-desc">As the code declares them: regions as bands, headers and spacing where the code puts them. Written <code>[Scry.Layout.AsWritten]</code>.</p>
+      </div>
+      <div class="subtype" id="Scry.Layout.Sorted">
+        <div class="type-header">
+          <h4>Layout.SortedAttribute</h4>
+          <span class="badge badge-class">sealed attr</span>
+          <span class="ns">: Layout</span>
+        </div>
+        <p class="type-desc">Grouped by kind, for code whose own layout does not help: serialized fields, then other fields and properties, then events and methods, then static members, with no regions, headers or spacing. Within a group, members every build uses come first, then those that do nothing in a player build, then those that do nothing in a release build; within each, fields come before properties and events before methods, then source order. Written <code>[Scry.Layout.Sorted]</code>.</p>
+      </div>
+    </div>
+    <div class="type-section" id="Scry.Style">
+      <div class="type-header">
+        <h3>Style</h3>
+        <span class="badge badge-class">abstract attr</span>
+        <span class="ns">Scry : AnswerAttribute</span>
+      </div>
+      <p class="type-desc">Sets the style of a serialized field. On a MonoBehaviour or ScriptableObject type, sets the style of its whole Inspector: Unity style shows Unity's own default inspector. On any other type, sets the style of every serialized field it declares, short of a field's own attribute or answer unless the type's is forced. On: fields, classes and structs. Write one of its values. Two values on one member or type are an error on its row, and <code>[Scry.Style.Unity]</code> holds.</p>
+      <div class="subtype" id="Scry.Style.Scry">
+        <div class="type-header">
+          <h4>Style.ScryAttribute</h4>
+          <span class="badge badge-class">sealed attr</span>
+          <span class="ns">: Style</span>
+        </div>
+        <p class="type-desc">The control inferred from the code. Written <code>[Scry.Style.Scry]</code>.</p>
+      </div>
+      <div class="subtype" id="Scry.Style.Unity">
+        <div class="type-header">
+          <h4>Style.UnityAttribute</h4>
+          <span class="badge badge-class">sealed attr</span>
+          <span class="ns">: Style</span>
+        </div>
+        <p class="type-desc">Unity's own drawing, with the user's drawers and attributes. Written <code>[Scry.Style.Unity]</code>.</p>
+      </div>
+    </div>
+    <div class="type-section" id="Scry.Visibility">
+      <div class="type-header">
+        <h3>Visibility</h3>
+        <span class="badge badge-class">abstract attr</span>
+        <span class="ns">Scry : AnswerAttribute</span>
+      </div>
+      <p class="type-desc">Sets whether a member shows in Scry's Inspector, and whether Scry may change anything through it. Without it, what code outside the type cannot use is read-only: a non-public field Unity does not serialize, a property whose getter or setter is not public, a non-public method or event. A serialized field is editable whatever its access. On: fields, properties, methods and events. Write one of its values. Two values on one member are an error on its row, and the first of Hidden, ReadOnly, Shown holds.</p>
+      <div class="subtype" id="Scry.Visibility.Shown">
+        <div class="type-header">
+          <h4>Visibility.ShownAttribute</h4>
+          <span class="badge badge-class">sealed attr</span>
+          <span class="ns">: Visibility</span>
+        </div>
+        <p class="type-desc">Shown, and editable wherever the code can write it. Written <code>[Scry.Visibility.Shown]</code>.</p>
+      </div>
+      <div class="subtype" id="Scry.Visibility.ReadOnly">
+        <div class="type-header">
+          <h4>Visibility.ReadOnlyAttribute</h4>
+          <span class="badge badge-class">sealed attr</span>
+          <span class="ns">: Visibility</span>
+        </div>
+        <p class="type-desc">Shown, not editable: its setter is never called, and a method runs or an event is raised only when Scry proves it changes nothing. Written <code>[Scry.Visibility.ReadOnly]</code>.</p>
+      </div>
+      <div class="subtype" id="Scry.Visibility.Hidden">
+        <div class="type-header">
+          <h4>Visibility.HiddenAttribute</h4>
+          <span class="badge badge-class">sealed attr</span>
+          <span class="ns">: Visibility</span>
+        </div>
+        <p class="type-desc">Left out of the inspector. The search still finds it, faded. Written <code>[Scry.Visibility.Hidden]</code>.</p>
+      </div>
+    </div>
+    <div class="type-section" id="EffectIntendedAttribute">
+      <div class="type-header">
+        <h3>EffectIntendedAttribute</h3>
+        <span class="badge badge-class">sealed attr</span>
+        <span class="ns">Scry : AnswerAttribute</span>
+      </div>
+      <p class="type-desc">States that the effects of a method or setter are intended, so Scry never asks before running it. On: methods and properties. Written <code>[Scry.EffectIntended]</code>.</p>
+    </div>
+    <div class="type-section" id="NotLiveAttribute">
+      <div class="type-header">
+        <h3>NotLiveAttribute</h3>
+        <span class="badge badge-class">sealed attr</span>
+        <span class="ns">Scry : AnswerAttribute</span>
+      </div>
+      <p class="type-desc">Turns off live updates for a getter, setter or method: a getter or a method shows its value on request, a setter applies on release or Enter. On: properties and methods. Written <code>[Scry.NotLive]</code>.</p>
+    </div>
+
+    <h2 class="api-group">Choice providers</h2>
+    <div class="type-section" id="IScryChoiceProvider">
+      <div class="type-header">
+        <h3>IScryChoiceProvider</h3>
+        <span class="badge badge-interface">interface</span>
+        <span class="ns">Scry.Editor</span>
+      </div>
+      <p class="type-desc">Supplies the valid values of a string argument, for a declaration's <code>choices</code> fact. Scry flags a value that is not among them. Reference the provider from a declaration file by its full type name. It needs a public parameterless constructor.</p>
+
+      <div class="member-group">
+        <table class="mt">
+          <tr><th scope="row"><span class="t">IEnumerable</span>&lt;<span class="t">string</span>&gt; <span class="mn">GetChoices</span>(<span class="t">ScryChoiceContext</span> context)</th><td>The valid values in this context.</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="type-section" id="ScryChoiceContext">
+      <div class="type-header">
+        <h3>ScryChoiceContext</h3>
+        <span class="badge badge-struct">readonly struct</span>
+        <span class="ns">Scry.Editor</span>
+      </div>
+      <p class="type-desc">Where a choice provider is asked for its values.</p>
+
+      <div class="member-group">
+        <table class="mt">
+          <tr><th scope="row"><span class="mn">ScryChoiceContext</span>(<span class="t">Object</span> inspectedObject, <span class="kw">object</span> receiver)</th><td>Creates a context.</td></tr>
+          <tr><th scope="row"><span class="t">Object</span> <span class="mn">InspectedObject</span> { get; }</th><td>The object being inspected.</td></tr>
+          <tr><th scope="row"><span class="kw">object</span> <span class="mn">Receiver</span> { get; }</th><td>The current value of the call's receiver when the receiver is a member of the inspected object, such as the <code>Animator</code> in <code>animator.SetFloat(name, value)</code>; otherwise <code>null</code>.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="doc-footer">Scry v1.0.0</div>
+  </main>
+</div>
+</body>
+</html>

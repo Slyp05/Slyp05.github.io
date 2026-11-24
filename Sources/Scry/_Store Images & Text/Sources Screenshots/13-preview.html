@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="frame.css">
+<script src="../Sources Media/parts.js"></script>
+</head>
+<body>
+<div class="head">
+  <h1>See what a method changes before you click</h1>
+</div>
+<div class="stage"><div class="col"><div class="code"><div class="file">Turret.cs</div><pre class="cs">public void TakeDamage(float amount)
+{
+    float blocked = amount * ‹armor›;
+    ⟪health⟫ -= amount - blocked;
+    ⟪isDead⟫ = health &lt;= 0;
+}</pre></div><div class="chips"><span class="chip" style="background:rgba(79,209,197,0.25); border-color:#4fd1c5">reads</span><span class="chip" style="background:rgba(228,95,208,0.25); border-color:#e45fd0">writes</span></div></div><div class="through"><div class="halo"></div><div class="orb"></div></div><div class="col"><img class="shot" src="Captures/preview.png" style="width:790px" alt="Hovering Take Damage: Armor marked as read, Health and Is Dead as written, each showing the value the run would leave"></div></div>
+<script src="highlight.js"></script>
+<script src="slide.js"></script>
+</body>
+</html>

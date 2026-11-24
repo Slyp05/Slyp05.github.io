@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="frame.css">
+<script src="../Sources Media/parts.js"></script>
+</head>
+<body>
+<div class="head">
+  <h1>Every method gets a button</h1>
+  <p>Undone with Ctrl+Z, or it asks first.</p>
+</div>
+<div class="stage columns"><div class="track"><div class="step"><div class="when">Before</div><img class="shot" src="Captures/method-before.png" style="width:700px" alt="Ammo 4, Reload"></div><div class="between">Click Reload</div><div class="step"><div class="when">After</div><img class="shot" src="Captures/method-after.png" style="width:700px" alt="Ammo 30 after Reload, which changes only its object"></div><div class="between"><span class="key">Ctrl+Z</span></div><div class="step"><div class="when">Undone</div><img class="shot" src="Captures/method-undone.png" style="width:700px" alt="Ammo 4 again"></div></div><div class="win-dialog" style="zoom:1.92" title="Save Loadout asks first: it calls File.WriteAllText, shown with its line"><div class="title">Run SaveLoadout()</div><div class="close"></div><div class="body"><img src="Captures/dialog-icon.png" alt=""><div><p>This cannot be undone. What it does:</p><p>- writes a file (Turret.cs, line 15)</p></div></div><div class="buttons"><span class="default">Run</span><span>Run, Don't Ask Again</span><span>Cancel</span></div></div></div>
+<script src="highlight.js"></script>
+<script src="slide.js"></script>
+</body>
+</html>

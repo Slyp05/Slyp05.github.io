@@ -1,0 +1,216 @@
+/* Shared frame for the Asset Store screenshots: a 1920x1280 page (3:2) under the cover's night-violet sky, rendered to 1950x1300. */
+@font-face { font-family: "Inter"; src: url("../Sources Media/fonts/Inter.woff2") format("woff2"); font-weight: 400 800; font-display: block; }
+
+:root {
+  /* The cover's sky and Scry's accent in the Editor. */
+  --violet: #8466de;
+  --violet-lite: #b9a3ff;
+  --title: #f6f2ff;
+  --text: #d8d0ef;
+  --dim: #9c92bd;
+  /* Read and write marks, as Scry's preview draws them. */
+  --read: #4fd1c5;
+  --write: #e45fd0;
+  /* Outcomes. */
+  --error: #e85d55;
+  --warn: #e8b84a;
+  /* Code card syntax colours, the cover's. */
+  --code-bg: rgba(13, 8, 28, 0.92);
+  --code-text: #e7e2f6;
+  --code-key: #c69cff;
+  --code-type: #7fd4e8;
+  --code-method: #9fe3c4;
+  --code-num: #f3c57a;
+  --code-str: #f0a8c8;
+  --code-comment: #8f86ad;
+  --shadow: 0 30px 60px -24px rgba(0, 0, 0, 0.8);
+}
+html { margin: 0; padding: 0; width: 1920px; height: 1280px; overflow: hidden; background: #0e0820; }
+body {
+  margin: 0; padding: 0; width: 1920px; height: 1280px; overflow: hidden; position: relative;
+  font-family: Inter, "Segoe UI", Arial, sans-serif; color: var(--text);
+  background: radial-gradient(1300px 900px at 50% 62%, #33206e 0%, #1d1042 45%, #0e0820 80%, #08050f 100%);
+}
+.sky { position: absolute; left: 0; top: 0; z-index: 0; }
+
+/* Headline, top left: the feature's name, and at most one short line. */
+.head { position: absolute; left: 100px; top: 78px; right: 100px; z-index: 1; }
+.head h1 { margin: 0; font-size: 76px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.04; color: var(--title); text-shadow: 0 0 40px rgba(185, 163, 255, 0.35); }
+.head p { margin: 14px 0 0; font-size: 36px; font-weight: 500; color: var(--violet-lite); line-height: 1.3; }
+
+/* Stage: the script on the left, the crystal ball, the Inspector on the right. */
+.stage {
+  position: absolute; left: 100px; right: 100px; top: 300px; bottom: 80px; z-index: 1;
+  display: grid; grid-template-columns: 760px 170px 1fr; align-items: center;
+}
+.stage.reverse { grid-template-columns: 760px 170px 1fr; }
+.stage.single { display: flex; gap: 40px; justify-content: center; align-items: center; }
+/* Above the beam, which runs under the captures and code cards it meets. */
+.col { display: flex; flex-direction: column; gap: 30px; min-width: 0; position: relative; z-index: 2; }
+.col .label { font-size: 24px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--dim); margin: 0 0 -14px 4px; }
+
+/* The crystal ball between script and Inspector, with its beam. */
+.through { position: relative; height: 100%; display: flex; align-items: center; justify-content: center; }
+.through::before {
+  content: ""; position: absolute; left: -24px; right: -24px; top: 50%; height: 4px; transform: translateY(-50%);
+  background: linear-gradient(90deg, rgba(199, 180, 255, 0.1), #f3edff 50%, rgba(185, 163, 255, 0.6));
+  box-shadow: 0 0 18px 3px rgba(185, 163, 255, 0.55); border-radius: 2px;
+}
+.through .orb { position: relative; width: 130px; height: 143px; }
+.through .orb svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.through .halo { position: absolute; width: 260px; height: 260px; border-radius: 50%; background: radial-gradient(circle, rgba(170, 140, 255, 0.45) 0%, rgba(132, 102, 222, 0.15) 40%, rgba(132, 102, 222, 0) 70%); }
+
+/* Code card: a dark editor page with its file name on a bar. */
+.code {
+  background: var(--code-bg); border-radius: 18px; box-shadow: var(--shadow), 0 0 30px rgba(132, 102, 222, 0.18); overflow: hidden;
+  box-sizing: border-box; border: 1px solid rgba(185, 163, 255, 0.28);
+}
+.code .file {
+  display: flex; align-items: center; gap: 12px; padding: 12px 24px; background: rgba(132, 102, 222, 0.22);
+  font-size: 23px; font-weight: 600; color: #e7e2f6; border-bottom: 1px solid rgba(185, 163, 255, 0.2);
+}
+.code .file::before { content: ""; width: 12px; height: 12px; border-radius: 50%; background: var(--violet-lite); }
+.code pre {
+  margin: 0; padding: 22px 26px 24px; font-family: "Cascadia Code", "Cascadia Mono", Consolas, monospace; font-size: 25px;
+  line-height: 1.55; color: var(--code-text); white-space: pre; font-variant-ligatures: none;
+}
+.code pre .k { color: var(--code-key); }
+.code pre .t { color: var(--code-type); }
+.code pre .m { color: var(--code-method); }
+.code pre .n { color: var(--code-num); }
+.code pre .s { color: var(--code-str); }
+.code pre .c { color: var(--code-comment); font-style: italic; }
+.code pre .a { color: #ffffff; font-weight: 700; }
+/* The line the slide is about: a soft violet marker. */
+.code pre .u { border-radius: 6px; background: rgba(185, 163, 255, 0.16); box-shadow: 0 0 0 4px rgba(185, 163, 255, 0.16); }
+/* Read and write marks inside code. */
+.code pre .r { color: var(--read); font-weight: 700; }
+.code pre .w { color: var(--write); font-weight: 700; }
+/* Struck out: code a reader no longer writes. */
+.code pre .x { color: #8f86ad; text-decoration: line-through; text-decoration-color: var(--error); text-decoration-thickness: 3px; }
+
+/* A script nobody has read: lines of unknown code, drawn as bars. */
+.code .bars { padding: 26px 26px 30px; display: flex; flex-direction: column; gap: 17px; }
+.code .bars i { display: block; height: 14px; border-radius: 7px; background: rgba(185, 163, 255, 0.22); }
+.code .bars i.k { background: rgba(198, 156, 255, 0.45); }
+.code .bars i.t { background: rgba(127, 212, 232, 0.35); }
+
+/* Placeholder for an Editor capture still to take: the Unity dark skin's grey, labelled with the capture's name. */
+.ph {
+  position: relative; box-sizing: border-box; border-radius: 14px; background: #282828; border: 3px dashed #6e6e6e;
+  box-shadow: var(--shadow), 0 0 50px rgba(132, 102, 222, 0.28); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
+  color: #c4c4c4; text-align: center; padding: 30px;
+}
+.ph b { font-size: 30px; font-weight: 600; color: #e4e4e4; font-family: "Cascadia Code", Consolas, monospace; }
+.ph span { font-size: 23px; line-height: 1.4; color: #a8a8a8; max-width: 92%; font-family: "Segoe UI", sans-serif; }
+.ph::before { content: "Screenshot pending"; font-size: 18px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #8a8a8a; }
+
+/* An Editor or docs capture from Captures/, shown at its own aspect inside the box the slide gives it. */
+.shot { display: block; box-sizing: border-box; border-radius: 14px; box-shadow: var(--shadow), 0 0 50px rgba(132, 102, 222, 0.28); object-fit: contain; max-width: 100%; height: auto; }
+/* Two captures of one component, one above the other. */
+.stack { display: flex; flex-direction: column; align-items: center; gap: 24px; }
+
+/* Short chips: who wrote a script, or a key. */
+.chips { display: flex; gap: 14px; }
+/* Chips under a column's card hang below it, so the card stays level with the beam and the capture across. */
+.col > .chips { position: absolute; top: 100%; left: 0; margin-top: 30px; }
+.chip {
+  font-size: 24px; font-weight: 600; color: var(--title); background: rgba(132, 102, 222, 0.3); border: 1px solid rgba(185, 163, 255, 0.45);
+  padding: 8px 20px; border-radius: 999px; white-space: nowrap;
+}
+.key {
+  display: inline-block; font-size: 26px; font-weight: 700; color: #1d1042; background: #efe8ff; padding: 6px 16px; border-radius: 10px;
+  box-shadow: 0 5px 0 #8f7fc4;
+}
+.note { font-size: 28px; font-weight: 600; color: var(--title); display: flex; align-items: center; gap: 16px; }
+
+/* Beside two stacked captures the beam stops at the ball, so it never points into the gap between them. */
+.through.in-only::before { right: 50%; }
+
+/* Annotated capture: one Inspector capture in the middle, labelled callouts on each side, each placed by slide.js near
+   the row it names (data-y, in the capture's pixels; data-shot, which capture of a stack) and joined to it. */
+.stage.callouts { display: grid; grid-template-columns: 1fr 820px 1fr; gap: 0; align-items: center; }
+.stage.callouts > .shot, .stage.callouts > .stack { justify-self: center; position: relative; z-index: 1; }
+.callouts .side { position: relative; align-self: stretch; }
+.callouts .links { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; z-index: 3; pointer-events: none; }
+.callouts .links path { fill: none; stroke: var(--violet-lite); stroke-width: 3; filter: drop-shadow(0 0 5px rgba(185, 163, 255, 0.8)); }
+.callouts .links circle { fill: #fff; filter: drop-shadow(0 0 5px rgba(185, 163, 255, 0.9)); }
+.callout {
+  position: absolute; box-sizing: border-box; background: rgba(13, 8, 28, 0.85); border: 1px solid rgba(185, 163, 255, 0.4); border-radius: 14px;
+  padding: 16px 22px; box-shadow: var(--shadow); font-size: 25px; line-height: 1.35; color: var(--text);
+}
+.callout b { display: block; font-size: 28px; font-weight: 700; color: var(--title); margin-bottom: 4px; }
+.callout.error { border-color: rgba(232, 93, 85, 0.7); }
+.callout.error b { color: #ff9a92; }
+.callout.warn { border-color: rgba(232, 184, 74, 0.7); }
+.callout.warn b { color: #f3cf7a; }
+.side.left .callout { left: 0; right: 70px; }
+.side.right .callout { left: 70px; right: 0; }
+
+/* Steps: frames left to right, each step's action between them. */
+.stage.steps { display: flex; flex-direction: column; justify-content: center; gap: 46px; }
+.steps .row { display: flex; align-items: center; justify-content: center; gap: 22px; }
+.steps .frame { display: flex; flex-direction: column; gap: 16px; align-items: center; }
+.steps .frame .when { font-size: 26px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--dim); }
+.steps .action { display: flex; flex-direction: column; align-items: center; gap: 12px; font-size: 26px; font-weight: 600; color: var(--title); min-width: 150px; white-space: nowrap; margin-top: 46px; }
+.steps .action::after { content: ""; width: 120px; height: 4px; border-radius: 2px; background: linear-gradient(90deg, rgba(185, 163, 255, 0.2), #f3edff); box-shadow: 0 0 14px rgba(185, 163, 255, 0.7); }
+
+/* Side by side captures, each with its label and one short line. */
+.stage.side-by-side { display: flex; gap: 60px; justify-content: center; align-items: center; }
+.side-by-side .frame { display: flex; flex-direction: column; gap: 18px; }
+.side-by-side .frame .name { font-size: 34px; font-weight: 700; color: var(--title); }
+.side-by-side .frame .what { font-size: 26px; color: var(--violet-lite); margin-top: -10px; }
+
+/* Vision: several code lines beamed through one large crystal ball into the Inspector rows they become, as on the cover. */
+.stage.vision { display: grid; grid-template-columns: 700px 280px 1fr; row-gap: 44px; align-content: center; align-items: center; }
+.vision .code pre { padding: 18px 24px; font-size: 24px; }
+.vision .beam { height: 4px; border-radius: 2px; background: linear-gradient(90deg, rgba(199, 180, 255, 0.15), #f3edff 50%, rgba(185, 163, 255, 0.7)); box-shadow: 0 0 16px 2px rgba(185, 163, 255, 0.55); margin: 0 -8px; }
+.vision .ph { padding: 14px 24px; gap: 6px; }
+.vision .ph b { font-size: 24px; }
+.vision .ph span { font-size: 20px; }
+.vision .ph::before { font-size: 14px; }
+.vision .ball { position: absolute; left: 840px; top: 50%; transform: translate(-50%, -50%); width: 240px; height: 264px; z-index: 2; pointer-events: none; }
+.vision .ball .halo { position: absolute; left: 50%; top: 45%; transform: translate(-50%, -50%); width: 560px; height: 560px; border-radius: 50%; background: radial-gradient(circle, rgba(170, 140, 255, 0.5) 0%, rgba(132, 102, 222, 0.16) 40%, rgba(132, 102, 222, 0) 70%); }
+.vision .ball .orb { position: absolute; inset: 0; }
+.vision .ball .orb svg { width: 100%; height: 100%; overflow: visible; }
+/* A beam between two side by side captures that show one action. */
+.side-by-side .joint { width: 90px; height: 4px; margin: 60px -30px 0; border-radius: 2px; background: linear-gradient(90deg, rgba(185, 163, 255, 0.2), #f3edff); box-shadow: 0 0 14px rgba(185, 163, 255, 0.7); }
+
+/* Track: captures one above the other, each with its moment or its name at the left, for wide and short captures. */
+.stage.columns { display: flex; justify-content: center; align-items: center; gap: 80px; }
+.track { display: flex; flex-direction: column; gap: 34px; }
+.track .step { display: grid; grid-template-columns: 150px auto; align-items: center; }
+.track .step .when { font-size: 28px; font-weight: 700; color: var(--dim); }
+.track .step.named { grid-template-columns: 420px auto; }
+.track .step .name { font-size: 34px; font-weight: 700; color: var(--title); }
+.track .step .what { font-size: 26px; color: var(--violet-lite); margin-top: 6px; }
+.track .between { margin: -18px 0 -18px 150px; display: flex; align-items: center; gap: 16px; font-size: 24px; font-weight: 600; color: var(--title); }
+.track .between::before { content: ""; width: 4px; height: 40px; border-radius: 2px; background: linear-gradient(180deg, rgba(185, 163, 255, 0.2), #f3edff); box-shadow: 0 0 14px rgba(185, 163, 255, 0.7); margin-left: 40px; }
+
+/* Unity's native confirmation on Windows and its right-click menu, drawn at 1x CSS pixels in their Windows style so a
+   slide shows them sharp at any zoom: Unity draws both at the system scale, whatever the Editor's. */
+.win-dialog {
+  position: relative; box-sizing: border-box; width: 380px; background: #f0f0f0; border: 1px solid #505050; color: #000;
+  font: 12px "Segoe UI", sans-serif; box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+}
+.win-dialog .title { height: 30px; padding-left: 10px; display: flex; align-items: center; background: #f3f3f3; }
+.win-dialog .close { position: absolute; right: 1px; top: 6px; width: 20px; height: 20px; background: #c75050; }
+.win-dialog .close::before, .win-dialog .close::after { content: ""; position: absolute; left: 6px; top: 9.5px; width: 8px; height: 1px; background: #fff; transform: rotate(45deg); }
+.win-dialog .close::after { transform: rotate(-45deg); }
+.win-dialog .body { display: flex; gap: 16px; padding: 16px 18px 6px; }
+.win-dialog .body img { width: 48px; height: 48px; flex-shrink: 0; }
+.win-dialog .body p { margin: 0 0 12px; line-height: 16px; }
+.win-dialog .buttons { display: flex; justify-content: flex-end; gap: 10px; padding: 0 12px 12px; }
+.win-dialog .buttons span {
+  box-sizing: border-box; min-width: 74px; height: 21px; padding: 0 10px; display: flex; align-items: center; justify-content: center;
+  background: #fdfdfd; border: 1px solid #d0d0d0; border-bottom-color: #bababa; border-radius: 3px;
+}
+.win-dialog .buttons span.default { border: 2px solid #0067c0; }
+.win-menu {
+  position: absolute; box-sizing: border-box; padding: 3px 4px; background: #f9f9f9; border: 1px solid #e5e5e5; border-radius: 8px;
+  color: #000; font: 12px "Segoe UI", sans-serif; box-shadow: 0 8px 16px rgba(0, 0, 0, 0.35);
+}
+.win-menu span { display: block; height: 22px; line-height: 22px; padding: 0 28px 0 34px; border-radius: 4px; white-space: nowrap; }
+.win-menu span.hover { background: #f0f0f0; }
+/* A capture with a native element laid over it at the capture's own scale. */
+.over { position: relative; }

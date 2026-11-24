@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="What Scry knows about each member, and how to change the way Scry handles it." />
+  <title>Scry - Scry panels and answers</title>
+  <link rel="stylesheet" href="/assets/css/scry.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Scry</div><a href="../index.html">User Manual</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Scry panels and answers</h1>
+      <div class="sub">What Scry knows about each member, and how to change the way Scry handles it.</div>
+    </div>
+
+    <section id="scry-button">
+      <h2>The Scry button</h2>
+      <p>The crystal ball at the right of each row is its Scry button, colored by what Scry knows about the member: red for an error, yellow for a warning. Select it to open the member's Scry panel: its declaration, which opens in your code editor, what Scry knows about it with the line each fact comes from, and the controls that change how Scry handles it, such as its <strong>Style</strong> and <strong>Visibility</strong>.</p>
+      <div class="img-block">
+        <img src="../img/scry-panel.png" alt="A row's Scry panel open: the declaration, a fact with its line and a fix button, and the Style and Visibility answers."
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">&#128247;</span>
+          <span><strong>img/scry-panel</strong><br/>A row's Scry panel open: the declaration, a fact with its line and a fix button, and the Style and Visibility answers.</span>
+        </div>
+      </div>
+      <p>The component's header has its own crystal ball, which counts the component's problems and opens a panel listing them, and a magnifying glass that searches the component's members.</p>
+      <div class="img-block">
+        <img src="../img/component-panel.png" alt="The component's Scry panel open, listing its problems, its hidden members, and the Style, Layout and Show answers."
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">&#128247;</span>
+          <span><strong>img/component-panel</strong><br/>The component's Scry panel open, listing its problems, its hidden members, and the Style, Layout and Show answers.</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="answers">
+      <h2>Answers and attributes</h2>
+      <p>The controls in a Scry panel that change how Scry handles a member are answers. For example, <strong>Visibility</strong> shows a member, hides it, or makes it read-only, and <strong>Style</strong> decides who draws it: Scry, or Unity as Unity's Inspector would. Set <strong>Style</strong> in a field's panel for that field, or in the component's panel for its whole Inspector.</p>
+      <p>Picking a value overrides the answer's default, as a prefab override does, even when you pick the value it already had. To return to the default, right-click its line and select <strong>Clear Answer</strong>. Scry saves your answers in the project's <code>UserSettings</code> folder, which version control usually leaves out, so they change only your own Inspector.</p>
+      <p>To apply an answer for everyone working on the project, write it into the script as an attribute: right-click its line, select <strong>Copy as Attribute</strong>, and paste the attribute on the member or the type. An attribute sets the default; each user can still answer otherwise, unless the attribute sets <code>Force = true</code>.</p>
+      <div class="img-block">
+        <img src="../img/copy-as-attribute.png" alt="The right-click menu of an answer line, with Clear Answer and Copy as Attribute."
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">&#128247;</span>
+          <span><strong>img/copy-as-attribute</strong><br/>The right-click menu of an answer line, with Clear Answer and Copy as Attribute.</span>
+        </div>
+      </div>
+      <div class="table-scroll"><table class="cmp">
+        <tr><th>Attribute</th><th>On</th><th>Effect</th></tr>
+        <tr><td><code>[Scry.Style.Scry]</code></td><td>A serialized field, a class or a struct</td><td>Scry's drawing, even where a property drawer or a custom editor would apply.</td></tr>
+        <tr><td><code>[Scry.Style.Unity]</code></td><td>A serialized field, a class or a struct</td><td>Unity's drawing. On a component or ScriptableObject class, Unity's default Inspector.</td></tr>
+        <tr><td><code>[Scry.Layout.AsWritten]</code></td><td>A class or struct</td><td>Members in the order and structure the code declares.</td></tr>
+        <tr><td><code>[Scry.Layout.Sorted]</code></td><td>A class or struct</td><td>Members grouped by kind: serialized fields, other fields and properties, events and methods, then static members.</td></tr>
+        <tr><td><code>[Scry.Visibility.Shown]</code></td><td>A field, property, method or event</td><td>Shown and editable, even when the member is not public.</td></tr>
+        <tr><td><code>[Scry.Visibility.ReadOnly]</code></td><td>A field, property, method or event</td><td>Shown, <a href="Use%20the%20Inspector.html#read-only">read-only</a>.</td></tr>
+        <tr><td><code>[Scry.Visibility.Hidden]</code></td><td>A field, property, method or event</td><td>Not shown. The search still finds it.</td></tr>
+        <tr><td><code>[Scry.EffectIntended]</code></td><td>A method or property</td><td>Never asks before running it.</td></tr>
+        <tr><td><code>[Scry.NotLive]</code></td><td>A method or property</td><td>Not live: a getter or method updates when you select its name, and a setter applies on release or Enter.</td></tr>
+      </table></div>
+      <p>For every attribute, refer to the <a href="../../public-api/index.html">Public API</a>.</p>
+    </section>
+
+    <div class="resources">
+      <h2>Additional resources</h2>
+      <ul>
+        <li><a href="Inspector%20Reference.html#scry-panel">Scry panel reference</a></li>
+        <li><a href="../../public-api/index.html">Public API</a></li>
+      </ul>
+    </div>
+
+    <div class="pager">
+      <a class="prev" href="../pages/Use%20the%20Inspector.html">
+        <div class="dir">Back</div>
+        <div class="pg-title">Use the Inspector</div>
+      </a>
+      <a class="next" href="../pages/Compatibility.html">
+        <div class="dir">Next</div>
+        <div class="pg-title">Compatibility</div>
+      </a>
+    </div>
+
+    <div class="doc-footer">Scry v1.0.0</div>
+  </main>
+</div>
+</body>
+</html>

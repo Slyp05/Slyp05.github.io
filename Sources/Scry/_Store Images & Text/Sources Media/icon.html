@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="theme.css"><script src="parts.js"></script><style>
+html, body { width: 160px; height: 160px; }
+body { background: radial-gradient(150px 150px at 50% 40%, #4a2a98 0%, #24134f 55%, #0e0820 100%); }
+.orb { left: 12px; top: 6px; width: 136px; height: 150px; }
+.halo { left: -20px; top: -30px; width: 200px; height: 200px; }
+</style></head><body>
+<div class="halo"></div>
+<div class="orb" id="orb"></div>
+<script>
+sky(160, 160, 25, 2);
+document.getElementById("orb").innerHTML = orb("i", { rows: true, mist: false });
+</script>
+</body></html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="How Scry reads your code, and how it runs it." />
+  <title>Scry - How Scry works</title>
+  <link rel="stylesheet" href="../shared/styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Scry</div><a href="../User%20Manual.html">User Manual</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>How Scry works</h1>
+      <div class="sub">How Scry reads your code, and how it runs it.</div>
+      <div class="guide-index">
+        <a href="#values">Values</a>
+        <a href="#code">Properties, methods and events</a>
+        <a href="#limits">What Scry reads</a>
+        <a href="#first-analysis">The first analysis</a>
+      </div>
+    </div>
+
+    <section id="values">
+      <h2>Values</h2>
+      <p>Scry analyzes your scripts each time they change, down to the body of every method and property, without running any of your code. What the code does with a value decides how Scry draws it. For example, a number the code clamps shows its minimum and maximum at the ends of its field, a value it compares against fixed values gets a dropdown of them, and a value it would reject gets a warning.</p>
+      <div class="img-block">
+        <img src="../img/inferred-controls" alt="Fields with bound boxes from a clamp, a dropdown from a switch, and a warning outline on a rejected value."
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">&#128247;</span>
+          <span><strong>img/inferred-controls</strong><br/>Fields with bound boxes from a clamp, a dropdown from a switch, and a warning outline on a rejected value.</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="code">
+      <h2>Properties, methods and events</h2>
+      <p>Besides fields, Scry's Inspector shows your properties, methods and events. A method runs from a button named after it, and a property shows its value by running its getter. A getter Scry proves changes nothing is live: Scry reads it again several times a second, so it always shows the current value.</p>
+      <p>Before any of this code runs, the analysis proves what it can change. Code that changes nothing runs freely. Code that changes only its own object runs as one undo step, and the undo restores exactly that object: the GameObject and its components, or the ScriptableObject, with every plain C# object they hold. Anything else asks first, and lists what Scry knows it does.</p>
+      <div class="img-block">
+        <img src="../img/confirmation" alt="The confirmation of a method that writes a file, listing the effect and its line, with Run, Cancel and Run, Don't Ask Again."
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">&#128247;</span>
+          <span><strong>img/confirmation</strong><br/>The confirmation of a method that writes a file, listing the effect and its line, with Run, Cancel and Run, Don't Ask Again.</span>
+        </div>
+      </div>
+      <p>A coroutine runs in Play mode, on the component that holds it. Its button shows it running; select the button again to stop it.</p>
+      <p>An asynchronous method, one returning a <code>Task</code>, an <code>Awaitable</code> or anything else you can <code>await</code>, runs in Edit mode and in Play mode. Its button shows it running, and its result fills in when it completes. When the method takes a <code>CancellationToken</code>, Scry passes one in, cancelled when you select the button again or when the component is destroyed. Without one, the method runs until it completes.</p>
+    </section>
+
+    <section id="limits">
+      <h2>What Scry reads</h2>
+      <p>Scry reads your scripts, every package shipped as source, and the common Unity and .NET APIs. Anything it does not understand counts as unrestricted: Scry can miss a fact, but it never claims a restriction your code does not make. To describe code Scry cannot read, such as a precompiled plugin, write a <a href="Declaration%20Files.html">declaration file</a>.</p>
+    </section>
+
+    <section id="first-analysis">
+      <h2>The first analysis</h2>
+      <p>The first analysis runs right after you install Scry, shown as <strong>Scry Analysis</strong> in Unity's status bar. Until it finishes, fields show Unity's plain controls and every method asks before it runs.</p>
+      <div class="img-block">
+        <img src="../img/analysis-status" alt="Unity's status bar showing Scry Analysis while the first analysis runs."
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">&#128247;</span>
+          <span><strong>img/analysis-status</strong><br/>Unity's status bar showing Scry Analysis while the first analysis runs.</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="resources">
+      <h2>Additional resources</h2>
+      <ul>
+        <li><a href="Use%20the%20Inspector.html">Use the Inspector</a></li>
+        <li><a href="Scry%20Panels%20and%20Answers.html">Scry panels and answers</a></li>
+        <li><a href="Declaration%20Files.html">Declaration files</a></li>
+      </ul>
+    </div>
+
+    <div class="pager">
+      <a class="prev" href="../User%20Manual.html">
+        <div class="dir">Back</div>
+        <div class="pg-title">Get started</div>
+      </a>
+      <a class="next" href="../pages/Use%20the%20Inspector.html">
+        <div class="dir">Next</div>
+        <div class="pg-title">Use the Inspector</div>
+      </a>
+    </div>
+
+    <div class="doc-footer">Scry v1.0.0</div>
+  </main>
+</div>
+</body>
+</html>

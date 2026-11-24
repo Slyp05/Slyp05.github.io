@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="frame.css">
+<script src="../Sources Media/parts.js"></script>
+</head>
+<body>
+<div class="head">
+  <h1>No more attributes: Scry reads your code</h1>
+</div>
+<div class="stage"><div class="col"><div class="code"><div class="file">Turret.cs</div><pre class="cs">~~[Range(0, 20)]~~
+public float speed = 8;
+~~[ShowInInspector]~~
+int ammo = 30;
+~~[Button]~~
+public void Reload() =&gt; ammo = 30;
+
+void OnValidate() =&gt;
+    «speed = Mathf.Clamp(speed, 0, 20);»</pre></div></div><div class="through"><div class="halo"></div><div class="orb"></div></div><div class="col"><img class="shot" src="Captures/attributes-free.png" style="width:790px" alt="The same Inspector without the attributes: Speed bounded from 0 to 20, Ammo shown, Reload as a button"></div></div>
+<script src="highlight.js"></script>
+<script src="slide.js"></script>
+</body>
+</html>

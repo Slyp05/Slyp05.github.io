@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scry Store Video</title>
+<script src="../Sources Media/parts.js"></script>
+<style>
+@font-face { font-family: Inter; src: url("../Sources Media/fonts/Inter.woff2"); font-weight: 400 800; font-display: block; }
+* { box-sizing: border-box; }
+body { margin: 0; background: #080711; color: #f4efff; font-family: Inter, "Segoe UI", sans-serif; overflow: hidden; }
+#frame { position: absolute; width: 1920px; height: 1080px; overflow: hidden; transform-origin: top left;
+  background: radial-gradient(ellipse at 50% 62%, #302052, #151125 54%, #090812 83%); }
+.sky { position: absolute; inset: 0; opacity: .47; }
+#frame::after { content: ""; position: absolute; inset: 0; pointer-events: none; box-shadow: inset 0 0 180px 32px #08071180; }
+#demo, #end { position: absolute; inset: 0; }
+.headline { position: absolute; top: 102px; left: 130px; right: 130px; text-align: center; }
+h1 { margin: 0; font-size: 92px; line-height: 1.02; letter-spacing: -.062em; font-weight: 750; }
+.headline p { margin: 20px 0 0; color: #d4c8e9; font-size: 34px; letter-spacing: -.022em; }
+.panel { position: absolute; overflow: hidden; border-radius: 18px; box-shadow: 0 24px 72px #06040ca0; }
+#code { left: 126px; top: 344px; width: 795px; background: #14121f; border: 1px solid #584c70; }
+.file, .component { display: flex; align-items: center; height: 66px; padding: 0 25px; font-size: 25px; font-weight: 650; gap: 15px; }
+.file { background: #211b32; border-bottom: 1px solid #403551; }
+.file span { color: #a695c5; font: 20px Consolas, monospace; }
+.code-body { padding: 21px 0 23px; }
+.line { height: 40px; padding: 0 22px; display: flex; align-items: center; white-space: pre;
+  font: 29px Consolas, monospace; border-left: 3px solid transparent; }
+.line small { width: 47px; color: #b1a2c5; opacity: .69; font-size: 19px; }
+.line.focus { background: #ae8afa25; border-color: #c2a4ff; }
+.keyword { color: #d0a8ff; } .type { color: #a5deed; } .number { color: #f7cd93; }
+#inspector { left: 1080px; top: 344px; width: 714px; background: #383838; border: 1px solid #68656e; }
+.component { background: #424242; border-bottom: 2px solid #252525; }
+.component svg { width: 33px; height: 33px; }
+#inspectorName { position: absolute; left: 1080px; top: 295px; font-size: 23px; color: #ded1f3; font-weight: 650; }
+.rows { padding: 20px 25px 24px; }
+.row { position: relative; min-height: 55px; display: grid; grid-template-columns: 220px 1fr; align-items: center; font-size: 28px; }
+.field { height: 44px; display: flex; align-items: center; background: #292929; border: 1px solid #212121; border-radius: 5px; overflow: hidden; font-variant-numeric: tabular-nums; }
+.value { flex: 1; padding-left: 13px; }
+.bound { padding: 0 12px; align-content: center; height: 100%; background: #202020; font-size: 22px; color: #d3cddc; }
+#speedField.focus { outline: 2px solid #bf9bff; box-shadow: 0 0 26px #ac7bff66; }
+#ammoField.write { outline: 2px solid #ec9fdd; }
+#reloadRow { grid-template-columns: 1fr; }
+#reloadButton { justify-self: start; width: 250px; height: 46px; display: flex; align-items: center; justify-content: space-between;
+  padding: 0 14px; background: #545454; border: 1px solid #262626; border-radius: 5px; font-size: 26px; }
+#reloadButton.hot { background: #645478; outline: 2px solid #bf9bff; }
+#reloadButton svg { width: 27px; height: 27px; }
+#detail { position: absolute; top: 670px; left: 1080px; width: 714px; color: #e0cfee; font-size: 32px; }
+#detail strong { color: #ffc7ef; font-weight: 650; }
+kbd { font: 24px Inter, sans-serif; color: #f4efff; background: #322841; border: 1px solid #8a749e; border-radius: 7px; padding: 5px 11px; }
+#bridge { position: absolute; inset: 0; pointer-events: none; }
+#ray { fill: none; stroke: #ddc5ff; stroke-width: 3; filter: drop-shadow(0 0 9px #bf91ff); }
+#lens { position: absolute; left: 954px; top: 552px; width: 91px; height: 91px; display: grid; place-items: center; border-radius: 50%; 
+  border: 1px solid #b88affb0; background: #291945; box-shadow: 0 0 37px #a95bff76; pointer-events: none; }
+#lens svg { width: 77px; }
+#end { display: grid; align-items: center; grid-template-columns: 1fr 660px; padding: 0 205px; }
+#end h1 { font-size: 218px; }
+#end p { margin: 20px 0 28px; font-size: 53px; line-height: 1.14; letter-spacing: -.045em; }
+#end small { font-size: 27px; color: #d8c4f4; }
+#heroOrb { position: relative; width: 590px; justify-self: end; filter: drop-shadow(0 0 70px #9959ff52); }
+#heroOrb::before, #heroOrb::after { content: ""; position: absolute; inset: 65px -34px 95px; border: 1px solid #ccadff58;
+  border-radius: 50%; transform: rotate(-23deg) scaleY(.64); z-index: -1; }
+#heroOrb::after { inset: 36px -64px 65px; transform: rotate(22deg) scaleY(.71); }
+[hidden] { display: none !important; }
+#controls { position: absolute; bottom: 0; width: 100%; height: 56px; display: flex; gap: 12px; align-items: center; padding: 0 15px; background: #171222; }
+button { background: #292038; color: inherit; border: 1px solid #645174; border-radius: 6px; padding: 6px 10px; cursor: pointer; font: inherit; }
+#scrub { flex: 1; min-width: 35px; accent-color: #b998f4; }
+#time { min-width: 55px; font-variant-numeric: tabular-nums; }
+@media (max-width: 620px) { .chapter { display: none; } }
+</style>
+</head>
+<body>
+<main id="frame">
+  <section id="demo">
+    <header class="headline"><h1 id="headline"></h1><p id="subhead"></p></header>
+    <div class="panel" id="code">
+      <div class="file"><span>C#</span> Turret.cs</div>
+      <div class="code-body">
+        <div class="line"><small>1</small><span class="keyword">public class</span> <span class="type">Turret</span> : <span class="type">MonoBehaviour</span></div>
+        <div class="line"><small>2</small>{</div>
+        <div class="line"><small>3</small>  <span class="keyword">public float</span> speed = <span class="number">8</span>;</div>
+        <div class="line"><small>4</small>  <span class="keyword">int</span> ammo = <span class="number">4</span>;</div>
+        <div class="line"><small>5</small></div>
+        <div class="line"><small>6</small>  <span class="keyword">void</span> OnValidate() =&gt;</div>
+        <div class="line" id="clampLine"><small>7</small>    speed = <span class="type">Mathf</span>.Clamp(speed, <span class="number">0</span>, <span class="number">20</span>);</div>
+        <div class="line"><small>8</small></div>
+        <div class="line" id="reloadLine"><small>9</small>  <span class="keyword">public void</span> Reload() =&gt; ammo = <span class="number">30</span>;</div>
+        <div class="line"><small>10</small>}</div>
+      </div>
+    </div>
+    <div id="inspectorName"></div>
+    <div class="panel" id="inspector">
+      <div class="component"><span id="componentIcon"></span>Turret (Script)</div>
+      <div class="rows">
+        <div class="row"><span>Speed</span><div class="field" id="speedField"><span class="bound" id="lower">0 ≤</span><span class="value" id="speed"></span><span class="bound" id="upper">≤ 20</span></div></div>
+        <div class="row" id="ammoRow"><span>Ammo</span><div class="field" id="ammoField"><span class="value" id="ammo"></span></div></div>
+        <div class="row" id="reloadRow"><span id="reloadButton">Reload () <span id="undoIcon"></span></span></div>
+      </div>
+    </div>
+    <svg id="bridge" viewBox="0 0 1920 1080" aria-hidden="true"><path id="ray" pathLength="1"/></svg>
+    <div id="lens" aria-hidden="true"></div>
+    <div id="detail"></div>
+  </section>
+  <section id="end" hidden>
+    <div><h1>Scry</h1><p>The Inspector that<br>understands your code.</p><small>Available on the Unity Asset Store</small></div>
+    <div id="heroOrb"></div>
+  </section>
+</main>
+<div id="controls">
+  <button id="play">Play</button><output id="time">0.00 s</output>
+  <input id="scrub" aria-label="Trailer position" type="range" min="0" step="0.01" value="0">
+  <button class="chapter" data-time="0">Hook</button><button class="chapter" data-time="4">Reveal</button>
+  <button class="chapter" data-time="12">Reload</button><button class="chapter" data-time="22">End card</button>
+</div>
+<script>
+const END = 28;
+const W = 1920, H = 1080;
+const q = id => document.getElementById(id);
+const frame = q('frame');
+const controls = q('controls');
+const play = q('play');
+const scrub = q('scrub');
+const ray = q('ray');
+const audio = new Audio('soundtrack.wav');
+const fixedTime = new URLSearchParams(location.search).get('t');
+const clamp = value => Math.max(0, Math.min(1, value));
+const ease = value => 1 - (1 - clamp(value)) ** 3;
+let time = 0;
+let running = false;
+let soundClock = false;
+let startedAt = 0;
+let offset = 0;
+let animationFrame;
+let playRequest = 0;
+
+sky(W, H, 160, 11);
+frame.prepend(document.querySelector('.sky'));
+q('heroOrb').innerHTML = orb('hero', { rows: true });
+q('lens').innerHTML = orb('lens', { stand: false });
+q('undoIcon').innerHTML = undoIcon;
+scrub.max = END;
+controls.hidden = fixedTime !== null;
+
+function seekTo(value) {
+  time = Number.isFinite(value) ? clamp(value / END) * END : 0;
+  const branded = time >= 4;
+  const method = time >= 12;
+  const closing = time >= 22;
+  const preview = time >= 14 && time < 17;
+  const changed = time >= 17 && time < 20;
+  const undone = time >= 20;
+  const bounds = time >= 5.5;
+  const beamStart = method ? 13.5 : 5;
+  const beam = ease((time - beamStart) / .5);
+  const glow = beam * (1 - clamp((time - beamStart - 1) / .8));
+
+  q('demo').hidden = closing;
+  q('end').hidden = !closing;
+  const headline = !branded ? 'Your code already knows.' : method ? 'See what a click will change.' : 'Scry reads the code you wrote.';
+  q('headline').textContent = headline;
+  q('subhead').textContent = !branded ? 'Why declare the same rules twice?' :
+    method ? 'Preview the change. Run it. Undo it.' : 'Plain C#. The clamp becomes Inspector limits.';
+  q('demo').style.opacity = 1 - clamp((time - 21.65) / .35);
+  q('end').style.opacity = ease((time - 22) / .45);
+  q('heroOrb').style.transform = 'scale(' + (.94 + .06 * ease((time - 22) / 1.45)) + ')';
+
+  q('inspectorName').textContent = branded ? 'Scry Inspector' : 'Unity Inspector';
+  const icon = branded ? orbIcon('#c8a9ff') : '<span class="type">#</span>';
+  if (q('componentIcon').dataset.mode !== String(branded)) {
+    q('componentIcon').innerHTML = icon;
+    q('componentIcon').dataset.mode = String(branded);
+  }
+  q('lower').hidden = q('upper').hidden = !bounds;
+  q('ammoRow').hidden = q('reloadRow').hidden = !branded;
+  q('speed').textContent = time >= 8 ? String(Math.round(8 + 12 * ease((time - 8) / 1))) : '8';
+  q('ammo').textContent = changed ? '30' : '4';
+  q('clampLine').classList.toggle('focus', time >= 5 && !method);
+  q('reloadLine').classList.toggle('focus', time >= 13.5);
+  q('speedField').classList.toggle('focus', bounds && !method);
+  q('reloadButton').classList.toggle('hot', preview || (changed && time < 17.4));
+  q('ammoField').classList.toggle('write', preview || (changed && time < 17.65) || (undone && time < 20.65));
+
+  const detail = preview ? 'Ammo <strong>4 → 30</strong> on click' : changed ? 'Ammo <strong>30</strong>' : undone ? '<kbd>Ctrl</kbd> + <kbd>Z</kbd> &nbsp; Ammo back to <strong>4</strong>' : '';
+  if (q('detail').innerHTML !== detail) q('detail').innerHTML = detail;
+  ray.setAttribute('d', method ? 'M921 771 C1000 771 997 560 1080 560' : 'M921 691 C1001 691 996 457 1080 457');
+  ray.style.strokeDasharray = '1';
+  ray.style.strokeDashoffset = String(1 - beam);
+  ray.style.opacity = glow;
+  q('lens').style.opacity = glow;
+  q('lens').style.top = method ? '620px' : '529px';
+  scrub.value = time;
+  q('time').textContent = time.toFixed(2) + ' s';
+}
+
+function fit() {
+  const available = innerHeight - (controls.hidden ? 0 : controls.offsetHeight);
+  const scale = Math.min(innerWidth / W, Math.max(available, 1) / H);
+  frame.style.transform = 'scale(' + scale + ')';
+  frame.style.left = (innerWidth - W * scale) / 2 + 'px';
+  frame.style.top = (available - H * scale) / 2 + 'px';
+}
+
+function stop() {
+  playRequest++;
+  running = false;
+  cancelAnimationFrame(animationFrame);
+  audio.pause();
+  play.textContent = time >= END ? 'Replay' : 'Play';
+}
+
+function tick(now) {
+  seekTo(soundClock ? (audio.ended ? END : audio.currentTime) : offset + (now - startedAt) / 1000);
+  if (time >= END) stop();
+  else animationFrame = requestAnimationFrame(tick);
+}
+
+async function start(at) {
+  stop();
+  const request = playRequest;
+  seekTo(at);
+  audio.currentTime = at;
+  running = true;
+  play.textContent = 'Pause';
+  try {
+    await audio.play();
+    if (request !== playRequest) return;
+    soundClock = true;
+  } catch {
+    if (request !== playRequest) return;
+    soundClock = false;
+  }
+  offset = at;
+  startedAt = performance.now();
+  animationFrame = requestAnimationFrame(tick);
+}
+
+play.onclick = () => running ? stop() : start(time >= END ? 0 : time);
+scrub.oninput = () => { stop(); seekTo(Number(scrub.value)); };
+document.querySelectorAll('.chapter').forEach(button => {
+  button.onclick = () => start(Number(button.dataset.time));
+});
+addEventListener('keydown', event => {
+  if (event.code !== 'Space' || event.repeat || event.target.closest('button, input')) return;
+  event.preventDefault();
+  play.click();
+});
+addEventListener('resize', fit);
+seekTo(Number(fixedTime));
+fit();
+window.END = END;
+window.seekTo = seekTo;
+window.ready = true;
+</script>
+</body>
+</html>

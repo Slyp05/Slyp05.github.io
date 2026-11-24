@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="What you can edit, and how to find, build and preview values." />
+  <title>Scry - Use the Inspector</title>
+  <link rel="stylesheet" href="/assets/css/scry.css" />
+  <link rel="stylesheet" href="/assets/css/doc-dark.css" />
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+  <script src="/assets/js/theme.js" defer></script>
+  <script src="/assets/js/doc-nav.js" defer></script>
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <script data-goatcounter="https://justetools.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Scry</div><a href="../index.html">User Manual</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Use the Inspector</h1>
+      <div class="sub">What you can edit, and how to find, build and preview values.</div>
+      <div class="guide-index">
+        <a href="#read-only">Read-only members</a>
+        <a href="#search">Search members</a>
+        <a href="#build">Build, clear and reset values</a>
+        <a href="#fold">Fold and open values</a>
+        <a href="#preview">Preview code before it runs</a>
+      </div>
+    </div>
+
+    <section id="read-only">
+      <h2>Read-only members</h2>
+      <p>A member only its own type's code can use starts read-only: a field that is not public and not serialized, a property whose getter or setter is not public, a method or event that is not public. It shows dimmed, and a read-only method runs only once Scry proves it changes nothing. To make one editable, set its <strong>Visibility</strong> to <strong>Shown</strong>, or <a href="Scry%20Panels%20and%20Answers.html#answers">for everyone</a> with <code>[Scry.Visibility.Shown]</code>.</p>
+    </section>
+
+    <section id="search">
+      <h2>Search members</h2>
+      <p>Select the magnifying glass in the component's header and type part of a name. The search also finds hidden members, members <strong>Show</strong> leaves out, and members inside the values your fields hold. <strong>Enter</strong> jumps to the first match, <strong>Esc</strong> clears the search.</p>
+      <div class="img-block">
+        <img src="../img/search.png" alt="The component's search open on a name, with a match inside a folded value and a hidden member shown with diagonal stripes."
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">&#128247;</span>
+          <span><strong>img/search</strong><br/>The component's search open on a name, with a match inside a folded value and a hidden member shown with diagonal stripes.</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="build">
+      <h2>Build, clear and reset values</h2>
+      <p>A field holding None folds open to build a value: pick the type and the constructor, then select <strong>Create</strong>.</p>
+      <div class="img-block">
+        <img src="../img/build.png" alt="A None field folded open to build a value, with its type, constructor, arguments and Create button."
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">&#128247;</span>
+          <span><strong>img/build</strong><br/>A None field folded open to build a value, with its type, constructor, arguments and Create button.</span>
+        </div>
+      </div>
+      <p>The trash button at the right end of a line sets the value back to None. To return a field to its initializer, right-click it and select <strong>Reset</strong>.</p>
+    </section>
+
+    <section id="fold">
+      <h2>Fold and open values</h2>
+      <p>Alt-click a fold arrow to open or close everything below it, or a region's header to open or close every region. The Inspector icon on an object reference opens the object in a Properties window. Rest the pointer on an asset, a curve or a gradient to see it larger.</p>
+    </section>
+
+    <section id="preview">
+      <h2>Preview code before it runs</h2>
+      <p>Rest the pointer on the name of a method or a property: Scry marks the values it reads and writes, and previews the values a run would leave. To turn either off, refer to <a href="Settings%20Reference.html#preferences">Preferences</a>.</p>
+      <div class="img-block">
+        <img src="../img/preview.png" alt="The pointer resting on a method's name, with the values it reads and writes marked and the values its run would leave previewed."
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">&#128247;</span>
+          <span><strong>img/preview</strong><br/>The pointer resting on a method's name, with the values it reads and writes marked and the values its run would leave previewed.</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="resources">
+      <h2>Additional resources</h2>
+      <ul>
+        <li><a href="Inspector%20Reference.html">Inspector reference</a></li>
+        <li><a href="Scry%20Panels%20and%20Answers.html">Scry panels and answers</a></li>
+      </ul>
+    </div>
+
+    <div class="pager">
+      <a class="prev" href="../pages/How%20Scry%20Works.html">
+        <div class="dir">Back</div>
+        <div class="pg-title">How Scry works</div>
+      </a>
+      <a class="next" href="../pages/Scry%20Panels%20and%20Answers.html">
+        <div class="dir">Next</div>
+        <div class="pg-title">Scry panels and answers</div>
+      </a>
+    </div>
+
+    <div class="doc-footer">Scry v1.0.0</div>
+  </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Every project setting and preference." />
+  <title>Scry - Settings reference</title>
+  <link rel="stylesheet" href="../shared/styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="layout">
+
+  <script src="../shared/nav.js"></script>
+  <noscript><nav><div class="nav-title">Scry</div><a href="../User%20Manual.html">User Manual</a></nav></noscript>
+
+  <main id="content">
+    <div class="page-header">
+      <h1>Settings reference</h1>
+      <div class="sub">Every project setting and preference.</div>
+    </div>
+
+    <section id="preferences">
+      <h2>Preferences</h2>
+      <p><strong>Edit</strong> &gt; <strong>Preferences</strong> &gt; <strong>Scry</strong>, saved in the project's <code>UserSettings</code> folder, for your own Editor only.</p>
+      <div class="img-block">
+        <img src="../img/preferences" alt="Scry's page in Preferences."
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">&#128247;</span>
+          <span><strong>img/preferences</strong><br/>Scry's page in Preferences.</span>
+        </div>
+      </div>
+      <div class="table-scroll"><table class="cmp">
+        <tr><th>Setting</th><th>Description</th></tr>
+        <tr><td><strong>Style</strong></td><td><strong>Unity</strong> keeps each type's own editor, or Unity's default Inspector, everywhere, until you switch a type to Scry in its Scry panel.</td></tr>
+        <tr><td><strong>Layout</strong>, <strong>Show</strong></td><td>The default <strong>Layout</strong> (order of members) and <strong>Show</strong> (kinds of member shown) of every Inspector. A component's Scry panel can set its own.</td></tr>
+        <tr><td><strong>Mark Reads and Writes</strong></td><td>Resting the pointer on a member that runs code marks the values it reads and writes.</td></tr>
+        <tr><td><strong>Preview Runs</strong></td><td>Resting the pointer on a member that runs code shows, in place, the values its run would leave, without keeping them.</td></tr>
+        <tr><td><strong>Accent</strong>, <strong>Read Mark</strong>, <strong>Write Mark</strong></td><td>The color of Scry panels, and of the read and write marks, for each Editor theme.</td></tr>
+        <tr><td><strong>Refresh Rate (Per Second)</strong></td><td>How often live values are read again. Lower it if the Inspector feels slow.</td></tr>
+        <tr><td><strong>Clear Them</strong></td><td>Clears your answers for code that no longer exists.</td></tr>
+      </table></div>
+    </section>
+
+    <section id="project">
+      <h2>Project settings</h2>
+      <p><strong>Edit</strong> &gt; <strong>Project Settings</strong> &gt; <strong>Scry</strong>, saved in <code>ProjectSettings/ScrySettings.asset</code>, which you commit with the project. Each switch turns off, for everyone, one kind of thing Scry draws from your code.</p>
+      <div class="img-block">
+        <img src="../img/project-settings" alt="Scry's page in Project Settings."
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="display:none">
+          <span class="icon">&#128247;</span>
+          <span><strong>img/project-settings</strong><br/>Scry's page in Project Settings.</span>
+        </div>
+      </div>
+      <h3>Analysis</h3>
+      <div class="table-scroll"><table class="cmp">
+        <tr><th>Setting</th><th>Description</th></tr>
+        <tr><td><strong>Reanalyze Project</strong></td><td>Runs the analysis again. Scry already analyzes your scripts each time they change.</td></tr>
+        <tr><td><strong>Declaration Problems</strong></td><td>Lists the keys of declaration files that match nothing.</td></tr>
+      </table></div>
+      <h3>Controls</h3>
+      <div class="table-scroll"><table class="cmp">
+        <tr><th>Setting</th><th>Description</th></tr>
+        <tr><td><strong>Bounds for Ranges</strong></td><td>Shows the minimum and maximum of a number the code clamps, or the values where it wraps around, at the ends of its field.</td></tr>
+        <tr><td><strong>Dropdowns for Choices</strong></td><td>Gives a dropdown to a value the code compares against fixed values.</td></tr>
+        <tr><td><strong>Masks for Enums Used as Flags</strong></td><td>Gives a mask to an enum the code combines bit by bit.</td></tr>
+        <tr><td><strong>Read-Only Values Set by OnValidate</strong></td><td>Makes a field <code>OnValidate</code> always sets read-only.</td></tr>
+        <tr><td><strong>Enum Names on Array Elements</strong></td><td>Labels the elements of an array indexed with one enum.</td></tr>
+        <tr><td><strong>Units</strong></td><td>Shows a number's unit, and warns when two uses disagree.</td></tr>
+      </table></div>
+      <h3>Value Checks</h3>
+      <div class="table-scroll"><table class="cmp">
+        <tr><th>Setting</th><th>Description</th></tr>
+        <tr><td><strong>Numbers the Code Rejects</strong></td><td>Errors on a number outside what the code accepts.</td></tr>
+        <tr><td><strong>Missing Values</strong></td><td>Errors on a reference or string used without a check while it is None or empty.</td></tr>
+        <tr><td><strong>Objects Missing a Component</strong></td><td>Errors on an object that lacks a component the code gets from it.</td></tr>
+        <tr><td><strong>Objects of the Wrong Type</strong></td><td>Errors on an object that is not the type the code casts it to.</td></tr>
+        <tr><td><strong>Tag and Scene Names</strong></td><td>Errors on a tag or scene name the project does not have.</td></tr>
+        <tr><td><strong>Collections Too Short</strong></td><td>Errors on a collection with fewer elements than the code indexes.</td></tr>
+        <tr><td><strong>Components Missing on the GameObject</strong></td><td>Flags a component the code needs on its GameObject. Switch it off in a project that adds components at runtime.</td></tr>
+        <tr><td><strong>Colliders for Collision Messages</strong></td><td>Flags a component with collision or trigger messages and no collider.</td></tr>
+      </table></div>
+      <h3>Relevance</h3>
+      <div class="table-scroll"><table class="cmp">
+        <tr><th>Setting</th><th>Description</th></tr>
+        <tr><td><strong>Strikethrough on Values That Do Not Matter</strong></td><td>Strikes through a field the code ignores in the current state.</td></tr>
+        <tr><td><strong>Overwritten at Runtime</strong></td><td>Marks a field <code>Awake</code>, <code>Start</code> or <code>OnEnable</code> overwrites.</td></tr>
+        <tr><td><strong>Editor-Only and Development-Only</strong></td><td>Marks members that do nothing in player or release builds.</td></tr>
+        <tr><td><strong>Unused and Output</strong></td><td>Marks a field no code reads as unused, and a field the code only writes as output.</td></tr>
+        <tr><td><strong>Statics Kept Between Play Sessions</strong></td><td>Warns on a static field nothing resets while domain reload is off.</td></tr>
+      </table></div>
+      <h3 id="code-formatting">Code Formatting</h3>
+      <div class="table-scroll"><table class="cmp">
+        <tr><th>Setting</th><th>Description</th></tr>
+        <tr><td><strong>Regions as Bands</strong></td><td>Shows each <code>#region</code> as a group that folds.</td></tr>
+        <tr><td><strong>Headers</strong>, <strong>Separators</strong>, <strong>Hints</strong></td><td>Reads each from <strong>Doc Comments</strong> (<code>///</code>), <strong>Plain Comments</strong> (<code>//</code>), or not at all.</td></tr>
+        <tr><td><strong>Spacing from Blank Lines</strong></td><td>Adds space where the code leaves extra blank lines.</td></tr>
+      </table></div>
+    </section>
+
+    <div class="resources">
+      <h2>Additional resources</h2>
+      <ul>
+        <li><a href="Scry%20Panels%20and%20Answers.html#answers">Answers and attributes</a></li>
+        <li><a href="Inspector%20Reference.html">Inspector reference</a></li>
+      </ul>
+    </div>
+
+    <div class="pager">
+      <a class="prev" href="../pages/Inspector%20Reference.html">
+        <div class="dir">Back</div>
+        <div class="pg-title">Inspector reference</div>
+      </a>
+    </div>
+
+    <div class="doc-footer">Scry v1.0.0</div>
+  </main>
+</div>
+</body>
+</html>

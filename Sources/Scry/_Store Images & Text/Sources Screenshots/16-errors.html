@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="frame.css">
+<script src="../Sources Media/parts.js"></script>
+</head>
+<body>
+<div class="head">
+  <h1>Errors shown before Play, and before the build</h1>
+</div>
+<div class="stage callouts"><div class="side left"><div class="callout error" data-y="374" data-shot="1"><b>Missing component</b>The code needs a Rigidbody: Add Rigidbody.</div><div class="callout error" data-y="149"><b>Missing tag</b>"Enemy" isn't a tag yet: Add Tag.</div><div class="callout warn" data-y="109"><b>Divisor set to 0</b>Used as total / shots.</div></div><div class="stack"><img class="shot" src="Captures/errors.png" style="width:650px" alt="A component's rows with their problems: yellow and red Scry buttons, the header counting six"><img class="shot" src="Captures/errors-panel.png" style="width:650px" alt="The component's Scry panel listing its problems, with Add Tag and Add Rigidbody"></div><div class="side right"><div class="callout error" data-y="340"><b>Breaks the build</b>Selection outside #if UNITY_EDITOR.</div><div class="callout warn" data-y="523" data-shot="1"><b>Survives Play</b>A static nothing resets, with Domain Reload off.</div><div class="callout warn" data-y="189"><b>Obsolete, still set</b>[Obsolete] field holding scene data.</div></div></div>
+<script src="highlight.js"></script>
+<script src="slide.js"></script>
+</body>
+</html>
