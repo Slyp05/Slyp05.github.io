@@ -1,0 +1,26 @@
+{%- comment -%}
+  One home page card. Pass the package entry from _data/packages.yml as `pkg`.
+{%- endcomment -%}
+{%- assign pkg = include.pkg -%}
+  <div class="package-card">
+    <img src="{{ pkg.card }}" alt="{{ pkg.title }}" class="package-card-image" width="420" height="280" loading="lazy" decoding="async">
+    <img src="{{ pkg.icon }}" alt="{{ pkg.title }} icon" class="package-card-icon" width="160" height="160" loading="lazy" decoding="async">
+    <div class="package-card-content">
+      <h2><a href="{{ pkg.url }}">{{ pkg.title }}</a></h2>
+      <div class="card-meta">
+        {%- unless pkg.released %}
+        <span class="badge badge-review">In review</span>
+        {%- endunless %}
+        {%- if pkg.free %}
+        <span class="badge badge-free">Free</span>
+        {%- else %}
+        <span class="badge badge-paid">Paid</span>
+        {%- endif %}
+        {%- if pkg.released %}
+        <span class="card-updated">{{ pkg.meta }}</span>
+        {%- endif %}
+      </div>
+      <p>{{ pkg.blurb }}</p>
+      <a href="{{ pkg.url }}" class="card-link">Learn more →</a>
+    </div>
+  </div>

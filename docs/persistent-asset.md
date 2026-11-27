@@ -9,7 +9,7 @@ software:
   store_url: https://assetstore.unity.com/packages/slug/389310
 ---
 
-<img src="/assets/images/persistent-asset.jpg" alt="Persistent Asset" class="package-image" width="1200" height="800" decoding="async">
+{% include media-gallery.html %}
 
 **Make persistent data a native part of your Unity project! Save your way, anywhere, anything, safely.**
 

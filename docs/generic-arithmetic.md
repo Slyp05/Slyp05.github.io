@@ -8,7 +8,7 @@ software:
   store_url: https://assetstore.unity.com/packages/tools/utilities/generic-arithmetic-c-template-extension-265011
 ---
 
-<img src="/assets/images/generic-arithmetic.jpg" alt="Generic Arithmetic" class="package-image" width="1200" height="800" decoding="async">
+{% include media-gallery.html %}
 
 Arithmetic and comparison operations in generic C# classes. Works with any numeric or operator-enabled type, with no additional setup required.  
 Built-in computators cover all Unity numeric and vector types; a Roslyn source generator adds AOT-safe support for custom types.

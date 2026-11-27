@@ -8,7 +8,7 @@ software:
   store_url: https://assetstore.unity.com/packages/tools/utilities/infinite-value-bigdecimal-194963
 ---
 
-<img src="/assets/images/infinite-value.jpg" alt="Infinite Value" class="package-image" width="1200" height="800" decoding="async">
+{% include media-gallery.html %}
 
 **Numbers of any size and precision in Unity. Behaves like a primitive type, works in real-time, and is fully configurable. Perfect for incremental games, RPGs, and monetary systems.**
 

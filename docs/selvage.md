@@ -9,7 +9,7 @@ software:
   store_url: https://assetstore.unity.com/packages/slug/416836
 ---
 
-<img src="/assets/images/selvage.jpg" alt="Selvage" class="package-image" width="1200" height="800" decoding="async">
+{% include media-gallery.html %}
 
 **Selvage adapts to your project, not the other way around: it injects from your scenes, assets and code, checks every dependency before Play, and handles async loading, pooling, live updates and more.**
 

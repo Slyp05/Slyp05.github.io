@@ -8,7 +8,7 @@ software:
   store_url: https://assetstore.unity.com/packages/slug/392788
 ---
 
-<img src="/assets/images/settings-kit.jpg" alt="Settings Kit" class="package-image" width="1200" height="800" decoding="async">
+{% include media-gallery.html %}
 
 **Project Settings & Preferences pages from one small class. No boilerplate, no Resources folder, and readable at runtime.**
 

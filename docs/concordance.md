@@ -3,14 +3,13 @@ layout: page
 title: Concordance
 permalink: /concordance/
 image: /assets/images/concordance-social.jpg
-sitemap: false
 description: "Coordinate every script that writes the same value: changes combine instead of overwriting, any field or property becomes a change event, and every write is tracked."
 software:
   name: "Concordance - Coordinate Scripts Sharing Values"
   store_url: ""
 ---
 
-<img src="/assets/images/concordance.jpg" alt="Concordance" class="package-image" width="1200" height="800" decoding="async">
+{% include media-gallery.html %}
 
 **Coordinate every script that writes the same value: changes combine instead of overwriting, any field or property becomes a change event, and every write is tracked.**
 
@@ -127,7 +126,7 @@ Asset uses Mono.Cecil under MIT License; see Third-Party Notices.txt file in pac
 
 ## Get It
 
-<!-- TODO: unreleased; on release set store_url in the front matter above (the button below switches to the store link) and remove `sitemap: false` (here and the concordance scope in _config.yml). -->
+<!-- In review: on release set store_url in the front matter above (the button below switches to the store link). -->
 {% include store-button.html %}
 <a href="https://justetools.itch.io/concordance" class="asset-store-btn new-tab" target="_blank" rel="noopener">Play Demo<span class="visually-hidden"> (opens in a new tab)</span></a>
 

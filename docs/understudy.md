@@ -3,14 +3,13 @@ layout: page
 title: Understudy
 permalink: /understudy/
 image: /assets/images/understudy-social.jpg
-sitemap: false
 description: "Stop rearchitecting your game to test it. Stub Time.deltaTime, Random, physics, singletons and constructors in your unit tests, with no interfaces or wrappers, and catch tests that leak real state."
 software:
   name: "Understudy - Mocking for Unity"
   store_url: ""
 ---
 
-<img src="/assets/images/understudy.jpg" alt="Understudy" class="package-image" width="1200" height="800" decoding="async">
+{% include media-gallery.html %}
 
 **Stop rearchitecting your game to test it. Stub Time.deltaTime, Random, physics, singletons and constructors in your unit tests, with no interfaces or wrappers, and catch tests that leak real state.**
 
@@ -117,7 +116,7 @@ Asset uses Mono.Cecil and NUnit under MIT License; see Third-Party Notices.txt f
 
 ## Get It
 
-<!-- TODO: unreleased; on release set store_url in the front matter above (the button below switches to the store link) and remove `sitemap: false` (here and the understudy scope in _config.yml). -->
+<!-- In review: on release set store_url in the front matter above (the button below switches to the store link). -->
 {% include store-button.html %}
 
 ## Support

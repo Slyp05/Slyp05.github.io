@@ -28,7 +28,7 @@ body {
    sticky nav (a short page, or an overscroll) stays dark rather than showing the content background. */
 #layout {
   display: grid;
-  grid-template-columns: 270px 1fr;
+  grid-template-columns: 270px minmax(0, 1fr);
   grid-template-rows: auto 1fr;
   min-height: 100vh;
   background: linear-gradient(to right, #1e1e2e 0 270px, #f7f7f7 270px);
@@ -123,6 +123,7 @@ h4 {
 /* Type header (API pages) */
 .type-header {
   display: flex;
+  flex-wrap: wrap;
   align-items: baseline;
   gap: 10px;
   margin-bottom: 10px;
@@ -665,7 +666,11 @@ table.cmp.keycol th:not([colspan]):first-child {
 
 /* Responsive layout */
 @media (max-width: 1000px) {
-  main { padding: 36px 32px 64px; }
+  main { padding: 36px 32px 64px; overflow-wrap: break-word; }
+  /* Beside the sidebar the column is narrower than a long name or a member table. */
+  :not(pre) > code { overflow-wrap: anywhere; }
+  .type-header { flex-wrap: wrap; }
+  .member-group { overflow-x: auto; }
 }
 @media (max-width: 760px) {
   /* The three links need the whole bar at this width, so the brand gives way to them. */

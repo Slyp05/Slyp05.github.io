@@ -3,14 +3,13 @@ layout: page
 title: Scry
 permalink: /scry/
 image: /assets/images/scry-social.jpg
-sitemap: false
 description: "An Inspector that reads your C# code: every field, property and method, live, with the right control, buttons you can undo, and no attributes or custom editors to write."
 software:
   name: "Scry - The Inspector That Understands Your Code"
   store_url: ""
 ---
 
-<img src="/assets/images/scry.jpg" alt="Scry" class="package-image" width="1200" height="800" decoding="async">
+{% include media-gallery.html %}
 
 **An Inspector that reads your C# code: every field, property and method, live, with the right control, buttons you can undo, and no attributes or custom editors to write.**
 
@@ -127,7 +126,7 @@ Asset uses Roslyn under MIT License; see Third-Party Notices.txt file in package
 
 ## Get It
 
-<!-- TODO: unreleased; on release set store_url in the front matter above (the button below switches to the store link) and remove `sitemap: false` (here and the scry scope in _config.yml). -->
+<!-- In review: on release set store_url in the front matter above (the button below switches to the store link). -->
 {% include store-button.html %}
 
 ## Support

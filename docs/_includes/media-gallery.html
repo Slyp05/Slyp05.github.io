@@ -1,0 +1,61 @@
+{%- comment -%}
+  Store media gallery for a package page, in the Asset Store's order: video, cover,
+  screenshots. Reads the page's entry in _data/media.yml (keyed by the URL slug), so
+  a page only needs `{% include media-gallery.html %}`. Images are built by
+  Tools/Build-Galleries.py. Behaviour is in /assets/js/gallery.js.
+
+  Without JavaScript the first slide still shows: the video thumbnail links to
+  YouTube, or the cover is a plain image.
+{%- endcomment -%}
+{%- assign slug = page.url | remove: "/" -%}
+{%- assign media = site.data.media[slug] -%}
+{%- assign dir = "/assets/media/" | append: slug | append: "/" -%}
+{%- assign cover = "/assets/images/" | append: slug | append: ".jpg" -%}
+
+<section class="gallery" data-gallery aria-label="{{ page.title | escape }} video and screenshots">
+  <div class="gallery-stage">
+    {%- if media.video %}
+    <a class="gallery-video" href="https://www.youtube.com/watch?v={{ media.video }}" data-video="{{ media.video }}" target="_blank" rel="noopener">
+      <img src="{{ dir }}video.webp" alt="" decoding="async">
+      <span class="gallery-play" aria-hidden="true"></span>
+      <span class="visually-hidden">Play the {{ page.title | escape }} video</span>
+    </a>
+    <img class="gallery-image" src="{{ cover }}" alt="{{ page.title | escape }}" width="1200" height="800" decoding="async" hidden>
+    {%- else %}
+    <img class="gallery-image" src="{{ cover }}" alt="{{ page.title | escape }}" width="1200" height="800" decoding="async">
+    {%- endif %}
+    <button type="button" class="gallery-arrow gallery-prev" aria-label="Previous" hidden>‹</button>
+    <button type="button" class="gallery-arrow gallery-next" aria-label="Next" hidden>›</button>
+    <button type="button" class="gallery-zoom" aria-label="View fullscreen" hidden>
+      <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false"><path d="M1 6V1h5M10 1h5v5M15 10v5h-5M6 15H1v-5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
+    </button>
+    <span class="gallery-count" aria-hidden="true" hidden></span>
+  </div>
+
+  <div class="gallery-thumbs" hidden>
+    {%- if media.video %}
+    <button type="button" class="gallery-thumb" data-kind="video" aria-label="Video">
+      <img src="{{ dir }}video-thumb.webp" alt="" loading="lazy" decoding="async">
+      <span class="gallery-play gallery-play--small" aria-hidden="true"></span>
+    </button>
+    {%- endif %}
+    <button type="button" class="gallery-thumb" data-kind="image" data-src="{{ cover }}" data-alt="{{ page.title | escape }}" aria-label="Cover">
+      <img src="{{ cover }}" alt="" width="240" height="160" loading="lazy" decoding="async">
+    </button>
+    {%- for shot in media.screenshots %}
+    {%- capture n %}{% if forloop.index < 10 %}0{% endif %}{{ forloop.index }}{% endcapture %}
+    <button type="button" class="gallery-thumb" data-kind="image" data-src="{{ dir }}{{ n }}.webp" data-alt="{{ shot.alt | escape }}" aria-label="{{ shot.alt | escape }}">
+      <img src="{{ dir }}{{ n }}-thumb.webp" alt="" width="240" height="160" loading="lazy" decoding="async">
+    </button>
+    {%- endfor %}
+  </div>
+
+  <dialog class="gallery-lightbox" aria-label="{{ page.title | escape }} screenshots">
+    <img class="gallery-lightbox-image" src="" alt="">
+    <p class="gallery-lightbox-caption"></p>
+    <button type="button" class="gallery-arrow gallery-prev" aria-label="Previous">‹</button>
+    <button type="button" class="gallery-arrow gallery-next" aria-label="Next">›</button>
+    <button type="button" class="gallery-close" aria-label="Close">×</button>
+  </dialog>
+</section>
+<script src="/assets/js/gallery.js" defer></script>

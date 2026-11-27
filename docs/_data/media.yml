@@ -1,0 +1,178 @@
+# Store media for each package page: the gallery under the page title
+# (_includes/media-gallery.html), in the Asset Store's order: video, cover, screenshots.
+#
+#   source       Folder name under Sources/.
+#   video        YouTube video ID. Its thumbnail is saved locally as video.webp.
+#   screenshots  One entry per image, in order. `alt` is the image's headline.
+#
+# Images come from Sources/<source>/_Store Images & Text/Screenshot NN.png (or .jpg).
+# After adding or replacing one, run `python Tools/Build-Galleries.py`: it writes
+# docs/assets/media/<slug>/NN.webp and NN-thumb.webp, and the video thumbnail.
+
+clonebuster:
+  source: "CloneBuster"
+  video: 9ZmS3zV-bO8
+  screenshots:
+    - alt: "Prove when each version of your game existed"
+    - alt: "No setup: every save is timestamped from import"
+    - alt: "A dated timelapse of any file, in a few clicks"
+    - alt: "Show how you made it, with a date on every frame"
+    - alt: "Export a one-page proof a store reviewer can read"
+    - alt: "Paste the generated notice into the takedown form"
+    - alt: "Anyone can verify it with standard tools"
+    - alt: "Code, models and art: every file is timestamped"
+    - alt: "Editor only: nothing added to your build"
+
+selvage:
+  source: "Selvage"
+  video: lahOWw_A-fk
+  screenshots:
+    - alt: "Delete your wiring code"
+    - alt: "Your project already holds its dependencies"
+    - alt: "Integrated into the Editor"
+    - alt: "Every field checked before you press Play"
+    - alt: "See what every field holds"
+    - alt: "Dependency injection, without the container"
+    - alt: "A small API"
+    - alt: "Every result comes with its reason"
+    - alt: "Not even an attribute"
+    - alt: "Mistakes caught as you compile"
+    - alt: "Every object, injected the same way"
+    - alt: "Injection in Edit mode too"
+    - alt: "Compiled in, no reflection"
+    - alt: "Spawn without factories"
+    - alt: "Pooling, built in"
+    - alt: "Assets, loaded the right way"
+    - alt: "Options that combine"
+    - alt: "Loading is part of injection"
+    - alt: "Ready now, better when it arrives"
+    - alt: "Reinjected automatically when it changes"
+    - alt: "The right one, without keys"
+    - alt: "Name the one you want"
+    - alt: "Swap for tests and platforms, without #if"
+    - alt: "Set up once, reuse everywhere"
+    - alt: "Extend it for your own needs"
+    - alt: "Moving from Zenject or VContainer?"
+    - alt: "Documentation that starts from zero"
+
+settings-kit:
+  source: "Settings Kit"
+  screenshots:
+    - alt: "Create a class, and your settings appear in Project Settings or Preferences"
+    - alt: "Read them anywhere, even at runtime, resolved per platform"
+    - alt: "Revert, validate and migrate your settings, built in"
+
+persistent-asset:
+  source: "Persistent Asset"
+  video: NftmQtIKgY8
+  screenshots:
+    - alt: "Save your way: what you already use becomes persistent"
+    - alt: "Save your way: control it from the Inspector"
+    - alt: "Save your way: wire it to your game"
+    - alt: "Save anywhere: any storage"
+    - alt: "Save anywhere: several places at once"
+    - alt: "Save anything: any serializer"
+    - alt: "Save anything: what Unity can't"
+    - alt: "Save safely: protected from players"
+    - alt: "Save safely: protected from failure"
+    - alt: "Save safely: protected from updates"
+
+generic-arithmetic:
+  source: "Generic Arithmetic"
+  screenshots:
+    - alt: "A generic method that does not compile"
+    - alt: "The same method written with Computable"
+    - alt: "The same method written with static methods"
+    - alt: "Benchmark of the calculation methods"
+    - alt: "Unit tests window"
+
+auto-singleton:
+  source: "Auto Singleton"
+  screenshots:
+    - alt: "Decorate your class with the Singleton attribute"
+    - alt: "A reference asset is created automatically"
+    - alt: "Optional attribute parameters"
+    - alt: "Retrieve a singleton at runtime with one call"
+    - alt: "Access every instance through polymorphism"
+    - alt: "Select an instance dynamically"
+
+infinite-value:
+  source: "Infinite Value"
+  video: 4Y7C3O_IL2A
+  screenshots:
+    - alt: "Serialization support with an Inspector drawer, and customizable string formatting"
+    - alt: "Clicker demo and unit test window"
+    - alt: "InfValInputField component and math classes"
+
+concordance:
+  source: "Concordance"
+  video: XNseyXD-_MI
+  screenshots:
+    - alt: "Scripts stop overwriting each other"
+    - alt: "Keep your line, make it a Modifier"
+    - alt: "Overlapping effects add up right"
+    - alt: "Scripts written apart still work together"
+    - alt: "See every script that writes a value"
+    - alt: "See how a value is built"
+    - alt: "Choose the order Modifiers apply in"
+    - alt: "No cleanup code to write"
+    - alt: "Modifiers stay on top of other writes"
+    - alt: "React when any value changes"
+    - alt: "Quick syntax, or regular syntax"
+    - alt: "Pick what a Modifier does, in the Inspector"
+    - alt: "Know what needs a look, at a glance"
+    - alt: "Exit Play mode, and every value is back"
+    - alt: "Control any object's changes from code"
+    - alt: "Your scripts stay as you wrote them"
+    - alt: "Mistakes caught as you type"
+    - alt: "Runs wherever Unity 6 does"
+    - alt: "Learn it in minutes"
+
+understudy:
+  source: "Understudy"
+  video: NSxIVLq01cs
+  screenshots:
+    - alt: "Test your game without rewriting it"
+    - alt: "Control anything Unity code reaches"
+    - alt: "Find the tests that only pass on your machine"
+    - alt: "Check what the code did"
+    - alt: "Already know NSubstitute or Moq?"
+    - alt: "Replace a singleton in one line"
+    - alt: "Control only the calls you mean"
+    - alt: "Target one object or all of them"
+    - alt: "Global changes stay inside the test"
+    - alt: "Even what other libraries can't reach"
+    - alt: "Catch the errors the code swallows"
+    - alt: "Failures that read like code"
+    - alt: "Every test starts fresh"
+    - alt: "Record the calls Unity makes too"
+    - alt: "Mistakes caught as you type"
+    - alt: "Make leaks fail your CI"
+    - alt: "Your released game is unchanged"
+    - alt: "New to testing? Start with a tutorial"
+
+scry:
+  source: "Scry"
+  video: fRzMCRhNI_w
+  screenshots:
+    - alt: "Scry shows everything in your script"
+    - alt: "No more attributes: Scry reads your code"
+    - alt: "Click any row to see why"
+    - alt: "Use any script without reading it first"
+    - alt: "Your custom editors and drawers keep working"
+    - alt: "Your code decides each control"
+    - alt: "See which fields matter right now"
+    - alt: "Your comments become headers and tooltips"
+    - alt: "Find any member, and choose what shows"
+    - alt: "See which values Unity saves"
+    - alt: "Every method gets a button"
+    - alt: "Results update live, in Edit and Play mode"
+    - alt: "See what a method changes before you click"
+    - alt: "Call methods, coroutines, async and events"
+    - alt: "Edit the values Unity can't draw"
+    - alt: "Errors shown before Play, and before the build"
+    - alt: "Run a method on every selected object at once"
+    - alt: "Share your Inspector setup as an attribute"
+    - alt: "Settings for the team, preferences for you"
+    - alt: "Hover an asset to preview it"
+    - alt: "Full documentation, included offline"

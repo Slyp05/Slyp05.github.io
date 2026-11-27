@@ -6,6 +6,7 @@ so the nav stays three items wide no matter how many packages ship. Standalone p
 {%- assign live = site.data.packages | where: "released", true | sort: "released_on" | reverse -%}
 {%- assign paid_packages = live | where_exp: "p", "p.free != true" -%}
 {%- assign free_packages = live | where_exp: "p", "p.free == true" -%}
+{%- assign review_packages = site.data.packages | where_exp: "p", "p.released != true" -%}
 
 <header class="site-header" role="banner">
 
@@ -35,9 +36,11 @@ so the nav stays three items wide no matter how many packages ship. Standalone p
           </button>
 
           <div class="nav-dropdown-menu" id="nav-assets-menu">
+            <span class="nav-group-label" aria-hidden="true">Assets</span>
             {%- if paid_packages.size > 0 -%}
             {%- for pkg in paid_packages -%}
-            <a class="nav-dropdown-link" href="{{ pkg.url | relative_url }}">
+            {%- assign here = page.url | slice: 0, pkg.url.size -%}
+            <a class="nav-dropdown-link" href="{{ pkg.url | relative_url }}"{% if here == pkg.url %} aria-current="page"{% endif %}>
               <span class="nav-dropdown-name">{{ pkg.title | escape }}</span>
               <span class="badge badge-paid">Paid</span>
             </a>
@@ -46,12 +49,21 @@ so the nav stays three items wide no matter how many packages ship. Standalone p
 
             {%- if free_packages.size > 0 -%}
             {%- for pkg in free_packages -%}
-            <a class="nav-dropdown-link" href="{{ pkg.url | relative_url }}">
+            {%- assign here = page.url | slice: 0, pkg.url.size -%}
+            <a class="nav-dropdown-link" href="{{ pkg.url | relative_url }}"{% if here == pkg.url %} aria-current="page"{% endif %}>
               <span class="nav-dropdown-name">{{ pkg.title | escape }}</span>
               <span class="badge badge-free">Free</span>
             </a>
             {%- endfor -%}
             {%- endif -%}
+
+            {%- for pkg in review_packages -%}
+            {%- assign here = page.url | slice: 0, pkg.url.size -%}
+            <a class="nav-dropdown-link" href="{{ pkg.url | relative_url }}"{% if here == pkg.url %} aria-current="page"{% endif %}>
+              <span class="nav-dropdown-name">{{ pkg.title | escape }}</span>
+              <span class="badge badge-review">In review</span>
+            </a>
+            {%- endfor -%}
           </div>
         </div>
         {%- endif -%}
@@ -59,7 +71,7 @@ so the nav stays three items wide no matter how many packages ship. Standalone p
         {%- for path in page_paths -%}
           {%- assign my_page = site.pages | where: "path", path | first -%}
           {%- if my_page.title -%}
-          <a class="page-link" href="{{ my_page.url | relative_url }}">{{ my_page.title | escape }}</a>
+          <a class="page-link" href="{{ my_page.url | relative_url }}"{% if page.url == my_page.url %} aria-current="page"{% endif %}>{{ my_page.title | escape }}</a>
           {%- endif -%}
         {%- endfor -%}
       </div>

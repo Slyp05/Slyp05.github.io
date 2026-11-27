@@ -13,14 +13,14 @@
 #   blurb     One or two sentences for the home card. Inline HTML is allowed.
 #   card      420x280 landscape image, shown on wide screens.
 #   icon      160x160 square icon, shown when cards stack on narrow screens.
-#   released     false hides the package from both the home page and the nav.
+#   released     false lists the package under "In Review" on the home page and in the
+#                nav, after the released ones, in the order of this file.
 #   released_on  Date of the first store release (YYYY-MM-DD). Every list of packages
 #                (home, nav, contact form) sorts by it, newest first, so the order in
 #                this file does not matter. Set it when flipping `released` to true.
 #
-# Releasing a package: flip `released` to true, then remove its `sitemap: false`
-# front matter and its entry under `defaults:` in _config.yml. Those two are
-# Jekyll config and can't be driven from this file.
+# Releasing a package: flip `released` to true, set `released_on` and `meta`, and set
+# `software.store_url` in the package's .md page (its store button switches to the link).
 
 - title: CloneBuster
   released_on: 2026-11-16
@@ -109,26 +109,26 @@
     Numbers of any size and precision in Unity. Behaves like a primitive type, works in
     real-time, and is fully configurable. Perfect for incremental games, RPGs, and monetary systems.
 
-# Unreleased: hidden from the home page and the nav until `released` is true.
+# In review: listed under "In Review" until `released` is true.
 # Artwork is in place, exported from Sources/Concordance/_Store Images & Text/.
 - title: Concordance
   url: /concordance/
   released: false
   free: false
-  meta: Coming soon
+  meta: In review   # not shown while `released` is false; the card shows the In review pill
   card: /assets/images/concordance-card.jpg
   icon: /assets/images/CO.png
   blurb: >-
     Coordinate every script that writes the same value: changes combine instead of
     overwriting, any field or property becomes a change event, and every write is tracked.
 
-# Unreleased: hidden from the home page and the nav until `released` is true.
+# In review: listed under "In Review" until `released` is true.
 # Artwork is in place, exported from Sources/Understudy/_Store Images & Text/.
 - title: Understudy
   url: /understudy/
   released: false
   free: false
-  meta: Coming soon
+  meta: In review   # not shown while `released` is false; the card shows the In review pill
   card: /assets/images/understudy-card.jpg
   icon: /assets/images/US.png
   blurb: >-
@@ -136,13 +136,13 @@
     and constructors in your unit tests, with no interfaces or wrappers, and catch tests that
     leak real state.
 
-# Unreleased: hidden from the home page and the nav until `released` is true.
+# In review: listed under "In Review" until `released` is true.
 # Artwork is in place, exported from Sources/Scry/_Store Images & Text/.
 - title: Scry
   url: /scry/
   released: false
   free: false
-  meta: Coming soon
+  meta: In review   # not shown while `released` is false; the card shows the In review pill
   card: /assets/images/scry-card.jpg
   icon: /assets/images/SC.png
   blurb: >-

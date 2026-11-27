@@ -9,7 +9,7 @@ software:
   store_url: https://assetstore.unity.com/packages/slug/422340
 ---
 
-<img src="/assets/images/clonebuster.jpg" alt="CloneBuster" class="package-image" width="1200" height="800" decoding="async">
+{% include media-gallery.html %}
 
 **CloneBuster timestamps every version of your project and source art from the moment you import it, and turns that history into a one-page proof and a dated timelapse when someone copies your game.**
 

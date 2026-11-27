@@ -8,7 +8,7 @@ software:
   store_url: https://assetstore.unity.com/packages/tools/utilities/auto-singleton-264895
 ---
 
-<img src="/assets/images/auto-singleton.jpg" alt="Auto Singleton" class="package-image" width="1200" height="800" decoding="async">
+{% include media-gallery.html %}
 
 The simplest singleton tool on the Asset Store. Add the `[Singleton]` attribute to any class and the asset handles everything: automatic asset generation, cleanup, and polymorphic access at runtime.
 

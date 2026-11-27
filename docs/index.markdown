@@ -12,56 +12,23 @@ layout: home
 {%- assign live = site.data.packages | where: "released", true | sort: "released_on" | reverse -%}
 {%- assign paid_packages = live | where_exp: "p", "p.free != true" -%}
 {%- assign free_packages = live | where_exp: "p", "p.free == true" -%}
+{%- assign review_packages = site.data.packages | where_exp: "p", "p.released != true" -%}
 
-## Paid Assets {#assets}
-
-<div class="package-grid">
-{% for pkg in paid_packages %}
-  <div class="package-card">
-    <img src="{{ pkg.card }}" alt="{{ pkg.title }}" class="package-card-image" width="420" height="280" loading="lazy" decoding="async">
-    <img src="{{ pkg.icon }}" alt="{{ pkg.title }} icon" class="package-card-icon" width="160" height="160" loading="lazy" decoding="async">
-    <div class="package-card-content">
-      <h2><a href="{{ pkg.url }}">{{ pkg.title }}</a></h2>
-      <div class="card-meta">
-        <span class="badge badge-paid">Paid</span>
-        <span class="card-updated">{{ pkg.meta }}</span>
-      </div>
-      <p>{{ pkg.blurb }}</p>
-      <a href="{{ pkg.url }}" class="card-link">Learn more →</a>
-    </div>
-  </div>
-{% endfor %}
-</div>
-
-## Free Assets {#free-assets}
+## Paid Assets <span class="section-note">On the Unity Asset Store</span> {#assets}
 
 <div class="package-grid">
-{% for pkg in free_packages %}
-  <div class="package-card">
-    <img src="{{ pkg.card }}" alt="{{ pkg.title }}" class="package-card-image" width="420" height="280" loading="lazy" decoding="async">
-    <img src="{{ pkg.icon }}" alt="{{ pkg.title }} icon" class="package-card-icon" width="160" height="160" loading="lazy" decoding="async">
-    <div class="package-card-content">
-      <h2><a href="{{ pkg.url }}">{{ pkg.title }}</a></h2>
-      <div class="card-meta">
-        <span class="badge badge-free">Free</span>
-        <span class="card-updated">{{ pkg.meta }}</span>
-      </div>
-      <p>{{ pkg.blurb }}</p>
-      <a href="{{ pkg.url }}" class="card-link">Learn more →</a>
-    </div>
-  </div>
-{% endfor %}
+{% for pkg in paid_packages %}{% include package-card.html pkg=pkg %}{% endfor %}
 </div>
 
-## Support
+## Free Assets <span class="section-note">Free to download on the Asset Store</span> {#free-assets}
 
-<div class="about-text about-text--tight">
-  <p>Reviews on the Asset Store help a lot: positive ones are how most people find the tools, and critical ones tell me what to fix.</p>
-  <p>You can also donate on Ko-fi.</p>
+<div class="package-grid">
+{% for pkg in free_packages %}{% include package-card.html pkg=pkg %}{% endfor %}
 </div>
+{% if review_packages.size > 0 %}
+## In Review <span class="section-note">Awaiting Unity's review</span> {#in-review}
 
-<a href="https://ko-fi.com/justetools" class="asset-store-btn">Buy me a coffee ☕</a>
-
-## Contact
-
-Questions or issues? Reach me at [justetools@gmail.com](mailto:justetools@gmail.com). I reply within one business day.
+<div class="package-grid">
+{% for pkg in review_packages %}{% include package-card.html pkg=pkg %}{% endfor %}
+</div>
+{% endif %}
