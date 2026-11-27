@@ -42,7 +42,7 @@ body {
 .chip.code .n { color: #f3c57a; }
 .chip.code .m { color: #9fe3c4; }
 .chip.row {
-  left: 1300px; width: 590px; padding: 0 18px 0 30px; overflow: hidden;
+  left: 1300px; width: 620px; padding: 0 18px 0 30px; overflow: hidden;
   background: #383838; color: #d8d8d8; font: 26px Inter, "Segoe UI", sans-serif;
   box-shadow: 0 0 0 2px #1c1c1c, 0 18px 50px rgba(0, 0, 0, 0.55), 0 0 50px rgba(132, 102, 222, 0.35);
 }

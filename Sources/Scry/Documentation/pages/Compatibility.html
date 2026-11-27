@@ -57,7 +57,7 @@
 
     <section id="attributes">
       <h2>Inspector attributes</h2>
-      <p>On fields Scry draws, Unity's presentation attributes, such as <code>[Header]</code>, <code>[Space]</code>, <code>[Tooltip]</code> and <code>[HideInInspector]</code>, have no effect: Scry takes headers and tooltips from your <code>///</code> comments, and hides members through <strong>Visibility</strong>. A field whose <strong>Style</strong> is <strong>Unity</strong> keeps them.</p>
+      <p>On fields Scry draws, Unity's attributes that change what a member is or does apply: <code>[HideInInspector]</code> hides the member, which you can unhide from the Hidden list, <code>[Tooltip]</code> is the row's tooltip over your <code>///</code> summary, and <code>[NonReorderable]</code> keeps a list's order. Unity's layout attributes, <code>[Header]</code> and <code>[Space]</code>, have no effect: Scry takes headers from your <code>///</code> comments. A field whose <strong>Style</strong> is <strong>Unity</strong> keeps them.</p>
       <div class="img-block">
         <img src="../img/inspector-attributes" alt="A header from a /// comment on a field Scry draws, beside a field whose Style is Unity keeping its [Header]."
              onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />

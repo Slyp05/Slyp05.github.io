@@ -74,7 +74,7 @@ method MyPlugin.Audio.Play(string, float)
         <tr><td><code>returns clamp $p [lo, hi]</code>, <code>returns wrap $p [lo, hi)</code></td><td>The result is the parameter, clamped or wrapped.</td></tr>
         <tr><td><code>returns min $a $b</code>, <code>max $a $b</code>, <code>oneof $a $b</code>, <code>copy $p</code></td><td>The result is one of the parameters.</td></tr>
         <tr><td><code>returns excludes value</code></td><td>The result is never the value.</td></tr>
-        <tr><td><code>returns unit name</code>, <code>param $p unit name</code></td><td>The unit of the result or of the parameter.</td></tr>
+        <tr><td><code>returns unit name</code>, <code>param $p unit name</code></td><td>The unit of the result or of the parameter, in plural words: <code>seconds</code>, <code>meters</code>, <code>meters per second</code>, <code>meters per second squared</code>. Units the code combines compose from it.</td></tr>
         <tr><td><code>param $p rejects value</code>, <code>requires [lo, hi]</code>, <code>nonempty</code></td><td>Values the call rejects: Scry warns on them.</td></tr>
         <tr><td><code>param $p clamped [lo, hi]</code>, <code>wrapped period</code></td><td>Values the call clamps or wraps around: Scry shows the limits at the ends of the field instead of warning.</td></tr>
         <tr><td><code>param $p fails</code></td><td>A rejected value makes the call throw or log an error, so Scry shows an error instead of a warning.</td></tr>

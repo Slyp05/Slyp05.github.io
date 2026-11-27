@@ -46,7 +46,7 @@
         <tr><td>Struck-through label</td><td>The value does not matter in the current state, such as a field the code uses only while a toggle is on, while the toggle is off.</td></tr>
         <tr><td>Yellow or red outline</td><td>A value the code rejects.</td></tr>
         <tr><td>Box at an end of a number field</td><td>The nearest limit the code sets on that side: a minimum or maximum (<em>0 &le;</em>), a range of values it excludes (<em>&notin; -1, 1</em>), the value where it wraps around (<em>360 &#8635;</em>), or a value it rejects (<em>&ne; 0</em>). A value typed or dragged past it becomes the value the code would make of it.</td></tr>
-        <tr><td>Muted suffix inside a field, such as <em>s</em></td><td>The value's unit, from how the code uses it: <em>s</em> for a value passed to <code>WaitForSeconds</code>.</td></tr>
+        <tr><td>Muted suffix inside a field, such as <em>s</em></td><td>The value's unit, from how the code uses it: <em>s</em> for a value passed to <code>WaitForSeconds</code>, <em>°/s</em> for a turn speed multiplied by <code>Time.deltaTime</code> and added to an angle.</td></tr>
         <tr><td>Muted <em>editor</em> after a name</td><td>The member does nothing in a player build.</td></tr>
         <tr><td>Muted <em>dev</em> after a name</td><td>The member does nothing in a release build.</td></tr>
         <tr><td>Italic name, such as <em>Result</em></td><td>A name Scry gives, where the code has none.</td></tr>
@@ -176,7 +176,7 @@
         <tr><td><code>#region</code></td><td>A group that folds.</td></tr>
         <tr><td>Extra blank lines between members</td><td>Space between rows.</td></tr>
       </table></div>
-      <p>Fields Scry draws ignore Unity's presentation attributes, such as <code>[Header]</code>, <code>[Tooltip]</code> and <code>[Space]</code>; fields whose <strong>Style</strong> is <strong>Unity</strong> keep them. To read <code>//</code> comments instead of <code>///</code>, refer to the <a href="Settings%20Reference.html#code-formatting">project settings</a>.</p>
+      <p>Fields Scry draws ignore Unity's layout attributes, <code>[Header]</code> and <code>[Space]</code>; fields whose <strong>Style</strong> is <strong>Unity</strong> keep them. A <code>[Tooltip]</code> is the row's tooltip, over the <code>///</code> summary. To read <code>//</code> comments instead of <code>///</code>, refer to the <a href="Settings%20Reference.html#code-formatting">project settings</a>.</p>
     </section>
 
     <div class="resources">

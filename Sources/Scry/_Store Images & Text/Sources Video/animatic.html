@@ -2,253 +2,855 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Scry Store Video</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<link rel="stylesheet" href="../Sources Media/theme.css">
 <script src="../Sources Media/parts.js"></script>
 <style>
-@font-face { font-family: Inter; src: url("../Sources Media/fonts/Inter.woff2"); font-weight: 400 800; font-display: block; }
-* { box-sizing: border-box; }
-body { margin: 0; background: #080711; color: #f4efff; font-family: Inter, "Segoe UI", sans-serif; overflow: hidden; }
-#frame { position: absolute; width: 1920px; height: 1080px; overflow: hidden; transform-origin: top left;
-  background: radial-gradient(ellipse at 50% 62%, #302052, #151125 54%, #090812 83%); }
-.sky { position: absolute; inset: 0; opacity: .47; }
-#frame::after { content: ""; position: absolute; inset: 0; pointer-events: none; box-shadow: inset 0 0 180px 32px #08071180; }
-#demo, #end { position: absolute; inset: 0; }
-.headline { position: absolute; top: 102px; left: 130px; right: 130px; text-align: center; }
-h1 { margin: 0; font-size: 92px; line-height: 1.02; letter-spacing: -.062em; font-weight: 750; }
-.headline p { margin: 20px 0 0; color: #d4c8e9; font-size: 34px; letter-spacing: -.022em; }
-.panel { position: absolute; overflow: hidden; border-radius: 18px; box-shadow: 0 24px 72px #06040ca0; }
-#code { left: 126px; top: 344px; width: 795px; background: #14121f; border: 1px solid #584c70; }
-.file, .component { display: flex; align-items: center; height: 66px; padding: 0 25px; font-size: 25px; font-weight: 650; gap: 15px; }
-.file { background: #211b32; border-bottom: 1px solid #403551; }
-.file span { color: #a695c5; font: 20px Consolas, monospace; }
-.code-body { padding: 21px 0 23px; }
-.line { height: 40px; padding: 0 22px; display: flex; align-items: center; white-space: pre;
-  font: 29px Consolas, monospace; border-left: 3px solid transparent; }
-.line small { width: 47px; color: #b1a2c5; opacity: .69; font-size: 19px; }
-.line.focus { background: #ae8afa25; border-color: #c2a4ff; }
-.keyword { color: #d0a8ff; } .type { color: #a5deed; } .number { color: #f7cd93; }
-#inspector { left: 1080px; top: 344px; width: 714px; background: #383838; border: 1px solid #68656e; }
-.component { background: #424242; border-bottom: 2px solid #252525; }
-.component svg { width: 33px; height: 33px; }
-#inspectorName { position: absolute; left: 1080px; top: 295px; font-size: 23px; color: #ded1f3; font-weight: 650; }
-.rows { padding: 20px 25px 24px; }
-.row { position: relative; min-height: 55px; display: grid; grid-template-columns: 220px 1fr; align-items: center; font-size: 28px; }
-.field { height: 44px; display: flex; align-items: center; background: #292929; border: 1px solid #212121; border-radius: 5px; overflow: hidden; font-variant-numeric: tabular-nums; }
-.value { flex: 1; padding-left: 13px; }
-.bound { padding: 0 12px; align-content: center; height: 100%; background: #202020; font-size: 22px; color: #d3cddc; }
-#speedField.focus { outline: 2px solid #bf9bff; box-shadow: 0 0 26px #ac7bff66; }
-#ammoField.write { outline: 2px solid #ec9fdd; }
-#reloadRow { grid-template-columns: 1fr; }
-#reloadButton { justify-self: start; width: 250px; height: 46px; display: flex; align-items: center; justify-content: space-between;
-  padding: 0 14px; background: #545454; border: 1px solid #262626; border-radius: 5px; font-size: 26px; }
-#reloadButton.hot { background: #645478; outline: 2px solid #bf9bff; }
-#reloadButton svg { width: 27px; height: 27px; }
-#detail { position: absolute; top: 670px; left: 1080px; width: 714px; color: #e0cfee; font-size: 32px; }
-#detail strong { color: #ffc7ef; font-weight: 650; }
-kbd { font: 24px Inter, sans-serif; color: #f4efff; background: #322841; border: 1px solid #8a749e; border-radius: 7px; padding: 5px 11px; }
-#bridge { position: absolute; inset: 0; pointer-events: none; }
-#ray { fill: none; stroke: #ddc5ff; stroke-width: 3; filter: drop-shadow(0 0 9px #bf91ff); }
-#lens { position: absolute; left: 954px; top: 552px; width: 91px; height: 91px; display: grid; place-items: center; border-radius: 50%; 
-  border: 1px solid #b88affb0; background: #291945; box-shadow: 0 0 37px #a95bff76; pointer-events: none; }
-#lens svg { width: 77px; }
-#end { display: grid; align-items: center; grid-template-columns: 1fr 660px; padding: 0 205px; }
-#end h1 { font-size: 218px; }
-#end p { margin: 20px 0 28px; font-size: 53px; line-height: 1.14; letter-spacing: -.045em; }
-#end small { font-size: 27px; color: #d8c4f4; }
-#heroOrb { position: relative; width: 590px; justify-self: end; filter: drop-shadow(0 0 70px #9959ff52); }
-#heroOrb::before, #heroOrb::after { content: ""; position: absolute; inset: 65px -34px 95px; border: 1px solid #ccadff58;
-  border-radius: 50%; transform: rotate(-23deg) scaleY(.64); z-index: -1; }
-#heroOrb::after { inset: 36px -64px 65px; transform: rotate(22deg) scaleY(.71); }
-[hidden] { display: none !important; }
-#controls { position: absolute; bottom: 0; width: 100%; height: 56px; display: flex; gap: 12px; align-items: center; padding: 0 15px; background: #171222; }
-button { background: #292038; color: inherit; border: 1px solid #645174; border-radius: 6px; padding: 6px 10px; cursor: pointer; font: inherit; }
-#scrub { flex: 1; min-width: 35px; accent-color: #b998f4; }
-#time { min-width: 55px; font-variant-numeric: tabular-nums; }
-@media (max-width: 620px) { .chapter { display: none; } }
+@font-face { font-family: "Inter"; src: url("../Sources Media/fonts/Inter.woff2") format("woff2"); font-weight: 400 800; font-display: block; }
+html, body { margin: 0; height: 100%; background: #08050f; overflow: hidden; }
+#viewport { position: absolute; left: 0; top: 0; }
+#frame
+{
+  position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: hidden; transform-origin: 0 0;
+  background: radial-gradient(1300px 900px at 50% 55%, #3b2280 0%, #21124a 45%, #0e0820 80%, #08050f 100%);
+  font-family: Inter, "Segoe UI", sans-serif; color: #e6e6e6;
+}
+#frame > .sky { position: absolute; left: 0; top: 0; }
+.abs { position: absolute; }
+#pulse { position: absolute; inset: 0; background: radial-gradient(900px 600px at 50% 60%, rgba(170, 140, 255, 0.35), rgba(132, 102, 222, 0) 70%); opacity: 0; pointer-events: none; }
+#stage { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 50% 55%; }
+#flash { position: absolute; inset: 0; background: #efe8ff; opacity: 0; pointer-events: none; z-index: 40; }
+
+.k { color: #c69cff; } .t { color: #7fd4e8; } .n { color: #f3c57a; } .m { color: #9fe3c4; } .c { color: #8a9a8c; } .s { color: #e8b48a; }
+
+/* The scripts. */
+.code
+{
+  position: absolute; left: 120px; top: 186px; width: 820px; box-sizing: border-box; padding: 14px 0; border-radius: 18px;
+  background: #0d081c; border: 1px solid rgba(185, 163, 255, 0.28);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.5), 0 0 40px rgba(132, 102, 222, 0.22);
+  font: 22px/30px Consolas, "Cascadia Mono", monospace; color: #e7e2f6; white-space: pre;
+}
+.code.small { font-size: 19px; }
+.code .file { height: 50px; margin: -14px 0 10px; padding: 0 26px; display: flex; align-items: center; gap: 12px; background: rgba(132, 102, 222, 0.22); border-bottom: 1px solid rgba(185, 163, 255, 0.2); border-radius: 18px 18px 0 0; font: 600 23px Inter, sans-serif; }
+.code .file::before { content: ""; width: 12px; height: 12px; border-radius: 50%; background: #b9a3ff; }
+.ln { position: relative; height: 30px; padding: 0 28px; }
+.tx { position: relative; display: inline-block; }
+.ln .glow { position: absolute; inset: 0; background: rgba(132, 102, 222, 0.42); opacity: 0; }
+.ln .red { position: absolute; inset: 0; background: rgba(232, 93, 85, 0.25); opacity: 0; }
+#scan { position: absolute; left: 0; right: 0; height: 64px; margin-top: -32px; background: linear-gradient(rgba(185, 163, 255, 0), rgba(185, 163, 255, 0.45), rgba(185, 163, 255, 0)); opacity: 0; pointer-events: none; }
+
+/* Pills beside a line: a rule the code holds, or a member Unity does not show. */
+.pill { position: absolute; top: 3px; padding: 0 11px; height: 24px; box-sizing: border-box; border-radius: 12px; font: 600 16px/22px Inter, sans-serif; white-space: nowrap; opacity: 0; }
+.pill.rule { background: rgba(132, 102, 222, 0.55); border: 1px solid rgba(205, 188, 255, 0.8); color: #fff; }
+.pill.miss { background: rgba(200, 70, 64, 0.55); border: 1px solid rgba(255, 150, 140, 0.8); color: #fff; }
+
+/* Attributes stamped onto the script. */
+.sticker
+{
+  position: absolute; padding: 1px 10px; border-radius: 6px; background: #f3c57a; color: #3a2400; font: 700 18px/26px Consolas, monospace;
+  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.55); white-space: nowrap; opacity: 0; z-index: 8;
+}
+
+/* The Inspector, in Unity's dark skin. */
+.insp
+{
+  position: absolute; left: 1010px; top: 186px; width: 790px; box-sizing: border-box; border-radius: 10px; background: #383838; overflow: hidden;
+  box-shadow: 0 0 0 2px #1c1c1c, 0 18px 50px rgba(0, 0, 0, 0.55), 0 0 60px rgba(132, 102, 222, 0.35);
+}
+.insp .head { position: relative; height: 56px; background: #3e3e3e; display: flex; align-items: center; padding: 0 18px 0 14px; gap: 12px; font-size: 26px; font-weight: 600; color: #e0e0e0; border-bottom: 2px solid #232323; }
+.head .fold { width: 0; height: 0; border-left: 9px solid transparent; border-right: 9px solid transparent; border-top: 11px solid #9a9a9a; }
+.head .hash { width: 30px; height: 30px; border-radius: 4px; background: #e9e9e9; color: #2f8a45; font: 800 24px Inter; display: flex; align-items: center; justify-content: center; }
+.head .tog { width: 26px; height: 26px; border-radius: 4px; background: #2a2a2a; border: 2px solid #1e1e1e; position: relative; }
+.head .tog svg, .chk svg { position: absolute; left: 2px; top: 2px; width: 22px; height: 22px; }
+.head .tools { margin-left: auto; display: flex; gap: 18px; align-items: center; }
+.head .tools svg { width: 28px; height: 28px; display: block; }
+.head .scry { display: flex; gap: 18px; }
+#analysis { position: absolute; left: 0; top: 56px; height: 4px; width: 100%; background: linear-gradient(90deg, #8466de, #c9b6ff); transform: scaleX(0); transform-origin: 0 0; opacity: 0; }
+.insp .body { position: relative; padding: 10px 0; }
+.row { position: relative; height: 46px; display: flex; align-items: center; font-size: 26px; }
+.row .lab { width: 330px; flex: none; padding-left: 38px; box-sizing: border-box; color: #d2d2d2; position: relative; white-space: nowrap; }
+.row .lab.in { padding-left: 66px; }
+.row .lab .x { position: absolute; left: 34px; width: 0; top: 50%; height: 2px; background: #d2d2d2; transform: scaleX(0); transform-origin: 0 0; }
+.row .lab.dim { color: #6d6d6d; }
+.row .fld { flex: 1; margin-right: 22px; height: 38px; box-sizing: border-box; background: #2a2a2a; border: 2px solid #212121; border-radius: 5px; display: flex; align-items: center; color: #e6e6e6; position: relative; }
+/* As the Inspector draws them: a read-only value borderless and dimmed, a getter's result boxed on the panel's
+   background, a fold's summary lighter and grey. */
+.row .fld.ro { background: #313131; border-color: #313131; color: #6d6d6d; }
+.row .fld.result { background: #383838; border-color: #555555; color: #e6e6e6; }
+.row .fld.summary { background: #323232; border-color: #323232; color: #8c8c8c; }
+.row .fld .trash { width: 26px; height: 26px; margin-right: 10px; opacity: 0; }
+.sep { position: relative; height: 22px; }
+.sep::after { content: ""; position: absolute; left: 0; right: 0; top: 10px; height: 2px; background: #1a1a1a; }
+.gap { height: 16px; }
+.row .fld.err { border-color: #e05a4f; }
+.sbtn.err { opacity: 1; background: transparent; }
+#scryOrb .orbE { display: none; align-items: center; gap: 4px; color: #e86a5e; font: 700 22px Inter; }
+#scryOrb.err .orbN { display: none; }
+#scryOrb.err .orbE { display: flex; }
+.fact { display: flex; gap: 14px; padding: 14px 0; border-bottom: 2px solid #2a2a2a; }
+.fact .ficon { width: 28px; height: 28px; border-radius: 50%; background: #e05a4f; color: #fff; font: 800 20px Inter; display: flex; align-items: center; justify-content: center; flex: none; margin-top: 2px; }
+.fact .ftext { color: #d2d2d2; line-height: 32px; }
+.fact code { font: 22px Consolas, monospace; color: #ececec; }
+.fact .factions { display: flex; align-items: center; gap: 18px; margin-top: 10px; }
+.fact .fbtn { padding: 5px 16px; border-radius: 5px; background: #585858; color: #e6e6e6; }
+.fact a { color: #6aa5ff; }
+.row .fld.read { background: #2c4d49; border-color: #3f9a8a; }
+.row .fld.write { background: #4c3350; border-color: #b0508f; color: #e57cc4; }
+.row .fld.write::before { content: ""; position: absolute; left: -2px; top: -2px; bottom: -2px; width: 6px; border-radius: 4px 0 0 4px; background: #e57cc4; }
+.row .btn.hover { background: #5c5c5c; }
+.row .fld.edit { border-color: #4c7eff; }
+.row .val { padding: 0 12px; flex: 1; white-space: nowrap; }
+.row .pre { padding-left: 12px; color: #8c8c8c; }
+.row .unit { padding: 0 12px; color: #8c8c8c; font-size: 24px; white-space: nowrap; }
+.row .box { height: 100%; display: flex; align-items: center; padding: 0 12px; font-size: 22px; background: #1f1f1f; color: #c8c8c8; white-space: nowrap; }
+.row .box.s { border-radius: 3px 0 0 3px; }
+.row .box.e { border-radius: 0 3px 3px 0; }
+.row .chk { width: 30px; height: 30px; box-sizing: border-box; background: #2a2a2a; border: 2px solid #212121; border-radius: 4px; position: relative; }
+.row .chk svg { left: 1px; top: 1px; opacity: 0; }
+/* A method's button sits a few pixels left of the labels, so its name lines up with them. */
+.row .btn { position: relative; overflow: hidden; width: 292px; height: 38px; margin-left: 34px; margin-right: 8px; box-sizing: border-box; display: flex; align-items: center; justify-content: space-between; padding: 0 8px 0 4px; border-radius: 5px; background: #454545; color: #e6e6e6; flex: none; }
+.row .btn span { position: relative; }
+.row .btn svg, .row .btn .ico { position: relative; width: 28px; height: 28px; }
+.row .btn .run { position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: #2f5f8e; }
+.group .lab { font-weight: 700; color: #e6e6e6; }
+.group .lab::before { content: ""; position: absolute; left: 14px; top: 50%; margin-top: -5px; border-left: 9px solid transparent; border-right: 9px solid transparent; border-top: 11px solid #bdbdbd; }
+/* A saved value carries Unity's grey bar on its left edge. */
+.row.saved::after { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 5px; background: #5c5c5c; }
+/* A row whose panel drops over the rows below stands above them. */
+#sSpeed { z-index: 4; }
+#sTag { z-index: 3; }
+.tip { position: absolute; left: 62px; top: 46px; padding: 8px 16px; background: #1c1c1c; border: 2px solid #4a4a4a; border-radius: 5px; color: #e6e6e6; font-size: 24px; z-index: 5; opacity: 0; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5); white-space: nowrap; }
+.layer { position: absolute; left: 0; right: 0; top: 0; }
+/* Scry keeps a column for each row's Scry button, right of the fields. */
+#sbody .fld { margin-right: 52px; }
+/* A row's Scry button: centred on its 46 px line, in the column right of the fields. */
+.sbtn { position: absolute; right: 8px; top: 5px; width: 36px; height: 36px; border-radius: 5px; background: #5a5a5a; display: flex; align-items: center; justify-content: center; opacity: 0; }
+.sbtn svg { width: 28px; height: 28px; display: block; }
+
+.row .rowtint { position: absolute; left: 30px; right: 4px; top: 0; bottom: 0; box-sizing: border-box; background: rgba(111, 92, 174, 0.4); border: 3px solid #6f5cae; border-bottom: none; opacity: 0; }
+/* A row's Scry panel: a dropdown hanging from its button, violet. */
+.spanel { position: absolute; top: 46px; left: 30px; right: 4px; box-sizing: border-box; background: #383838; border: 3px solid #6f5cae; border-top: none; padding: 14px 18px 18px; z-index: 7; opacity: 0; font-size: 24px; }
+.spanel .decl { display: flex; gap: 22px; padding-bottom: 14px; border-bottom: 2px solid #2a2a2a; }
+.spanel .decl i { color: #d2d2d2; }
+.spanel .decl a { color: #6aa5ff; }
+.spanel .line { display: flex; align-items: center; margin-top: 14px; }
+.spanel .line b { width: 270px; font-weight: 400; color: #d2d2d2; }
+.spanel .line b.answered { font-weight: 700; color: #ececec; }
+.spanel .seg { display: flex; }
+.spanel .seg span { padding: 5px 14px; background: #515151; border: 1px solid #2e2e2e; color: #e6e6e6; }
+.spanel .seg span:first-child { border-radius: 4px 0 0 4px; }
+.spanel .seg span:last-child { border-radius: 0 4px 4px 0; }
+.spanel .seg span.on { background: #3e5f8a; }
+.row .plain { flex: 1; margin-right: 52px; height: 38px; box-sizing: border-box; background: #2a2a2a; border: 2px solid #212121; border-radius: 5px; display: flex; align-items: center; padding: 0 12px; opacity: 0; position: absolute; left: 330px; right: 0; }
+/* A foldout row and the build it folds open to. */
+.row .arrow { position: absolute; left: 18px; top: 14px; width: 0; height: 0; border-top: 9px solid transparent; border-bottom: 9px solid transparent; border-left: 11px solid #bdbdbd; transform-origin: 50% 50%; }
+.row.b { overflow: hidden; }
+.row .pick { justify-content: space-between; padding-right: 14px; }
+.row .pick::after { content: ""; border-left: 8px solid transparent; border-right: 8px solid transparent; border-top: 10px solid #bdbdbd; }
+.row .create { position: absolute; top: 4px; left: 62px; right: 52px; height: 38px; border-radius: 5px; background: #585858; display: flex; align-items: center; justify-content: center; color: #e6e6e6; }
+.row .create .ico { position: absolute; right: 12px; width: 28px; height: 28px; }
+#searchbox { position: absolute; left: 128px; right: 236px; top: 9px; height: 38px; box-sizing: border-box; border: 2px solid #3d7be0; border-radius: 5px; background: #2a2a2a; display: flex; align-items: center; gap: 10px; padding: 0 12px; font-size: 24px; font-weight: 400; color: #e6e6e6; opacity: 0; }
+#searchbox svg { width: 22px; height: 22px; }
+#searchbox .caret { width: 2px; height: 24px; background: #e6e6e6; margin-left: -8px; }
+#findBtn { display: flex; border-radius: 5px; padding: 3px; margin: -3px; }
+.hit { border-radius: 3px; }
+.insp.finding .hit { background: #3e5f8a; }
+/* The guide down the left of what a fold opens. */
+#build, #weaponMembers { position: relative; }
+#build::before, #weaponMembers::before { content: ""; position: absolute; left: 30px; top: 0; bottom: 0; width: 2px; background: #4a4a4a; }
+#menu { position: absolute; box-sizing: border-box; width: 300px; background: #2b2b2b; border: 2px solid #191919; border-radius: 5px; padding: 6px 0; font-size: 24px; box-shadow: 0 10px 28px rgba(0, 0, 0, 0.55); opacity: 0; z-index: 11; }
+#menu div { padding: 6px 18px; color: #e6e6e6; }
+#menu div.hover { background: #3e5f8a; }
+
+/* The Editor's play controls above the Inspector. */
+#playbar { position: absolute; left: 1616px; top: 128px; display: flex; gap: 4px; opacity: 0; }
+#playbar span { width: 58px; height: 44px; border-radius: 5px; background: #3c3c3c; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 0 2px #1c1c1c; }
+#playbar svg { width: 24px; height: 24px; }
+#playOn { background: #3d6bd6 !important; opacity: 0; position: absolute; left: 0; top: 0; }
+
+/* The dialog of a method that asks first. */
+#dialog { position: absolute; left: 1110px; top: 800px; width: 600px; box-sizing: border-box; background: #f0f0f0; border: 1px solid #505050; color: #000; font: 21px "Segoe UI", sans-serif; box-shadow: 0 18px 44px rgba(0, 0, 0, 0.55); opacity: 0; z-index: 11; }
+#dialog .dtitle { height: 48px; padding-left: 16px; display: flex; align-items: center; background: #f3f3f3; }
+/* The title bar's close button, flush in its corner, red with a white cross. */
+#dialog .close { position: absolute; right: 0; top: 0; width: 64px; height: 48px; background: #c42b1c; }
+#dialog .close::before, #dialog .close::after { content: ""; position: absolute; left: 23px; top: 23px; width: 18px; height: 2px; background: #fff; transform: rotate(45deg); }
+#dialog .close::after { transform: rotate(-45deg); }
+#dialog .dbody { display: flex; gap: 22px; align-items: center; padding: 14px 26px 10px; }
+#dialog .dbody img { width: 64px; height: 64px; }
+#dialog .dbuttons { display: flex; justify-content: flex-end; gap: 14px; padding: 0 18px 14px; }
+#dialog .dbuttons span { min-width: 120px; height: 36px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; background: #fdfdfd; border: 1px solid #d0d0d0; border-radius: 4px; }
+#dialog .dbuttons span.default { border: 2px solid #0067c0; }
+
+.beams { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; pointer-events: none; overflow: visible; z-index: 9; }
+.beams path { fill: none; stroke: #e2d8ff; stroke-width: 4; stroke-linecap: round; filter: drop-shadow(0 0 8px rgba(185, 163, 255, 0.9)); }
+.beams circle { fill: #fff; filter: drop-shadow(0 0 8px rgba(185, 163, 255, 0.9)); }
+.flier { position: absolute; font: 22px/30px Consolas, monospace; color: #efe8ff; white-space: pre; z-index: 10; text-shadow: 0 0 14px rgba(185, 163, 255, 0.9); opacity: 0; pointer-events: none; }
+
+.ring { position: absolute; box-sizing: border-box; border: 3px solid #c9b6ff; border-radius: 9px; box-shadow: 0 0 18px 4px rgba(185, 163, 255, 0.75), inset 0 0 12px rgba(185, 163, 255, 0.45); opacity: 0; pointer-events: none; z-index: 6; }
+.ring.bad { border-color: #ff8f86; box-shadow: 0 0 18px 4px rgba(255, 110, 100, 0.7), inset 0 0 12px rgba(255, 110, 100, 0.4); }
+
+#cursor { position: absolute; left: 0; top: 0; width: 34px; height: 44px; z-index: 12; opacity: 0; filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.6)); }
+#cursor svg { position: absolute; left: 0; top: 0; }
+#keycap { position: absolute; padding: 12px 22px; border-radius: 10px; background: #f1edfa; color: #1d1530; font: 700 34px Inter; box-shadow: 0 6px 0 #9d92b8, 0 14px 30px rgba(0, 0, 0, 0.5); opacity: 0; z-index: 12; }
+
+/* Captions: one line at the top, word by word. */
+.cap { position: absolute; left: 0; width: 1920px; top: 46px; text-align: center; font-size: 70px; font-weight: 800; letter-spacing: -0.02em; color: #f6f2ff; white-space: nowrap; z-index: 20; text-shadow: 0 0 40px rgba(185, 163, 255, 0.45), 0 3px 14px rgba(0, 0, 0, 0.6); }
+.cap .w { display: inline-block; opacity: 0; margin: 0 0.12em; }
+.cap .w.b { color: #b9a3ff; }
+
+#end { position: absolute; inset: 0; opacity: 0; z-index: 25; }
+.sub { position: absolute; left: 0; right: 0; top: 410px; text-align: center; font-size: 44px; font-weight: 600; color: #cbbcf2; letter-spacing: 0.01em; }
+
+#controls
+{
+  position: absolute; left: 0; right: 0; bottom: 0; height: 64px; display: flex; align-items: center; gap: 14px; padding: 0 18px;
+  background: #100c1a; color: #cbbcf2; font: 14px "Segoe UI", sans-serif; box-sizing: border-box;
+}
+#controls button { background: #241a3d; color: #fff; border: 1px solid #3d3060; border-radius: 6px; padding: 6px 12px; font: inherit; cursor: pointer; }
+#controls input[type=range] { flex: 1; }
+#scenes { display: flex; gap: 6px; }
+#time { width: 92px; font-variant-numeric: tabular-nums; }
 </style>
 </head>
 <body>
-<main id="frame">
-  <section id="demo">
-    <header class="headline"><h1 id="headline"></h1><p id="subhead"></p></header>
-    <div class="panel" id="code">
-      <div class="file"><span>C#</span> Turret.cs</div>
-      <div class="code-body">
-        <div class="line"><small>1</small><span class="keyword">public class</span> <span class="type">Turret</span> : <span class="type">MonoBehaviour</span></div>
-        <div class="line"><small>2</small>{</div>
-        <div class="line"><small>3</small>  <span class="keyword">public float</span> speed = <span class="number">8</span>;</div>
-        <div class="line"><small>4</small>  <span class="keyword">int</span> ammo = <span class="number">4</span>;</div>
-        <div class="line"><small>5</small></div>
-        <div class="line"><small>6</small>  <span class="keyword">void</span> OnValidate() =&gt;</div>
-        <div class="line" id="clampLine"><small>7</small>    speed = <span class="type">Mathf</span>.Clamp(speed, <span class="number">0</span>, <span class="number">20</span>);</div>
-        <div class="line"><small>8</small></div>
-        <div class="line" id="reloadLine"><small>9</small>  <span class="keyword">public void</span> Reload() =&gt; ammo = <span class="number">30</span>;</div>
-        <div class="line"><small>10</small>}</div>
-      </div>
-    </div>
-    <div id="inspectorName"></div>
-    <div class="panel" id="inspector">
-      <div class="component"><span id="componentIcon"></span>Turret (Script)</div>
-      <div class="rows">
-        <div class="row"><span>Speed</span><div class="field" id="speedField"><span class="bound" id="lower">0 ≤</span><span class="value" id="speed"></span><span class="bound" id="upper">≤ 20</span></div></div>
-        <div class="row" id="ammoRow"><span>Ammo</span><div class="field" id="ammoField"><span class="value" id="ammo"></span></div></div>
-        <div class="row" id="reloadRow"><span id="reloadButton">Reload () <span id="undoIcon"></span></span></div>
-      </div>
-    </div>
-    <svg id="bridge" viewBox="0 0 1920 1080" aria-hidden="true"><path id="ray" pathLength="1"/></svg>
-    <div id="lens" aria-hidden="true"></div>
-    <div id="detail"></div>
-  </section>
-  <section id="end" hidden>
-    <div><h1>Scry</h1><p>The Inspector that<br>understands your code.</p><small>Available on the Unity Asset Store</small></div>
-    <div id="heroOrb"></div>
-  </section>
-</main>
-<div id="controls">
-  <button id="play">Play</button><output id="time">0.00 s</output>
-  <input id="scrub" aria-label="Trailer position" type="range" min="0" step="0.01" value="0">
-  <button class="chapter" data-time="0">Hook</button><button class="chapter" data-time="4">Reveal</button>
-  <button class="chapter" data-time="12">Reload</button><button class="chapter" data-time="22">End card</button>
+<div id="viewport">
+<div id="frame">
+  <div class="mist" style="left:-200px; top:780px; width:900px; height:500px; background:rgba(132,102,222,0.2)"></div>
+  <div class="mist" style="left:1200px; top:800px; width:900px; height:500px; background:rgba(132,102,222,0.16)"></div>
+  <div id="pulse"></div>
+  <div id="stage"></div>
+  <div id="end"></div>
+  <div id="flash"></div>
 </div>
+</div>
+
+<div id="controls">
+  <button id="playBtn">Play</button>
+  <span id="time">0.00 s</span>
+  <input type="range" id="scrub" min="0" max="50" step="0.01" value="0">
+  <span id="scenes"></span>
+</div>
+
 <script>
-const END = 28;
-const W = 1920, H = 1080;
+// The score (sound.py) is in 4/4 at 120 BPM: a beat is 0.5 s, a bar 2 s. These times are sound.py's.
+const W = 1920, H = 1080, BEAT = 0.5, BAR = 4 * BEAT, S16 = BEAT / 4;
+const GROOVE = 4 * BAR, ROWS = 5 * BAR, RULES = 6 * BAR, MISTAKE = 8 * BAR, LIVE = 10 * BAR, PREVIEW = 12 * BAR, UNDO = 13 * BAR, SEARCH = 16 * BAR, ANSWERS = 18 * BAR, BUILD = 20 * BAR, END_CARD = 22 * BAR, END = 25 * BAR;
+const RULE_FLASH = [2.0, 2.5, 3.0, 3.5];
+const UNITY_IN = 4.0, TYPED = 4.5, ACCEPTED = 5.0, HIDDEN = 5.25;
+const STAMPS = [0, 1, 2, 3, 4, 5].map(k => 6.0 + k * S16);
+const SILENCE = 7.75;
+const ROW_TIMES = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map(k => ROWS + k * 2 * S16);
+const FACTS = { limits: 13.0, snap: 13.25, unit: 13.75, strike: 14.25, tooltip: 14.5, timer: 15.0, tick: 15.75 };
+const ERROR_OPEN = 16.75, ERROR_FIX = 18.25, ERROR_CLOSE = 18.75;
+const DRAG = [20.5, 21.0, 21.5], PRESSES = [26.0, 26.5], UNDOS = [27.25, 27.75], ASK = 28.5, RUN = 29.5, RUN_END = 30.5;
+const AMOUNT = [24.25, 24.375], HOVER = 25.0, HOVER_END = 26.0;
+const FIND = 32.5, FIND_KEYS = [33.0, 33.125, 33.25], FIND_CLEAR = 35.25;
+const PANEL = 36.5, STYLE = 37.25, CLOSE = 38.75;
+const FOLD = 40.25, MENU = 40.5, PICK = 40.75, TYPE_IN = 41.0, CREATE = 41.75;
+// The groove's kicks: 1, 2-and and 3-and of every bar from the drop to the end card.
+const KICKS = [];
+for (let bar = 4; bar < 22; bar++)
+  for (const s of [0, 6, 10])
+    KICKS.push(bar * BAR + s * S16);
+
+const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+// One-pass C# colouring, so a replacement never lands inside a span it wrote itself.
+function hl(line)
+{
+  return esc(line).replace(/(\/\/.*$)|(#region.*|#endregion)|(&quot;[^&]*&quot;|"[^"]*")|(\[[A-Za-z]+(?=[\](]))|\b(public|void|float|int|bool|string|class|if|async|await)\b|\b(Mathf|MonoBehaviour|Enemy|Time|Awaitable|IWeapon)\b|\b(Clamp|Update|Shoot|TakeDamage|Translate|Respawn|WaitForSecondsAsync|CompareTag)\b|\b(\d+)\b/g,
+    (m, com, reg, str, att, kw, ty, me, num) => `<span class="${(com || reg) ? 'c' : str ? 's' : att ? 't' : kw ? 'k' : ty ? 't' : me ? 'm' : 'n'}">${m}</span>`);
+}
+
+// One plain script, not a single attribute in it.
+const script = [
+  'public class Enemy : MonoBehaviour', '{', '    #region Movement', '    /// <summary> How fast it chases the player. </summary>', '    public float speed = 8;',
+  '    #endregion', '    public bool isRanged;', '    public float range = 10;', '    public string targetTag = "Enemy";', '    [SerializeReference] public IWeapon weapon;', '    int health = 100;',
+  '    float timer;', '    public bool IsDead => health <= 0;', '', '    void Update()', '    {', '        speed = Mathf.Clamp(speed, 0, 20);',
+  '        transform.Translate(0, 0, speed * Time.deltaTime);', '        if (isRanged && CompareTag(targetTag)) Shoot(range);', '        timer += Time.deltaTime;', '    }',
+  '    public void TakeDamage(int amount) => health -= amount;', '    public async Awaitable Respawn()', '        => await Awaitable.WaitForSecondsAsync(1);',
+  '    void Shoot(float distance) { }', '}'];
+// The rules the code holds: [line, pill].
+const rules = [[16, 'a limit'], [17, 'a unit'], [18, 'a condition'], [3, 'a description']];
+// The members Unity's Inspector never shows.
+const missing = [10, 11, 12, 21, 22, 24];
+// The attributes other tools need, each stamped on the line it repeats: [line, text, x offset, rotation].
+const stickers = [[2, '[Header("Movement")]', 0, -2], [3, '[Tooltip("How fast it chases the player.")]', 20, 1.5], [4, '[Range(0, 20)]', 6, -1.5],
+  [7, '[ShowIf("isRanged")]', 16, 2], [11, '[ShowInInspector]', 4, -2], [21, '[Button]', 10, 1.5]];
+
+const icon = (d, w = 1.6) => `<svg viewBox="0 0 16 16" fill="none" stroke="#c4c4c4" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
+const check = '<svg viewBox="0 0 16 16" fill="none" stroke="#e6e6e6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3.2 3L13 4.5"/></svg>';
+const searchIcon = icon('<circle cx="7" cy="7" r="4.2"/><path d="M10.2 10.2l3.6 3.6"/>');
+const helpIcon = '<svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="7" fill="#c4c4c4"/><path d="M6 6.2a2 2 0 1 1 2.6 1.9c-.5.2-.6.5-.6 1v.4" fill="none" stroke="#383838" stroke-width="1.6" stroke-linecap="round"/><circle cx="8" cy="11.6" r="0.9" fill="#383838"/></svg>';
+const presetIcon = icon('<path d="M2 5h12M2 11h12"/><circle cx="10" cy="5" r="1.6" fill="#383838"/><circle cx="6" cy="11" r="1.6" fill="#383838"/>');
+const moreIcon = '<svg viewBox="0 0 16 16" fill="#c4c4c4"><circle cx="8" cy="3" r="1.4"/><circle cx="8" cy="8" r="1.4"/><circle cx="8" cy="13" r="1.4"/></svg>';
+// Unity's own icons, exported from the Editor into icons/: Scry draws a method's marks and the trash button with them.
+const uIcon = (file, cls = 'ico') => `<img class="${cls}" src="icons/${file}.png" alt="">`;
+const undoableIcon = uIcon('RotateTool'), eyeIcon = uIcon('ViewToolOrbit'), clockIcon = uIcon('UnityEditor_AnimationWindow');
+const play = '<svg viewBox="0 0 16 16" fill="#d8d8d8"><path d="M4 2.5v11l9-5.5z"/></svg>';
+const pause = '<svg viewBox="0 0 16 16" fill="#d8d8d8"><rect x="3.5" y="3" width="3" height="10"/><rect x="9.5" y="3" width="3" height="10"/></svg>';
+const step = '<svg viewBox="0 0 16 16" fill="#d8d8d8"><path d="M3 3v10l7-5z"/><rect x="11" y="3" width="2.2" height="10"/></svg>';
+
+const header = (name, tools, search = '') => `<div class="head"><div class="fold"></div><div class="hash">#</div><div class="tog">${check}</div><span id="hTitle">${name}</span>${search}<div class="tools">${tools}</div></div>`;
+const row = (id, label, field, labCls = '', rowCls = '') => `<div class="row ${rowCls}" id="${id}"><div class="lab ${labCls}"><span class="tx">${label}</span><i class="x"></i></div>${field}</div>`;
+const fld = (id, v, cls = '', unit = '') => `<div class="fld ${cls}" id="${id}_f"><div class="val" id="${id}_v">${v}</div>${unit ? `<div class="unit" id="${id}_u">${unit}</div>` : ''}</div>`;
+const method = (id, label, iconHtml, field = '') => `<div class="row" id="${id}"><div class="btn" id="${id}_b"><div class="run" id="${id}_run"></div><span>${label}</span>${iconHtml}</div>${field}</div>`;
+const slider = (label, value, at) => `<div class="row"><div class="lab"><span class="tx">${label}</span></div><div class="slider"><div class="track"><b style="left:${at}%"></b></div><div class="num">${value}</div></div></div>`;
+
+const unityRows = row('uScript', 'Script', `<div class="fld ro"><div class="val"># Enemy</div></div>`, 'dim')
+  + row('uSpeed', 'Speed', fld('uSpeed', '8'))
+  + row('uRanged', 'Is Ranged', `<div class="chk">${check}</div>`)
+  + row('uRange', 'Range', fld('uRange', '10'))
+  + row('uTag', 'Target Tag', fld('uTag', 'Enemy'))
+  + `<div class="row"><div class="arrow"></div><div class="lab"><span class="tx">Weapon</span></div></div>`;
+// Private fields Unity does not save are read-only by default: their author keeps them inside the type.
+const buildRow = (id, inner) => `<div class="row b" id="${id}">${inner}</div>`;
+const scryRows = `<div class="row group" id="sGroup"><div class="lab">Movement</div></div>`
+  + `<div class="row saved" id="sSpeed"><div class="rowtint" id="sSpeed_tint"></div><div class="lab" id="sSpeed_l"><span class="tx">Speed</span></div><div class="fld" id="sSpeed_f"><div class="box s" id="sSpeed_s">0 ≤</div><div class="val" id="sSpeed_v">500</div><div class="unit" id="sSpeed_u">/s</div><div class="box e" id="sSpeed_e">≤ 20</div></div><div class="plain" id="sSpeed_p">20</div><div class="sbtn" id="sSpeed_b">${orbIcon('#e6e6e6')}</div><div class="tip" id="tip">How fast it chases the player.</div>`
+  + `<div class="spanel" id="panel"><div class="decl"><i>public float speed</i><a>Enemy.cs:5</a></div><div class="line"><b id="styleLabel">Style</b><div class="seg"><span id="stScry" class="on">Scry</span><span id="stUnity">Unity</span></div></div><div class="line"><b>Visibility</b><div class="seg"><span class="on">Shown</span><span>Read-Only</span><span>Hidden</span></div></div></div></div>`
+  + `<div class="sep" id="regionEnd"></div>`
+  + row('sRanged', 'Is <span class="hit">Ran</span>ged', `<div class="chk" id="sRanged_c">${check}</div>`, '', 'saved')
+  + row('sRange', '<span class="hit">Ran</span>ge', fld('sRange', '10'), '', 'saved')
+  + `<div class="row saved" id="sTag"><div class="rowtint" id="sTag_tint"></div><div class="lab"><span class="tx">Target Tag</span><i class="x"></i></div>${fld('sTag', 'Enemy', 'err')}<div class="sbtn err" id="sTag_b">${orbIcon('#e86a5e')}</div>`
+  + `<div class="spanel" id="tagPanel"><div class="decl"><i>public string targetTag</i><a>Enemy.cs:9</a></div><div class="fact"><div class="ficon">!</div><div><div class="ftext"><code>Enemy</code> is not a tag: the code passes it to Component.CompareTag.</div><div class="factions"><span class="fbtn" id="addTag">Add Tag <code>Enemy</code></span><a>Enemy.cs:19</a></div></div></div><div class="line"><b>Style</b><div class="seg"><span class="on">Scry</span><span>Unity</span></div></div><div class="line"><b>Visibility</b><div class="seg"><span class="on">Shown</span><span>Read-Only</span><span>Hidden</span></div></div></div></div>`
+  + `<div class="row saved" id="sWeapon"><div class="arrow" id="sWeapon_a"></div><div class="lab"><span class="tx">Weapon</span></div><div class="fld summary" id="sWeapon_f"><div class="val" id="sWeapon_v">None (IWeapon)</div><img class="trash" id="sWeapon_t" src="icons/TreeEditor_Trash.png" alt=""></div></div>`
+  + `<div id="build">`
+  + buildRow('bType', `<div class="lab in"><span class="tx">Type</span></div><div class="fld pick" id="bType_f"><div class="val" id="bType_v">Bow</div></div>`)
+  + buildRow('bCtor', `<div class="lab in"><span class="tx">Constructor</span></div><div class="fld pick" id="bCtor_f"><div class="val">new(int arrows)</div></div>`)
+  + buildRow('bArrows', `<div class="lab in"><span class="tx">Arrows</span></div><div class="fld" id="bArrows_f"><div class="val" id="bArrows_v">0</div></div>`)
+  + buildRow('bCreate', `<div class="create" id="bCreate_b">Create${eyeIcon}</div>`)
+  + `</div>`
+  + `<div id="weaponMembers"></div>`
+  + row('sHealth', 'Health', fld('sHealth', '100', 'ro'), 'dim')
+  + row('sTimer', 'Timer', fld('sTimer', '0.00', 'ro', 's'), 'dim')
+  + row('sDead', 'Is Dead', fld('sDead', 'false', 'result'))
+  + `<div class="gap" id="methodsGap"></div>`
+  + method('sDamage', 'Take Damage ()', undoableIcon, `<div class="fld" id="sAmount_f"><span class="pre">Amount</span><div class="val" id="sAmount_v">0</div></div>`)
+  + method('sRespawn', 'Respawn () …', clockIcon)
+  + method('sShoot', 'Shoot ()', eyeIcon, `<div class="fld"><span class="pre">Distance</span><div class="val">0</div></div>`);
+
+const cursorArrow = '<svg id="arrow" width="34" height="44" viewBox="0 0 17 22"><path d="M1 1v17l4.6-4.3 3 6.8 3-1.3-3-6.6H15z" fill="#fff" stroke="#111" stroke-width="1.2" stroke-linejoin="round"/></svg>';
+const cursorDrag = '<svg id="drag" width="44" height="44" viewBox="0 0 22 22" style="opacity:0; left:-22px; top:-22px"><path d="M2 11h18M2 11l4-4M2 11l4 4M20 11l-4-4M20 11l-4 4" fill="none" stroke="#111" stroke-width="4" stroke-linecap="round"/><path d="M2 11h18M2 11l4-4M2 11l4 4M20 11l-4-4M20 11l-4 4" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>';
+const codeCard = (id, file, lines, cls = '') => `<div class="code ${cls}" id="${id}"><div class="file">${file}</div>${lines.map((l, i) =>
+  `<div class="ln" id="${id}L${i}"><div class="glow"></div><div class="red"></div><span class="tx">${hl(l)}</span></div>`).join('')}${(id === 'code') ? '<div id="scan"></div>' : ''}</div>`;
+
+document.getElementById('stage').innerHTML =
+  codeCard('code', 'Enemy.cs', script)
+  + `<div class="insp" id="insp">${header('Enemy (Script)', `<span class="scry" id="scryTools"><span id="findBtn">${searchIcon}</span><span id="scryOrb"><span class="orbN">${orbIcon('#c4c4c4')}</span><span class="orbE">${orbIcon('#e86a5e')}<b>1</b></span></span></span>${helpIcon}${presetIcon}${moreIcon}`, `<div id="searchbox">${searchIcon}<span id="findText"></span><i class="caret"></i></div>`)}<div id="analysis"></div><div class="body" id="body"><div class="layer" id="ubody">${unityRows}</div><div id="sbody">${scryRows}</div></div></div>`
+  + ``
+  + `<div id="playbar"><span style="position:relative">${play}<span id="playOn">${play}</span></span><span>${pause}</span><span>${step}</span></div>`
+  + `<div id="dialog"><div class="dtitle">Run Respawn()</div><div class="close"></div><div class="dbody"><img src="../Sources Screenshots/Captures/dialog-icon.png" alt=""><div>This cannot be undone.</div></div><div class="dbuttons"><span class="default" id="dRun">Run</span><span>Cancel</span></div></div>`
+  + `<svg class="beams" id="beams" viewBox="0 0 1920 1080"></svg>`
+  + `<div id="cursor">${cursorArrow}${cursorDrag}</div><div id="keycap">Ctrl+Z</div>`;
+document.getElementById('end').innerHTML = `<div class="halo" id="halo" style="left:560px; top:380px; width:800px; height:800px"></div>
+  <div class="abs" id="ball" style="left:770px; top:520px; width:380px; height:418px">${orb('end', { rows: true })}</div>
+  <div class="title" id="title" style="left:0; right:0; top:70px; text-align:center; font-size:200px">Scry</div>
+  <div class="tagline" id="tagline" style="left:0; right:0; top:300px; text-align:center; font-size:60px">The Inspector that <b>understands your code.</b></div>
+  <div class="sub" id="sub">Nothing to write. Everything editable.</div>`;
+
+// [start, end, text]; *word* marks a word in violet.
+const LEAD = 0.5;
+const captions = [
+  // A caption lands half a beat before what it announces, so the eye reads, then drops to the action on the beat.
+  [0.15, 3.85, 'Your code already knows *the* *rules.*'],
+  [UNITY_IN - LEAD, 5.85, "Unity's Inspector *doesn't.*"],
+  [6.0 - LEAD, 7.6, 'So you repeat them *as* *attributes.*'],
+  [GROOVE + 0.05, 12.2, 'Scry reads your code and *shows* *every* *member.*'],
+  [RULES + 0.5, 15.95, 'Your clamps, ifs and comments *shape* *each* *field.*'],
+  [MISTAKE - LEAD, 19.85, 'Wrong values caught *before* *you* *press* *Play.*'],
+  [LIVE - LEAD, 23.85, 'Values update *live* *in* *Play* *mode.*'],
+  [PREVIEW - LEAD, 25.85, 'Hover a method to *preview* *what* *it* *changes.*'],
+  [UNDO - LEAD, 31.85, 'Every click *undoable,* *or* *asked* *first.*'],
+  [SEARCH - LEAD, 35.85, 'Search *any* *member* *by* *name.*'],
+  [ANSWERS - LEAD, 39.85, 'Change how any field is shown, *in* *one* *click.*'],
+  [BUILD - LEAD, END_CARD - 0.3, 'Create any value with *your* *own* *constructor.*'],
+];
+
+const frame = document.getElementById('frame');
+sky(W, H, 300, 11);
+frame.prepend(document.querySelector('body > .sky'));
+
+const tl = gsap.timeline({ paused: true });
+
+// Layout reads text sizes, so the timeline is built once the fonts are in.
+document.fonts.ready.then(() =>
+{
+
 const q = id => document.getElementById(id);
-const frame = q('frame');
-const controls = q('controls');
-const play = q('play');
-const scrub = q('scrub');
-const ray = q('ray');
-const audio = new Audio('soundtrack.wav');
-const fixedTime = new URLSearchParams(location.search).get('t');
-const clamp = value => Math.max(0, Math.min(1, value));
-const ease = value => 1 - (1 - clamp(value)) ** 3;
-let time = 0;
-let running = false;
-let soundClock = false;
-let startedAt = 0;
-let offset = 0;
-let animationFrame;
-let playRequest = 0;
+const stage = q('stage');
+// Positions inside the frame, measured before any initial state moves an element.
+const rect = el => { const r = (typeof el === 'string' ? q(el) : el).getBoundingClientRect(), f = frame.getBoundingClientRect(); return { l: r.left - f.left, t: r.top - f.top, r: r.right - f.left, b: r.bottom - f.top, w: r.width, h: r.height, y: (r.top + r.bottom) / 2 - f.top, x: (r.left + r.right) / 2 - f.left }; };
+const line = i => q('codeL' + i);
+const lineText = i => line(i).querySelector('.tx');
+const charW = rect(lineText(0)).w / script[0].length;
+const indentOf = i => script[i].length - script[i].trimStart().length;
 
-sky(W, H, 160, 11);
-frame.prepend(document.querySelector('.sky'));
-q('heroOrb').innerHTML = orb('hero', { rows: true });
-q('lens').innerHTML = orb('lens', { stand: false });
-q('undoIcon').innerHTML = undoIcon;
+// Captions: each word pops in on its own, the whole line lifts out.
+// A caption leaves at least 0.3 s before the next arrives, so two never share the line.
+captions.forEach((caption, k) => { if (k + 1 < captions.length) caption[1] = Math.min(caption[1], captions[k + 1][0] - 0.3); });
+for (const [t0, t1, text] of captions)
+{
+  const el = document.createElement('div');
+  el.className = 'cap';
+  el.innerHTML = text.split(' ').map(w => (w.startsWith('*')) ? `<span class="w b">${w.slice(1, -1)}</span>` : `<span class="w">${w}</span>`).join('');
+  frame.appendChild(el);
+  const words = el.querySelectorAll('.w');
+  tl.fromTo(words, { opacity: 0, y: 18, filter: 'blur(6px)' }, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.3, ease: 'power2.out', immediateRender: false }, t0);
+  tl.to(words, { opacity: 0, y: -16, duration: 0.18, ease: 'power2.in' }, t1);
+}
+
+// A violet (or red) ring around what changes, for a moment.
+function ring(target, t, hold = 1.0, bad = false)
+{
+  const b = rect(target);
+  const el = document.createElement('div');
+  el.className = 'ring' + (bad ? ' bad' : '');
+  Object.assign(el.style, { left: (b.l - 6) + 'px', top: (b.t - 6) + 'px', width: (b.w + 12) + 'px', height: (b.h + 12) + 'px' });
+  stage.appendChild(el);
+  tl.fromTo(el, { opacity: 0, scale: 1.15 }, { opacity: 1, scale: 1, duration: 0.2, ease: 'power2.out', immediateRender: false }, t);
+  tl.to(el, { opacity: 0, duration: 0.3 }, t + hold);
+}
+const glow = (i, t, hold = 0.3, cls = '.glow') => { tl.to(`#codeL${i} ${cls}`, { opacity: 1, duration: 0.06 }, t); tl.to(`#codeL${i} ${cls}`, { opacity: 0, duration: 0.5 }, t + hold); };
+// A beam from a line's end to the Inspector's edge, level with its target, landing at t.
+const beams = q('beams');
+const NS = 'http://www.w3.org/2000/svg';
+function beam(lineIndex, target, t)
+{
+  const a = rect(lineText(lineIndex)), b = rect(target), insp = rect('insp');
+  const x1 = a.r + 10, x2 = insp.l - 4, mid = (x1 + x2) / 2;
+  const p = document.createElementNS(NS, 'path');
+  p.setAttribute('d', `M${x1} ${a.y} C ${mid} ${a.y}, ${mid} ${b.y}, ${x2} ${b.y}`);
+  const d = document.createElementNS(NS, 'circle');
+  d.setAttribute('r', 7); d.setAttribute('cx', x2); d.setAttribute('cy', b.y);
+  beams.append(p, d);
+  const len = p.getTotalLength() + 2;
+  // A round cap draws a dot even at zero length, so the path stays hidden until it starts.
+  gsap.set(p, { strokeDasharray: len, strokeDashoffset: len, opacity: 0 });
+  gsap.set(d, { opacity: 0 });
+  tl.fromTo(p, { opacity: 0 }, { opacity: 1, duration: 0.01, immediateRender: false }, t - 0.25);
+  tl.to(p, { strokeDashoffset: 0, duration: 0.25, ease: 'power2.in' }, t - 0.25);
+  tl.to(d, { opacity: 1, duration: 0.05 }, t);
+  tl.fromTo(d, { attr: { r: 16 } }, { attr: { r: 7 }, duration: 0.3, ease: 'power2.out', immediateRender: false }, t);
+  tl.to([p, d], { opacity: 0, duration: 0.25 }, t + 0.45);
+}
+// A pulse of the whole stage on a downbeat.
+const punch = (t, amount = 0.018) => tl.fromTo(stage, { scale: 1 + amount }, { scale: 1, duration: 0.35, ease: 'power3.out', immediateRender: false }, t);
+// The cursor glides to an element's centre (or a point offset from it) by time t.
+function cursorTo(target, t, dur = 0.3, dx = 0, dy = 0)
+{
+  const b = rect(target);
+  tl.to('#cursor', { x: b.x + dx, y: b.y + dy, duration: dur, ease: 'power2.inOut' }, t - dur);
+}
+const press = (el, t) => tl.fromTo('#' + el, { scale: 0.94, backgroundColor: '#5d5d5d' }, { scale: 1, backgroundColor: '#454545', duration: 0.25, ease: 'power2.out', immediateRender: false }, t);
+
+// Measure every row at its place before anything is hidden.
+const insp = q('insp');
+q('build').style.display = 'none';
+const fullH = insp.offsetHeight;
+const scryRowIds = ['sGroup', 'sSpeed', 'sRanged', 'sRange', 'sTag', 'sWeapon', 'sHealth', 'sTimer', 'sDead', 'sDamage', 'sRespawn', 'sShoot'];
+const rowLines = [2, 4, 6, 7, 8, 9, 10, 11, 12, 21, 22, 24];
+const inspTop = rect('insp').t;
+const bottomOf = id => rect(id).b - inspTop + 10;
+const rowBottoms = scryRowIds.map(bottomOf);
+const unityH = rect('ubody').b - inspTop + 10;
+const ROW = 46;
+const speedLabel = q('sSpeed').querySelector('.tx');
+const rangeLabelW = rect(q('sRange').querySelector('.tx')).w;
+const tagLabelW = rect(q('sTag').querySelector('.tx')).w;
+const dialogBox = rect('dialog');
+
+// Opening: the script, and the rules it already holds.
+tl.fromTo('#code', { opacity: 0, x: -40 }, { opacity: 1, x: 0, duration: 0.5, ease: 'power3.out', immediateRender: false }, 0.05);
+function pill(lineIndex, cls, text)
+{
+  const el = document.createElement('div');
+  el.className = 'pill ' + cls;
+  el.textContent = text;
+  el.style.left = (rect(lineText(lineIndex)).r - rect(line(lineIndex)).l + 16) + 'px';
+  line(lineIndex).appendChild(el);
+  return el;
+}
+rules.forEach(([lineIndex, label], k) =>
+{
+  const t = RULE_FLASH[k];
+  const el = pill(lineIndex, 'rule', label);
+  glow(lineIndex, t, 0.35);
+  tl.fromTo(el, { opacity: 0, x: -12, scale: 0.8 }, { opacity: 1, x: 0, scale: 1, duration: 0.22, ease: 'back.out(2.5)', immediateRender: false }, t);
+  tl.to(el, { opacity: 0, duration: 0.2 }, HIDDEN - 0.1);
+});
+
+// Unity's Inspector: it takes 500 and shows only what Unity serializes.
+tl.fromTo(insp, { opacity: 0, x: 60 }, { opacity: 1, x: 0, duration: 0.35, ease: 'power3.out', immediateRender: false }, UNITY_IN);
+ring('uSpeed_f', ACCEPTED, 0.8, true);
+missing.forEach(lineIndex =>
+{
+  const el = pill(lineIndex, 'miss', 'not shown');
+  glow(lineIndex, HIDDEN, 0.5, '.red');
+  tl.fromTo(el, { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 0.2, ease: 'back.out(2.5)', immediateRender: false }, HIDDEN);
+  tl.to(el, { opacity: 0, duration: 0.12 }, STAMPS[0] - 0.1);
+});
+
+// The attributes stamp in at the start of their lines, the stage jolting under each, then the stage draws back through the
+// quarter beat of silence.
+const stickerEls = stickers.map(([lineIndex, text, x, rot], k) =>
+{
+  const el = document.createElement('div');
+  el.className = 'sticker';
+  el.textContent = text;
+  const l = rect(line(lineIndex)), c = rect('code');
+  Object.assign(el.style, { left: (l.l - c.l + 28 + indentOf(lineIndex) * charW + x) + 'px', top: (l.t - c.t + 1) + 'px' });
+  q('code').appendChild(el);
+  const t = STAMPS[k];
+  tl.fromTo(el, { opacity: 0, scale: 1.9, rotation: rot * 4 }, { opacity: 1, scale: 1, rotation: rot, duration: 0.09, ease: 'power4.in', immediateRender: false }, t - 0.09);
+  tl.fromTo(stage, { x: (k % 2) ? 9 : -9, y: 5 }, { x: 0, y: 0, duration: 0.12, ease: 'power2.out', immediateRender: false }, t);
+  return el;
+});
+tl.to(stage, { scale: 0.985, duration: SILENCE - STAMPS[5], ease: 'power1.in' }, STAMPS[5]);
+
+tl.to(insp, { opacity: 0.45, duration: 0.3 }, STAMPS[0] - 0.1);
+tl.to(insp, { opacity: 1, duration: 0.2 }, GROOVE);
+
+// The drop: the attributes scatter, Unity's rows go, and Scry reads the script while its analysis fills.
+tl.fromTo('#flash', { opacity: 0.7 }, { opacity: 0, duration: 0.45, ease: 'power2.out', immediateRender: false }, GROOVE);
+punch(GROOVE, 0.04);
+stickerEls.forEach((el, k) =>
+{
+  const a = (k / stickerEls.length) * Math.PI * 2 + 0.6;
+  tl.to(el, { x: Math.cos(a) * 700, y: Math.sin(a) * 500 - 100, rotation: (k % 2 ? 1 : -1) * 220, opacity: 0, duration: 0.7, ease: 'power3.out' }, GROOVE);
+});
+tl.to('#ubody', { opacity: 0, duration: 0.15 }, GROOVE);
+tl.to(insp, { height: 56 + 20, duration: 0.3, ease: 'power2.inOut' }, GROOVE + 0.05);
+tl.fromTo('#scryTools', { opacity: 0, width: 0 }, { opacity: 1, width: 'auto', duration: 0.3, ease: 'back.out(2)', immediateRender: false }, GROOVE);
+tl.fromTo('#analysis', { opacity: 0 }, { opacity: 1, duration: 0.1, immediateRender: false }, GROOVE + 0.45);
+tl.fromTo('#analysis', { scaleX: 0 }, { scaleX: 1, duration: 1.4, ease: 'none', immediateRender: false }, GROOVE + 0.5);
+tl.to('#analysis', { opacity: 0, duration: 0.2 }, ROWS - 0.1);
+[0, 1, 2, 3].forEach(k => tl.fromTo('#scryOrb svg', { scale: 1.45, filter: 'drop-shadow(0 0 6px #c9b6ff)' }, { scale: 1, filter: 'drop-shadow(0 0 0px #c9b6ff)', duration: 0.35, ease: 'power2.out', immediateRender: false }, GROOVE + 0.5 + k * BEAT));
+const sweepFrom = rect(line(0)).t - rect('code').t, sweepTo = rect(line(script.length - 1)).b - rect('code').t;
+tl.set('#scan', { top: sweepFrom, opacity: 0 }, 0);
+tl.to('#scan', { opacity: 1, duration: 0.1 }, GROOVE + 0.45);
+tl.fromTo('#scan', { top: sweepFrom }, { top: sweepTo, duration: 1.4, ease: 'none', immediateRender: false }, GROOVE + 0.5);
+tl.to('#scan', { opacity: 0, duration: 0.15 }, GROOVE + 1.9);
+script.forEach((_, i) => tl.fromTo(`#codeL${i} .tx`, { color: '#ffffff', textShadow: '0 0 14px rgba(185,163,255,1)' }, { color: '#e7e2f6', textShadow: '0 0 0px rgba(185,163,255,0)', duration: 0.5, immediateRender: false }, GROOVE + 0.5 + 1.4 * i / (script.length - 1)));
+
+// Rows: each member's line flies across and lands as its row, the Inspector growing under it; the last one lands hard.
+scryRowIds.forEach((id, k) =>
+{
+  const t = ROW_TIMES[k], lineIndex = rowLines[k];
+  const from = rect(lineText(lineIndex)), to = rect(q(id).querySelector('.lab, .btn span'));
+  const indentPx = indentOf(lineIndex) * charW;
+  const fl = document.createElement('div');
+  fl.className = 'flier';
+  fl.textContent = script[lineIndex].trim();
+  fl.style.left = (from.l + indentPx) + 'px';
+  fl.style.top = from.t + 'px';
+  stage.appendChild(fl);
+  const travel = 0.25;
+  tl.fromTo(fl, { opacity: 0, x: 0, y: 0, scale: 1 }, { opacity: 1, duration: 0.05, immediateRender: false }, t - travel - 0.02);
+  tl.to(fl, { x: to.l + 20 - from.l - indentPx, y: to.t - from.t, scale: 0.85, duration: travel, ease: 'power3.in' }, t - travel);
+  tl.to(fl, { opacity: 0, duration: 0.06 }, t);
+  glow(lineIndex, t - travel - 0.02, 0.15);
+  tl.to(insp, { height: rowBottoms[k], duration: 0.12, ease: 'power2.out' }, t - 0.05);
+  tl.fromTo('#' + id, { opacity: 0, x: 24 }, { opacity: 1, x: 0, duration: 0.18, ease: 'power2.out', immediateRender: false }, t);
+});
+tl.set(insp, { height: fullH }, ROW_TIMES[10] + 0.2);
+tl.fromTo('#regionEnd', { opacity: 0 }, { opacity: 1, duration: 0.2, immediateRender: false }, ROW_TIMES[2]);
+
+// Rules: the clamp becomes the bounds and 500 snaps to 20, the movement gives the unit, the if strikes Range, the
+// comment becomes the tooltip, and ticking Is Ranged lifts the strike.
+beam(16, 'sSpeed_f', FACTS.limits);
+glow(16, FACTS.limits - 0.25, 0.5);
+tl.fromTo('#sSpeed_s, #sSpeed_e', { opacity: 0, width: 0, paddingLeft: 0, paddingRight: 0 }, { opacity: 1, width: 'auto', paddingLeft: 12, paddingRight: 12, duration: 0.2, ease: 'back.out(2)', immediateRender: false }, FACTS.limits);
+ring('sSpeed_s', FACTS.limits, 0.6);
+ring('sSpeed_e', FACTS.limits, 0.6);
+beam(17, 'sSpeed_f', FACTS.unit);
+glow(17, FACTS.unit - 0.25, 0.5);
+tl.fromTo('#sSpeed_u', { opacity: 0, width: 0, paddingLeft: 0, paddingRight: 0 }, { opacity: 1, width: 'auto', paddingLeft: 12, paddingRight: 12, duration: 0.2, ease: 'back.out(2)', immediateRender: false }, FACTS.unit);
+ring('sSpeed_u', FACTS.unit, 0.6);
+beam(18, 'sRange', FACTS.strike);
+glow(18, FACTS.strike - 0.25, 0.5);
+tl.fromTo('#sRange .x, #sTag .x', { scaleX: 0 }, { scaleX: 1, duration: 0.2, ease: 'power2.out', immediateRender: false }, FACTS.strike);
+ring(q('sRange').querySelector('.lab .tx'), FACTS.strike, 0.6);
+ring(q('sTag').querySelector('.lab .tx'), FACTS.strike, 0.6);
+beam(3, 'sSpeed', FACTS.tooltip);
+glow(3, FACTS.tooltip - 0.25, 0.5);
+tl.fromTo('#tip', { opacity: 0, y: -6 }, { opacity: 1, y: 0, duration: 0.18, immediateRender: false }, FACTS.tooltip);
+ring('tip', FACTS.tooltip, 0.8);
+tl.to('#tip', { opacity: 0, duration: 0.2 }, FACTS.tick - 0.5);
+tl.to('#cursor', { opacity: 1, duration: 0.15 }, FACTS.tick - 0.45);
+beam(19, 'sTimer_f', FACTS.timer);
+glow(19, FACTS.timer - 0.25, 0.5);
+tl.fromTo('#sTimer_u', { opacity: 0, width: 0, paddingLeft: 0, paddingRight: 0 }, { opacity: 1, width: 'auto', paddingLeft: 12, paddingRight: 12, duration: 0.2, ease: 'back.out(2)', immediateRender: false }, FACTS.timer);
+ring('sTimer_u', FACTS.timer, 0.6);
+cursorTo('sRanged_c', FACTS.tick, 0.35, 4, 6);
+tl.fromTo('#sRanged_c svg', { opacity: 0 }, { opacity: 1, duration: 0.05, immediateRender: false }, FACTS.tick);
+tl.fromTo('#sRanged_c', { scale: 0.85 }, { scale: 1, duration: 0.2, immediateRender: false }, FACTS.tick);
+tl.to('#sRange .x, #sTag .x', { scaleX: 0, duration: 0.2, ease: 'power2.in' }, FACTS.tick + 0.08);
+ring('sRange', FACTS.tick + 0.08, 0.6);
+
+
+// Mistake: the header's badge, the row's red button, its panel with the fix, and the fix.
+q('scryOrb').className = 'err';
+ring('scryOrb', MISTAKE + 0.25, 0.9);
+q('scryOrb').className = '';
+ring('sTag_f', MISTAKE + 0.5, 0.9);
+cursorTo('sTag_b', ERROR_OPEN, 0.5, 4, 6);
+tl.fromTo('#sTag_tint', { opacity: 0 }, { opacity: 1, duration: 0.1, immediateRender: false }, ERROR_OPEN);
+tl.fromTo('#tagPanel', { opacity: 0, y: -10 }, { opacity: 1, y: 0, duration: 0.15, ease: 'power2.out', immediateRender: false }, ERROR_OPEN);
+glow(18, ERROR_OPEN + 0.25, 1.0);
+cursorTo('addTag', ERROR_FIX, 0.4, 0, 4);
+tl.fromTo('#addTag', { backgroundColor: '#7a7a7a' }, { backgroundColor: '#585858', duration: 0.25, immediateRender: false }, ERROR_FIX);
+tl.to('#tagPanel, #sTag_tint', { opacity: 0, duration: 0.15 }, ERROR_CLOSE);
+ring('sTag_f', ERROR_CLOSE + 0.05, 0.8);
+ring('scryOrb', ERROR_CLOSE + 0.05, 0.8);
+
+// Live: Play mode on, the timer running, Speed dragged down and back up into its bound, all inside its label.
+tl.fromTo('#playbar', { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.25, immediateRender: false }, LIVE - 0.35);
+tl.fromTo('#playOn', { opacity: 0 }, { opacity: 1, duration: 0.1, immediateRender: false }, LIVE);
+ring('sTimer_f', LIVE + 0.1, 1.2);
+cursorTo(speedLabel, DRAG[0], 0.4, 30, 2);
+tl.to('#arrow', { opacity: 0, duration: 0.05 }, DRAG[0]);
+tl.to('#drag', { opacity: 1, duration: 0.05 }, DRAG[0]);
+tl.to('#cursor', { x: '-=50', duration: DRAG[1] - DRAG[0], ease: 'power1.inOut' }, DRAG[0]);
+tl.to('#cursor', { x: '+=190', duration: DRAG[2] - DRAG[1] + 0.3, ease: 'power1.in' }, DRAG[1]);
+ring('sSpeed_e', DRAG[2], 0.8);
+tl.to('#drag', { opacity: 0, duration: 0.05 }, DRAG[2] + 0.5);
+tl.to('#arrow', { opacity: 1, duration: 0.05 }, DRAG[2] + 0.5);
+
+// Every click undoable: Take Damage twice, two undos put Health back.
+cursorTo('sAmount_f', AMOUNT[0] - 0.05, 0.4, -60, 4);
+cursorTo('sDamage_b', HOVER - 0.2, 0.35, -60, 4);
+PRESSES.forEach(t => press('sDamage_b', t));
+const kc = rect('insp');
+gsap.set('#dialog', { top: kc.b + 14 });
+gsap.set('#keycap', { left: kc.r - 190, top: kc.b + 24 });
+UNDOS.forEach(t =>
+{
+  tl.fromTo('#keycap', { opacity: 1, scale: 1.35, y: -8 }, { opacity: 1, scale: 1, y: 0, duration: 0.18, ease: 'power3.in', immediateRender: false }, t - 0.18);
+  ring('sHealth_f', t, 0.4);
+});
+tl.to('#keycap', { opacity: 0, duration: 0.15 }, UNDOS[1] + 0.3);
+
+// Or asked first: Respawn opens its dialog, Run, and the method runs as its button fills.
+cursorTo('sRespawn_b', ASK, 0.3, -40, 4);
+press('sRespawn_b', ASK);
+tl.fromTo('#dialog', { opacity: 0, scale: 0.92 }, { opacity: 1, scale: 1, duration: 0.15, ease: 'back.out(2)', immediateRender: false }, ASK + 0.03);
+cursorTo('dRun', RUN, 0.35, 0, 4);
+tl.fromTo('#dRun', { backgroundColor: '#cce4f7' }, { backgroundColor: '#fdfdfd', duration: 0.2, immediateRender: false }, RUN);
+tl.to('#dialog', { opacity: 0, scale: 0.96, duration: 0.12 }, RUN + 0.05);
+ring('sRespawn_b', RUN + 0.05, 0.9);
+
+// Search: the field opens over the title, "ran" filters the rows to the two that match, highlighted, then clears.
+cursorTo('findBtn', FIND, 0.6, 0, 4);
+tl.fromTo('#findBtn', { backgroundColor: 'rgba(62, 95, 138, 0)' }, { backgroundColor: 'rgba(62, 95, 138, 1)', duration: 0.1, immediateRender: false }, FIND);
+tl.to('#hTitle', { opacity: 0, duration: 0.1 }, FIND);
+tl.fromTo('#searchbox', { opacity: 0, scaleX: 0.9, transformOrigin: '0 50%' }, { opacity: 1, scaleX: 1, duration: 0.2, ease: 'power2.out', immediateRender: false }, FIND);
+const others = ['sGroup', 'sSpeed', 'regionEnd', 'sTag', 'sWeapon', 'sHealth', 'sTimer', 'sDead', 'methodsGap', 'sDamage', 'sRespawn', 'sShoot'];
+const heights = Object.fromEntries(others.map(id => [id, q(id).offsetHeight]));
+const filtered = FIND_KEYS[2] + 0.05;
+others.forEach(id => tl.to('#' + id, { height: 0, opacity: 0, duration: 0.25, ease: 'power2.inOut' }, filtered));
+tl.to(insp, { height: 56 + 20 + 2 * ROW, duration: 0.25, ease: 'power2.inOut' }, filtered);
+others.forEach(id => tl.to('#' + id, { height: heights[id], opacity: 1, duration: 0.25, ease: 'power2.inOut' }, FIND_CLEAR + 0.05));
+tl.to(insp, { height: fullH, duration: 0.25, ease: 'power2.inOut' }, FIND_CLEAR + 0.05);
+tl.to('#searchbox', { opacity: 0, duration: 0.15 }, FIND_CLEAR + 0.1);
+tl.to('#hTitle', { opacity: 1, duration: 0.15 }, FIND_CLEAR + 0.2);
+tl.to('#findBtn', { backgroundColor: 'rgba(62, 95, 138, 0)', duration: 0.15 }, FIND_CLEAR + 0.1);
+
+
+// Answers: Speed's Scry button shows under the pointer, its panel opens, and Unity style is picked: Unity draws the field,
+// with any drawer of the user's own, and the label turns bold, as an answered line does.
+cursorTo('sSpeed_b', PANEL, 0.5, 4, 6);
+tl.fromTo('#sSpeed_b', { opacity: 0 }, { opacity: 1, duration: 0.1, immediateRender: false }, PANEL - 0.2);
+tl.fromTo('#sSpeed_b', { backgroundColor: '#6f5cae' }, { backgroundColor: '#6f5cae', duration: 0.01, immediateRender: false }, PANEL);
+tl.fromTo('#sSpeed_tint', { opacity: 0 }, { opacity: 1, duration: 0.1, immediateRender: false }, PANEL);
+tl.fromTo('#panel', { opacity: 0, y: -10 }, { opacity: 1, y: 0, duration: 0.15, ease: 'power2.out', immediateRender: false }, PANEL);
+cursorTo('stUnity', STYLE, 0.4, 0, 4);
+tl.to('#sSpeed_f', { opacity: 0, duration: 0.12 }, STYLE);
+tl.to('#sSpeed_p', { opacity: 1, duration: 0.12 }, STYLE);
+ring('stUnity', STYLE, 0.8);
+tl.to('#panel, #sSpeed_tint', { opacity: 0, duration: 0.15 }, CLOSE);
+tl.to('#sSpeed_b', { opacity: 0, backgroundColor: '#5a5a5a', duration: 0.15 }, CLOSE);
+ring('sSpeed', CLOSE + 0.1, 0.8);
+
+// The build: Weapon folds open, Bow is picked, its constructor is offered with its parameter, 12, Create.
+cursorTo('sWeapon_a', FOLD, 0.6, 4, 0);
+tl.to('#sWeapon_a', { rotation: 90, duration: 0.15 }, FOLD);
+q('build').style.display = '';
+
+const growTo = (rows, t) => tl.to(insp, { height: fullH + rows * ROW, duration: 0.2, ease: 'power2.out' }, t);
+tl.fromTo('#bType, #bCtor, #bArrows, #bCreate', { height: 0 }, { height: ROW, duration: 0.25, ease: 'power2.out', immediateRender: false }, FOLD);
+growTo(4, FOLD);
+ring('bCtor_f', PICK, 1.2);
+cursorTo('bArrows_f', TYPE_IN, 0.3, -120, 4);
+cursorTo('bCreate_b', CREATE, 0.35, 0, 4);
+tl.fromTo('#bCreate_b', { scale: 0.96, backgroundColor: '#6a6a6a' }, { scale: 1, backgroundColor: '#585858', duration: 0.25, immediateRender: false }, CREATE);
+tl.to('#bType, #bCtor, #bCreate', { height: 0, duration: 0.25, ease: 'power2.inOut' }, CREATE + 0.05);
+tl.to(insp, { height: fullH + ROW, duration: 0.25, ease: 'power2.inOut' }, CREATE + 0.05);
+tl.fromTo('#sWeapon_t', { opacity: 0 }, { opacity: 1, duration: 0.15, immediateRender: false }, CREATE + 0.05);
+ring('sWeapon_f', CREATE + 0.1, 0.9);
+tl.to('#cursor', { opacity: 0, duration: 0.2 }, END_CARD - 0.5);
+
+// The beat: the background breathes on every kick, the stage pushes on every bar from the drop.
+KICKS.forEach((t, k) => tl.fromTo('#pulse', { opacity: (k % 3 === 0) ? 0.9 : 0.5 }, { opacity: 0, duration: 0.3, ease: 'power2.out', immediateRender: false }, t));
+for (let bar = 5; bar < 22; bar++)
+  punch(bar * BAR, 0.012);
+
+// End card: the stage leaves with a flash, the title on the bar, the tagline a half bar later.
+tl.to(stage, { scale: 0.9, opacity: 0, filter: 'blur(10px)', duration: 0.3, ease: 'power2.in' }, END_CARD - 0.3);
+tl.fromTo('#flash', { opacity: 0.5 }, { opacity: 0, duration: 0.6, immediateRender: false }, END_CARD);
+tl.fromTo('#end', { opacity: 0 }, { opacity: 1, duration: 0.2, immediateRender: false }, END_CARD);
+tl.fromTo('#title', { opacity: 0, scale: 1.3, filter: 'blur(12px)' }, { opacity: 1, scale: 1, filter: 'blur(0px)', duration: 0.5, ease: 'power3.out', immediateRender: false }, END_CARD);
+tl.fromTo('#ball', { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out', immediateRender: false }, END_CARD);
+tl.fromTo('#tagline', { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out', immediateRender: false }, END_CARD + BAR / 2);
+tl.fromTo('#sub', { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out', immediateRender: false }, END_CARD + BAR);
+tl.fromTo('#halo', { scale: 0.9 }, { scale: 1.08, duration: BAR, yoyo: true, repeat: 2, ease: 'sine.inOut', immediateRender: false }, END_CARD);
+tl.to('#end', { opacity: 0, duration: 1.0 }, END - 1.0);
+
+// Initial states, set once every position is measured.
+gsap.set('#code', { opacity: 0, x: -40 });
+gsap.set(insp, { height: unityH, opacity: 0 });
+gsap.set('#sbody .row:not(.b), #regionEnd', { opacity: 0 });
+gsap.set('#scryTools', { opacity: 0, width: 0 });
+gsap.set('#sSpeed_s, #sSpeed_e, #sSpeed_u', { opacity: 0, width: 0, paddingLeft: 0, paddingRight: 0 });
+gsap.set('#sRange .x', { width: rangeLabelW + 8 });
+gsap.set('#sTag .x', { width: tagLabelW + 8 });
+gsap.set('#sTimer_u', { opacity: 0, width: 0, paddingLeft: 0, paddingRight: 0 });
+gsap.set('#cursor', { x: 1500, y: 1150, opacity: 0 });
+gsap.set('#bType, #bCtor, #bArrows, #bCreate', { height: 0 });
+gsap.set('#title, #tagline, #sub', { opacity: 0 });
+tl.set({}, {}, END);
+
+// Text that follows the time: written for any seek, so scrubbing and frame rendering always agree.
+function paint(t)
+{
+  q('uSpeed_v').textContent = (t < TYPED) ? '8' : (t < TYPED + 0.12) ? '5' : (t < TYPED + 0.24) ? '50' : '500';
+  let speed = (t < FACTS.snap) ? 500 : 20;
+  if ((t >= DRAG[0]) && (t < DRAG[1]))
+    speed = 20 - 8 * (t - DRAG[0]) / (DRAG[1] - DRAG[0]);
+  else if ((t >= DRAG[1]) && (t < DRAG[2]))
+    speed = 12 + 8 * (t - DRAG[1]) / (DRAG[2] - DRAG[1]);
+  q('sSpeed_v').textContent = Math.round(speed);
+  q('sTimer_v').textContent = Math.min(Math.max(t - LIVE, 0), END_CARD - LIVE).toFixed(2);
+  q('sHealth_v').textContent = (t < PRESSES[0]) ? 100 : (t < PRESSES[1]) ? 90 : (t < UNDOS[0]) ? 80 : (t < UNDOS[1]) ? 90 : 100;
+  q('sSpeed_e').style.background = ((t >= DRAG[2] - 0.05) && (t < DRAG[2] + 0.8)) ? 'rgba(132, 102, 222, 0.75)' : '';
+  const running = ((t >= RUN) && (t < RUN_END + 0.25)) ? Math.min((t - RUN) / (RUN_END - RUN), 1) : 0;
+  q('sRespawn_run').style.width = (running * 100) + '%';
+  q('bArrows_v').textContent = (t < TYPE_IN) ? '0' : (t < TYPE_IN + 0.12) ? '1' : '12';
+  q('sWeapon_v').textContent = (t < CREATE) ? 'None (IWeapon)' : '(arrows: 12)';
+  const broken = (t < ERROR_FIX);
+  q('sTag_f').className = broken ? 'fld err' : 'fld';
+  q('sTag_b').style.display = broken ? '' : 'none';
+  q('scryOrb').className = (broken && (t >= ROWS)) ? 'err' : '';
+  q('sAmount_v').textContent = (t < AMOUNT[0]) ? '0' : (t < AMOUNT[1]) ? '1' : '10';
+  const previewing = (t >= HOVER) && (t < HOVER_END);
+  q('sAmount_f').className = previewing ? 'fld read' : 'fld';
+  q('sHealth_f').className = previewing ? 'fld ro write' : 'fld ro';
+  q('sDamage_b').classList.toggle('hover', (t >= HOVER - 0.2) && (t < PRESSES[1] + 0.3));
+  if (previewing)
+    q('sHealth_v').textContent = '90';
+  q('uSpeed_f').className = ((t >= TYPED - 0.05) && (t < ACCEPTED)) ? 'fld edit' : 'fld';
+  insp.className = ((t >= FIND_KEYS[2]) && (t < FIND_CLEAR)) ? 'insp finding' : 'insp';
+  q('stScry').className = (t < STYLE) ? 'on' : '';
+  q('stUnity').className = (t < STYLE) ? '' : 'on';
+  q('styleLabel').className = (t < STYLE) ? '' : 'answered';
+  q('findText').textContent = ((t >= FIND_CLEAR) || (t < FIND_KEYS[0])) ? '' : (t < FIND_KEYS[1]) ? 'r' : (t < FIND_KEYS[2]) ? 'ra' : 'ran';
+}
+
+// A backward jump goes back to the start, then forward to its time: several tweens animate the same element.
+function jump(t)
+{
+  if (t < tl.time())
+    tl.seek(0, false);
+  tl.seek(t, false);
+  paint(t);
+}
+
+// Player. The soundtrack starts first and the timeline follows its clock, never seeking the audio.
+const scrub = q('scrub'), time = q('time'), playBtn = q('playBtn');
 scrub.max = END;
-controls.hidden = fixedTime !== null;
-
-function seekTo(value) {
-  time = Number.isFinite(value) ? clamp(value / END) * END : 0;
-  const branded = time >= 4;
-  const method = time >= 12;
-  const closing = time >= 22;
-  const preview = time >= 14 && time < 17;
-  const changed = time >= 17 && time < 20;
-  const undone = time >= 20;
-  const bounds = time >= 5.5;
-  const beamStart = method ? 13.5 : 5;
-  const beam = ease((time - beamStart) / .5);
-  const glow = beam * (1 - clamp((time - beamStart - 1) / .8));
-
-  q('demo').hidden = closing;
-  q('end').hidden = !closing;
-  const headline = !branded ? 'Your code already knows.' : method ? 'See what a click will change.' : 'Scry reads the code you wrote.';
-  q('headline').textContent = headline;
-  q('subhead').textContent = !branded ? 'Why declare the same rules twice?' :
-    method ? 'Preview the change. Run it. Undo it.' : 'Plain C#. The clamp becomes Inspector limits.';
-  q('demo').style.opacity = 1 - clamp((time - 21.65) / .35);
-  q('end').style.opacity = ease((time - 22) / .45);
-  q('heroOrb').style.transform = 'scale(' + (.94 + .06 * ease((time - 22) / 1.45)) + ')';
-
-  q('inspectorName').textContent = branded ? 'Scry Inspector' : 'Unity Inspector';
-  const icon = branded ? orbIcon('#c8a9ff') : '<span class="type">#</span>';
-  if (q('componentIcon').dataset.mode !== String(branded)) {
-    q('componentIcon').innerHTML = icon;
-    q('componentIcon').dataset.mode = String(branded);
-  }
-  q('lower').hidden = q('upper').hidden = !bounds;
-  q('ammoRow').hidden = q('reloadRow').hidden = !branded;
-  q('speed').textContent = time >= 8 ? String(Math.round(8 + 12 * ease((time - 8) / 1))) : '8';
-  q('ammo').textContent = changed ? '30' : '4';
-  q('clampLine').classList.toggle('focus', time >= 5 && !method);
-  q('reloadLine').classList.toggle('focus', time >= 13.5);
-  q('speedField').classList.toggle('focus', bounds && !method);
-  q('reloadButton').classList.toggle('hot', preview || (changed && time < 17.4));
-  q('ammoField').classList.toggle('write', preview || (changed && time < 17.65) || (undone && time < 20.65));
-
-  const detail = preview ? 'Ammo <strong>4 → 30</strong> on click' : changed ? 'Ammo <strong>30</strong>' : undone ? '<kbd>Ctrl</kbd> + <kbd>Z</kbd> &nbsp; Ammo back to <strong>4</strong>' : '';
-  if (q('detail').innerHTML !== detail) q('detail').innerHTML = detail;
-  ray.setAttribute('d', method ? 'M921 771 C1000 771 997 560 1080 560' : 'M921 691 C1001 691 996 457 1080 457');
-  ray.style.strokeDasharray = '1';
-  ray.style.strokeDashoffset = String(1 - beam);
-  ray.style.opacity = glow;
-  q('lens').style.opacity = glow;
-  q('lens').style.top = method ? '620px' : '529px';
-  scrub.value = time;
-  q('time').textContent = time.toFixed(2) + ' s';
-}
-
-function fit() {
-  const available = innerHeight - (controls.hidden ? 0 : controls.offsetHeight);
-  const scale = Math.min(innerWidth / W, Math.max(available, 1) / H);
-  frame.style.transform = 'scale(' + scale + ')';
-  frame.style.left = (innerWidth - W * scale) / 2 + 'px';
-  frame.style.top = (available - H * scale) / 2 + 'px';
-}
-
-function stop() {
-  playRequest++;
-  running = false;
-  cancelAnimationFrame(animationFrame);
+const audio = new Audio('soundtrack.wav?' + Date.now());
+audio.preload = 'auto';
+let playing = false, withSound = false, runId = 0;
+tl.eventCallback('onUpdate', () => { paint(tl.time()); scrub.value = tl.time(); time.textContent = tl.time().toFixed(2) + ' s'; });
+gsap.ticker.add(() =>
+{
+  if (playing && withSound && (tl.paused() === false))
+    tl.timeScale(1 + Math.max(-0.05, Math.min(0.05, (audio.currentTime - tl.time()) * 0.8)));
+  if (playing && (tl.progress() === 1))
+    stop();
+});
+function start(at)
+{
+  const id = ++runId;
+  tl.pause();
+  jump(at);
+  playing = true;
+  playBtn.textContent = 'Pause';
+  const go = () =>
+  {
+    if (id !== runId)
+      return;
+    if (withSound)
+      jump(audio.currentTime);
+    tl.play();
+  };
   audio.pause();
-  play.textContent = time >= END ? 'Replay' : 'Play';
-}
-
-function tick(now) {
-  seekTo(soundClock ? (audio.ended ? END : audio.currentTime) : offset + (now - startedAt) / 1000);
-  if (time >= END) stop();
-  else animationFrame = requestAnimationFrame(tick);
-}
-
-async function start(at) {
-  stop();
-  const request = playRequest;
-  seekTo(at);
   audio.currentTime = at;
-  running = true;
-  play.textContent = 'Pause';
-  try {
-    await audio.play();
-    if (request !== playRequest) return;
-    soundClock = true;
-  } catch {
-    if (request !== playRequest) return;
-    soundClock = false;
-  }
-  offset = at;
-  startedAt = performance.now();
-  animationFrame = requestAnimationFrame(tick);
+  audio.addEventListener('playing', () => { withSound = true; go(); }, { once: true });
+  audio.play().catch(() => { withSound = false; go(); });
 }
-
-play.onclick = () => running ? stop() : start(time >= END ? 0 : time);
-scrub.oninput = () => { stop(); seekTo(Number(scrub.value)); };
-document.querySelectorAll('.chapter').forEach(button => {
-  button.onclick = () => start(Number(button.dataset.time));
-});
-addEventListener('keydown', event => {
-  if (event.code !== 'Space' || event.repeat || event.target.closest('button, input')) return;
-  event.preventDefault();
-  play.click();
-});
+function stop()
+{
+  runId++;
+  playing = false;
+  tl.timeScale(1);
+  withSound = false;
+  audio.pause();
+  tl.pause();
+  playBtn.textContent = (tl.progress() === 1) ? 'Replay' : 'Play';
+}
+function toggle()
+{
+  if (playing)
+    stop();
+  else
+    start((tl.progress() === 1) ? 0 : tl.time());
+}
+scrub.oninput = () => { stop(); jump(+scrub.value); };
+playBtn.onclick = toggle;
+document.addEventListener('keydown', e => { if (e.code === 'Space') { e.preventDefault(); toggle(); } });
+for (const [name, t] of [['Rules', 0], ['Unity', UNITY_IN], ['Attributes', 6], ['Drop', GROOVE], ['Rows', ROWS], ['Facts', RULES], ['Mistake', MISTAKE], ['Live', LIVE], ['Preview', PREVIEW], ['Undo', UNDO], ['Search', SEARCH], ['Answers', ANSWERS], ['Build', BUILD], ['End', END_CARD]])
+{
+  const b = document.createElement('button');
+  b.textContent = name;
+  b.onclick = () => start(t);
+  q('scenes').appendChild(b);
+}
+const t0 = new URLSearchParams(location.search).get('t');
+const bar = (t0 === null) ? 64 : 0;
+function fit()
+{
+  const s = Math.min(innerWidth / W, (innerHeight - bar) / H);
+  frame.style.transform = 'scale(' + s + ')';
+  const vp = q('viewport');
+  vp.style.left = ((innerWidth - W * s) / 2) + 'px';
+  vp.style.top = ((innerHeight - bar - H * s) / 2) + 'px';
+}
 addEventListener('resize', fit);
-seekTo(Number(fixedTime));
-fit();
+// Frame rendering seeks with ?t=seconds and stays paused.
+window.seekTo = t => jump(t);
 window.END = END;
-window.seekTo = seekTo;
+if (t0 !== null)
+{
+  jump(+t0);
+  q('controls').style.display = 'none';
+}
+else
+  jump(0);
+fit();
 window.ready = true;
+});
 </script>
 </body>
 </html>
