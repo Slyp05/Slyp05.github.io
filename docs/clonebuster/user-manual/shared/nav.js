@@ -61,9 +61,11 @@
       ["record", "Every version, recorded as you save"],
       ["timestamps", "Two independent timestamps"],
       ["previews", "Previews taken at save time"],
-      ["history", "Originals come from your own history"],
+      ["history", "Your originals stay with you"],
+      ["git", "If you already use git"],
       ["purchased", "Purchased assets are never evidence"],
-      ["limits", "What a timestamp proves"]
+      ["limits", "What a timestamp proves"],
+      ["evidence", "Hashes and timestamps as evidence"]
     ] },
     { group: "Prove your work", file: "pages/Export a proof.html", title: "Export a proof", sections: [
       ["pick", "Pick files and versions"],

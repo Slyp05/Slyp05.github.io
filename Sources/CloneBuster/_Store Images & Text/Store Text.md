@@ -34,7 +34,7 @@ Plain text, pasted as is into the Asset Store description field (it renders no c
 
 ---
 
-Prove you made it first.
+Prove you made it first!
 
 AI tools can now rebuild a game from its build or its trailer in days. Obfuscation can't stop a clone made from a trailer, and AI keeps getting better at reading builds.
 
@@ -54,11 +54,17 @@ Pick the files and versions to show, then export:
 
 • Proof.pdf: one page per asset that a store reviewer reads in seconds, with a plain verdict ("This file existed by 2 March 2026, confirmed by two independent timestamps"), your first and latest versions, and the copy's screenshot beside them.
 • Notice text: one paragraph to paste into a store's takedown form.
-• The raw evidence: every version's timestamps and preview, with the standard command that checks each one, so anyone can verify it without CloneBuster.
+• The raw evidence: each version's file hash and preview, both timestamped, with the standard command that checks each one, so anyone can verify it without CloneBuster.
 
 🎞️ Show How You Made It
 
 The process reel turns an asset's versions into a GIF or MP4 with a date on every frame. Share it to show how your game came to be, or to answer anyone who claims your work is AI-made.
+
+🔀 Why Not Just Git?
+
+Git dates are set by your own machine, and with any VCS a store reviewer can't check them without access to your repository. Only what you commit is recorded, and source art outside the repo isn't recorded at all.
+
+CloneBuster timestamps every saved version, committed or not, through two outside authorities, and exports a proof any reviewer reads in seconds without access to your project.
 
 ⭐ Good to Know
 
@@ -68,11 +74,13 @@ The process reel turns an asset's versions into a GIF or MP4 with a date on ever
 • Source art outside Assets can be recorded too: add its folders in the settings.
 • Previews: PNG, JPG, PSD, Aseprite, Krita, Blender, Procreate and models inside Assets. Every other file, code included, is timestamped and provable by its hash.
 • Your repository backs it up: commit the CloneBuster Vault folder with your project.
-• Source code and full documentation included, with where to file a takedown on each major store.
+• Source code and full documentation included: with where to file a takedown on each major store.
 
 🔍 What It Proves
 
 Each version existed by its timestamped date. CloneBuster doesn't stop copying, and it doesn't certify how a version was made. It proves when.
+
+SHA-256 hashes and timestamps are recognised forms of digital evidence, for example in US Federal Rule of Evidence 902(14), EU eIDAS Article 41, China's Online Litigation Rules and India's Bharatiya Sakshya Adhiniyam.
 
 🔧 Requirements
 

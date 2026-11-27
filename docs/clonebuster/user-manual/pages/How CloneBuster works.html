@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Understand the vault, the two timestamps, the previews, and what a timestamp proves." />
+  <meta name="description" content="Understand the vault, the two timestamps, the previews, git, and what a timestamp proves." />
   <title>CloneBuster - How CloneBuster proves your work</title>
   <link rel="stylesheet" href="/assets/css/clonebuster.css" />
   <link rel="stylesheet" href="/assets/css/doc-dark.css" />
@@ -26,14 +26,16 @@
   <main id="content">
     <div class="page-header">
       <h1>How CloneBuster proves your work</h1>
-      <div class="sub">Understand the vault, the two timestamps, the previews, and what a timestamp proves.</div>
+      <div class="sub">Understand the vault, the two timestamps, the previews, git, and what a timestamp proves.</div>
       <div class="guide-index">
         <a href="#record">Every version, recorded as you save</a>
         <a href="#timestamps">Two independent timestamps</a>
         <a href="#previews">Previews taken at save time</a>
-        <a href="#history">Originals come from your own history</a>
+        <a href="#history">Your originals stay with you</a>
+        <a href="#git">If you already use git</a>
         <a href="#purchased">Purchased assets are never evidence</a>
         <a href="#limits">What a timestamp proves</a>
+        <a href="#evidence">Hashes and timestamps as evidence</a>
       </div>
     </div>
 
@@ -90,17 +92,31 @@
 
 <!-- ====================================== history ==== -->
 <section id="history">
-  <h2>Originals come from your own history</h2>
-<p>CloneBuster keeps no copies of your files. For each version it stores the hashes, the two timestamps and the
-  preview. An export doesn't include originals either: if someone asks for one, you send it yourself. So the export looks
-  for each version you picked in these places, and warns you when it can't find one (code and text files aren't
-  checked):</p>
+  <h2>Your originals stay with you</h2>
+<p>CloneBuster keeps no copies of your files, and an export includes none, only the
+  <a href="Export%20a%20proof.html#code">lines of code</a> you choose to show. For each version, the vault stores only its preview, the hashes of the file and of the
+  preview, and the two timestamps that cover both.</p>
+<p>If someone asks for a version's exact file, you send it yourself. When you export, CloneBuster warns you about any
+  version you picked that you can no longer produce. It looks for a file whose SHA-256 matches the timestamped hash in
+  two places:</p>
 <ul>
-  <li>The file on disk, when its content still matches.</li>
-  <li>The file's last 300 commits in your git history, read through the <code>git</code> command, when the file is tracked. CloneBuster accepts a file
-    from history only if its SHA-256 matches the timestamped hash, so git's own dates are never relied on.</li>
+  <li>The file on disk.</li>
+  <li>The file's last 300 commits in your git history, when the file is tracked.</li>
 </ul>
-<p>A version found in neither place still exports with its hash, its proofs and its preview.</p>
+<p>Code and text files aren't checked. A version found in neither place still exports with its hash, its proofs and its
+  preview.</p>
+
+</section>
+
+<!-- ====================================== git ==== -->
+<section id="git">
+  <h2>If you already use git</h2>
+<p>Git keeps your old files; CloneBuster dates them. A commit's date comes from the committer's machine, rebasing or
+  squashing rewrites it, and a store reviewer can check it only with access to your repository. CloneBuster's dates come
+  from the two authorities, cover every saved version, committed or not, in <code>Assets</code> and the source folders
+  you add, and anyone can check them without your project.</p>
+<p>Together, CloneBuster's timestamps date each version, and git holds the exact file of each version you committed.
+  If a dispute reaches court, the records of the host you push to can support the same history.</p>
 
 </section>
 
@@ -133,6 +149,30 @@
 
 </section>
 
+<!-- ====================================== evidence ==== -->
+<section id="evidence">
+  <h2>Hashes and timestamps as evidence</h2>
+<p>Hashes and timestamps are established forms of digital evidence. For example:</p>
+<ul>
+  <li>United States: <a href="https://www.law.cornell.edu/rules/fre/rule_902">Federal Rule of Evidence 902(14)</a>
+    lets a copied file be authenticated by a process of digital identification, which the rule's committee note says
+    is ordinarily a hash value.</li>
+  <li>European Union: <a href="https://eur-lex.europa.eu/eli/reg/2014/910/oj/eng">eIDAS Article 41</a> says an
+    electronic timestamp can't be refused as evidence because it's electronic or not qualified. A qualified timestamp
+    is also presumed accurate. FreeTSA, the default, doesn't claim qualified status, so its timestamps are admissible
+    but carry no presumption of accuracy.</li>
+  <li>China: the Supreme People's Court's
+    <a href="https://english.court.gov.cn/pdf/OnlineLitigationRulesofthePeople'sCourts.docx">Online Litigation Rules</a>
+    (Article 16) let a court presume that data preserved in a blockchain hasn't been altered since it was uploaded,
+    unless evidence shows otherwise.</li>
+  <li>India: the <a href="https://www.advocatekhoj.com/library/bareacts/bharatiyaaakshya2023/b.php">Bharatiya Sakshya
+    Adhiniyam, 2023</a> requires a certificate with each electronic record submitted as evidence, stating its hash
+    value; SHA-256 is one of the listed algorithms.</li>
+</ul>
+<p>A court still weighs each piece of evidence. If you're unsure, ask a lawyer who handles copyright.</p>
+
+</section>
+
 <div class="resources">
   <h2>Additional resources</h2>
   <ul>
@@ -151,7 +191,7 @@
   </a>
 </div>
 
-    <div class="doc-footer">CloneBuster v1.0.0</div>
+    <div class="doc-footer">CloneBuster v1.0.1</div>
 
   </main>
 </div>
